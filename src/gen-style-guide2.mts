@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { join, basename } from 'node:path';
 import { mkdirSync, createWriteStream, writeFileSync } from 'node:fs';
 import { Readable } from 'node:stream';

@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import type { StyleGuide } from './gen-style-guide.mjs';
 import { join } from 'node:path';
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
