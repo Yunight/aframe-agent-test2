@@ -1,0 +1,223 @@
+/* ==============================================
+   Red Bull Winter Olympics 2026 – Overlay Styles
+   ============================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ---- Overlay Container ---- */
+#ad-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---- Top Strip ---- */
+.top-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 20px 28px;
+  background: linear-gradient(180deg, rgba(11, 22, 47, 0.82) 0%, rgba(11, 22, 47, 0) 100%);
+  opacity: 0;
+  transform: translateY(-24px);
+}
+
+#ad-overlay.active .top-strip {
+  animation: fadeSlideDown 1s ease-out 5s forwards;
+}
+
+.brand-name {
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 5px;
+  color: #FFC906;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+}
+
+.divider-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #CC1E4A;
+  box-shadow: 0 0 6px rgba(204, 30, 74, 0.6);
+}
+
+.event-label {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 3.5px;
+  color: #D4D6D8;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* ---- Bottom Panel ---- */
+.bottom-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 28px 24px 40px;
+  background: linear-gradient(0deg, rgba(11, 22, 47, 0.88) 0%, rgba(11, 22, 47, 0) 100%);
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+#ad-overlay.active .bottom-panel {
+  animation: fadeSlideUp 1s ease-out 5.5s forwards;
+}
+
+.mission-text {
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 4px;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ---- CTA Button ---- */
+.cta-btn {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 36px;
+  background: linear-gradient(135deg, #CC1E4A 0%, #9b1539 100%);
+  border: 1px solid rgba(255, 201, 6, 0.25);
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.35s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 201, 6, 0.22), transparent);
+  transition: none;
+}
+
+#ad-overlay.active .cta-btn::before {
+  animation: shimmerBtn 3.5s ease-in-out infinite 7s;
+}
+
+.cta-btn:hover {
+  background: linear-gradient(135deg, #e62460 0%, #CC1E4A 100%);
+  border-color: #FFC906;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(204, 30, 74, 0.45), 0 0 16px rgba(255, 201, 6, 0.15);
+}
+
+.cta-btn:active {
+  transform: translateY(-1px);
+}
+
+.cta-text {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #FFFFFF;
+}
+
+.cta-arrow {
+  font-size: 15px;
+  color: #FFC906;
+  transition: transform 0.3s ease;
+  line-height: 1;
+}
+
+.cta-btn:hover .cta-arrow {
+  transform: translateX(5px);
+}
+
+/* ---- Animations ---- */
+@keyframes fadeSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmerBtn {
+  0%   { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .brand-name {
+    font-size: 11px;
+    letter-spacing: 3.5px;
+  }
+  .event-label {
+    font-size: 9px;
+    letter-spacing: 2.5px;
+  }
+  .top-strip {
+    gap: 10px;
+    padding: 16px 18px;
+  }
+  .bottom-panel {
+    padding: 20px 16px 32px;
+    gap: 14px;
+  }
+  .cta-btn {
+    padding: 12px 26px;
+  }
+  .cta-text {
+    font-size: 10px;
+    letter-spacing: 2px;
+  }
+  .mission-text {
+    font-size: 8px;
+    letter-spacing: 3px;
+  }
+}
+
+@media (max-width: 380px) {
+  .top-strip {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .divider-dot {
+    display: none;
+  }
+}

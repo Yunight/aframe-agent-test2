@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=320, initial-scale=1">
+  <title>PARKSIDE - Outils Printemps Été</title>
+  <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+  <script src="components.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 320px;
+      height: 480px;
+      background: #006B3C;
+    }
+  </style>
+</head>
+<body>
+  <a-scene
+    embedded
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false"
+    loading-screen="enabled: false"
+    renderer="antialias: true; alpha: false; colorManagement: true; sortObjects: true"
+    style="width: 320px; height: 480px;">
+
+    <a-assets timeout="10000">
+      <img id="logo" src="Parkside-Lidl-Tools-Logo-Vector.svg-.png" crossorigin="anonymous">
+      <img id="drill" src="41jKbcMDvyL.jpg" crossorigin="anonymous">
+      <img id="hedge-life" src="Card-009-1920x1440px-1715562.jpg" crossorigin="anonymous">
+    </a-assets>
+
+    <!-- Fixed Camera with mouse cursor for click interactions -->
+    <a-entity camera="fov: 80" position="0 0 3" look-controls="enabled: false" wasd-controls="enabled: false">
+      <a-entity cursor="fuse: false; rayOrigin: mouse" raycaster="objects: .clickable"></a-entity>
+    </a-entity>
+
+    <!-- Ambient Lighting -->
+    <a-entity light="type: ambient; color: #FFF; intensity: 1"></a-entity>
+
+    <!-- ===== BACKGROUND LAYERS ===== -->
+    <!-- Solid dark green base -->
+    <a-plane position="0 0 -3" width="10" height="14" color="#006B3C" material="shader: flat"></a-plane>
+    <!-- Diagonal darker overlay (brand visual motif) -->
+    <a-plane position="0.9 0.8 -2.9" width="9" height="14" rotation="0 0 15" color="#004828" material="shader: flat; opacity: 0.65"></a-plane>
+    <!-- Subtle lifestyle image ghost overlay -->
+    <a-plane position="0.2 0 -2.6" width="3.8" height="2.85" src="#hedge-life" material="shader: flat; opacity: 0.06"></a-plane>
+
+    <!-- ===== FLOATING SPARKLE PARTICLES ===== -->
+    <a-entity sparkle-particles="count: 22; colors: #78BE20,#C8D400,#FFFFFF; width: 4; height: 6"></a-entity>
+
+    <!-- ===== DECORATIVE RED STRIPES — top-left (brand triple-stripe motif) ===== -->
+    <a-plane position="-1.32 1.72 -0.8" width="0.09" height="0.55" rotation="0 0 -22" color="#E30613" material="shader: flat"
+      animation="property: material.opacity; from: 0; to: 1; dur: 400; delay: 300"></a-plane>
+    <a-plane position="-1.16 1.72 -0.8" width="0.09" height="0.55" rotation="0 0 -22" color="#E30613" material="shader: flat"
+      animation="property: material.opacity; from: 0; to: 1; dur: 400; delay: 450"></a-plane>
+    <a-plane position="-1.00 1.72 -0.8" width="0.09" height="0.55" rotation="0 0 -22" color="#E30613" material="shader: flat"
+      animation="property: material.opacity; from: 0; to: 1; dur: 400; delay: 600"></a-plane>
+
+    <!-- Red stripes — bottom-right (smaller echo) -->
+    <a-plane position="1.35 -1.55 -0.8" width="0.06" height="0.35" rotation="0 0 -22" color="#E30613" material="shader: flat; opacity: 0"
+      animation="property: material.opacity; from: 0; to: 0.35; dur: 400; delay: 2000"></a-plane>
+    <a-plane position="1.44 -1.55 -0.8" width="0.06" height="0.35" rotation="0 0 -22" color="#E30613" material="shader: flat; opacity: 0"
+      animation="property: material.opacity; from: 0; to: 0.35; dur: 400; delay: 2100"></a-plane>
+
+    <!-- ===== PARKSIDE LOGO ===== -->
+    <a-image src="#logo" position="0 2.1 -0.3" width="2.3" height="0.58"
+      material="shader: flat; transparent: true; alphaTest: 0.05"
+      animation="property: position; from: 0 3.5 -0.3; to: 0 2.1 -0.3; dur: 900; easing: easeOutBack"
+      animation__fade="property: material.opacity; from: 0; to: 1; dur: 600"></a-image>
+
+    <!-- ===== HEADLINE TEXT ===== -->
+    <a-text value="PRÊT POUR" position="0 1.4 -0.2" align="center" color="#FFFFFF" width="4.2"
+      font="exo2bold" letter-spacing="2"
+      animation="property: position; from: -4 1.4 -0.2; to: 0 1.4 -0.2; dur: 650; delay: 600; easing: easeOutCubic"
+      animation__fade="property: material.opacity; from: 0; to: 1; dur: 400; delay: 600"></a-text>
+
+    <a-text value="L'ÉTÉ ?" position="0 1.0 -0.2" align="center" color="#78BE20" width="5.0"
+      font="exo2bold" letter-spacing="3"
+      animation="property: position; from: 4 1.0 -0.2; to: 0 1.0 -0.2; dur: 650; delay: 800; easing: easeOutCubic"
+      animation__fade="property: material.opacity; from: 0; to: 1; dur: 400; delay: 800"></a-text>
+
+    <!-- Green accent underline -->
+    <a-plane position="0 0.82 -0.2" width="1.6" height="0.025" color="#78BE20" material="shader: flat"
+      animation="property: scale; from: 0 1 1; to: 1 1 1; dur: 500; delay: 1200; easing: easeOutCubic"></a-plane>
+
+    <!-- ===== GLOW RINGS BEHIND PRODUCT ===== -->
+    <a-ring position="0 -0.1 -0.5" radius-inner="0.55" radius-outer="1.05" color="#78BE20"
+      material="shader: flat; opacity: 0; side: double"
+      animation="property: material.opacity; from: 0; to: 0.2; dur: 800; delay: 900"
+      animation__pulse="property: material.opacity; from: 0.1; to: 0.25; dur: 2200; delay: 1700; dir: alternate; loop: true; easing: easeInOutSine"
+      animation__rot="property: rotation; from: 0 0 0; to: 0 0 360; dur: 25000; loop: true; easing: linear"></a-ring>
+
+    <a-ring position="0 -0.1 -0.6" radius-inner="0.95" radius-outer="1.4" color="#C8D400"
+      material="shader: flat; opacity: 0; side: double"
+      animation="property: material.opacity; from: 0; to: 0.08; dur: 1000; delay: 1100"
+      animation__pulse="property: material.opacity; from: 0.04; to: 0.12; dur: 3200; delay: 2100; dir: alternate; loop: true; easing: easeInOutSine"
+      animation__rot="property: rotation; from: 0 0 0; to: 0 0 -360; dur: 35000; loop: true; easing: linear"></a-ring>
+
+    <!-- ===== HERO PRODUCT — DRILL ===== -->
+    <a-image src="#drill" position="0 -0.1 0.1" width="1.9" height="1.63"
+      material="shader: flat; transparent: true; alphaTest: 0.4"
+      animation="property: position; from: 3.5 -0.1 0.1; to: 0 -0.1 0.1; dur: 1000; delay: 700; easing: easeOutBack"
+      animation__float="property: position; from: 0 -0.18 0.1; to: 0 -0.02 0.1; dur: 2800; delay: 1700; dir: alternate; loop: true; easing: easeInOutSine"
+      animation__tilt="property: rotation; from: 0 0 -2; to: 0 0 2; dur: 3500; delay: 1700; dir: alternate; loop: true; easing: easeInOutSine">
+    </a-image>
+
+    <!-- ===== PRICE BADGE ===== -->
+    <a-entity position="1.15 0.75 0.3"
+      animation="property: scale; from: 0 0 0; to: 1 1 1; dur: 500; delay: 1400; easing: easeOutBack">
+      <a-circle radius="0.36" color="#E30613" material="shader: flat"
+        animation__pulse="property: scale; from: 1 1 1; to: 1.1 1.1 1; dur: 900; delay: 2200; dir: alternate; loop: true; easing: easeInOutSine"></a-circle>
+      <a-text value="dès" position="0 0.14 0.01" align="center" color="#FFFFFF" width="0.65" font="roboto"></a-text>
+      <a-text value="29,99€" position="0 -0.04 0.01" align="center" color="#FFFFFF" width="1.2" font="exo2bold"></a-text>
+    </a-entity>
+
+    <!-- ===== SUBTEXT ===== -->
+    <a-text value="Outils jardin & atelier" position="0 -1.15 0.2" align="center" color="#F5F5F5" width="2.5" font="roboto"
+      animation__fade="property: material.opacity; from: 0; to: 1; dur: 600; delay: 1500"></a-text>
+
+    <a-text value="Qualité pro, prix Lidl" position="0 -1.4 0.2" align="center" color="#C8D400" width="2.2" font="roboto"
+      animation__fade="property: material.opacity; from: 0; to: 1; dur: 600; delay: 1700"></a-text>
+
+    <!-- ===== CTA BUTTON ===== -->
+    <a-entity position="0 -1.82 0.4"
+      animation="property: scale; from: 0 0 0; to: 1 1 1; dur: 600; delay: 1900; easing: easeOutBack">
+      <!-- White border / glow -->
+      <a-plane position="0 0 -0.008" width="2.12" height="0.46" color="#FFFFFF" material="shader: flat; opacity: 0.2"></a-plane>
+      <!-- Red button background -->
+      <a-plane class="clickable" click-url="https://parkside-diy.com" position="0 0 0" width="2.0" height="0.4" color="#E30613" material="shader: flat"
+        animation__pulse="property: scale; from: 1 1 1; to: 1.04 1.07 1; dur: 1100; delay: 2800; dir: alternate; loop: true; easing: easeInOutSine"></a-plane>
+      <!-- Button label -->
+      <a-text value="DÉCOUVRIR" position="0 0.005 0.01" align="center" color="#FFFFFF" width="2.5" font="exo2bold" letter-spacing="2"></a-text>
+    </a-entity>
+
+    <!-- ===== BOTTOM URL BAR ===== -->
+    <a-plane position="0 -2.32 0.2" width="5" height="0.2" color="#003D1F" material="shader: flat; opacity: 0.9"></a-plane>
+    <a-text value="parkside-diy.com" position="0 -2.32 0.22" align="center" color="#78BE20" width="1.7" font="roboto"></a-text>
+
+  </a-scene>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{
+  "companyName": "Red Bull GmbH",
+  "companyContext": "Red Bull GmbH is an Austrian multinational company founded in 1987 by Dietrich Mateschitz and Chaleo Yoovidhya. It is the world's leading energy drink company, having sold nearly 14 billion cans worldwide in 2025. Beyond beverages, Red Bull operates as a global media and sports enterprise through Red Bull Media House, owning and sponsoring sports teams across Formula 1, football, and extreme sports. Red Bull employs over 21,000 people and sells its products in 178 countries. The company is headquartered in Fuschl am See, Salzburg, Austria.",
+  "companyURL": "https://www.redbull.com",
+  "brandName": "Red Bull",
+  "brandContext": "Red Bull is the world's most recognizable energy drink brand, synonymous with extreme sports, adventure, and peak performance. In the context of the 2026 Winter Olympics Milano Cortina (February 6–22, 2026), Red Bull sponsors and supports numerous elite winter sports athletes across disciplines such as snowboarding (Jake Canter, Scotty James, Mark McMorris, Liam Brearley), freeskiing (Mathilde Gremaud, Jesper Tjäder), alpine skiing (Lindsey Vonn), ice hockey, and ski jumping. Red Bull's Athlete Performance Center prepares sponsored athletes for the Games. The brand also produces seasonal Winter Edition energy drinks (the 2025/2026 winter featured Fuji Apple & Ginger and Iced Vanilla Berry) and maintains a dedicated Winter Sports content hub showcasing athlete profiles, event coverage, and behind-the-scenes content.",
+  "brandURL": "https://www.redbull.com/us-en/hubs/wintersports",
+  "logoFileUrls": [
+    "https://pngimg.com/uploads/red_bull/red_bull_PNG1.png",
+    "https://pngimg.com/uploads/red_bull/red_bull_PNG13.png"
+  ],
+  "productName": "Red Bull Energy Drink",
+  "productPictureUrls": [
+    "https://pngimg.com/uploads/red_bull/red_bull_PNG2.png",
+    "https://pngimg.com/uploads/red_bull/red_bull_PNG3.png",
+    "https://pngimg.com/uploads/red_bull/red_bull_PNG19.png"
+  ],
+  "primaryColorPalette": [
+    "CC1E4A",
+    "FFC906",
+    "223971"
+  ],
+  "secondaryColorPalette": [
+    "004C6C",
+    "F4801F",
+    "464646",
+    "0B162F",
+    "D4D6D8",
+    "FFFFFF"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Futura SH-Dem Bol",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Brand name logotype – the Red Bull wordmark uses a heavily modified version of Futura Demi Bold with custom alterations to the R and B letterforms."
+    },
+    {
+      "fontFamily": "Maison Neue Red Bull",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Headlines and primary headings across digital platforms, marketing materials, and corporate communications. Custom-licensed version of Maison Neue exclusively for Red Bull GmbH."
+    },
+    {
+      "fontFamily": "Maison Neue Red Bull",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body text, paragraphs, product descriptions, and general editorial content across Red Bull digital properties and print materials."
+    },
+    {
+      "fontFamily": "Maison Neue Red Bull",
+      "fontWeight": 300,
+      "fontEffect": [],
+      "fontUses": "Captions, supporting text, metadata, and secondary UI elements across Red Bull digital platforms."
+    }
+  ],
+  "brandVision": "Red Bull GmbH is dedicated to upholding Red Bull standards while maintaining the leadership position in the energy drinks category, delivering superior customer service in a highly efficient and profitable manner. In the context of the 2026 Winter Olympics Milano Cortina, the brand direction aligns with championing human performance at the highest level, supporting world-class winter athletes, and creating compelling content around winter sports that reinforces Red Bull's association with pushing limits, adrenaline, and peak athletic achievement on the global Olympic stage.",
+  "brandValues": "Red Bull's brand identity is built on four core pillars: freedom, adventure, energy, and edge. Its mission statement — 'Giving wings to people and ideas' — encapsulates its commitment to empowering individuals to push beyond their limits. The brand's core values are People, Ideas, and Culture. Red Bull stands for an adventurous spirit, passion for excitement, bold action, and the pursuit of extraordinary achievement. In winter sports, these values are expressed through support of athletes who defy conventional limits in disciplines like freestyle skiing, snowboarding, ski jumping, and alpine skiing. Red Bull's commitment to sustainability also extends to environmentally responsible production, using 100% recyclable aluminum cans and eco-friendly manufacturing processes."
+}

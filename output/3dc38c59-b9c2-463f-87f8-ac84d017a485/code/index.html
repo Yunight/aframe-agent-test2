@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Red Bull | Winter Olympics Milano Cortina 2026 – Gives You Wings</title>
+  <meta name="description" content="Red Bull 3D Immersive Winter Olympics Milano Cortina 2026 Advertisement">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+  <script src="components.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a-scene
+    vr-mode-ui="enabled: false"
+    renderer="antialias: true; colorManagement: true; sortObjects: true"
+    loading-screen="dotsColor: #FFC906; backgroundColor: #0B162F"
+    fog="type: exponential; color: #0B162F; density: 0.011"
+  >
+    <!-- ============ ASSETS ============ -->
+    <a-assets timeout="15000">
+      <img id="logo" src="./red_bull_PNG1.png" crossorigin="anonymous">
+      <img id="logo2" src="./red_bull_PNG13.png" crossorigin="anonymous">
+      <img id="can-main" src="./red_bull_PNG2.png" crossorigin="anonymous">
+      <img id="can-left" src="./red_bull_PNG3.png" crossorigin="anonymous">
+      <img id="can-right" src="./red_bull_PNG19.png" crossorigin="anonymous">
+    </a-assets>
+
+    <!-- ============ SKY ============ -->
+    <a-sky color="#0B162F"></a-sky>
+
+    <!-- ============ STARFIELD ============ -->
+    <a-entity starfield="count: 70; spread: 60; minHeight: 7; maxHeight: 35"></a-entity>
+
+    <!-- ============ GROUND ============ -->
+    <a-circle position="0 -0.02 0" rotation="-90 0 0" radius="65" material="color: #111d38; shader: flat"></a-circle>
+    <a-circle position="0 -0.01 0" rotation="-90 0 0" radius="28" material="color: #D4D6D8; shader: flat; opacity: 0.1"></a-circle>
+    <a-ring position="0 0.005 0" rotation="-90 0 0" radius-inner="3" radius-outer="6" material="color: #FFFFFF; shader: flat; opacity: 0.05"></a-ring>
+    <!-- Spotlight on ground beneath products -->
+    <a-circle position="0 0.01 -3.8" rotation="-90 0 0" radius="2.2" material="color: #FFC906; shader: flat; opacity: 0" animation__show="property: material.opacity; to: 0.045; dur: 2000; delay: 3000"></a-circle>
+    <a-circle position="0 0.015 -3.8" rotation="-90 0 0" radius="1" material="color: #FFFFFF; shader: flat; opacity: 0" animation__show="property: material.opacity; to: 0.06; dur: 2000; delay: 3200"></a-circle>
+
+    <!-- ============ MOUNTAINS – FAR LAYER ============ -->
+    <a-cone position="-16 4.5 -38" radius-bottom="11" radius-top="0.3" height="13" material="color: #223971; shader: flat"></a-cone>
+    <a-cone position="-4 7 -44" radius-bottom="13" radius-top="0.2" height="18" material="color: #004C6C; shader: flat"></a-cone>
+    <a-cone position="8 6 -42" radius-bottom="12" radius-top="0.1" height="16" material="color: #223971; shader: flat"></a-cone>
+    <a-cone position="20 4 -36" radius-bottom="9" radius-top="0" height="11" material="color: #004C6C; shader: flat"></a-cone>
+    <a-cone position="-24 3 -33" radius-bottom="8" radius-top="0" height="9" material="color: #223971; shader: flat"></a-cone>
+    <a-cone position="30 3.5 -40" radius-bottom="10" radius-top="0.2" height="10" material="color: #004C6C; shader: flat"></a-cone>
+
+    <!-- MOUNTAINS – NEAR LAYER -->
+    <a-cone position="-10 3 -20" radius-bottom="6" radius-top="0" height="8" material="color: #223971; shader: flat; opacity: 0.9"></a-cone>
+    <a-cone position="14 2.5 -18" radius-bottom="5" radius-top="0" height="7" material="color: #004C6C; shader: flat; opacity: 0.85"></a-cone>
+    <a-cone position="-20 2 -22" radius-bottom="5.5" radius-top="0" height="6" material="color: #004C6C; shader: flat; opacity: 0.8"></a-cone>
+
+    <!-- SNOW CAPS -->
+    <a-cone position="-4 14 -44" radius-bottom="4.5" radius-top="0.1" height="5.5" material="color: #FFFFFF; shader: flat; opacity: 0.85"></a-cone>
+    <a-cone position="8 12 -42" radius-bottom="4" radius-top="0.05" height="5" material="color: #FFFFFF; shader: flat; opacity: 0.85"></a-cone>
+    <a-cone position="-16 9 -38" radius-bottom="3.5" radius-top="0.2" height="4" material="color: #FFFFFF; shader: flat; opacity: 0.8"></a-cone>
+    <a-cone position="20 7 -36" radius-bottom="2.8" radius-top="0" height="3" material="color: #FFFFFF; shader: flat; opacity: 0.75"></a-cone>
+
+    <!-- ============ AURORA / ATMOSPHERIC BANDS ============ -->
+    <a-plane position="-3 16 -30" width="28" height="0.5" rotation="2 8 4" material="color: #004C6C; shader: flat; opacity: 0.06; side: double" animation="property: material.opacity; from: 0.03; to: 0.09; dur: 6000; dir: alternate; easing: easeInOutSine; loop: true"></a-plane>
+    <a-plane position="5 18 -34" width="24" height="0.4" rotation="-1 -5 -2" material="color: #223971; shader: flat; opacity: 0.05; side: double" animation="property: material.opacity; from: 0.02; to: 0.08; dur: 8000; dir: alternate; easing: easeInOutSine; loop: true; delay: 2000"></a-plane>
+    <a-plane position="-8 14 -28" width="18" height="0.3" rotation="3 12 6" material="color: #CC1E4A; shader: flat; opacity: 0.03; side: double" animation="property: material.opacity; from: 0.01; to: 0.05; dur: 7000; dir: alternate; easing: easeInOutSine; loop: true; delay: 1000"></a-plane>
+
+    <!-- ============ ENERGY SUNBURST RAYS (behind logo) ============ -->
+    <a-entity position="0 4.3 -6.2" animation="property: rotation; from: 0 0 0; to: 0 0 360; dur: 80000; easing: linear; loop: true">
+      <a-plane width="0.05" height="5.5" rotation="0 0 0" material="color: #FFC906; shader: flat; opacity: 0.1; side: double"></a-plane>
+      <a-plane width="0.05" height="5.5" rotation="0 0 30" material="color: #FFC906; shader: flat; opacity: 0.07; side: double"></a-plane>
+      <a-plane width="0.05" height="5.5" rotation="0 0 60" material="color: #FFC906; shader: flat; opacity: 0.1; side: double"></a-plane>
+      <a-plane width="0.05" height="5.5" rotation="0 0 90" material="color: #FFC906; shader: flat; opacity: 0.07; side: double"></a-plane>
+      <a-plane width="0.05" height="5.5" rotation="0 0 120" material="color: #FFC906; shader: flat; opacity: 0.1; side: double"></a-plane>
+      <a-plane width="0.05" height="5.5" rotation="0 0 150" material="color: #FFC906; shader: flat; opacity: 0.07; side: double"></a-plane>
+    </a-entity>
+    <!-- Wide soft red rays -->
+    <a-entity position="0 4.3 -6.5" animation="property: rotation; from: 0 0 0; to: 0 0 -360; dur: 120000; easing: linear; loop: true">
+      <a-plane width="0.4" height="8" rotation="0 0 15" material="color: #CC1E4A; shader: flat; opacity: 0.03; side: double"></a-plane>
+      <a-plane width="0.4" height="8" rotation="0 0 75" material="color: #CC1E4A; shader: flat; opacity: 0.03; side: double"></a-plane>
+      <a-plane width="0.4" height="8" rotation="0 0 135" material="color: #CC1E4A; shader: flat; opacity: 0.03; side: double"></a-plane>
+    </a-entity>
+
+    <!-- ============ RED BULL LOGO ============ -->
+    <a-entity
+      position="0 7.5 -5.8"
+      animation__entrance="property: position; to: 0 4.3 -5.8; dur: 2400; easing: easeOutQuad; delay: 600"
+    >
+      <a-image
+        src="#logo"
+        width="3.6"
+        height="2.7"
+        material="transparent: true; alphaTest: 0.01; shader: flat; opacity: 0"
+        animation__show="property: material.opacity; to: 1; dur: 1800; delay: 600"
+        animation__float="property: position; from: 0 -0.1 0; to: 0 0.1 0; dur: 3200; dir: alternate; easing: easeInOutSine; loop: true; delay: 3200"
+      ></a-image>
+    </a-entity>
+
+    <!-- ============ GOLDEN HALO RING ============ -->
+    <a-torus
+      position="0 4.3 -6.1"
+      radius="2.1"
+      radius-tubular="0.02"
+      segments-tubular="64"
+      segments-radial="12"
+      material="color: #FFC906; shader: flat; opacity: 0"
+      rotation="82 0 0"
+      animation__show="property: material.opacity; to: 0.6; dur: 1200; delay: 1200"
+      animation__rotate="property: rotation; from: 82 0 0; to: 82 0 360; dur: 28000; easing: linear; loop: true"
+      animation__pulse="property: scale; from: 0.97 0.97 0.97; to: 1.03 1.03 1.03; dur: 2200; dir: alternate; easing: easeInOutSine; loop: true"
+    ></a-torus>
+    <!-- Inner red accent ring -->
+    <a-torus
+      position="0 4.3 -5.95"
+      radius="2.5"
+      radius-tubular="0.009"
+      segments-tubular="48"
+      segments-radial="8"
+      material="color: #CC1E4A; shader: flat; opacity: 0"
+      rotation="86 0 0"
+      animation__show="property: material.opacity; to: 0.4; dur: 1200; delay: 1600"
+      animation__rotate="property: rotation; from: 86 0 0; to: 86 0 -360; dur: 40000; easing: linear; loop: true"
+    ></a-torus>
+
+    <!-- ============ TEXT: EVENT ============ -->
+    <a-text
+      value="MILANO  CORTINA  2026"
+      position="0 3.05 -5.4"
+      align="center"
+      color="#FFC906"
+      width="7.5"
+      font="exo2bold"
+      anchor="center"
+      baseline="center"
+      opacity="0"
+      animation__show="property: opacity; to: 1; dur: 1400; delay: 1800"
+    ></a-text>
+
+    <a-text
+      value="WINTER  OLYMPICS"
+      position="0 2.68 -5.4"
+      align="center"
+      color="#FFFFFF"
+      width="5"
+      font="exo2bold"
+      anchor="center"
+      baseline="center"
+      opacity="0"
+      animation__show="property: opacity; to: 0.85; dur: 1400; delay: 2200"
+    ></a-text>
+
+    <!-- Yellow accent bar under event text -->
+    <a-plane
+      position="0 2.45 -5.4"
+      width="1.6"
+      height="0.012"
+      material="color: #FFC906; shader: flat; opacity: 0"
+      scale="0.01 1 1"
+      animation__show="property: material.opacity; to: 0.8; dur: 800; delay: 2500"
+      animation__grow="property: scale; to: 1 1 1; dur: 1200; easing: easeOutQuad; delay: 2500"
+    ></a-plane>
+
+    <!-- ============ MAIN CAN (CENTER) ============ -->
+    <a-entity
+      position="0 -2 -3.8"
+      animation__entrance="property: position; to: 0 1.6 -3.8; dur: 2000; easing: easeOutBack; delay: 2800"
+    >
+      <a-image
+        src="#can-main"
+        width="1.35"
+        height="3.1"
+        material="transparent: true; alphaTest: 0.01; shader: flat; opacity: 0"
+        animation__show="property: material.opacity; to: 1; dur: 1200; delay: 2800"
+        animation__float="property: position; from: 0 -0.06 0; to: 0 0.06 0; dur: 2600; dir: alternate; easing: easeInOutSine; loop: true; delay: 5000"
+        animation__sway="property: rotation; from: 0 -2 -0.5; to: 0 2 0.5; dur: 4200; dir: alternate; easing: easeInOutSine; loop: true; delay: 5000"
+      ></a-image>
+    </a-entity>
+
+    <!-- ============ LEFT CAN ============ -->
+    <a-entity
+      position="-2.8 -1.5 -4.8"
+      animation__entrance="property: position; to: -2.8 1.2 -4.8; dur: 1800; easing: easeOutBack; delay: 3200"
+    >
+      <a-image
+        src="#can-left"
+        width="1.05"
+        height="2.5"
+        material="transparent: true; alphaTest: 0.01; shader: flat; opacity: 0"
+        animation__show="property: material.opacity; to: 0.95; dur: 1100; delay: 3200"
+        animation__float="property: position; from: 0 -0.08 0; to: 0 0.08 0; dur: 3000; dir: alternate; easing: easeInOutSine; loop: true; delay: 5200"
+        animation__sway="property: rotation; from: 0 -4 -3; to: 0 4 3; dur: 5200; dir: alternate; easing: easeInOutSine; loop: true; delay: 5200"
+      ></a-image>
+    </a-entity>
+
+    <!-- ============ RIGHT CAN ============ -->
+    <a-entity
+      position="2.8 -1.5 -4.8"
+      animation__entrance="property: position; to: 2.8 1.2 -4.8; dur: 1800; easing: easeOutBack; delay: 3500"
+    >
+      <a-image
+        src="#can-right"
+        width="1.05"
+        height="2.5"
+        material="transparent: true; alphaTest: 0.01; shader: flat; opacity: 0"
+        animation__show="property: material.opacity; to: 0.95; dur: 1100; delay: 3500"
+        animation__float="property: position; from: 0 -0.08 0; to: 0 0.08 0; dur: 3400; dir: alternate; easing: easeInOutSine; loop: true; delay: 5500"
+        animation__sway="property: rotation; from: 0 4 3; to: 0 -4 -3; dur: 5600; dir: alternate; easing: easeInOutSine; loop: true; delay: 5500"
+      ></a-image>
+    </a-entity>
+
+    <!-- ============ TAGLINE ============ -->
+    <a-text
+      value="GIVES  YOU  WINGS"
+      position="0 0.3 -3.6"
+      align="center"
+      color="#FFFFFF"
+      width="6"
+      font="exo2bold"
+      anchor="center"
+      baseline="center"
+      opacity="0"
+      animation__show="property: opacity; to: 1; dur: 1500; delay: 4200"
+    ></a-text>
+
+    <!-- Red accent line under tagline -->
+    <a-plane
+      position="0 0.08 -3.6"
+      width="2.4"
+      height="0.018"
+      material="color: #CC1E4A; shader: flat; opacity: 0"
+      scale="0.01 1 1"
+      animation__show="property: material.opacity; to: 1; dur: 800; delay: 4600"
+      animation__grow="property: scale; to: 1 1 1; dur: 1400; easing: easeOutElastic; delay: 4600"
+    ></a-plane>
+
+    <!-- ============ SECONDARY BADGE (small logo) ============ -->
+    <a-entity
+      position="0 -0.3 -3.6"
+    >
+      <a-image
+        src="#logo2"
+        width="0.7"
+        height="0.7"
+        material="transparent: true; alphaTest: 0.01; shader: flat; opacity: 0"
+        animation__show="property: material.opacity; to: 0.6; dur: 1200; delay: 5000"
+      ></a-image>
+    </a-entity>
+
+    <!-- ============ ICE CRYSTALS (decorative) ============ -->
+    <a-octahedron
+      position="-5 3.8 -9"
+      radius="0.38"
+      material="color: #D4D6D8; shader: flat; opacity: 0"
+      animation__show="property: material.opacity; to: 0.3; dur: 2000; delay: 1000"
+      animation__rot="property: rotation; to: 360 360 0; dur: 16000; easing: linear; loop: true"
+      animation__float="property: position; from: -5 3.5 -9; to: -5 4.1 -9; dur: 4500; dir: alternate; easing: easeInOutSine; loop: true"
+    ></a-octahedron>
+
+    <a-octahedron
+      position="5.5 3.2 -8"
+      radius="0.3"
+      material="color: #D4D6D8; shader: flat; opacity: 0"
+      animation__show="property: material.opacity; to: 0.35; dur: 2000; delay: 1400"
+      animation__rot="property: rotation; to: 0 360 360; dur: 18000; easing: linear; loop: true"
+      animation__float="property: position; from: 5.5 2.9 -8; to: 5.5 3.5 -8; dur: 3800; dir: alternate; easing: easeInOutSine; loop: true"
+    ></a-octahedron>
+
+    <a-octahedron
+      position="-3.8 6 -12"
+      radius="0.24"
+      material="color: #FFC906; shader: flat; opacity: 0"
+      animation__show="property: material.opacity; to: 0.22; dur: 2000; delay: 2000"
+      animation__rot="property: rotation; to: 360 0 360; dur: 13000; easing: linear; loop: true"
+    ></a-octahedron>
+
+    <a-octahedron
+      position="4.2 6.2 -13"
+      radius="0.2"
+      material="color: #FFC906; shader: flat; opacity: 0"
+      animation__show="property: material.opacity; to: 0.28; dur: 2000; delay: 2400"
+      animation__rot="property: rotation; to: 180 360 180; dur: 14000; easing: linear; loop: true"
+    ></a-octahedron>
+
+    <!-- Small crystal accents near cans -->
+    <a-dodecahedron
+      position="-1.6 0.6 -3.2"
+      radius="0.09"
+      material="color: #FFFFFF; shader: flat; opacity: 0"
+      animation__show="property: material.opacity; to: 0.4; dur: 1500; delay: 4800"
+      animation__rot="property: rotation; to: 0 360 0; dur: 9000; easing: linear; loop: true"
+    ></a-dodecahedron>
+
+    <a-dodecahedron
+      position="1.6 0.6 -3.2"
+      radius="0.09"
+      material="color: #FFFFFF; shader: flat; opacity: 0"
+      animation__show="property: material.opacity; to: 0.4; dur: 1500; delay: 5000"
+      animation__rot="property: rotation; to: 360 0 0; dur: 10000; easing: linear; loop: true"
+    ></a-dodecahedron>
+
+    <a-icosahedron
+      position="-6.5 1.5 -6"
+      radius="0.14"
+      material="color: #CC1E4A; shader: flat; opacity: 0"
+      animation__show="property: material.opacity; to: 0.25; dur: 1500; delay: 3000"
+      animation__rot="property: rotation; to: 0 360 360; dur: 12000; easing: linear; loop: true"
+      animation__float="property: position; from: -6.5 1.3 -6; to: -6.5 1.7 -6; dur: 5000; dir: alternate; easing: easeInOutSine; loop: true"
+    ></a-icosahedron>
+
+    <a-icosahedron
+      position="6.5 1.8 -6.5"
+      radius="0.12"
+      material="color: #CC1E4A; shader: flat; opacity: 0"
+      animation__show="property: material.opacity; to: 0.25; dur: 1500; delay: 3400"
+      animation__rot="property: rotation; to: 360 360 0; dur: 11000; easing: linear; loop: true"
+      animation__float="property: position; from: 6.5 1.6 -6.5; to: 6.5 2 -6.5; dur: 4600; dir: alternate; easing: easeInOutSine; loop: true"
+    ></a-icosahedron>
+
+    <!-- ============ SNOWFALL ============ -->
+    <a-entity snowfall="count: 110; spread: 35; height: 16"></a-entity>
+
+    <!-- ============ LIGHTING ============ -->
+    <a-light type="ambient" color="#556688" intensity="0.45"></a-light>
+    <a-light type="directional" color="#FFFFFF" intensity="0.45" position="1 8 3"></a-light>
+    <a-light type="point" color="#FFC906" intensity="1.1" distance="14" position="0 5 -4.5"
+      animation="property: intensity; from: 0.85; to: 1.3; dur: 2500; dir: alternate; easing: easeInOutSine; loop: true"
+    ></a-light>
+    <a-light type="point" color="#CC1E4A" intensity="0.5" distance="9" position="-3.5 2 -3.5"></a-light>
+    <a-light type="point" color="#CC1E4A" intensity="0.5" distance="9" position="3.5 2 -3.5"></a-light>
+    <a-light type="point" color="#223971" intensity="0.3" distance="18" position="0 0.5 1"></a-light>
+
+    <!-- ============ CAMERA ============ -->
+    <a-entity
+      camera
+      look-controls="enabled: true; magicWindowTrackingEnabled: true; touchEnabled: true"
+      position="0 5.5 9"
+      animation__intro="property: position; to: 0 1.7 2.5; dur: 4500; easing: easeInOutQuad; delay: 300"
+    ></a-entity>
+
+  </a-scene>
+
+  <!-- ============ HTML OVERLAY ============ -->
+  <div id="ad-overlay">
+    <div class="top-strip">
+      <div class="brand-name">RED BULL</div>
+      <div class="divider-dot"></div>
+      <div class="event-label">WINTER OLYMPICS 2026</div>
+    </div>
+    <div class="bottom-panel">
+      <p class="mission-text">GIVING WINGS TO PEOPLE AND IDEAS</p>
+      <a href="https://www.redbull.com/us-en/hubs/wintersports" target="_blank" rel="noopener noreferrer" class="cta-btn">
+        <span class="cta-text">EXPLORE WINTER SPORTS</span>
+        <span class="cta-arrow">&#10140;</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      var scene = document.querySelector('a-scene');
+      var overlay = document.getElementById('ad-overlay');
+      function activateOverlay() {
+        overlay.classList.add('active');
+      }
+      if (scene.hasLoaded) {
+        activateOverlay();
+      } else {
+        scene.addEventListener('loaded', activateOverlay);
+      }
+    })();
+  </script>
+</body>
+</html>
