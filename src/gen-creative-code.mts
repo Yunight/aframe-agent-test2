@@ -28,7 +28,11 @@ interface RenderCreativePngInput {
     deviceScaleFactor?: number;
   };
   waitMs?: number;
+  ensureSceneReady?: boolean;
+  sceneReadyTimeoutMs?: number;
 }
+
+const debugMode = process.env['DEBUG_RENDER'] === '1';
 
 const directoryUuid = process.argv[2];
 
@@ -67,11 +71,36 @@ async function renderCreativePng(input: RenderCreativePngInput): Promise<{ outpu
   const entryFilePath = join(codeDirectoryPath, entryFileName);
   const outputFileName = sanitizeFilename(input.outputFileName ?? `preview-${Date.now()}.png`);
   const outputPath = join(previewDirectoryPath, outputFileName.endsWith('.png') ? outputFileName : `${outputFileName}.png`);
-  const waitMs = Math.max(0, Math.min(input.waitMs ?? 1_500, 30_000));
-  const browser = await puppeteer.launch({ headless: true });
+  const waitMs = Math.max(0, Math.min(input.waitMs ?? 6_500, 30_000));
+  const ensureSceneReady = input.ensureSceneReady ?? true;
+  const sceneReadyTimeoutMs = Math.max(1_000, Math.min(input.sceneReadyTimeoutMs ?? 15_000, 60_000));
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: [
+      '--allow-file-access-from-files',
+      '--disable-web-security'
+    ]
+  });
 
   try {
     const page = await browser.newPage();
+    if (debugMode) {
+      page.on('console', msg => {
+        console.log(`[render:browser:console:${msg.type()}] ${msg.text()}`);
+      });
+      page.on('pageerror', err => {
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        console.error(`[render:browser:pageerror] ${errorMessage}`);
+      });
+      page.on('requestfailed', req => {
+        console.error(`[render:browser:requestfailed] ${req.url()} :: ${req.failure()?.errorText ?? 'Unknown error'}`);
+      });
+      page.on('response', res => {
+        if (res.status() >= 400) {
+          console.error(`[render:browser:http${res.status()}] ${res.url()}`);
+        }
+      });
+    }
 
     if (input.devicePreset !== undefined && input.devicePreset.trim().length > 0) {
       const knownDevices = KnownDevices as Record<string, (typeof KnownDevices)[keyof typeof KnownDevices]>;
@@ -99,6 +128,65 @@ async function renderCreativePng(input: RenderCreativePngInput): Promise<{ outpu
 
     const entryFileUrl = pathToFileURL(entryFilePath).toString();
     await page.goto(entryFileUrl, { waitUntil: 'networkidle2' });
+    if (debugMode) {
+      console.log(`[render] Loaded entry URL: ${entryFileUrl}`);
+      const imageDebug = await page.evaluate(() => {
+        const doc = (globalThis as any).document as { images: ArrayLike<any> };
+        return Array.from(doc.images as ArrayLike<any>).map((img: any) => ({
+          src: img.currentSrc || img.src,
+          complete: img.complete,
+          naturalWidth: img.naturalWidth,
+          naturalHeight: img.naturalHeight
+        }));
+      });
+      console.log(`[render] DOM image state: ${JSON.stringify(imageDebug)}`);
+    }
+
+    if (ensureSceneReady) {
+      await page.evaluate((timeoutMs: number) => {
+        const waitLoaded = (target: EventTarget): Promise<void> => {
+          return new Promise(resolve => {
+            const node = target as { hasLoaded?: boolean; addEventListener: EventTarget['addEventListener'] };
+
+            if (node.hasLoaded === true) {
+              resolve();
+              return;
+            }
+
+            node.addEventListener('loaded', () => resolve(), { once: true });
+          });
+        };
+
+        const withTimeout = (promise: Promise<void>, ms: number): Promise<void> => {
+          return Promise.race([
+            promise,
+            new Promise<void>((_, reject) => {
+              setTimeout(() => reject(new Error('A-Frame scene readiness timeout')), ms);
+            })
+          ]);
+        };
+
+        const doc = (globalThis as any).document as {
+          querySelector: (selector: string) => any;
+        };
+        const scene = doc.querySelector('a-scene');
+        const assets = scene?.querySelector('a-assets');
+
+        if (scene === null) {
+          throw new Error('Missing <a-scene> in entry file.');
+        }
+
+        const readyPromise = (async () => {
+          await waitLoaded(scene);
+
+          if (assets !== null) {
+            await waitLoaded(assets);
+          }
+        })();
+
+        return withTimeout(readyPromise, timeoutMs);
+      }, sceneReadyTimeoutMs);
+    }
 
     if (waitMs > 0) {
       await new Promise(resolve => setTimeout(resolve, waitMs));
@@ -173,9 +261,15 @@ const messages: Anthropic.Messages.MessageParam[] = [{
 }];
 let codeFileList: z.infer<typeof filesSchema> | null = null;
 let generationIndex = 0;
+const maxGenerationTurns = 8;
+let structuredOutputRetryCount = 0;
+const maxStructuredOutputRetries = 2;
 
 while (true) {
   generationIndex += 1;
+  if (generationIndex > maxGenerationTurns) {
+    throw new Error(`Generation exceeded ${maxGenerationTurns} turns without valid output.`);
+  }
   console.log(`Generating creative code ... (i=${generationIndex})`);
 
   const creativeCodeStream = await anthropicClient.messages.stream({
@@ -269,6 +363,16 @@ while (true) {
               minimum: 0,
               maximum: 30000,
               description: 'Optional wait after page load before screenshot, useful for animations.'
+            },
+            ensureSceneReady: {
+              type: 'boolean',
+              description: 'Wait for A-Frame scene/assets loaded events before screenshot. Defaults to true.'
+            },
+            sceneReadyTimeoutMs: {
+              type: 'integer',
+              minimum: 1000,
+              maximum: 60000,
+              description: 'Timeout for scene/assets readiness wait.'
             }
           },
           required: [ 'entryFile' ]
@@ -277,11 +381,35 @@ while (true) {
     ]
   });
   const creativeCodeResponse = await creativeCodeStream.finalMessage();
+  if (debugMode) {
+    console.log(`[ai] stop_reason=${creativeCodeResponse.stop_reason ?? 'null'}`);
+    console.log(`[ai] stop_details=${JSON.stringify(creativeCodeResponse.stop_details ?? null)}`);
+    console.log(`[ai] parsed_output_count=${creativeCodeResponse.parsed_output?.length ?? 0}`);
+    const contentDebug = creativeCodeResponse.content.map(block =>
+      block.type === 'tool_use'
+        ? { type: block.type, name: block.name, id: block.id }
+        : { type: block.type }
+    );
+    console.log(`[ai] content_blocks=${JSON.stringify(contentDebug)}`);
+  }
   messages.push({ role: 'assistant', content: creativeCodeResponse.content });
 
   if (creativeCodeResponse.stop_reason !== 'tool_use') {
-    codeFileList = creativeCodeResponse.parsed_output;
-    break;
+    if (creativeCodeResponse.parsed_output !== null && creativeCodeResponse.parsed_output.length > 0) {
+      codeFileList = creativeCodeResponse.parsed_output;
+      break;
+    }
+
+    structuredOutputRetryCount += 1;
+    if (structuredOutputRetryCount > maxStructuredOutputRetries) {
+      throw new Error('AI returned no structured code output after retries.');
+    }
+
+    messages.push({
+      role: 'user',
+      content: `Your previous response did not include the required structured file list. Respond now with only valid structured output matching the expected schema. Do not call tools.`
+    });
+    continue;
   }
 
   const toolResults: Anthropic.ToolResultBlockParam[] = [];
@@ -291,7 +419,13 @@ while (true) {
       const args = block.input as RenderCreativePngInput;
 
       try {
+        if (debugMode) {
+          console.log(`[tool] render_creative_png args=${JSON.stringify(args)}`);
+        }
         const result = await renderCreativePng(args);
+        if (debugMode) {
+          console.log(`[tool] render_creative_png success outputPath=${result.outputPath}`);
+        }
         toolResults.push({
           type: 'tool_result',
           tool_use_id: block.id,
@@ -312,6 +446,19 @@ while (true) {
     }
   }
 
+  if (toolResults.length === 0) {
+    structuredOutputRetryCount += 1;
+    if (structuredOutputRetryCount > maxStructuredOutputRetries) {
+      throw new Error('Tool use response contained no executable tool calls.');
+    }
+
+    messages.push({
+      role: 'user',
+      content: `No valid tool call was executed. Continue and return valid structured file output now.`
+    });
+    continue;
+  }
+
   messages.push({ role: 'user', content: toolResults });
 }
 
@@ -319,11 +466,11 @@ if (codeFileList === null || codeFileList.length === 0) {
   throw new Error('Missing or empty code file list returned by AI.');
 }
 
-console.log(`${codeFileList} code files generated by AI`);
+console.log(`${codeFileList.length} code files generated by AI`);
 
 console.log(`Output code directory path: ${codeDirectoryPath}`);
 
-mkdirSync(codeDirectoryPath);
+mkdirSync(codeDirectoryPath, { recursive: true });
 
 for (const codeFile of codeFileList) {
   const filePath = join(codeDirectoryPath, codeFile.fileName);
