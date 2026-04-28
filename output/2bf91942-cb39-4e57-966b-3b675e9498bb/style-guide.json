@@ -1,0 +1,73 @@
+{
+  "companyName": "Epic Games, Inc.",
+  "companyContext": "Epic Games is a leading interactive entertainment company and provider of 3D engine technology, founded in 1991 by Tim Sweeney. The company operates Fortnite — one of the world's largest games with over 800 million accounts — as well as Unreal Engine, the Epic Games Store, and Epic Online Services. Epic provides an end-to-end digital ecosystem for developers and creators to build, distribute, and operate games and other content. Headquartered in Cary, North Carolina, USA, with over 40 offices worldwide.",
+  "companyURL": "https://www.epicgames.com",
+  "brandName": "Fortnite",
+  "brandContext": "Fortnite is a free-to-play video game platform that has become a global cultural phenomenon since its launch in 2017. It encompasses multiple game experiences including Fortnite Battle Royale (100-player last-one-standing competition), LEGO Fortnite, Fortnite Festival, Rocket Racing, Fortnite Ballistic, and thousands of creator-made experiences. The brand operates on a seasonal model, with each season delivering new gameplay mechanics, cosmetics, map changes, narrative arcs, and collaborations with major entertainment franchises. The current season (Chapter 7 Season 2: Showdown) runs from March 19 to June 5, 2026, and the upcoming Chapter 7 Season 3 — which aligns with the user-referenced 'Season 17' for summer 2026 — is expected to launch on June 5, 2026, continuing the Dark Voyager saga with anticipated summer-themed events, new collaborations (possibly Masters of the Universe, Overwatch, Kingdom Hearts, and 007), and further storyline developments.",
+  "brandURL": "https://www.fortnite.com",
+  "logoFileUrls": [
+    "https://www.citypng.com/public/uploads/preview/hd-fortnite-battle-royale-official-logo-png-701751694787044pj5dquxrx1.png",
+    "https://www.citypng.com/public/uploads/preview/hd-fortnite-battle-royale-logo-white-text-png-7017516947870376gn6dxyuwy.png",
+    "https://www.citypng.com/public/uploads/preview/hd-black-white-fortnite-battle-royale-logo-png-7017516947870303trjdnw1mg.png",
+    "https://www.edigitalagency.com.au/wp-content/uploads/fortnite-logo-white-blue-background.jpg",
+    "https://i.pinimg.com/originals/15/b2/91/15b291f9f4a691b3c6fe31ab7a3a0cd2.jpg",
+    "https://www.citypng.com/public/uploads/preview/hd-black-fortnite-logo-silhouette-png-701751694787541gzzv3tshvh.png"
+  ],
+  "productName": "Fortnite Chapter 7 Season 3 (Summer 2026)",
+  "productPictureUrls": [
+    "https://preview.redd.it/fortnite-chapter-7-season-2-showdown-official-key-art-v0-6ygrrukdlhpg1.jpeg?width=1920&format=pjpg&auto=webp&s=49d534a51067d0bd1b4780f4be65fb34d89b501c",
+    "https://preview.redd.it/chapter-7-season-2-final-key-art-v0-dbhvj8s7tmpg1.jpeg?width=1920&format=pjpg&auto=webp&s=95901b0d269c07d78a4eefdcde7a9f4f3f41b278",
+    "https://preview.redd.it/chapter-7-season-2-final-key-art-v0-wwn0isd73npg1.png?width=1080&format=png&auto=webp&s=7edf99e65a8df30d351dd31ec58ca7b78ead5660",
+    "https://preview.redd.it/fortnite-chapter-7-new-look-at-the-key-art-via-v0-apzjf2ucug3g1.png?width=2048&format=png&auto=webp&s=46473ac173a8fe853712ca3f90c9335fac120841",
+    "https://www.gamespot.com/a/uploads/scale_super/1757/17577455/4667286-fortnitec7s2keyartwords.jpg",
+    "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2026/04/fortnite-characters-running-towards-shadow-boss-in-live-event.jpg"
+  ],
+  "primaryColorPalette": [
+    "000000",
+    "FFFFFF",
+    "1B90DD",
+    "5FCEEA"
+  ],
+  "secondaryColorPalette": [
+    "F3AF19",
+    "9D4DBB",
+    "319236",
+    "4C51F7",
+    "2D2C4F"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Burbank Big Condensed Black",
+      "fontWeight": 900,
+      "fontEffect": [
+        "bold",
+        "italic"
+      ],
+      "fontUses": "Brand name / logo wordmark. The primary display typeface for the Fortnite logo. Custom-modified heavy italic letterforms with a jagged drop shadow, signaling urgency, momentum, and action. Designed by Tal Leming (Type Supply / House Industries). Not to be used by third-party event organizers per Epic's brand guidelines."
+    },
+    {
+      "fontFamily": "Heading Now",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "UI headings, website headings, playlist mode images. The current primary UI typeface used across the Fortnite platform since Chapter 5, as well as the main typeface on the official Fortnite website."
+    },
+    {
+      "fontFamily": "Burbank Small Bold",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "In-game subheadings, secondary supporting text, supplementary branding. A companion to Burbank Big, optimized for smaller sizes while maintaining brand consistency."
+    },
+    {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "In-game body text, kill feed messages, descriptive text. A clean sans-serif typeface used for readability in high-information-density game UI contexts such as the bottom-left kill feed during Battle Royale matches."
+    }
+  ],
+  "brandVision": "Fortnite aims to be the world's leading social entertainment platform — an ever-evolving digital space where play, creativity, competition, and cultural moments converge. With each new chapter and season, the brand pushes the boundaries of interactive entertainment by introducing innovative gameplay mechanics, world-class cross-media collaborations (Disney, Marvel, Star Wars, LEGO, and more), and empowering a creator economy through Unreal Editor for Fortnite (UEFN) and Fortnite Creative. The vision for summer 2026 (Chapter 7 Season 3) continues the Dark Voyager saga while delivering summer-themed events and new collaboration content, continuing Fortnite's transformation from a game into a persistent social metaverse experience.",
+  "brandValues": "Fun & Accessibility: Fortnite is free-to-play and designed to be accessible to all ages and skill levels, maintaining a welcoming and exciting atmosphere. Innovation: Constant evolution through seasonal updates, new mechanics, and cross-platform technology pushing the boundaries of interactive entertainment. Community & Creativity: Empowering players and creators alike through tools like UEFN and Fortnite Creative, fostering a global community of millions. Competition & Fair Play: Ranked modes, esports events, and competitive integrity are central to the experience. Cultural Relevance: Collaborations with the world's biggest entertainment brands and artists, live in-game events, and narrative-driven seasons keep Fortnite at the center of global pop culture. Inclusivity & Expression: A vast library of cosmetics, emotes, and customization options allows every player to express their individuality."
+}

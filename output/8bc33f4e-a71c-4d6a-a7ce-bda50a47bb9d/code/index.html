@@ -1,144 +1,227 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=320, initial-scale=1">
-  <title>PARKSIDE - Outils Printemps Été</title>
-  <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
-  <script src="components.js"></script>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      width: 320px;
-      height: 480px;
-      background: #006B3C;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=320">
+<title>PARKSIDE - C'est vous qui faites !</title>
+<script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:320px;height:480px;overflow:hidden;background:#003D22}
+.ad{width:320px;height:480px;position:relative;overflow:hidden;font-family:'Noto Sans',sans-serif}
+
+/* Scene sizing */
+.scene-wrap{position:absolute;top:0;left:0;width:320px;height:480px}
+
+/* Gradient fades for text readability */
+.fade-top{position:absolute;top:0;left:0;width:100%;height:160px;background:linear-gradient(180deg,rgba(0,50,28,0.95) 0%,rgba(0,50,28,0.6) 50%,rgba(0,50,28,0) 100%);z-index:5;pointer-events:none}
+.fade-bot{position:absolute;bottom:0;left:0;width:100%;height:150px;background:linear-gradient(0deg,rgba(0,50,28,0.97) 0%,rgba(0,50,28,0.7) 50%,rgba(0,50,28,0) 100%);z-index:5;pointer-events:none}
+
+/* Decorative diagonal stripes (brand identity) */
+.deco-stripe{position:absolute;top:-40px;right:-80px;width:160px;height:560px;background:linear-gradient(180deg,#E30613,#c50510);transform:rotate(18deg);opacity:0.06;z-index:2;pointer-events:none}
+.deco-stripe2{position:absolute;top:-40px;right:-40px;width:70px;height:560px;background:#78BE20;transform:rotate(18deg);opacity:0.05;z-index:2;pointer-events:none}
+.deco-stripe3{position:absolute;top:-40px;left:-100px;width:120px;height:560px;background:#006B3C;transform:rotate(18deg);opacity:0.1;z-index:2;pointer-events:none}
+
+/* UI overlay */
+.ui{position:absolute;top:0;left:0;width:100%;height:100%;z-index:10;pointer-events:none;display:flex;flex-direction:column;align-items:center}
+.ui-logo{margin-top:14px;width:200px;overflow:hidden}
+.ui-logo img{width:100%;display:block;clip-path:polygon(10% 0%,100% 0%,90% 100%,0% 100%);filter:drop-shadow(0 2px 8px rgba(0,0,0,0.4))}
+.ui-h1{margin-top:12px;color:#fff;font-size:22px;font-weight:800;line-height:1.12;text-align:center;text-transform:uppercase;text-shadow:0 2px 14px rgba(0,0,0,0.7);letter-spacing:0.5px}
+.ui-h1 .accent{color:#78BE20;position:relative}
+.ui-h1 .accent::after{content:'';position:absolute;bottom:-2px;left:0;width:100%;height:3px;background:#78BE20;border-radius:2px}
+.ui-badge{margin-top:10px;display:inline-flex;align-items:center;gap:6px;background:rgba(227,6,19,0.9);color:#fff;font-size:9px;font-weight:700;padding:4px 16px;border-radius:20px;letter-spacing:2px;text-transform:uppercase;box-shadow:0 2px 10px rgba(227,6,19,0.35);backdrop-filter:blur(4px)}
+.ui-badge::before{content:'☀';font-size:11px}
+.spacer{flex:1}
+.ui-features{display:flex;gap:8px;margin-bottom:10px;z-index:11}
+.ui-feat{display:flex;flex-direction:column;align-items:center;gap:2px}
+.ui-feat-icon{width:28px;height:28px;background:rgba(120,190,32,0.2);border:1px solid rgba(120,190,32,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px}
+.ui-feat-txt{color:rgba(255,255,255,0.7);font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.ui-tag{color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;text-align:center;margin-bottom:6px;text-shadow:0 1px 4px rgba(0,0,0,0.4);z-index:11}
+.ui-hint{color:rgba(255,255,255,0.35);font-size:8px;margin-bottom:8px;z-index:11;animation:hintPulse 3s ease-in-out infinite;letter-spacing:0.5px}
+@keyframes hintPulse{0%,100%{opacity:.25}50%{opacity:.6}}
+.ui-cta{pointer-events:all;position:relative;background:linear-gradient(135deg,#E30613 0%,#b20410 100%);color:#fff;border:none;padding:13px 42px;font-family:'Noto Sans',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:2px;border-radius:40px;cursor:pointer;margin-bottom:18px;z-index:11;box-shadow:0 4px 20px rgba(227,6,19,0.5);animation:ctaGlow 2.5s ease-in-out infinite;transition:transform .12s}
+.ui-cta:active{transform:scale(.93)}
+.ui-cta::after{content:'';position:absolute;inset:-3px;border-radius:43px;border:2px solid rgba(227,6,19,0.3);animation:ctaRing 2.5s ease-in-out infinite}
+@keyframes ctaGlow{0%,100%{box-shadow:0 4px 20px rgba(227,6,19,0.5)}50%{box-shadow:0 8px 35px rgba(227,6,19,0.85)}}
+@keyframes ctaRing{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.06);opacity:0.5}}
+</style>
 </head>
 <body>
-  <a-scene
-    embedded
-    vr-mode-ui="enabled: false"
-    device-orientation-permission-ui="enabled: false"
-    loading-screen="enabled: false"
-    renderer="antialias: true; alpha: false; colorManagement: true; sortObjects: true"
-    style="width: 320px; height: 480px;">
+<div class="ad">
+  <!-- Decorative stripes -->
+  <div class="deco-stripe"></div>
+  <div class="deco-stripe2"></div>
+  <div class="deco-stripe3"></div>
+  <!-- Gradient fades -->
+  <div class="fade-top"></div>
+  <div class="fade-bot"></div>
 
-    <a-assets timeout="10000">
-      <img id="logo" src="Parkside-Lidl-Tools-Logo-Vector.svg-.png" crossorigin="anonymous">
-      <img id="drill" src="41jKbcMDvyL.jpg" crossorigin="anonymous">
-      <img id="hedge-life" src="Card-009-1920x1440px-1715562.jpg" crossorigin="anonymous">
-    </a-assets>
+  <!-- 3D A-Frame Scene -->
+  <div class="scene-wrap">
+    <a-scene embedded vr-mode-ui="enabled:false" loading-screen="enabled:false"
+             renderer="antialias:true;alpha:false;colorManagement:true"
+             style="width:320px;height:480px;">
+      <a-assets timeout="12000">
+        <img id="p1" src="41jKbcMDvyL.jpg" crossorigin="anonymous">
+        <img id="p2" src="Card-009-1920x1440px-1715562.jpg" crossorigin="anonymous">
+        <img id="p3" src="Garden_Event_Calendar_Lawn_Maintenance_WK20_608_456px_V1-2058880.jpg" crossorigin="anonymous">
+        <img id="p4" src="Garden_Event_Calendar_Watering_608_456px_V1-2058822.jpg" crossorigin="anonymous">
+      </a-assets>
 
-    <!-- Fixed Camera with mouse cursor for click interactions -->
-    <a-entity camera="fov: 80" position="0 0 3" look-controls="enabled: false" wasd-controls="enabled: false">
-      <a-entity cursor="fuse: false; rayOrigin: mouse" raycaster="objects: .clickable"></a-entity>
-    </a-entity>
+      <!-- Background: branded diagonal split -->
+      <a-plane position="0 0 -12" width="30" height="22" color="#003D22" material="shader:flat"></a-plane>
+      <a-plane position="3 2.5 -11.8" width="20" height="20" rotation="0 0 -28" color="#006B3C" material="shader:flat;opacity:0.55"></a-plane>
+      <a-plane position="-4 -3.5 -11.6" width="12" height="16" rotation="0 0 -28" color="#002E18" material="shader:flat;opacity:0.3"></a-plane>
 
-    <!-- Ambient Lighting -->
-    <a-entity light="type: ambient; color: #FFF; intensity: 1"></a-entity>
+      <!-- Lighting -->
+      <a-light type="ambient" intensity="0.55" color="#ffffff"></a-light>
+      <a-light type="directional" position="2 4 2" intensity="0.75" color="#ffffff"></a-light>
+      <a-light type="point" position="0 0 -2" intensity="0.25" color="#78BE20"></a-light>
+      <a-light type="point" position="0 -1.5 -3" intensity="0.12" color="#E30613"></a-light>
 
-    <!-- ===== BACKGROUND LAYERS ===== -->
-    <!-- Solid dark green base -->
-    <a-plane position="0 0 -3" width="10" height="14" color="#006B3C" material="shader: flat"></a-plane>
-    <!-- Diagonal darker overlay (brand visual motif) -->
-    <a-plane position="0.9 0.8 -2.9" width="9" height="14" rotation="0 0 15" color="#004828" material="shader: flat; opacity: 0.65"></a-plane>
-    <!-- Subtle lifestyle image ghost overlay -->
-    <a-plane position="0.2 0 -2.6" width="3.8" height="2.85" src="#hedge-life" material="shader: flat; opacity: 0.06"></a-plane>
+      <!-- Central energy core -->
+      <a-sphere position="0 -0.15 -4" radius="0.14"
+        material="color:#78BE20;emissive:#78BE20;emissiveIntensity:1;opacity:0.3;transparent:true"
+        animation="property:scale;from:1 1 1;to:2 2 2;dur:2500;dir:alternate;easing:easeInOutSine;loop:true">
+      </a-sphere>
+      <a-sphere position="0 -0.15 -4" radius="0.06"
+        material="color:#C8D400;emissive:#C8D400;emissiveIntensity:1.2;opacity:0.6;transparent:true"
+        animation="property:scale;from:1 1 1;to:1.5 1.5 1.5;dur:1500;dir:alternate;easing:easeInOutSine;loop:true">
+      </a-sphere>
 
-    <!-- ===== FLOATING SPARKLE PARTICLES ===== -->
-    <a-entity sparkle-particles="count: 22; colors: #78BE20,#C8D400,#FFFFFF; width: 4; height: 6"></a-entity>
+      <!-- Product Orbital Carousel -->
+      <a-entity id="carousel" position="0 -0.15 -4"
+        animation="property:rotation;to:0 360 0;dur:14000;easing:linear;loop:true"
+        animation__enter="property:scale;from:0.01 0.01 0.01;to:1 1 1;dur:1800;easing:easeOutBack">
 
-    <!-- ===== DECORATIVE RED STRIPES — top-left (brand triple-stripe motif) ===== -->
-    <a-plane position="-1.32 1.72 -0.8" width="0.09" height="0.55" rotation="0 0 -22" color="#E30613" material="shader: flat"
-      animation="property: material.opacity; from: 0; to: 1; dur: 400; delay: 300"></a-plane>
-    <a-plane position="-1.16 1.72 -0.8" width="0.09" height="0.55" rotation="0 0 -22" color="#E30613" material="shader: flat"
-      animation="property: material.opacity; from: 0; to: 1; dur: 400; delay: 450"></a-plane>
-    <a-plane position="-1.00 1.72 -0.8" width="0.09" height="0.55" rotation="0 0 -22" color="#E30613" material="shader: flat"
-      animation="property: material.opacity; from: 0; to: 1; dur: 400; delay: 600"></a-plane>
+        <!-- Product 1: Perceuse (front) -->
+        <a-entity position="0 0 1.7">
+          <a-plane src="#p1" width="1.35" height="1.16" material="side:double;shader:flat;transparent:true"
+            animation="property:object3D.position.y;from:0;to:0.1;dur:2000;dir:alternate;easing:easeInOutSine;loop:true">
+          </a-plane>
+          <!-- Glow behind product -->
+          <a-plane width="1.5" height="1.3" position="0 0 -0.02" color="#78BE20" material="shader:flat;opacity:0.08"></a-plane>
+        </a-entity>
 
-    <!-- Red stripes — bottom-right (smaller echo) -->
-    <a-plane position="1.35 -1.55 -0.8" width="0.06" height="0.35" rotation="0 0 -22" color="#E30613" material="shader: flat; opacity: 0"
-      animation="property: material.opacity; from: 0; to: 0.35; dur: 400; delay: 2000"></a-plane>
-    <a-plane position="1.44 -1.55 -0.8" width="0.06" height="0.35" rotation="0 0 -22" color="#E30613" material="shader: flat; opacity: 0"
-      animation="property: material.opacity; from: 0; to: 0.35; dur: 400; delay: 2100"></a-plane>
+        <!-- Product 2: Taille-haie (right) -->
+        <a-entity position="1.7 0 0" rotation="0 -90 0">
+          <a-plane src="#p2" width="1.35" height="1.01" material="side:double;shader:flat"
+            animation="property:object3D.position.y;from:0;to:0.1;dur:2500;dir:alternate;easing:easeInOutSine;loop:true">
+          </a-plane>
+          <a-plane width="1.5" height="1.15" position="0 0 -0.02" color="#78BE20" material="shader:flat;opacity:0.08"></a-plane>
+        </a-entity>
 
-    <!-- ===== PARKSIDE LOGO ===== -->
-    <a-image src="#logo" position="0 2.1 -0.3" width="2.3" height="0.58"
-      material="shader: flat; transparent: true; alphaTest: 0.05"
-      animation="property: position; from: 0 3.5 -0.3; to: 0 2.1 -0.3; dur: 900; easing: easeOutBack"
-      animation__fade="property: material.opacity; from: 0; to: 1; dur: 600"></a-image>
+        <!-- Product 3: Tondeuse (back) -->
+        <a-entity position="0 0 -1.7" rotation="0 180 0">
+          <a-plane src="#p3" width="1.35" height="1.01" material="side:double;shader:flat"
+            animation="property:object3D.position.y;from:0;to:0.1;dur:2200;dir:alternate;easing:easeInOutSine;loop:true">
+          </a-plane>
+          <a-plane width="1.5" height="1.15" position="0 0 -0.02" color="#78BE20" material="shader:flat;opacity:0.08"></a-plane>
+        </a-entity>
 
-    <!-- ===== HEADLINE TEXT ===== -->
-    <a-text value="PRÊT POUR" position="0 1.4 -0.2" align="center" color="#FFFFFF" width="4.2"
-      font="exo2bold" letter-spacing="2"
-      animation="property: position; from: -4 1.4 -0.2; to: 0 1.4 -0.2; dur: 650; delay: 600; easing: easeOutCubic"
-      animation__fade="property: material.opacity; from: 0; to: 1; dur: 400; delay: 600"></a-text>
+        <!-- Product 4: Nettoyeur HP (left) -->
+        <a-entity position="-1.7 0 0" rotation="0 90 0">
+          <a-plane src="#p4" width="1.35" height="1.01" material="side:double;shader:flat"
+            animation="property:object3D.position.y;from:0;to:0.1;dur:1800;dir:alternate;easing:easeInOutSine;loop:true">
+          </a-plane>
+          <a-plane width="1.5" height="1.15" position="0 0 -0.02" color="#78BE20" material="shader:flat;opacity:0.08"></a-plane>
+        </a-entity>
+      </a-entity>
 
-    <a-text value="L'ÉTÉ ?" position="0 1.0 -0.2" align="center" color="#78BE20" width="5.0"
-      font="exo2bold" letter-spacing="3"
-      animation="property: position; from: 4 1.0 -0.2; to: 0 1.0 -0.2; dur: 650; delay: 800; easing: easeOutCubic"
-      animation__fade="property: material.opacity; from: 0; to: 1; dur: 400; delay: 800"></a-text>
+      <!-- Orbiting energy rings -->
+      <a-torus position="0 -0.15 -4" color="#78BE20" radius="2.2" radius-tubular="0.012" opacity="0.18" segments-tubular="72"
+        rotation="72 0 0"
+        animation="property:rotation;from:72 0 0;to:72 360 0;dur:20000;easing:linear;loop:true"></a-torus>
+      <a-torus position="0 -0.15 -4" color="#E30613" radius="2.5" radius-tubular="0.007" opacity="0.1" segments-tubular="56"
+        rotation="50 40 0"
+        animation="property:rotation;from:50 40 0;to:50 400 0;dur:28000;easing:linear;loop:true"></a-torus>
+      <a-torus position="0 -0.15 -4" color="#C8D400" radius="1.85" radius-tubular="0.005" opacity="0.07" segments-tubular="40"
+        rotation="85 20 0"
+        animation="property:rotation;from:85 20 0;to:85 380 0;dur:16000;easing:linear;loop:true"></a-torus>
 
-    <!-- Green accent underline -->
-    <a-plane position="0 0.82 -0.2" width="1.6" height="0.025" color="#78BE20" material="shader: flat"
-      animation="property: scale; from: 0 1 1; to: 1 1 1; dur: 500; delay: 1200; easing: easeOutCubic"></a-plane>
+      <!-- Floating particles -->
+      <a-box color="#78BE20" width="0.045" height="0.045" depth="0.045" position="-0.8 1.5 -3.2" opacity="0.5" material="shader:flat"
+        animation="property:position;from:-0.8 1.5 -3.2;to:-0.8 -2 -3.2;dur:5200;easing:linear;loop:true"
+        animation__r="property:rotation;from:0 0 0;to:360 360 0;dur:3000;easing:linear;loop:true"></a-box>
+      <a-box color="#C8D400" width="0.032" height="0.032" depth="0.032" position="0.75 1.9 -2.8" opacity="0.4" material="shader:flat"
+        animation="property:position;from:0.75 1.9 -2.8;to:0.75 -2.1 -2.8;dur:6800;easing:linear;loop:true"
+        animation__r="property:rotation;from:0 0 0;to:0 360 360;dur:4200;easing:linear;loop:true"></a-box>
+      <a-box color="#E30613" width="0.028" height="0.028" depth="0.028" position="1.1 1.1 -4.5" opacity="0.3" material="shader:flat"
+        animation="property:position;from:1.1 1.1 -4.5;to:1.1 -2.2 -4.5;dur:7500;easing:linear;loop:true"
+        animation__r="property:rotation;from:0 0 0;to:360 0 360;dur:3600;easing:linear;loop:true"></a-box>
+      <a-box color="#78BE20" width="0.022" height="0.022" depth="0.022" position="-1.3 2.1 -4.2" opacity="0.22" material="shader:flat"
+        animation="property:position;from:-1.3 2.1 -4.2;to:-1.3 -1.6 -4.2;dur:8600;easing:linear;loop:true"
+        animation__r="property:rotation;from:0 0 0;to:360 360 360;dur:5200;easing:linear;loop:true"></a-box>
+      <a-box color="#fff" width="0.018" height="0.018" depth="0.018" position="0.35 2.3 -3.4" opacity="0.15" material="shader:flat"
+        animation="property:position;from:0.35 2.3 -3.4;to:0.35 -1.8 -3.4;dur:4600;easing:linear;loop:true"
+        animation__r="property:rotation;from:0 0 0;to:0 0 360;dur:2600;easing:linear;loop:true"></a-box>
+      <a-box color="#C8D400" width="0.038" height="0.038" depth="0.038" position="-0.5 1.4 -2.9" opacity="0.3" material="shader:flat"
+        animation="property:position;from:-0.5 1.4 -2.9;to:-0.5 -2.4 -2.9;dur:6100;easing:linear;loop:true"
+        animation__r="property:rotation;from:0 0 0;to:360 0 0;dur:4400;easing:linear;loop:true"></a-box>
+      <a-box color="#78BE20" width="0.03" height="0.03" depth="0.03" position="1.35 1.7 -3.7" opacity="0.2" material="shader:flat"
+        animation="property:position;from:1.35 1.7 -3.7;to:1.35 -2 -3.7;dur:7100;easing:linear;loop:true"
+        animation__r="property:rotation;from:0 0 0;to:0 360 0;dur:3900;easing:linear;loop:true"></a-box>
+      <a-box color="#E30613" width="0.02" height="0.02" depth="0.02" position="-1 0.9 -3.6" opacity="0.18" material="shader:flat"
+        animation="property:position;from:-1 0.9 -3.6;to:-1 -2.5 -3.6;dur:5800;easing:linear;loop:true"
+        animation__r="property:rotation;from:0 0 0;to:360 360 0;dur:2800;easing:linear;loop:true"></a-box>
 
-    <!-- ===== GLOW RINGS BEHIND PRODUCT ===== -->
-    <a-ring position="0 -0.1 -0.5" radius-inner="0.55" radius-outer="1.05" color="#78BE20"
-      material="shader: flat; opacity: 0; side: double"
-      animation="property: material.opacity; from: 0; to: 0.2; dur: 800; delay: 900"
-      animation__pulse="property: material.opacity; from: 0.1; to: 0.25; dur: 2200; delay: 1700; dir: alternate; loop: true; easing: easeInOutSine"
-      animation__rot="property: rotation; from: 0 0 0; to: 0 0 360; dur: 25000; loop: true; easing: linear"></a-ring>
+      <!-- Camera -->
+      <a-camera position="0 0 0" look-controls="enabled:false" wasd-controls="enabled:false" fov="80"></a-camera>
+    </a-scene>
+  </div>
 
-    <a-ring position="0 -0.1 -0.6" radius-inner="0.95" radius-outer="1.4" color="#C8D400"
-      material="shader: flat; opacity: 0; side: double"
-      animation="property: material.opacity; from: 0; to: 0.08; dur: 1000; delay: 1100"
-      animation__pulse="property: material.opacity; from: 0.04; to: 0.12; dur: 3200; delay: 2100; dir: alternate; loop: true; easing: easeInOutSine"
-      animation__rot="property: rotation; from: 0 0 0; to: 0 0 -360; dur: 35000; loop: true; easing: linear"></a-ring>
+  <!-- HTML UI Overlay -->
+  <div class="ui">
+    <div class="ui-logo"><img src="Parkside-Lidl-Tools-Logo-Vector.svg-.png" alt="PARKSIDE"></div>
+    <div class="ui-h1">C'est vous<br>qui <span class="accent">faites</span>&nbsp;!</div>
+    <div class="ui-badge">Printemps · Été 2026</div>
+    <div class="spacer"></div>
+    <div class="ui-features">
+      <div class="ui-feat"><div class="ui-feat-icon">🔋</div><div class="ui-feat-txt">X20V</div></div>
+      <div class="ui-feat"><div class="ui-feat-icon">🌿</div><div class="ui-feat-txt">Jardin</div></div>
+      <div class="ui-feat"><div class="ui-feat-icon">🔧</div><div class="ui-feat-txt">Atelier</div></div>
+      <div class="ui-feat"><div class="ui-feat-icon">⭐</div><div class="ui-feat-txt">Pro</div></div>
+    </div>
+    <div class="ui-tag">Qualité pro · Prix imbattable</div>
+    <div class="ui-hint">↻ Touchez la scène pour accélérer</div>
+    <button class="ui-cta" id="ctaBtn">Découvrir →</button>
+  </div>
+</div>
 
-    <!-- ===== HERO PRODUCT — DRILL ===== -->
-    <a-image src="#drill" position="0 -0.1 0.1" width="1.9" height="1.63"
-      material="shader: flat; transparent: true; alphaTest: 0.4"
-      animation="property: position; from: 3.5 -0.1 0.1; to: 0 -0.1 0.1; dur: 1000; delay: 700; easing: easeOutBack"
-      animation__float="property: position; from: 0 -0.18 0.1; to: 0 -0.02 0.1; dur: 2800; delay: 1700; dir: alternate; loop: true; easing: easeInOutSine"
-      animation__tilt="property: rotation; from: 0 0 -2; to: 0 0 2; dur: 3500; delay: 1700; dir: alternate; loop: true; easing: easeInOutSine">
-    </a-image>
+<script>
+AFRAME.registerComponent('speed-toggle', {
+  init: function () {
+    this.fast = false;
+    this.el.sceneEl.addEventListener('loaded', () => {
+      const canvas = this.el.sceneEl.canvas;
+      if (!canvas) return;
+      canvas.addEventListener('click', () => {
+        this.fast = !this.fast;
+        this.el.setAttribute('animation', 'dur', this.fast ? 4000 : 14000);
+        // Also speed up particles
+        document.querySelectorAll('[data-particle]').forEach(p => {
+          const baseDur = parseInt(p.getAttribute('data-particle'));
+          p.setAttribute('animation', 'dur', this.fast ? baseDur * 0.4 : baseDur);
+        });
+      });
+    });
+  }
+});
 
-    <!-- ===== PRICE BADGE ===== -->
-    <a-entity position="1.15 0.75 0.3"
-      animation="property: scale; from: 0 0 0; to: 1 1 1; dur: 500; delay: 1400; easing: easeOutBack">
-      <a-circle radius="0.36" color="#E30613" material="shader: flat"
-        animation__pulse="property: scale; from: 1 1 1; to: 1.1 1.1 1; dur: 900; delay: 2200; dir: alternate; loop: true; easing: easeInOutSine"></a-circle>
-      <a-text value="dès" position="0 0.14 0.01" align="center" color="#FFFFFF" width="0.65" font="roboto"></a-text>
-      <a-text value="29,99€" position="0 -0.04 0.01" align="center" color="#FFFFFF" width="1.2" font="exo2bold"></a-text>
-    </a-entity>
+document.addEventListener('DOMContentLoaded', function () {
+  // Apply speed-toggle component to carousel
+  const carousel = document.querySelector('#carousel');
+  if (carousel) {
+    carousel.setAttribute('speed-toggle', '');
+  }
 
-    <!-- ===== SUBTEXT ===== -->
-    <a-text value="Outils jardin & atelier" position="0 -1.15 0.2" align="center" color="#F5F5F5" width="2.5" font="roboto"
-      animation__fade="property: material.opacity; from: 0; to: 1; dur: 600; delay: 1500"></a-text>
-
-    <a-text value="Qualité pro, prix Lidl" position="0 -1.4 0.2" align="center" color="#C8D400" width="2.2" font="roboto"
-      animation__fade="property: material.opacity; from: 0; to: 1; dur: 600; delay: 1700"></a-text>
-
-    <!-- ===== CTA BUTTON ===== -->
-    <a-entity position="0 -1.82 0.4"
-      animation="property: scale; from: 0 0 0; to: 1 1 1; dur: 600; delay: 1900; easing: easeOutBack">
-      <!-- White border / glow -->
-      <a-plane position="0 0 -0.008" width="2.12" height="0.46" color="#FFFFFF" material="shader: flat; opacity: 0.2"></a-plane>
-      <!-- Red button background -->
-      <a-plane class="clickable" click-url="https://parkside-diy.com" position="0 0 0" width="2.0" height="0.4" color="#E30613" material="shader: flat"
-        animation__pulse="property: scale; from: 1 1 1; to: 1.04 1.07 1; dur: 1100; delay: 2800; dir: alternate; loop: true; easing: easeInOutSine"></a-plane>
-      <!-- Button label -->
-      <a-text value="DÉCOUVRIR" position="0 0.005 0.01" align="center" color="#FFFFFF" width="2.5" font="exo2bold" letter-spacing="2"></a-text>
-    </a-entity>
-
-    <!-- ===== BOTTOM URL BAR ===== -->
-    <a-plane position="0 -2.32 0.2" width="5" height="0.2" color="#003D1F" material="shader: flat; opacity: 0.9"></a-plane>
-    <a-text value="parkside-diy.com" position="0 -2.32 0.22" align="center" color="#78BE20" width="1.7" font="roboto"></a-text>
-
-  </a-scene>
+  // CTA click
+  document.getElementById('ctaBtn').addEventListener('click', function (e) {
+    e.stopPropagation();
+    window.open('https://parkside-diy.com', '_blank');
+  });
+});
+</script>
 </body>
 </html>

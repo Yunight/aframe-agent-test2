@@ -1,8 +1,8 @@
-import 'dotenv/config';
 import type { StyleGuide } from './gen-style-guide.mjs';
 import { join } from 'node:path';
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
+import { config as loadDotenv } from 'dotenv';
 import { Anthropic } from '@anthropic-ai/sdk';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
 import { imageSizeFromFile } from 'image-size/fromFile';
@@ -32,7 +32,13 @@ interface RenderCreativePngInput {
   sceneReadyTimeoutMs?: number;
 }
 
+interface AssetFile {
+  fileName: string;
+  filePath: string;
+}
+
 const debugMode = process.env['DEBUG_RENDER'] === '1';
+loadDotenv({ path: join(import.meta.dirname, '..', '.env') });
 
 const directoryUuid = process.argv[2];
 
@@ -40,7 +46,7 @@ if (directoryUuid === undefined) {
   throw new Error('Missing project directory UUID.');
 }
 
-const directoryPath = join(import.meta.dirname, '..', '..', 'output', directoryUuid);
+const directoryPath = join(import.meta.dirname, '..', 'output', directoryUuid);
 const codeDirectoryPath = join(directoryPath, 'code');
 const previewDirectoryPath = join(directoryPath, 'preview');
 const styleGuidePath = join(directoryPath, 'style-guide.json');
@@ -56,8 +62,13 @@ const filesSchema = z.array(
 )
   .describe('List of code files');
 
+const anthropicApiKey = process.env['ANTHROPIC_API_KEY'];
+if (anthropicApiKey === undefined || anthropicApiKey.trim().length === 0) {
+  throw new Error('Missing ANTHROPIC_API_KEY. Set it in project root .env or export it in your shell.');
+}
+
 const anthropicClient = new Anthropic({
-  apiKey: process.env['ANTHROPIC_API_KEY']
+  apiKey: anthropicApiKey
 });
 
 async function renderCreativePng(input: RenderCreativePngInput): Promise<{ outputPath: string }> {
@@ -208,6 +219,7 @@ async function renderCreativePng(input: RenderCreativePngInput): Promise<{ outpu
 console.log('Generating creative code ...');
 
 const fileMessages: (Anthropic.ImageBlockParam | Anthropic.TextBlock)[] = [];
+const assetFiles: AssetFile[] = [];
 
 for (const fileType of [ 'logos', 'products' ]) {
   const subdirectoryPath = join(directoryPath, fileType);
@@ -241,6 +253,10 @@ for (const fileType of [ 'logos', 'products' ]) {
         media_type: fileMimeType,
         data: fileContentBase64
       }
+    });
+    assetFiles.push({
+      fileName,
+      filePath
     });
   }
 }
@@ -478,6 +494,28 @@ for (const codeFile of codeFileList) {
   console.log(`Writing file ${filePath} ...`);
 
  writeFileSync(filePath, codeFile.fileContent, { encoding: 'utf8' });
+}
+
+for (const assetFile of assetFiles) {
+  const destinationPath = join(codeDirectoryPath, assetFile.fileName);
+  console.log(`Copying asset ${assetFile.filePath} -> ${destinationPath} ...`);
+  copyFileSync(assetFile.filePath, destinationPath);
+}
+
+const indexFilePath = join(codeDirectoryPath, 'index.html');
+if (existsSync(indexFilePath)) {
+  try {
+    const finalPreview = await renderCreativePng({
+      entryFile: 'index.html',
+      outputFileName: 'final-preview.png',
+      waitMs: 2_000,
+      ensureSceneReady: true
+    });
+    console.log(`Final preview generated at ${finalPreview.outputPath}`);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(`Unable to generate final preview: ${message}`);
+  }
 }
 
 console.log('End.');

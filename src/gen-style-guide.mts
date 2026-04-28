@@ -1,9 +1,9 @@
-import 'dotenv/config';
 import { join, basename } from 'node:path';
 import { mkdirSync, createWriteStream, writeFileSync } from 'node:fs';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { randomUUID } from 'node:crypto';
+import { config as loadDotenv } from 'dotenv';
 import { Anthropic } from '@anthropic-ai/sdk';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
 import { z } from 'zod';
@@ -69,8 +69,14 @@ const brandStyleGuideSchema = z.object({
 
 export type StyleGuide = z.infer<typeof brandStyleGuideSchema>;
 
+loadDotenv({ path: join(import.meta.dirname, '..', '.env') });
+const anthropicApiKey = process.env['ANTHROPIC_API_KEY'];
+if (anthropicApiKey === undefined || anthropicApiKey.trim().length === 0) {
+  throw new Error('Missing ANTHROPIC_API_KEY. Set it in project root .env or export it in your shell.');
+}
+
 const anthropicClient = new Anthropic({
-  apiKey: process.env['ANTHROPIC_API_KEY']
+  apiKey: anthropicApiKey
 });
 
 console.log('Generating style guide ...');
@@ -120,7 +126,7 @@ console.log('Stop details:', styleGuideResponse.stop_details);
 console.log(styleGuideResponse.parsed_output);
 
 const directoryUuid = randomUUID();
-const directoryPath = join(import.meta.dirname, '..', '..', 'output', directoryUuid);
+const directoryPath = join(import.meta.dirname, '..', 'output', directoryUuid);
 
 console.log(`Output directory path: ${directoryPath}`);
 

@@ -4,7 +4,7 @@ import Express, { static as serveStatic } from 'express';
 const port = 3000;
 const app = Express();
 
-app.use(serveStatic(join(import.meta.dirname, '../../output')));
+app.use(serveStatic(join(import.meta.dirname, '../output')));
 
 app.listen(port, err => {
   if (err instanceof Error) {

@@ -40,7 +40,7 @@ interface BraveImageSearchResponse {
 }
 
 const contextPrompt = `
-  The brand is Parkside (by Lidl) and the context is spring and summer DIYers.
+  The brand is Parc Asterix and the context is the upcoming Parc Asterix 2026 summer season.
 `.trim();
 
 function sanitizeFilename (name: string): string {
@@ -158,7 +158,7 @@ while (true) {
       Make sure to understand who the company or brand is and what the context is.
       If a product name or category is specified analyse the problem with it in mind.
 
-      When specifying URLs, always check that they exist and that they are images (JPG, PNG, WEBP, GIF).
+      When specifying URLs, always check that they exist and that they are images (JPG, PNG, WEBP, GIF), filetype must be one of the following: JPG, PNG, WEBP, GIF.
       When specifying colors, always check that the color exists and matches the one described in the official sources.
 
       Find at least four versions of the logo (light theme / dark theme and with brand name / without brand name).

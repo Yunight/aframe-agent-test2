@@ -40,7 +40,7 @@ interface BraveImageSearchResponse {
 }
 
 const contextPrompt = `
-  The brand is Parkside (by Lidl) and the context is spring and summer DIYers.
+  The brand is Nintendo Switch and the context is the upcoming Nintendo Direct event.
 `.trim();
 
 function sanitizeFilename (name: string): string {
