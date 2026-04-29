@@ -1,0 +1,80 @@
+{
+  "companyName": "Nintendo Co., Ltd.",
+  "companyContext": "Nintendo is a global entertainment company headquartered in Kyoto, Japan, founded in 1889. It develops, manufactures, and sells gaming hardware and software, and has expanded into film production, theme parks, and merchandise. Nintendo created iconic franchises such as Mario, The Legend of Zelda, Pokémon, and Donkey Kong. For The Super Mario Galaxy Movie, Nintendo co-produced the film alongside Illumination Entertainment, with distribution by Universal Pictures.",
+  "companyURL": "https://www.nintendo.com",
+  "brandName": "The Super Mario Galaxy Movie",
+  "brandContext": "The Super Mario Galaxy Movie is a 2026 animated adventure comedy film based on Nintendo's Super Mario video game franchise, specifically inspired by the 2007 Wii game Super Mario Galaxy and its sequel. Co-produced by Nintendo and Illumination, directed by Aaron Horvath and Michael Jelenic, and written by Matthew Fogel, the film is a sequel to the 2023 blockbuster The Super Mario Bros. Movie. It stars Chris Pratt as Mario, Anya Taylor-Joy as Princess Peach, Charlie Day as Luigi, Jack Black as Bowser, Brie Larson as Rosalina, Benny Safdie as Bowser Jr., and Donald Glover as Yoshi. The film follows Mario and friends venturing into outer space to stop Bowser Jr.'s plan to destroy the universe. It premiered on March 28, 2026, and was released theatrically in the United States on April 1, 2026 by Universal Pictures.",
+  "brandURL": "https://www.thesupermariogalaxymovie.com",
+  "logoFileUrls": [
+    "https://dx35vtwkllhj9.cloudfront.net/universalstudios/the-super-mario-galaxy-movie/images/regions/us/updates2/tt.png",
+    "https://www.pngmart.com/files/22/Super-Mario-Galaxy-Logo-PNG.png",
+    "https://www.pngmart.com/files/22/Super-Mario-Galaxy-Logo-PNG-HD.png",
+    "https://www.pngmart.com/files/22/Super-Mario-Galaxy-Logo-PNG-Image.png",
+    "https://images.seeklogo.com/logo-png/13/1/super-mario-galaxy-logo-png_seeklogo-133847.png",
+    "https://www.pngmart.com/files/22/Super-Mario-Galaxy-Logo-PNG-Picture.png"
+  ],
+  "productName": "The Super Mario Galaxy Movie",
+  "productPictureUrls": [
+    "https://images-na.ssl-images-amazon.com/images/I/71wUuwonruL.jpg",
+    "https://images-na.ssl-images-amazon.com/images/I/719KzqtHDoL.jpg",
+    "https://images-na.ssl-images-amazon.com/images/I/812z8Iqe1oL.jpg",
+    "https://images-na.ssl-images-amazon.com/images/I/71cMkD4EIsL.jpg",
+    "http://www.impawards.com/2026/posters/super_mario_galaxy_movie_ver2.jpg",
+    "https://images-na.ssl-images-amazon.com/images/I/719uo8RCA1L.jpg"
+  ],
+  "primaryColorPalette": [
+    "E62310",
+    "009BD9",
+    "FCCF00",
+    "44AF35",
+    "000000"
+  ],
+  "secondaryColorPalette": [
+    "091D64",
+    "CCD2FD",
+    "F73A3A",
+    "FFE93F",
+    "4FAA4B",
+    "FFFFFF"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Super Mario (Custom Proprietary Display)",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Movie title logo and primary brand name. A custom bold display sans-serif typeface with blocky letterforms, irregular sharp edges, and pronounced 3D extrusion effects. The Galaxy Movie variant incorporates nebula texture fills and cosmic gradient overlays on the letterforms. Each letter alternates between red, green, yellow, and blue. Fan-made replica: 'New Super Mario Font U' by Michael B."
+    },
+    {
+      "fontFamily": "Blackplotan",
+      "fontWeight": 600,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Supporting sans-serif used for secondary text elements such as 'THE' and 'MOVIE' in the title lockup, taglines, and supplementary copy. Created by Situjuh Nazara."
+    },
+    {
+      "fontFamily": "Montserrat",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body text and marketing materials. A clean, modern geometric sans-serif for readability in paragraphs, descriptions, legal text, and digital marketing assets."
+    },
+    {
+      "fontFamily": "Montserrat",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Headings and subheadings in promotional and marketing materials, section titles on the official website and merchandise packaging."
+    },
+    {
+      "fontFamily": "Montserrat",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Captions, UI elements, navigation labels, and metadata such as release dates, credits, and legal notices."
+    }
+  ],
+  "brandVision": "The Super Mario Galaxy Movie expands the Mario cinematic universe into cosmic territory, bringing Nintendo's beloved characters to audiences worldwide through visually spectacular animated filmmaking. The brand aims to bridge generations—honoring the nostalgia of longtime fans who played the original 2007 Wii game while captivating a new generation of young moviegoers. The vision is to establish an ever-expanding Nintendo animated film franchise that brings the joy, wonder, and imagination of Nintendo's games to the big screen, with plans for additional films including a potential Donkey Kong movie and a third Mario movie anticipated for 2029.",
+  "brandValues": "Family-friendly entertainment that puts smiles on the faces of everyone it touches. Adventure, imagination, and wonder through cosmic exploration and intergalactic themes. Collaboration and friendship—the core group of Mario, Luigi, Peach, Toad, and Yoshi overcoming challenges together. Nostalgia blended with innovation—respecting the heritage of 40+ years of Mario games while pushing creative boundaries in animation. Accessibility and inclusivity for global audiences of all ages. Quality craftsmanship in animation by Illumination Studios Paris, guided by Mario creator Shigeru Miyamoto's vision of character authenticity and tone. Nintendo's core mission of creating unique, joyful entertainment experiences."
+}

@@ -54,7 +54,7 @@ const mimeTypeToExtension: Record<string, string> = {
 };
 
 const contextPrompt = `
-  The brand is Disneyland Paris and the context is for the newland frozen.
+  The brand is Stellentis and the context is for the new product they are launching.
 `.trim();
 
 const skillFiles = [

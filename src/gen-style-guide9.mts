@@ -54,7 +54,7 @@ const mimeTypeToExtension: Record<string, string> = {
 };
 
 const contextPrompt = `
-  The brand is Disneyland Paris and the context is for the newland frozen.
+  The brand is super mario galaxy the movie and the context is for the new movie they are launching.
 `.trim();
 
 const skillFiles = [

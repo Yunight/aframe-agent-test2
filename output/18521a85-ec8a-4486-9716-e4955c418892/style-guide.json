@@ -1,0 +1,76 @@
+{
+  "companyName": "Disneyland Paris",
+  "companyContext": "Disneyland Paris is Europe's leading tourist destination located in Chessy, Marne-la-Vallée, France, 32 km east of Paris. It encompasses two theme parks (Disneyland Park and Disney Adventure World, formerly Walt Disney Studios Park), resort hotels, a shopping and dining complex (Disney Village), and a golf course. Since opening in 1992, it has recorded more than 445 million visits and accounts for 6.1% of France's national tourism revenue. In March 2026, the resort underwent its most ambitious expansion to date, renaming its second park to Disney Adventure World and opening World of Frozen as its centerpiece.",
+  "companyURL": "https://www.disneylandparis.com",
+  "brandName": "World of Frozen",
+  "brandContext": "World of Frozen is the flagship immersive themed land at Disney Adventure World, the reimagined second park at Disneyland Paris. Opened on March 29, 2026, as part of a €2 billion transformation, it transports guests into a life-sized recreation of the Kingdom of Arendelle from Walt Disney Animation Studios' Frozen films. The land features the 36-meter (118-foot) North Mountain crowned by Elsa's Ice Palace, the Frozen Ever After boat ride with next-generation Audio-Animatronics, A Celebration in Arendelle daytime show on Arendelle Bay featuring a robotic Olaf, a Royal Encounter with Queens Anna and Elsa, Nordic Crowns Tavern, Fjord View Shop, and Scandinavian-inspired architecture adorned with rosemaling (traditional Norwegian decorative art). Every detail draws from Scandinavian landscapes, muted pastels, and Nordic folklore, with an original score composed exclusively for the land by Oscar-winning duo Kristen Anderson-Lopez and Robert Lopez.",
+  "brandURL": "https://www.disneylandparis.com/en-usd/destinations/disney-adventure-world/world-of-frozen",
+  "logoFileUrls": [
+    "https://cdn.freebiesupply.com/logos/large/2x/disneyland-paris-2-logo-png-transparent.png",
+    "https://static.cdnlogo.com/logos/d/69/disneyland-paris_800.png",
+    "https://www.pngmart.com/files/17/Frozen-Logo-PNG-Image.png",
+    "https://www.pngmart.com/files/17/Frozen-Logo-PNG-Photos.png"
+  ],
+  "productName": "World of Frozen",
+  "productPictureUrls": [
+    "https://news.disneylandparis.com/app/uploads/2025/11/KV-1_Disneyland-Paris_Disney-Adventure-World_World-Of-Frozen_Date-Revealed_Horizontal_UK.jpg",
+    "https://fans.disneylandparis.com/app/uploads/2025/08/WDI_Elsas-Ice-Palace-1.jpg",
+    "https://www.travelandtourworld.com/wp-content/uploads/2026/03/ice.jpg",
+    "https://www.mycastleclub.co.uk/wp-content/uploads/2025/05/frozen-night-time-view-concept-art-2023-1024x401.jpg",
+    "https://thewaltdisneycompany.com/app/uploads/2025/12/Disneyland-Paris_Disney-Adventure-World_Adventure-Way_Raiponce-Tangled-Spin_Night_Horizontal_2-scaled-1-1024x683.jpg"
+  ],
+  "primaryColorPalette": [
+    "7EC0EE",
+    "1B2A49",
+    "FFFFFF",
+    "B452CD"
+  ],
+  "secondaryColorPalette": [
+    "BFEFFF",
+    "F4B1C2",
+    "8B0A50",
+    "0D1B2A",
+    "3081C3",
+    "F8F8FF"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Waltograph",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Brand name — the Disney / Disneyland Paris logotype. Used for the master brand wordmark only at display sizes."
+    },
+    {
+      "fontFamily": "Ice Kingdom",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Product name / Frozen title — the custom serif with ice-crystal embellishments used for the 'Frozen' and 'World of Frozen' logos and hero headings."
+    },
+    {
+      "fontFamily": "Avenir Next",
+      "fontWeight": 600,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Subheadings and navigation — semibold weight for section headings, card titles, and UI navigation elements. Minimum 20px."
+    },
+    {
+      "fontFamily": "Avenir Next",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body text — regular weight for paragraph copy, descriptions, FAQ content, and long-form editorial. Minimum 16px, line-height 1.5."
+    },
+    {
+      "fontFamily": "Avenir Next",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Captions and labels — medium weight for metadata, timestamps, legal footnotes, and small UI labels. 12–14px with wide letter-spacing (0.05em)."
+    }
+  ],
+  "brandVision": "World of Frozen at Disneyland Paris embodies a vision of boundless immersive storytelling — pushing the boundaries of theme park design to let guests walk directly into the heart of the stories they love. The land is conceived as a living, breathing version of Arendelle where Nordic heritage meets cutting-edge Disney Imagineering innovation, including next-generation robotics and exclusive original music. The vision extends to being the premiere expression of the Frozen franchise in Europe, rooted in the very continent that inspired its Scandinavian source material, and serves as the spearhead of the most ambitious transformation in Disneyland Paris's 34-year history.",
+  "brandValues": "Immersive Storytelling — every detail, from rosemaling facades to Scandinavian landscaping, serves the narrative of Arendelle. Innovation & Technology — next-generation Audio-Animatronics, robotic Olaf, and cutting-edge projection systems push creative boundaries. Family & Togetherness — experiences designed for all ages, from gentle boat rides to character encounters to shared dining. European Heritage — honoring the Scandinavian roots of the Frozen story and placing it on European soil where it culturally belongs. Inclusivity & Accessibility — no minimum height on Frozen Ever After, virtual queues for equitable character access, gluten-free and vegan dining options, and wheelchair-accessible experiences. Emotional Connection — creating lasting memories through music, personal encounters with Anna and Elsa, and charitable partnerships such as the 25,000th Make-A-Wish fulfilled at Disneyland Paris."
+}

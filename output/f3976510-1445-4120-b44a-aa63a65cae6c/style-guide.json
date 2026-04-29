@@ -1,0 +1,93 @@
+{
+  "companyName": "Stellantis N.V.",
+  "companyContext": "Stellantis is a multinational automotive manufacturing corporation formed in January 2021 through the 50/50 merger of Fiat Chrysler Automobiles (FCA) and PSA Group. Headquartered in Hoofddorp, Netherlands, the company designs, manufactures and markets vehicles under 14 iconic brands: Abarth, Alfa Romeo, Chrysler, Citroën, Dodge, DS Automobiles, FIAT, Jeep, Lancia, Maserati, Opel, Peugeot, Ram, and Vauxhall, plus two mobility brands (Free2move and Leasys). With nearly 260,000 employees, manufacturing in over 30 countries, and a commercial presence in more than 130 markets, Stellantis is one of the world's largest automakers. The name derives from the Latin verb 'stello', meaning 'to brighten with stars'.",
+  "companyURL": "https://www.stellantis.com",
+  "brandName": "Stellantis",
+  "brandContext": "Stellantis is a corporate brand used exclusively in investor relations, press releases, corporate communications and stock exchange listings. In 2026, the company is executing its largest product offensive in history — an expanding 'new product wave' that includes the 2026 Jeep Cherokee, Dodge Charger SIXPACK, Jeep Grand Wagoneer, Ram 1500 HEMI V8, Fiat 500 Hybrid, Jeep Compass BEV, Citroën C5 Aircross BEV, Ram Dakota, and Lancia Gamma. The company has committed $13 billion in U.S. investment over four years and is targeting a mid-single-digit increase in net revenue for 2026 under new CEO Antonio Filosa.",
+  "brandURL": "https://www.stellantis.com",
+  "logoFileUrls": [
+    "https://brandlogohub.com/wp-content/uploads/2025/08/Stellantis-Logo.png",
+    "https://companieslogo.com/img/orig/STLA_BIG-b23f3d7e.png?t=1720244494",
+    "https://logospng.org/wp-content/uploads/stellantis.png",
+    "https://1000logos.net/wp-content/uploads/2024/04/Stellantis-Logo-500x281.png"
+  ],
+  "productName": "2026 New Product Wave (Jeep Cherokee, Dodge Charger SIXPACK, Jeep Grand Wagoneer, Ram 1500 HEMI V8, and more)",
+  "productPictureUrls": [
+    "https://mexico-now.com/wp-content/uploads/2025/09/JeepCherokee2026-0.jpg",
+    "https://theshopmag.com/wp-content/uploads/2025/08/2026_Jeep_Cherokee.jpg",
+    "https://theshopmag.com/wp-content/uploads/2025/08/2026-Jeep-Cherokee-Overland.jpg",
+    "https://s1.cdn.autoevolution.com/images/news/stellantis-readies-no-less-than-12-new-models-from-six-brands-for-2026-canadian-autoshow-265527-7.jpg",
+    "https://cdn-fastly.autoguide.com/media/2025/10/28/09301/the-2026-jeep-grand-cherokee-is-here-with-stellantis-newest-engine.jpg",
+    "https://cdn-fastly.autoguide.com/media/2025/10/28/09341/the-2026-jeep-grand-cherokee-is-here-with-stellantis-newest-engine.jpg"
+  ],
+  "primaryColorPalette": [
+    "243782",
+    "FFFFFF",
+    "000000",
+    "00133B"
+  ],
+  "secondaryColorPalette": [
+    "E94E24",
+    "43AAA0",
+    "EF7D00",
+    "F39671",
+    "E42313",
+    "A0D4CD"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Custom Stellantis Logotype",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Brand name / logotype only. Custom futuristic extended sans-serif typeface designed by Publicis Group. No commercial equivalent; features distinctive crossbar-free 'A' letterform and extended character width."
+    },
+    {
+      "fontFamily": "Encode Sans Expanded",
+      "fontWeight": 300,
+      "fontEffect": [],
+      "fontUses": "Headings, titles, subtitles and display text. Used in all-caps for maximum impact per Stellantis guidelines. Light weight for elegant headline treatments."
+    },
+    {
+      "fontFamily": "Encode Sans Expanded",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Sub-headings, emphasized body content and secondary titles. Medium weight for moderate emphasis."
+    },
+    {
+      "fontFamily": "Encode Sans Expanded",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Call-to-action labels, highlighted information and key data points. Semibold weight for strong emphasis."
+    },
+    {
+      "fontFamily": "Encode Sans Expanded",
+      "fontWeight": 800,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Primary headlines, large display numbers and hero section titles. Extrabold weight for maximum visual hierarchy."
+    },
+    {
+      "fontFamily": "Encode Sans Expanded",
+      "fontWeight": 100,
+      "fontEffect": [],
+      "fontUses": "Supplementary text blocks, subsidiary/plant name lockups under the Stellantis trademark. Thin weight for delicate, refined typography."
+    },
+    {
+      "fontFamily": "Arial",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Email signatures and fallback body text. Used when Encode Sans Expanded is not available on recipient systems to ensure consistency."
+    },
+    {
+      "fontFamily": "Arial",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Email signature names and department names. Bold fallback for emphasis in system contexts."
+    }
+  ],
+  "brandVision": "Stellantis aims to become the greatest sustainable mobility tech company, leading the transition to clean, accessible mobility across its 14 brands and global markets. Under the Dare Forward 2030 strategic plan, the company is committed to achieving carbon net zero by 2038 while providing customers the freedom to choose from electric, hybrid and internal combustion technologies. The 2026 strategy focuses on closing past execution gaps, driving profitable growth through a massive new product wave, and making the largest investment in U.S. history ($13 billion over four years). The company envisions expanding value creation beyond vehicle sales through digitalization, entrepreneurial business units, and a circular economy approach.",
+  "brandValues": "Stellantis is guided by four core values of equal importance: (1) Customer First — putting customers at the center of everything, anticipating their needs with cutting-edge mobility solutions; (2) Win Together — harnessing diversity and collaboration across 14 iconic brands and global regions to create a 'One Company' culture; (3) Agile & Innovative — embracing breakthrough ideas and technology to constantly move the limits of the possible and drive the transformation of the auto industry; (4) Care For The Future — a collective pledge to make a positive difference for the company, its people, communities and the planet. The company's purpose statement is 'Powered by Our Diversity, We Lead the Way the World Moves,' reflecting a commitment to clean, safe, and affordable freedom of mobility for all."
+}

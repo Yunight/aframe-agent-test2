@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=320,initial-scale=1,user-scalable=no">
+<title>World of Frozen — Disneyland Paris</title>
+<script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+<style>
+@font-face {
+  font-family: 'Avenir Next';
+  src: local('Avenir Next'), local('AvenirNext-Regular');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Avenir Next';
+  src: local('Avenir Next Medium'), local('AvenirNext-Medium');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Avenir Next';
+  src: local('Avenir Next DemiBold'), local('AvenirNext-DemiBold');
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Avenir Next';
+  src: local('Avenir Next Bold'), local('AvenirNext-Bold');
+  font-weight: 700;
+  font-style: normal;
+}
+
+* { margin:0; padding:0; box-sizing:border-box }
+
+html, body {
+  width: 320px;
+  height: 480px;
+  overflow: hidden;
+  background: #0D1B2A;
+  font-family: 'Avenir Next';
+}
+
+/* ======== CONTAINER ======== */
+#ad {
+  width: 320px;
+  height: 480px;
+  position: relative;
+  overflow: hidden;
+  background: #0D1B2A;
+}
+
+/* ======== HERO BACKGROUND ======== */
+#hero-bg {
+  position: absolute;
+  top: -15px; left: -10px;
+  width: 340px; height: 510px;
+  object-fit: cover;
+  object-position: center center;
+  opacity: 0;
+  transform: scale(1.05);
+  animation: heroIn 2s ease-out 0.2s forwards;
+}
+
+/* ======== GRADIENT OVERLAYS ======== */
+.grad-top {
+  position: absolute; top: 0; left: 0;
+  width: 320px; height: 230px;
+  background: linear-gradient(180deg,
+    rgba(13,27,42,1) 0%,
+    rgba(13,27,42,0.97) 28%,
+    rgba(13,27,42,0.6) 62%,
+    transparent 100%);
+  z-index: 2;
+}
+.grad-bottom {
+  position: absolute; bottom: 0; left: 0;
+  width: 320px; height: 280px;
+  background: linear-gradient(0deg,
+    rgba(13,27,42,0.99) 0%,
+    rgba(13,27,42,0.92) 32%,
+    rgba(13,27,42,0.4) 68%,
+    transparent 100%);
+  z-index: 2;
+}
+.vignette {
+  position: absolute; top: 0; left: 0;
+  width: 320px; height: 480px;
+  box-shadow: inset 0 0 55px 14px rgba(13,27,42,0.5);
+  z-index: 2; pointer-events: none;
+}
+
+/* ======== A-FRAME SNOW LAYER ======== */
+#snow-layer {
+  position: absolute; top: 0; left: 0;
+  width: 320px; height: 480px;
+  z-index: 4; pointer-events: none;
+}
+#snow-layer .a-scene { width: 320px !important; height: 480px !important; }
+.a-canvas { background: transparent !important; }
+
+/* ======== UI OVERLAY ======== */
+#ui {
+  position: absolute; top: 0; left: 0;
+  width: 320px; height: 480px;
+  z-index: 10;
+  display: flex; flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+/* Disneyland Paris logo */
+.logo-dlp {
+  width: 105px; height: auto;
+  margin-top: 16px;
+  opacity: 0;
+  filter: brightness(0) invert(1) drop-shadow(0 1px 4px rgba(13,27,42,0.6));
+  animation: slideDown 0.6s ease-out 0.4s forwards;
+}
+
+.top-spacer { flex: 0.48; }
+
+/* Frozen logo + shimmer */
+.frozen-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+}
+.frozen-logo {
+  width: 245px; display: block;
+  filter: drop-shadow(0 0 18px rgba(126,192,238,0.5));
+  opacity: 0;
+  animation: frozenIn 1.3s ease-out 0.9s forwards;
+  transition: filter 0.3s ease;
+}
+#ad:hover .frozen-logo {
+  filter: drop-shadow(0 0 28px rgba(126,192,238,0.7));
+}
+.shimmer {
+  position: absolute; top: 0; left: -130%;
+  width: 70%; height: 100%;
+  background: linear-gradient(90deg,
+    transparent, rgba(191,239,255,0.2), transparent);
+  transform: skewX(-15deg);
+  animation: shimmer 4s ease-in-out 2.5s infinite;
+  pointer-events: none;
+}
+
+/* Typography — all Avenir Next per style guide */
+.tagline {
+  font-family: 'Avenir Next';
+  font-weight: 600;
+  font-size: 18px;
+  color: #FFFFFF;
+  text-align: center;
+  margin-top: 14px;
+  padding: 0 20px;
+  text-shadow: 0 2px 14px rgba(13,27,42,0.8);
+  opacity: 0;
+  animation: fadeUp 0.7s ease-out 1.8s forwards;
+}
+.subtitle {
+  font-family: 'Avenir Next';
+  font-weight: 400;
+  font-size: 13px;
+  color: #BFEFFF;
+  text-align: center;
+  margin-top: 6px;
+  padding: 0 24px;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  text-shadow: 0 1px 10px rgba(13,27,42,0.6);
+  opacity: 0;
+  animation: fadeUp 0.6s ease-out 2.1s forwards;
+}
+
+.bottom-spacer { flex: 1; }
+
+/* Date badge */
+.badge {
+  font-family: 'Avenir Next';
+  font-weight: 500;
+  font-size: 10px;
+  color: #7EC0EE;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border: 1px solid rgba(126,192,238,0.35);
+  border-radius: 12px;
+  margin-bottom: 14px;
+  opacity: 0;
+  animation: fadeUp 0.5s ease-out 2.4s forwards;
+}
+
+/* CTA button */
+.cta {
+  pointer-events: all;
+  display: inline-block;
+  background: linear-gradient(135deg, #B452CD, #8B0A50);
+  color: #FFFFFF;
+  font-family: 'Avenir Next';
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  padding: 13px 36px;
+  border: none;
+  border-radius: 28px;
+  cursor: pointer;
+  box-shadow: 0 4px 24px rgba(139,10,80,0.45);
+  opacity: 0;
+  animation: ctaIn 0.7s cubic-bezier(0.34,1.56,0.64,1) 2.7s forwards;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.cta:hover {
+  transform: scale(1.06);
+  box-shadow: 0 6px 32px rgba(180,82,205,0.65);
+}
+.cta:active { transform: scale(0.97); }
+
+/* Legal line */
+.legal {
+  font-family: 'Avenir Next';
+  font-weight: 500;
+  font-size: 9px;
+  color: rgba(191,239,255,0.3);
+  letter-spacing: 0.05em;
+  margin-top: 10px;
+  margin-bottom: 14px;
+  opacity: 0;
+  animation: fadeIn 0.4s ease-out 3.1s forwards;
+}
+
+/* ======== KEYFRAMES ======== */
+@keyframes heroIn {
+  from { opacity: 0; transform: scale(1.12); }
+  to   { opacity: 0.78; transform: scale(1.05); }
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 0.88; transform: translateY(0); }
+}
+@keyframes frozenIn {
+  0%   { opacity: 0; transform: scale(0.8);
+         filter: drop-shadow(0 0 40px rgba(126,192,238,0.75)) blur(3px); }
+  55%  { opacity: 1;
+         filter: drop-shadow(0 0 24px rgba(126,192,238,0.55)) blur(0px); }
+  100% { opacity: 1; transform: scale(1);
+         filter: drop-shadow(0 0 18px rgba(126,192,238,0.5)); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes ctaIn {
+  from { opacity: 0; transform: scale(0.75); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 4px 24px rgba(139,10,80,0.45); }
+  50%      { box-shadow: 0 4px 38px rgba(180,82,205,0.72); }
+}
+@keyframes shimmer {
+  0%         { left: -130%; }
+  35%, 100%  { left: 200%; }
+}
+</style>
+</head>
+<body>
+<div id="ad">
+
+  <!-- Full-bleed hero background -->
+  <img id="hero-bg"
+       src="KV-1_Disneyland-Paris_Disney-Adventure-World_World-Of-Frozen_Date-Revealed_Horizontal_UK.jpg"
+       alt="">
+  <div class="grad-top"></div>
+  <div class="grad-bottom"></div>
+  <div class="vignette"></div>
+
+  <!-- A-Frame 3D Snowflake Layer -->
+  <div id="snow-layer">
+    <a-scene embedded
+             vr-mode-ui="enabled: false"
+             renderer="antialias: true; alpha: true"
+             loading-screen="enabled: false">
+      <a-entity camera
+                position="0 0 3"
+                fov="55"
+                look-controls="enabled: false"
+                wasd-controls="enabled: false"></a-entity>
+
+      <!-- Snowflake root -->
+      <a-entity id="snow-root" snowflakes></a-entity>
+
+      <!-- Subtle aurora glow accents -->
+      <a-plane position="0 1.4 -1" width="3" height=".25"
+               material="color: #7EC0EE; shader: flat; opacity: .06; transparent: true"
+               animation="property: position; from: -.4 1.5 -1; to: .4 1.3 -1; dur: 8000; dir: alternate; easing: easeInOutSine; loop: true"></a-plane>
+      <a-plane position=".2 1.1 -1.2" width="2" height=".15"
+               material="color: #B452CD; shader: flat; opacity: .04; transparent: true"
+               animation="property: position; from: .5 1.2 -1.2; to: -.3 1 -1.2; dur: 10000; dir: alternate; easing: easeInOutSine; loop: true"></a-plane>
+    </a-scene>
+  </div>
+
+  <!-- UI Content Overlay -->
+  <div id="ui">
+    <img class="logo-dlp"
+         src="disneyland-paris-2-logo-png-transparent.png"
+         alt="Disneyland Paris">
+
+    <div class="top-spacer"></div>
+
+    <div class="frozen-wrap">
+      <img class="frozen-logo"
+           src="Frozen-Logo-PNG-Image.png"
+           alt="World of Frozen">
+      <div class="shimmer"></div>
+    </div>
+
+    <div class="tagline">Plongez au cœur d'Arendelle</div>
+    <div class="subtitle">Une aventure givrée vous attend<br>à Disney Adventure World</div>
+
+    <div class="bottom-spacer"></div>
+
+    <div class="badge">✦ Ouvert depuis le 29 mars 2026 ✦</div>
+    <a class="cta"
+       href="https://www.disneylandparis.com/fr-fr/destinations/disney-adventure-world/world-of-frozen/"
+       target="_blank">Réservez vos billets</a>
+    <span class="legal">© Disney · disneylandparis.com</span>
+  </div>
+
+</div>
+
+<script>
+/* =================================================
+   SNOWFLAKE SYSTEM — custom A-Frame component
+   3-D ice-crystal octahedrons fall with twinkling,
+   parallax on pointer, burst particles on tap/click
+   ================================================= */
+AFRAME.registerComponent('snowflakes', {
+  init: function () {
+    var container = this.el;
+    var NUM = 32;
+
+    /* ---- spawn falling crystals ---- */
+    for (var i = 0; i < NUM; i++) {
+      var sf   = document.createElement('a-entity');
+      var x    = (Math.random() - 0.5) * 4.6;
+      var z    = (Math.random() - 0.5) * 3.6;
+      var sz   = Math.random() * 0.028 + 0.008;
+      var op   = Math.random() * 0.55 + 0.15;
+      var dur  = Math.random() * 11000 + 7000;
+      var sway = (Math.random() - 0.5) * 1.0;
+      var dl   = Math.random() * 10000;
+
+      sf.setAttribute('geometry', 'primitive: octahedron; radius: ' + sz);
+      sf.setAttribute('material',
+        'color: #BFEFFF; shader: flat; opacity: ' + op + '; transparent: true');
+      sf.setAttribute('position', x + ' 4 ' + z);
+
+      sf.setAttribute('animation', {
+        property: 'position',
+        from: x + ' 4 ' + z,
+        to:   (x + sway) + ' -4 ' + z,
+        dur: dur, easing: 'linear', loop: true, delay: dl
+      });
+      sf.setAttribute('animation__rot', {
+        property: 'rotation', from: '0 0 0',
+        to: (Math.random()*360)+' '+(Math.random()*360)+' '+(Math.random()*360),
+        dur: dur * 0.55, easing: 'linear', loop: true
+      });
+      sf.setAttribute('animation__tw', {
+        property: 'material.opacity',
+        from: op * 0.12, to: op,
+        dur: Math.random() * 2500 + 1200,
+        dir: 'alternate', easing: 'easeInOutSine',
+        loop: true, delay: Math.random() * 3000
+      });
+      container.appendChild(sf);
+    }
+
+    /* ---- parallax on pointer ---- */
+    var ad   = document.getElementById('ad');
+    var hero = document.getElementById('hero-bg');
+
+    function onMove(nx, ny) {
+      container.setAttribute('rotation', { x: ny * 5, y: -nx * 7, z: 0 });
+      hero.style.transform =
+        'translate(' + (nx * -7) + 'px,' + (ny * -5) + 'px) scale(1.05)';
+    }
+
+    ad.addEventListener('mousemove', function (e) {
+      var r = ad.getBoundingClientRect();
+      onMove(
+        (e.clientX - r.left) / r.width  - 0.5,
+       -((e.clientY - r.top) / r.height - 0.5)
+      );
+    });
+    ad.addEventListener('touchmove', function (e) {
+      var t = e.touches[0], r = ad.getBoundingClientRect();
+      onMove(
+        (t.clientX - r.left) / r.width  - 0.5,
+       -((t.clientY - r.top) / r.height - 0.5)
+      );
+    }, { passive: true });
+
+    /* ---- click / tap ice-burst ---- */
+    ad.addEventListener('click', function (e) {
+      if (e.target.classList.contains('cta')) return;
+      var r  = ad.getBoundingClientRect();
+      var nx = ((e.clientX - r.left) / r.width  - 0.5) * 3.8;
+      var ny = -((e.clientY - r.top) / r.height - 0.5) * 5.2;
+      var palette = ['#7EC0EE','#BFEFFF','#B452CD','#FFFFFF','#F4B1C2'];
+
+      for (var j = 0; j < 12; j++) {
+        var b   = document.createElement('a-entity');
+        var ang = (Math.PI * 2 / 12) * j + Math.random() * 0.25;
+        var spd = 0.45 + Math.random() * 0.55;
+
+        b.setAttribute('geometry', 'primitive: octahedron; radius: 0.022');
+        b.setAttribute('material',
+          'color: ' + palette[j % palette.length] +
+          '; shader: flat; opacity: 1; transparent: true');
+        b.setAttribute('position', nx + ' ' + ny + ' 1');
+
+        b.setAttribute('animation', {
+          property: 'position',
+          to: (nx + Math.cos(ang)*spd) + ' ' + (ny + Math.sin(ang)*spd) + ' 1',
+          dur: 580, easing: 'easeOutCubic'
+        });
+        b.setAttribute('animation__f', {
+          property: 'material.opacity', to: 0,
+          dur: 580, easing: 'easeInQuad'
+        });
+        b.setAttribute('animation__s', {
+          property: 'scale', from: '1.3 1.3 1.3', to: '0 0 0',
+          dur: 580, easing: 'easeInCubic'
+        });
+
+        container.appendChild(b);
+        (function (el) { setTimeout(function () { el.remove(); }, 640); })(b);
+      }
+    });
+  }
+});
+
+/* CTA pulsing glow once entry animations complete */
+setTimeout(function () {
+  var cta = document.querySelector('.cta');
+  if (cta) cta.style.animation = 'pulse 2.5s ease-in-out infinite';
+}, 3800);
+</script>
+</body>
+</html>
