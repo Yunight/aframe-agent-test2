@@ -37,6 +37,138 @@ interface AssetFile {
   filePath: string;
 }
 
+interface RenderDefaults {
+  devicePreset?: string;
+  viewport?: {
+    width: number;
+    height: number;
+    deviceScaleFactor?: number;
+  };
+}
+
+const designSkillFiles = [
+  '.claude/.skills/ui-design/commands/design-screen.md',
+  '.claude/.skills/ui-design/commands/color-palette.md',
+  '.claude/.skills/ui-design/commands/type-system.md',
+  '.claude/.skills/ui-design/skills/color-system/SKILL.md',
+  '.claude/.skills/ui-design/skills/dark-mode-design/SKILL.md',
+  '.claude/.skills/ui-design/skills/layout-grid/SKILL.md',
+  '.claude/.skills/ui-design/skills/responsive-design/SKILL.md',
+  '.claude/.skills/ui-design/skills/typography-scale/SKILL.md',
+  '.claude/.skills/ui-design/skills/visual-hierarchy/SKILL.md',
+  '.claude/.skills/interaction-design/skills/animation-principles/SKILL.md',
+  '.claude/.skills/interaction-design/skills/feedback-patterns/SKILL.md',
+  '.claude/.skills/interaction-design/skills/micro-interaction-spec/SKILL.md'
+] as const;
+
+function loadDesignSkillGuidance(): string {
+  const rootDir = join(import.meta.dirname, '..');
+  const loadedSkills = designSkillFiles
+    .map((relativePath) => {
+      const absolutePath = join(rootDir, relativePath);
+
+      if (!existsSync(absolutePath)) {
+        console.warn(`[skills] Missing skill file: ${relativePath}`);
+        return null;
+      }
+
+      const content = readFileSync(absolutePath, 'utf8').trim();
+      return `### ${relativePath}\n${content}`;
+    })
+    .filter((value): value is string => value !== null);
+
+  if (loadedSkills.length === 0) {
+    throw new Error('No local design skill files were found in .claude/.skills.');
+  }
+
+  return loadedSkills.join('\n\n');
+}
+
+function normalizeHexColor(value: string): string {
+  const normalized = value.trim().replace(/^#/, '').toUpperCase();
+  return normalized.length === 3
+    ? normalized.split('').map((char) => `${char}${char}`).join('')
+    : normalized;
+}
+
+function extractHexColorsFromCss(content: string): Set<string> {
+  const matches = content.match(/#[0-9a-fA-F]{3,8}\b/g) ?? [];
+  return new Set(
+    matches
+      .map((hexValue) => normalizeHexColor(hexValue))
+      .filter((hexValue) => hexValue.length === 6)
+  );
+}
+
+function extractFontFamiliesFromCss(content: string): Set<string> {
+  const fontFamilyMatches = content.match(/font-family\s*:\s*([^;]+);/gi) ?? [];
+  const familySet = new Set<string>();
+
+  for (const declaration of fontFamilyMatches) {
+    const declarationMatch = declaration.match(/font-family\s*:\s*([^;]+);/i);
+    if (declarationMatch === null) {
+      continue;
+    }
+    const list = declarationMatch[1] ?? '';
+    for (const fontName of list.split(',')) {
+      const cleaned = fontName.trim().replace(/^['"]|['"]$/g, '');
+      if (cleaned.length > 0) {
+        familySet.add(cleaned.toLowerCase());
+      }
+    }
+  }
+
+  return familySet;
+}
+
+function validateCreativeSkillCompliance(
+  files: z.infer<typeof filesSchema>,
+  currentStyleGuide: Omit<StyleGuide, 'logoFileUrls' | 'productPictureUrls'>
+): { ok: true } | { ok: false; issues: string[] } {
+  const indexFile = files.find((file) => file.fileName.toLowerCase() === 'index.html');
+  if (indexFile === undefined) {
+    return { ok: false, issues: [ 'Missing index.html output file.' ] };
+  }
+
+  const issues: string[] = [];
+  const htmlContent = indexFile.fileContent;
+  const htmlLower = htmlContent.toLowerCase();
+
+  const styleGuideFonts = new Set(
+    currentStyleGuide.typography
+      .map((item) => item.fontFamily.trim().toLowerCase())
+      .filter((fontName) => fontName.length > 0)
+  );
+  const usedFonts = extractFontFamiliesFromCss(htmlContent);
+  const disallowedFonts = Array.from(usedFonts).filter((fontName) =>
+    !styleGuideFonts.has(fontName) &&
+    !contains([ 'sans-serif', 'serif', 'monospace', 'cursive', 'fantasy', 'system-ui' ], fontName)
+  );
+  if (disallowedFonts.length > 0) {
+    issues.push(`Contains font families outside style guide: ${disallowedFonts.join(', ')}`);
+  }
+
+  const allowedColors = new Set([
+    ...currentStyleGuide.primaryColorPalette.map(normalizeHexColor),
+    ...currentStyleGuide.secondaryColorPalette.map(normalizeHexColor)
+  ]);
+  const usedHexColors = extractHexColorsFromCss(htmlContent);
+  const unknownHexColors = Array.from(usedHexColors).filter((hexColor) => !allowedColors.has(hexColor));
+  if (unknownHexColors.length > 0) {
+    issues.push(`Contains colors outside style guide palettes: ${unknownHexColors.slice(0, 10).join(', ')}`);
+  }
+
+  if (!htmlLower.includes('vr-mode-ui="enabled: false"')) {
+    issues.push('Missing required A-Frame setting vr-mode-ui="enabled: false".');
+  }
+
+  if (issues.length > 0) {
+    return { ok: false, issues };
+  }
+
+  return { ok: true };
+}
+
 const debugMode = process.env['DEBUG_RENDER'] === '1';
 loadDotenv({ path: join(import.meta.dirname, '..', '.env') });
 
@@ -44,6 +176,70 @@ const directoryUuid = process.argv[2];
 
 if (directoryUuid === undefined) {
   throw new Error('Missing project directory UUID.');
+}
+
+const cliArguments = process.argv.slice(3);
+const renderDefaults: RenderDefaults = {};
+
+for (let i = 0; i < cliArguments.length; i += 1) {
+  const argument = cliArguments[i];
+
+  if (argument === '--device') {
+    const value = cliArguments[i + 1];
+    if (value === undefined || value.startsWith('--')) {
+      throw new Error('Missing value for --device');
+    }
+    renderDefaults.devicePreset = value;
+    i += 1;
+    continue;
+  }
+
+  if (argument === '--viewport') {
+    const value = cliArguments[i + 1];
+    if (value === undefined || value.startsWith('--')) {
+      throw new Error('Missing value for --viewport. Expected format WIDTHxHEIGHT (example: 390x844).');
+    }
+    const viewportMatch = /^(\d+)x(\d+)$/i.exec(value);
+    if (viewportMatch === null) {
+      throw new Error(`Invalid --viewport value "${value}". Expected format WIDTHxHEIGHT (example: 390x844).`);
+    }
+    const widthMatch = viewportMatch[1];
+    const heightMatch = viewportMatch[2];
+    if (widthMatch === undefined || heightMatch === undefined) {
+      throw new Error(`Invalid --viewport value "${value}". Expected format WIDTHxHEIGHT (example: 390x844).`);
+    }
+    const width = Number.parseInt(widthMatch, 10);
+    const height = Number.parseInt(heightMatch, 10);
+    if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
+      throw new Error(`Invalid --viewport dimensions "${value}". Width and height must be positive integers.`);
+    }
+    renderDefaults.viewport = { width, height };
+    i += 1;
+    continue;
+  }
+
+  if (argument === '--dpr') {
+    const value = cliArguments[i + 1];
+    if (value === undefined || value.startsWith('--')) {
+      throw new Error('Missing value for --dpr (example: 2).');
+    }
+    const dpr = Number.parseFloat(value);
+    if (!Number.isFinite(dpr) || dpr <= 0) {
+      throw new Error(`Invalid --dpr value "${value}". DPR must be a positive number.`);
+    }
+    renderDefaults.viewport = {
+      ...(renderDefaults.viewport ?? { width: 320, height: 480 }),
+      deviceScaleFactor: dpr
+    };
+    i += 1;
+    continue;
+  }
+
+  throw new Error(`Unknown argument "${argument}". Allowed options: --device, --viewport, --dpr`);
+}
+
+if (renderDefaults.devicePreset !== undefined && renderDefaults.viewport !== undefined) {
+  throw new Error('Do not use --device and --viewport together. Choose one simulation mode.');
 }
 
 const directoryPath = join(import.meta.dirname, '..', 'output', directoryUuid);
@@ -70,6 +266,7 @@ if (anthropicApiKey === undefined || anthropicApiKey.trim().length === 0) {
 const anthropicClient = new Anthropic({
   apiKey: anthropicApiKey
 });
+const localDesignSkillGuidance = loadDesignSkillGuidance();
 
 async function renderCreativePng(input: RenderCreativePngInput): Promise<{ outputPath: string }> {
   const safeEntryFile = input.entryFile.replace(/\\/g, '/');
@@ -113,17 +310,20 @@ async function renderCreativePng(input: RenderCreativePngInput): Promise<{ outpu
       });
     }
 
-    if (input.devicePreset !== undefined && input.devicePreset.trim().length > 0) {
+    const effectiveDevicePreset = input.devicePreset ?? renderDefaults.devicePreset;
+    const effectiveViewport = input.viewport ?? renderDefaults.viewport;
+
+    if (effectiveDevicePreset !== undefined && effectiveDevicePreset.trim().length > 0) {
       const knownDevices = KnownDevices as Record<string, (typeof KnownDevices)[keyof typeof KnownDevices]>;
-      const device = knownDevices[input.devicePreset];
+      const device = knownDevices[effectiveDevicePreset];
 
       if (device === undefined) {
-        throw new Error(`Unknown device preset: ${input.devicePreset}`);
+        throw new Error(`Unknown device preset: ${effectiveDevicePreset}`);
       }
 
       await page.emulate(device);
-    } else if (input.viewport !== undefined) {
-      const { width, height, deviceScaleFactor } = input.viewport;
+    } else if (effectiveViewport !== undefined) {
+      const { width, height, deviceScaleFactor } = effectiveViewport;
       await page.setViewport({
         width,
         height,
@@ -301,10 +501,10 @@ while (true) {
       Aframe examples on GitHub : https://github.com/aframevr/aframe/tree/master/examples
       Aframe examples on official site : https://aframe.io/examples/showcase/helloworld/
 
-      What is asked of you is to create a 2D or 3D advertisement creative of a new ad format you invented.
+      What is asked of you is to create a 2D advertisement creative of a new ad format you invented.
       The graphic elements (fonts, colors, pictures) of said ad creative should only be based on the JSON style guide passed as input by the user.
       The format, which is the way these graphic elements are articulated together is up to you.
-      It should be fresh, inovative, eye catching and should make the viewer want know more or buy the product.
+      It should be fresh, modern, inovative, eye catching and should make the viewer want know more or buy the product.
       Ideally the format should be animated and be interactive for the user to make it fun.
       Logo and product images or pictures are passed as URLs.
 
@@ -316,7 +516,18 @@ while (true) {
       The colors used should be the ones defined in the style guide.
       The text of the advertisement should be in french.
       The size of the advertisement should be 320x480.
+      Never add browser-like controls, zoom buttons, fullscreen buttons, or VR mode toggles in the creative UI.
+      Use A-Frame with vr-mode-ui disabled (vr-mode-ui="enabled: false").
       You can call render_creative_png when useful to quickly preview and improve your output.
+
+      The local design skills below are mandatory constraints.
+      Before returning final files, internally run a compliance check against these skills.
+      If any skill rule is not satisfied, keep refining and do not finalize.
+      Use only typography families listed in the style guide.
+      Use only hex colors listed in the style guide primary/secondary palettes.
+      Follow the local design skills below as mandatory constraints for layout, color, typography,
+      hierarchy, animation, and interaction decisions:
+      ${localDesignSkillGuidance}
     `.trim(),
     messages,
     model: 'claude-opus-4-6',
@@ -412,8 +623,22 @@ while (true) {
 
   if (creativeCodeResponse.stop_reason !== 'tool_use') {
     if (creativeCodeResponse.parsed_output !== null && creativeCodeResponse.parsed_output.length > 0) {
-      codeFileList = creativeCodeResponse.parsed_output;
-      break;
+      const complianceCheck = validateCreativeSkillCompliance(creativeCodeResponse.parsed_output, prunedStyleGuide);
+      if (complianceCheck.ok) {
+        codeFileList = creativeCodeResponse.parsed_output;
+        break;
+      }
+
+      structuredOutputRetryCount += 1;
+      if (structuredOutputRetryCount > maxStructuredOutputRetries) {
+        throw new Error(`AI output failed skill compliance checks: ${complianceCheck.issues.join(' | ')}`);
+      }
+
+      messages.push({
+        role: 'user',
+        content: `Your previous output is not compliant with mandatory skills/style-guide constraints: ${complianceCheck.issues.join(' ; ')}. Regenerate all files and fix every issue.`
+      });
+      continue;
     }
 
     structuredOutputRetryCount += 1;

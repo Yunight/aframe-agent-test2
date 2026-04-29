@@ -1,5 +1,5 @@
 import { join, basename } from 'node:path';
-import { mkdirSync, createWriteStream, writeFileSync } from 'node:fs';
+import { mkdirSync, createWriteStream, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { randomUUID } from 'node:crypto';
@@ -14,6 +14,38 @@ import { z } from 'zod';
 const contextPrompt = `
   The brand is Parkside (by Lidl) and the context is spring and summer DIYers.
 `.trim();
+
+const skillFiles = [
+  '.claude/.skills/ui-design/commands/color-palette.md',
+  '.claude/.skills/ui-design/commands/type-system.md',
+  '.claude/.skills/ui-design/skills/color-system/SKILL.md',
+  '.claude/.skills/ui-design/skills/dark-mode-design/SKILL.md',
+  '.claude/.skills/ui-design/skills/typography-scale/SKILL.md',
+  '.claude/.skills/ui-design/skills/visual-hierarchy/SKILL.md'
+] as const;
+
+function loadSkillGuidance(): string {
+  const rootDir = join(import.meta.dirname, '..');
+  const loadedSkills = skillFiles
+    .map((relativePath) => {
+      const absolutePath = join(rootDir, relativePath);
+
+      if (!existsSync(absolutePath)) {
+        console.warn(`[skills] Missing skill file: ${relativePath}`);
+        return null;
+      }
+
+      const content = readFileSync(absolutePath, 'utf8').trim();
+      return `### ${relativePath}\n${content}`;
+    })
+    .filter((value): value is string => value !== null);
+
+  if (loadedSkills.length === 0) {
+    throw new Error('No local skill files were found in .claude/.skills.');
+  }
+
+  return loadedSkills.join('\n\n');
+}
 
 function sanitizeFilename (name: string): string {
   return name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 200);
@@ -78,6 +110,7 @@ if (anthropicApiKey === undefined || anthropicApiKey.trim().length === 0) {
 const anthropicClient = new Anthropic({
   apiKey: anthropicApiKey
 });
+const localSkillGuidance = loadSkillGuidance();
 
 console.log('Generating style guide ...');
 
@@ -97,6 +130,11 @@ const styleGuideStream = await anthropicClient.messages.stream({
     Find at least four versions of the logo (light theme / dark theme and with brand name / without brand name).
     Find at least four product pictures (light theme / dark theme and a few size and compositions variations).
     Make sure that both the logo and the product pictures have a transparent background.
+
+    The local skills below are mandatory constraints.
+    Before returning final JSON, internally run a compliance check against these skills.
+    If any skill rule is not satisfied, keep searching and refining, and do not finalize yet.
+    ${localSkillGuidance}
   `.trim(),
   messages: [{
     role: 'user',

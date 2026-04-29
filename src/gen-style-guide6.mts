@@ -1,5 +1,5 @@
 import { join, basename } from 'node:path';
-import { mkdirSync, createWriteStream, writeFileSync } from 'node:fs';
+import { mkdirSync, createWriteStream, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { randomUUID } from 'node:crypto';
@@ -40,8 +40,40 @@ interface BraveImageSearchResponse {
 }
 
 const contextPrompt = `
-  The brand is Parc Asterix and the context is the upcoming Parc Asterix 2026 summer season.
+  The brand Spiderman and the context is the upcoming Spiderman movie.
 `.trim();
+
+const skillFiles = [
+  '.claude/.skills/ui-design/commands/color-palette.md',
+  '.claude/.skills/ui-design/commands/type-system.md',
+  '.claude/.skills/ui-design/skills/color-system/SKILL.md',
+  '.claude/.skills/ui-design/skills/dark-mode-design/SKILL.md',
+  '.claude/.skills/ui-design/skills/typography-scale/SKILL.md',
+  '.claude/.skills/ui-design/skills/visual-hierarchy/SKILL.md'
+] as const;
+
+function loadSkillGuidance (): string {
+  const rootDir = join(import.meta.dirname, '..');
+  const loadedSkills = skillFiles
+    .map((relativePath) => {
+      const absolutePath = join(rootDir, relativePath);
+
+      if (!existsSync(absolutePath)) {
+        console.warn(`[skills] Missing skill file: ${relativePath}`);
+        return null;
+      }
+
+      const content = readFileSync(absolutePath, 'utf8').trim();
+      return `### ${relativePath}\n${content}`;
+    })
+    .filter((value): value is string => value !== null);
+
+  if (loadedSkills.length === 0) {
+    throw new Error('No local skill files were found in .claude/.skills.');
+  }
+
+  return loadedSkills.join('\n\n');
+}
 
 function sanitizeFilename (name: string): string {
   return name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 200);
@@ -140,6 +172,7 @@ const messages: Anthropic.Messages.MessageParam[] = [{
   content: contextPrompt
 }];
 let finalMessageContent = null;
+const localSkillGuidance = loadSkillGuidance();
 
 let i = 0;
 
@@ -158,13 +191,20 @@ while (true) {
       Make sure to understand who the company or brand is and what the context is.
       If a product name or category is specified analyse the problem with it in mind.
 
-      When specifying URLs, always check that they exist and that they are images (JPG, PNG, WEBP, GIF), filetype must be one of the following: JPG, PNG, WEBP, GIF, the logo should always be a transparent PNG file.
+      When specifying URLs, always check that they exist and that they are images (JPG, PNG, WEBP, GIF), filetype must be one of the following: JPG, PNG, WEBP, GIF, the logo should always be a transparent PNG file, even if the filename ends with .png you have to check that it is a transparent PNG file.
+      the logo should always be a transparent PNG file.
+
       When specifying colors, always check that the color exists and matches the one described in the official sources.
 
       Find at least four versions of the logo (light theme / dark theme and with brand name / without brand name).
       Find at least four product pictures (light theme / dark theme and a few size and compositions variations).
 
       Search for images using the Google Image Search tool.
+
+      The local skills below are mandatory constraints.
+      Before returning final JSON, internally run a compliance check against these skills.
+      If any skill rule is not satisfied, keep searching and refining, and do not finalize yet.
+      ${localSkillGuidance}
     `.trim(),
     messages,
     model: 'claude-opus-4-6',
