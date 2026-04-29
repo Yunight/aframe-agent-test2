@@ -1,0 +1,83 @@
+{
+  "companyName": "Pixar Animation Studios (Walt Disney Pictures)",
+  "companyContext": "Pixar Animation Studios is an American computer animation studio known for producing critically and commercially successful animated feature films. A subsidiary of Walt Disney Studios, Pixar has created iconic franchises including Toy Story, Finding Nemo, The Incredibles, and Inside Out. Toy Story 5 is produced by Pixar and distributed by Walt Disney Studios Motion Pictures.",
+  "companyURL": "https://www.pixar.com/",
+  "brandName": "Toy Story 5",
+  "brandContext": "Toy Story 5 is the fifth main installment in the Toy Story franchise, directed by Andrew Stanton and co-directed by Kenna Harris. The film explores the theme of 'Toy meets Tech' — Buzz, Woody, Jessie and the rest of the gang face their biggest challenge yet when Bonnie receives a Lilypad tablet and becomes obsessed with technology, threatening traditional playtime. The film releases exclusively in theaters on June 19, 2026.",
+  "brandURL": "https://movies.disney.com/toy-story-5",
+  "logoFileUrls": [
+    "https://www.pngmart.com/files/23/Toy-Story-Logo-PNG-File.png",
+    "https://www.pngmart.com/files/23/Toy-Story-Logo-PNG-Isolated-HD.png",
+    "https://www.pngmart.com/files/23/Toy-Story-Logo-PNG-Image.png",
+    "https://www.pngall.com/wp-content/uploads/5/Toy-Story-Logo.png",
+    "https://www.freepnglogos.com/uploads/toy-story-png/toy-story-logo-pixar-hd-transparent-png-31.png"
+  ],
+  "productName": "Toy Story 5 (2026 Theatrical Film)",
+  "productPictureUrls": [
+    "https://lumiere-a.akamaihd.net/v1/images/g_movies_toystory5_still_5_61714e5f.jpeg?region=0,0,1300,730",
+    "https://lumiere-a.akamaihd.net/v1/images/g_movies_toystory5_still_3_52ea0cb0.jpeg?region=0,0,1300,730",
+    "https://lumiere-a.akamaihd.net/v1/images/g_movies_toystory5_still_4_bfeeaedc.jpeg?region=0,0,1300,730",
+    "https://lumiere-a.akamaihd.net/v1/images/g_disneymovies_toystory5_6_b89f2798.jpeg?region=0,0,1300,730",
+    "https://lumiere-a.akamaihd.net/v1/images/g_disneymovies_toystory5_7_2ba88af6.jpeg?region=0,0,1300,730",
+    "http://www.impawards.com/2026/posters/toy_story_five.jpg",
+    "http://www.impawards.com/2026/posters/toy_story_five_ver2.jpg"
+  ],
+  "primaryColorPalette": [
+    "FFEE15",
+    "1A48A0",
+    "F1060B",
+    "FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "7CC1E9",
+    "4B9E3E",
+    "864F34",
+    "8B45A6",
+    "F9D445",
+    "121212",
+    "E0E0E0",
+    "1E1E2E"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Eagle Bold",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Logo title lettering ('TOY' wordmark). Custom hand-drawn heavyweight sans-serif used for the franchise's primary display text. Characters feature playful tilted angles and thick blue outlines. Also used for the number '5'."
+    },
+    {
+      "fontFamily": "Gill Sans Ultra Bold",
+      "fontWeight": 800,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Logo subtitle ('STORY' text on red banner) and the numeric sequel designation. Wide-tracked, geometric ultra-bold uppercase characters placed on the signature red rectangular banner."
+    },
+    {
+      "fontFamily": "Gill Sans Bold",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Supporting marketing text, taglines (e.g., 'Toy meets Tech', 'Only in theaters June 19'), subheadings, and body copy across promotional materials and press releases."
+    },
+    {
+      "fontFamily": "Gill Sans",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body text for long-form content, descriptions, credits, and secondary informational copy on marketing collateral, websites, and press kits."
+    },
+    {
+      "fontFamily": "Gill Sans",
+      "fontWeight": 600,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Section headings, call-to-action buttons, navigation labels, and emphasized inline text across digital and print campaign materials."
+    }
+  ],
+  "brandVision": "Toy Story 5 continues the franchise's legacy of exploring the emotional lives of toys through the lens of modern childhood. The film's central theme, 'Toy meets Tech,' addresses the timely cultural tension between traditional play and screen-based entertainment. Directed by franchise veteran Andrew Stanton, the film aims to deliver humor, heart, and a nostalgic-yet-timely adventure that resonates with both longtime fans and a new generation of audiences. With Jessie taking the leadership role and Woody returning for an anticipated reunion, the film charts new territory while honoring the franchise's 30-year heritage of storytelling excellence.",
+  "brandValues": "Friendship and loyalty — the enduring bonds between toys and the children they love. Imagination and play — championing the irreplaceable value of creative, hands-on childhood play over passive screen time. Resilience and adaptation — showing that legacy and tradition can coexist with modern change. Inclusivity and teamwork — celebrating diverse characters who work together to overcome challenges. Heart and humor — delivering emotionally resonant stories wrapped in joyful, family-friendly entertainment that speaks to all ages. The Toy Story franchise stands as Pixar's flagship property and a symbol of innovation, quality animation, and timeless storytelling."
+}

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=320, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Super Mario Galaxy Movie</title>
+  <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{
+      width:320px;
+      height:480px;
+      overflow:hidden;
+      background:#091D64;
+      font-family:'Montserrat';
+    }
+    .ad-wrap{
+      position:relative;
+      width:320px;
+      height:480px;
+      overflow:hidden;
+    }
+    .ad-wrap a-scene{
+      position:absolute;
+      top:0;
+      left:0;
+    }
+    .grad-top{
+      position:absolute;top:0;left:0;
+      width:320px;height:115px;
+      z-index:8;pointer-events:none;
+      background:linear-gradient(to bottom,rgba(9,29,100,0.94) 0%,rgba(9,29,100,0.35) 65%,transparent 100%);
+    }
+    .grad-bottom{
+      position:absolute;bottom:0;left:0;
+      width:320px;height:148px;
+      z-index:8;pointer-events:none;
+      background:linear-gradient(to top,rgba(9,29,100,0.98) 0%,rgba(9,29,100,0.65) 48%,transparent 100%);
+    }
+    .ui{
+      position:absolute;top:0;left:0;
+      width:320px;height:480px;
+      pointer-events:none;z-index:10;
+      display:flex;flex-direction:column;
+      align-items:center;justify-content:space-between;
+    }
+    .ui-top{
+      padding-top:6px;
+      text-align:center;
+    }
+    .logo{
+      width:188px;height:auto;
+      filter:drop-shadow(0 2px 16px rgba(204,210,253,0.32));
+      animation:floatLogo 3.5s ease-in-out infinite;
+    }
+    @keyframes floatLogo{
+      0%,100%{transform:translateY(0) scale(1)}
+      50%{transform:translateY(-5px) scale(1.015)}
+    }
+    .ui-bottom{
+      padding-bottom:14px;
+      text-align:center;
+    }
+    .brand{
+      font-family:'Montserrat';
+      font-weight:500;
+      font-size:9px;
+      color:#CCD2FD;
+      letter-spacing:2.5px;
+      text-transform:uppercase;
+      opacity:0.75;
+      margin-bottom:3px;
+    }
+    .tagline{
+      font-family:'Montserrat';
+      font-weight:700;
+      font-size:15px;
+      color:#FFE93F;
+      text-transform:uppercase;
+      letter-spacing:1.5px;
+      line-height:1.25;
+      margin-bottom:10px;
+      animation:glowTag 3s ease-in-out infinite;
+    }
+    @keyframes glowTag{
+      0%,100%{text-shadow:0 0 12px rgba(255,233,63,0.3),0 1px 3px rgba(0,0,0,0.6)}
+      50%{text-shadow:0 0 22px rgba(255,233,63,0.55),0 0 40px rgba(255,233,63,0.15),0 1px 3px rgba(0,0,0,0.6)}
+    }
+    .cta{
+      pointer-events:auto;
+      font-family:'Montserrat';
+      font-weight:700;
+      font-size:12px;
+      color:#FFFFFF;
+      background:linear-gradient(135deg,#E62310,#F73A3A);
+      border:2px solid rgba(255,233,63,0.8);
+      border-radius:25px;
+      padding:10px 24px;
+      cursor:pointer;
+      text-transform:uppercase;
+      letter-spacing:0.8px;
+      box-shadow:0 4px 18px rgba(230,35,16,0.5);
+      animation:btnPulse 2.5s ease-in-out infinite;
+      transition:transform 0.15s ease;
+    }
+    .cta:active{
+      transform:scale(1.06);
+    }
+    @keyframes btnPulse{
+      0%,100%{box-shadow:0 4px 18px rgba(230,35,16,0.5);border-color:rgba(255,233,63,0.7)}
+      50%{box-shadow:0 4px 30px rgba(230,35,16,0.7),0 0 50px rgba(230,35,16,0.15);border-color:rgba(255,233,63,1)}
+    }
+    .hint{
+      font-family:'Montserrat';
+      font-weight:400;
+      font-size:9px;
+      color:#CCD2FD;
+      margin-top:7px;
+      letter-spacing:1px;
+      animation:hintFade 3.5s ease-in-out infinite;
+    }
+    @keyframes hintFade{
+      0%,100%{opacity:0.3}
+      50%{opacity:0.75}
+    }
+  </style>
+</head>
+<body>
+  <div class="ad-wrap">
+    <a-scene embedded vr-mode-ui="enabled: false" loading-screen="enabled: false" renderer="antialias: true; alpha: false; sortObjects: true">
+      <a-assets timeout="10000">
+        <img id="p1" src="super_mario_galaxy_movie_ver2.jpg" crossorigin="anonymous">
+        <img id="p2" src="71cMkD4EIsL.jpg" crossorigin="anonymous">
+        <img id="p3" src="71wUuwonruL.jpg" crossorigin="anonymous">
+        <img id="p4" src="719uo8RCA1L.jpg" crossorigin="anonymous">
+        <img id="p5" src="812z8Iqe1oL.jpg" crossorigin="anonymous">
+      </a-assets>
+      <a-sky color="#091D64"></a-sky>
+      <a-entity star-field></a-entity>
+      <a-entity star-bits></a-entity>
+      <a-entity id="carousel" position="0 -0.1 0" poster-carousel></a-entity>
+      <a-light type="ambient" color="#FFFFFF" intensity="0.8"></a-light>
+      <a-light type="point" position="0 3 5" color="#CCD2FD" intensity="0.35"></a-light>
+      <a-entity camera position="0 0 4.5" fov="52" look-controls="enabled: false" wasd-controls="enabled: false"></a-entity>
+    </a-scene>
+    <div class="grad-top"></div>
+    <div class="grad-bottom"></div>
+    <div class="ui">
+      <div class="ui-top">
+        <img class="logo" src="tt.png" alt="Super Mario Galaxy Movie">
+      </div>
+      <div class="ui-bottom">
+        <div class="brand">Nintendo × Illumination</div>
+        <div class="tagline">Au cinéma maintenant !</div>
+        <button class="cta">★ Réservez vos places</button>
+        <div class="hint">↔ Glissez pour explorer</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    /* ===== STAR FIELD ===== */
+    AFRAME.registerComponent('star-field',{
+      init:function(){
+        this.items=[];
+        var cols=['#FFFFFF','#FFFFFF','#CCD2FD','#FFE93F'];
+        for(var i=0;i<50;i++){
+          var s=document.createElement('a-sphere');
+          var x=(Math.random()-0.5)*10;
+          var y=(Math.random()-0.5)*12;
+          var z=-1-Math.random()*7;
+          var r=Math.random()*0.02+0.006;
+          var c=cols[Math.floor(Math.random()*cols.length)];
+          s.setAttribute('position',x+' '+y+' '+z);
+          s.setAttribute('radius',r);
+          s.setAttribute('material','shader:flat;color:'+c+';transparent:true;opacity:0.5');
+          this.el.appendChild(s);
+          this.items.push({el:s,sp:Math.random()*2+0.5,off:Math.random()*6.283,m:null});
+        }
+      },
+      tick:function(t){
+        for(var i=0;i<this.items.length;i++){
+          var d=this.items[i];
+          if(!d.m) d.m=d.el.getObject3D('mesh');
+          if(d.m&&d.m.material) d.m.material.opacity=0.1+0.9*Math.abs(Math.sin(t*0.001*d.sp+d.off));
+        }
+      }
+    });
+
+    /* ===== STAR BITS ===== */
+    AFRAME.registerComponent('star-bits',{
+      init:function(){
+        this.items=[];
+        var c=['#E62310','#009BD9','#FCCF00','#44AF35','#F73A3A','#4FAA4B'];
+        for(var i=0;i<10;i++){
+          var b=document.createElement('a-entity');
+          var x=(Math.random()-0.5)*7,y=(Math.random()-0.5)*6,z=-0.5-Math.random()*4;
+          b.setAttribute('geometry','primitive:octahedron;radius:0.04');
+          b.setAttribute('material','shader:flat;color:'+c[i%c.length]+';transparent:true;opacity:0.75');
+          b.setAttribute('position',x+' '+y+' '+z);
+          this.el.appendChild(b);
+          this.items.push({el:b,sy:y,s1:Math.random()*0.7+0.3,s2:Math.random()*2+0.8,r:Math.random()*0.35+0.1,o:Math.random()*6.283});
+        }
+      },
+      tick:function(t){
+        var s=t*0.001;
+        for(var i=0;i<this.items.length;i++){
+          var b=this.items[i],o=b.el.object3D;
+          o.position.y=b.sy+Math.sin(s*b.s1+b.o)*b.r;
+          o.rotation.y=s*b.s2;
+          o.rotation.x=s*b.s2*0.6;
+        }
+      }
+    });
+
+    /* ===== POSTER CAROUSEL ===== */
+    AFRAME.registerComponent('poster-carousel',{
+      init:function(){
+        var ids=['#p1','#p2','#p3','#p4','#p5'],R=1.5,N=ids.length;
+        for(var i=0;i<N;i++){
+          var a=(i/N)*Math.PI*2;
+          var x=Math.sin(a)*R,z=Math.cos(a)*R,ry=-a*180/Math.PI;
+          var slot=document.createElement('a-entity');
+          slot.setAttribute('position',x.toFixed(3)+' 0 '+z.toFixed(3));
+          slot.setAttribute('rotation','0 '+ry.toFixed(1)+' 0');
+          var g=document.createElement('a-plane');
+          g.setAttribute('width','1.0');
+          g.setAttribute('height','1.55');
+          g.setAttribute('position','0 0 -0.012');
+          g.setAttribute('material','shader:flat;color:#CCD2FD;opacity:0.1;transparent:true;side:double');
+          slot.appendChild(g);
+          var p=document.createElement('a-plane');
+          p.setAttribute('src',ids[i]);
+          p.setAttribute('width','0.92');
+          p.setAttribute('height','1.45');
+          p.setAttribute('material','shader:flat;side:double');
+          slot.appendChild(p);
+          this.el.appendChild(slot);
+        }
+        this.ang=0;this.vel=0;this.drag=false;this.lx=0;this.idle=0;this._b=false;
+        var self=this;
+        this.el.sceneEl.addEventListener('loaded',function(){self.bindCanvas();});
+        if(this.el.sceneEl.hasLoaded) this.bindCanvas();
+      },
+      bindCanvas:function(){
+        if(this._b)return;
+        var c=this.el.sceneEl.canvas;
+        if(!c)return;
+        this._b=true;
+        var self=this;
+        c.addEventListener('mousedown',function(e){self.drag=true;self.lx=e.clientX;self.vel=0;self.idle=0;});
+        c.addEventListener('mousemove',function(e){if(!self.drag)return;var d=e.clientX-self.lx;self.vel=d*0.35;self.ang+=d*0.35;self.lx=e.clientX;});
+        c.addEventListener('mouseup',function(){self.drag=false;});
+        c.addEventListener('mouseleave',function(){self.drag=false;});
+        c.addEventListener('touchstart',function(e){e.preventDefault();self.drag=true;self.lx=e.touches[0].clientX;self.vel=0;self.idle=0;},{passive:false});
+        c.addEventListener('touchmove',function(e){e.preventDefault();if(!self.drag)return;var d=e.touches[0].clientX-self.lx;self.vel=d*0.35;self.ang+=d*0.35;self.lx=e.touches[0].clientX;},{passive:false});
+        c.addEventListener('touchend',function(){self.drag=false;});
+      },
+      tick:function(t,dt){
+        if(!this.drag){
+          if(Math.abs(this.vel)>0.03){this.ang+=this.vel;this.vel*=0.95;this.idle=0;}
+          else{this.vel=0;this.idle+=dt;if(this.idle>1500)this.ang+=0.12*(dt/16.67);}
+        }
+        this.el.object3D.rotation.y=this.ang*Math.PI/180;
+        this.el.object3D.position.y=-0.1+Math.sin(t*0.0008)*0.07;
+      }
+    });
+  </script>
+</body>
+</html>
