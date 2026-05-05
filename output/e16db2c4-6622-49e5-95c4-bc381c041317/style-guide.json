@@ -1,0 +1,87 @@
+{
+  "companyName": "Pixar Animation Studios / Walt Disney Pictures",
+  "companyContext": "Pixar Animation Studios is an American animation studio known for its pioneering CGI-animated feature films. A subsidiary of The Walt Disney Company since 2006, Pixar produces critically acclaimed animated movies distributed by Walt Disney Studios Motion Pictures. Toy Story (1995) was Pixar's debut feature and the first fully computer-animated feature film.",
+  "companyURL": "https://www.pixar.com",
+  "brandName": "Toy Story 5",
+  "brandContext": "Toy Story 5 is Disney and Pixar's fifth mainline installment of the iconic Toy Story franchise, releasing exclusively in theaters on June 19, 2026. Directed by Academy Award winner Andrew Stanton, the film's tagline is 'Toy meets Tech.' The story follows Buzz, Woody, Jessie and the gang as they face a new threat — Lilypad, a tablet device with her own disruptive ideas about what's best for their kid, Bonnie. Featuring voices of Tom Hanks, Tim Allen, Joan Cusack, Greta Lee, Conan O'Brien, and many more.",
+  "brandURL": "https://movies.disney.com/toy-story-5",
+  "logoFileUrls": [
+    "https://www.pngmart.com/files/23/Toy-Story-Logo-PNG-File.png",
+    "https://www.freepnglogos.com/uploads/toy-story-png/toy-story-movie-logo-png-28.png",
+    "https://images.seeklogo.com/logo-png/23/2/toy-story-3-logo-png_seeklogo-235990.png",
+    "https://lumiere-a.akamaihd.net/v1/images/b_toystory_disneyplus_marketingbanner_logo_desktop_v2_c352ec6e.png?region=0,0,600,405"
+  ],
+  "productName": "Toy Story 5 (2026 Theatrical Film)",
+  "productPictureUrls": [
+    "https://lumiere-a.akamaihd.net/v1/images/g_disneymovies_toystory5_6_b89f2798.jpeg?region=0,0,1300,730",
+    "https://lumiere-a.akamaihd.net/v1/images/image_55e1780b.png?region=0,0,1920,1080",
+    "http://www.impawards.com/2026/posters/toy_story_five.jpg",
+    "http://www.impawards.com/2026/posters/toy_story_five_ver2.jpg",
+    "https://lumiere-a.akamaihd.net/v1/images/pp_toystoryfranchiserefresh_herobanner_mobile_0ede7758.jpeg?region=0,0,640,460"
+  ],
+  "primaryColorPalette": [
+    "FFEE15",
+    "1A48A0",
+    "F1060B",
+    "FFFFFF",
+    "004190"
+  ],
+  "secondaryColorPalette": [
+    "F7C026",
+    "AD251B",
+    "87539B",
+    "3170A9",
+    "68BD56",
+    "864F34",
+    "121212",
+    "E0E0E0"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Custom (Eagle Bold / Agent Red style)",
+      "fontWeight": 800,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Brand logo — 'TOY' lettering. Custom hand-drawn playful block typeface with thick strokes, rotated characters, and yellow fill (#FFEE15) with a blue outline (#1A48A0). Used for the primary wordmark across all franchise touchpoints."
+    },
+    {
+      "fontFamily": "Gill Sans Ultra Bold",
+      "fontWeight": 800,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Brand logo — 'STORY' lettering. Set inside the red banner (#F1060B) with yellow fill (#FFEE15). Heavy geometric sans-serif with clean contours and straight cuts. Used for the secondary wordmark across all franchise materials."
+    },
+    {
+      "fontFamily": "Gill Sans",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Heading text for promotional materials, taglines such as 'IT'S ON.' and 'TOY MEETS TECH', poster titles, and key marketing messaging. Size range: 32–64px display, line-height 1.2."
+    },
+    {
+      "fontFamily": "Gill Sans",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body text for descriptions, synopses, credits, marketing copy, and legal text. Size range: 14–18px body, line-height 1.5. Minimum 16px for digital readability."
+    },
+    {
+      "fontFamily": "Gill Sans",
+      "fontWeight": 600,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Subheadings, call-to-actions (e.g. 'Only In Theaters June 19'), section titles, and UI elements. Size range: 20–28px, line-height 1.3."
+    },
+    {
+      "fontFamily": "Gill Sans",
+      "fontWeight": 300,
+      "fontEffect": [],
+      "fontUses": "Captions, credits, fine print, legal disclaimers, and metadata. Size range: 12–14px, line-height 1.6, letter-spacing 0.02em."
+    }
+  ],
+  "brandVision": "'Toy meets Tech' — Toy Story 5 explores the intersection of traditional play and modern technology, telling the story of beloved toys facing obsolescence in a digitally dominated world. The film champions the enduring power of imagination, physical play, and genuine emotional connection in the face of screen-obsessed culture. Directed by Andrew Stanton, the vision extends Pixar's storytelling philosophy: every character, toy or tech, ultimately wants to be there for their child. The brand aims to resonate across generations, speaking to parents who grew up with the franchise while connecting with today's children navigating a digital-first childhood.",
+  "brandValues": "Friendship & Loyalty — The core of the Toy Story franchise: toys (and people) showing up for one another no matter what. Imagination & Play — Championing the irreplaceable value of creative, screen-free play and the joy of childhood imagination. Emotional Connection — Pixar's hallmark ability to forge deep emotional bonds between characters and audiences, making viewers laugh and cry. Inclusivity & Belonging — Every toy matters; every character finds their purpose and place, regardless of age, type, or origin. Resilience & Adaptability — Facing new challenges (technology, change, growing up) with courage, humor, and heart. Innovation in Storytelling — Pioneering animation technology and narrative craft to deliver stories that are surprising, meaningful, and timeless."
+}

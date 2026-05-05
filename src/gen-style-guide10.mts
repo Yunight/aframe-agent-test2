@@ -208,6 +208,11 @@ if (anthropicApiKey === undefined || anthropicApiKey.trim().length === 0) {
 const anthropicClient = new Anthropic({
   apiKey: anthropicApiKey
 });
+const cliArguments = process.argv.slice(2);
+if (cliArguments.length > 0) {
+  throw new Error(`Unknown argument "${cliArguments[0]}". This script no longer supports optional asset download flags.`);
+}
+
 const messages: Anthropic.Messages.MessageParam[] = [{
   role: 'user',
   content: contextPrompt
@@ -338,13 +343,22 @@ if (finalMessageContent === null) {
 }
 
 const directoryUuid = randomUUID();
-const directoryPath = join(import.meta.dirname, '..', 'output', directoryUuid);
+const generatorScriptName = basename(import.meta.filename, extname(import.meta.filename));
+const outputDirectoryName = `${generatorScriptName}-${directoryUuid}`;
+const directoryPath = join(import.meta.dirname, '..', 'output', outputDirectoryName);
 
 console.log(`Output directory path: ${directoryPath}`);
+console.log('Download assets: required');
 
 mkdirSync(directoryPath);
 
-for (const fileType of [ 'logos', 'products' ]) {
+const downloadedAssetCounts: Record<'logos' | 'products', number> = {
+  logos: 0,
+  products: 0
+};
+const failedAssetDownloads: Array<{ fileType: 'logos' | 'products'; url: string; reason: string }> = [];
+
+for (const fileType of [ 'logos', 'products' ] as const) {
   const fileUrls = (fileType === 'logos'
     ? finalMessageContent?.logoFileUrls
     : fileType === 'products'
@@ -373,12 +387,36 @@ for (const fileType of [ 'logos', 'products' ]) {
 
       console.log(`Downloading ${filePath} ...`);
       await downloadFileToFileSystem(fileUrl, filePath);
+      downloadedAssetCounts[fileType] += 1;
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error(err);
+        failedAssetDownloads.push({
+          fileType,
+          url: fileUrl,
+          reason: err.message
+        });
       }
     }
   }
+}
+
+const minimumAssetsPerType = 1;
+const missingTypes = (Object.entries(downloadedAssetCounts) as Array<[ 'logos' | 'products', number ]>)
+  .filter(([, count]) => count < minimumAssetsPerType)
+  .map(([type, count]) => `${type}: ${count}/${minimumAssetsPerType}`);
+
+if (missingTypes.length > 0) {
+  const failedList = failedAssetDownloads.length === 0
+    ? 'none'
+    : failedAssetDownloads
+      .map((entry) => `${entry.fileType} | ${entry.url} | ${entry.reason}`)
+      .join('\n');
+  throw new Error(
+    `Asset download requirements not met (${missingTypes.join(', ')}).\n` +
+    `Downloaded counts: logos=${downloadedAssetCounts.logos}, products=${downloadedAssetCounts.products}\n` +
+    `Failed downloads:\n${failedList}`
+  );
 }
 
 const styleGuideFilePath = join(directoryPath, 'style-guide.json');

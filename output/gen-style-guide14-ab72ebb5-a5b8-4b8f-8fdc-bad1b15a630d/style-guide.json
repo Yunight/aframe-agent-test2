@@ -1,0 +1,68 @@
+{
+  "companyName": "Warner Bros. Discovery",
+  "companyContext": "Warner Bros. Discovery is an American multinational mass media and entertainment conglomerate. It owns HBO, the premium cable and streaming network that produces and distributes House of the Dragon. The company operates across television, film, streaming, and gaming, and its Streaming & Studios division houses HBO, HBO Max, Warner Bros. Television, Warner Bros. Motion Picture Group, and DC Studios.",
+  "companyURL": "https://www.wbd.com/",
+  "brandName": "House of the Dragon",
+  "brandContext": "House of the Dragon is an Emmy-winning HBO fantasy drama television series created by George R.R. Martin and Ryan Condal, set roughly 200 years before the events of Game of Thrones. Based on Martin's novel Fire & Blood, it chronicles the Targaryen civil war known as the Dance of the Dragons. Season 3 premieres June 21, 2026, on HBO and HBO Max, with eight weekly episodes running through August 9, 2026. In Season 3 the factions of House Targaryen engage in all-out war as Rhaenyra presses her claim with an army of dragons, Aegon II flees the capital, and new players enter the fray.",
+  "brandURL": "https://www.hbo.com/house-of-the-dragon",
+  "logoFileUrls": [
+    "https://cdn.pnggallery.com/wp-content/uploads/house-of-the-dragon-logo-01.png",
+    "https://cdn.pnggallery.com/wp-content/uploads/house-of-the-dragon-logo-02.png",
+    "https://images.ctfassets.net/g4cf1q74w7m6/7lPtFROzwpQy9McX6ZOrEA/31143f81c4a85dd5183f2608f06a7ba5/hbo_houseofdragon_logo_v034__00000__1.png",
+    "https://images.ctfassets.net/g4cf1q74w7m6/66mhleBgpMAK0H2YNBn9D6/c5e0fc51a3adde0492a94464a54a3a48/hbo_houseofdragon_logo_v037__00000_.png",
+    "https://images.ctfassets.net/g4cf1q74w7m6/74YDTC6xn2NRzNsegVLC5t/98126be99055e61618cf533d830bafd9/02_hbo_houseofdragon_logo_v040__00000_.png"
+  ],
+  "productName": "House of the Dragon Season 3",
+  "productPictureUrls": [
+    "https://img.youtube.com/vi/i6w7O1kwuBk/maxresdefault.jpg",
+    "https://images-na.ssl-images-amazon.com/images/I/71mOWQcuxgL.jpg",
+    "https://cdn.mos.cms.futurecdn.net/kWcmUaH6yh7SxX7oy8undN.jpg",
+    "https://cdn.mos.cms.futurecdn.net/ptvYmXSf2wtEPHL8sS4rwi.jpg",
+    "https://comicbook.com/wp-content/uploads/sites/4/2026/01/House-of-the-Dragon-Season-3-Update-HBO-Happy-With-Show.jpg"
+  ],
+  "primaryColorPalette": [
+    "0C0C14",
+    "7C1009",
+    "C5A55A",
+    "480800"
+  ],
+  "secondaryColorPalette": [
+    "28251F",
+    "624226",
+    "927556",
+    "E5DCA9",
+    "D4D4D4"
+  ],
+  "typography": [
+    {
+      "fontFamily": "House of the Dragon",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Brand name, show title, and main title treatments. A modern blackletter typeface by Måns Grebäck with decorative fraktur initials and a condensed medieval look. Used in all hero placements and key art."
+    },
+    {
+      "fontFamily": "Trajan Pro",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Display headings, taglines, and marketing headlines. An all-caps Roman serif that evokes prestige and antiquity, commonly used in HBO's premium drama campaigns for sub-headings and promotional copy."
+    },
+    {
+      "fontFamily": "Gotham",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body text, UI elements, metadata, episode descriptions, and digital platform copy. A clean geometric sans-serif used across HBO and HBO Max for readability and modern accessibility."
+    },
+    {
+      "fontFamily": "Garamond Premier Pro",
+      "fontWeight": 400,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Editorial accent text, pull quotes, character names, and in-world narrative elements. An elegant Old Style serif that complements the medieval setting and provides a literary, classical tone."
+    }
+  ],
+  "brandVision": "House of the Dragon Season 3 aims to deliver the most epic and emotionally resonant chapter of the Dance of the Dragons, establishing itself as HBO's flagship summer 2026 tentpole. The season escalates the Targaryen civil war to its most devastating heights while deepening character complexity and moral ambiguity. The brand vision centers on premium, cinematic storytelling that rewards both existing fans and draws new audiences into the Game of Thrones universe, positioning it alongside A Knight of the Seven Kingdoms and the upcoming Aegon's Conquest film as pillars of an expanding franchise.",
+  "brandValues": "House of the Dragon stands for premium cinematic storytelling, complex moral landscapes, and epic world-building rooted in George R.R. Martin's rich literary legacy. It values narrative depth over spectacle alone — exploring themes of power, legacy, sacrifice, and the devastating human cost of war. The brand embodies HBO's commitment to prestige television: bold creative risks, top-tier production quality, diverse and compelling characters, and a willingness to challenge audiences. Fire and Blood — the Targaryen words — encapsulate the brand's fierce, unapologetic identity and the dramatic tension between beauty and destruction that defines the series."
+}

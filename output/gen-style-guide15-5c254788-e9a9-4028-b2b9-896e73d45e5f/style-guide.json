@@ -1,0 +1,73 @@
+{
+  "companyName": "IKEA (Inter IKEA Systems B.V.)",
+  "companyContext": "IKEA is a Swedish-founded multinational group that designs and sells ready-to-assemble furniture, home accessories, and furnishing products. Founded in 1943 by Ingvar Kamprad, it operates 422+ stores worldwide through a franchise system. IKEA is known for its commitment to democratic design — making well-designed, functional products accessible at low prices for as many people as possible.",
+  "companyURL": "https://www.ikea.com",
+  "brandName": "IKEA PS 2026",
+  "brandContext": "IKEA PS 2026 is the tenth edition of IKEA's experimental PS collection, first launched in 1995. After a nine-year hiatus (the last edition was 2017), the PS 2026 collection centres on playful functionality — useful, functional designs that do their job in the home while incorporating unexpected elements of playfulness. The 35-piece collection was designed and developed in Älmhult, Sweden, and was previewed at Milan Design Week in April 2026. Three flagship products were revealed: an air-filled inflatable easy chair (emerald green, designed by Mikael Axelsson), a solid-pine rocking bench (designed by Marta Krupińska), and a three-directional floor lamp available in chartreuse yellow, cobalt blue, and Bordeaux red (designed by Lex Pott). The full collection launches on May 14, 2026, following a global reveal at Democratic Design Days on May 13.",
+  "brandURL": "https://www.ikea.com/global/en/stories/design/ikea-ps-2026-collection/productName",
+  "logoFileUrls": [
+    "https://cdn.freebiesupply.com/logos/large/2x/ikea-logo-png-transparent.png",
+    "https://www.pngmart.com/files/22/Ikea-Logo-PNG-Photo.png",
+    "https://toppng.com/uploads/preview/ikea-black-vector-logo-download-free-11574103915elwexnaz3u.png",
+    "https://www.kindpng.com/picc/m/169-1691608_ikea-logo-white-png-transparent-png.png",
+    "https://www.edigitalagency.com.au/wp-content/uploads/IKEA-logo-png-black-white.png"
+  ],
+  "productName": "IKEA PS 2026 Collection (Inflatable Easy Chair, Rocking Bench, Three-Directional Floor Lamp)",
+  "productPictureUrls": [
+    "https://www.ikea.com/global/en/media/chair2_e95113c67d.jpg",
+    "https://www.ikea.com/global/en/media/PH_208894_0b9ed2a608.jpg",
+    "https://www.thenordroom.com/wp-content/uploads/2026/04/ikea-ps-collection-milan-design-week-2026-rocking-bench-nordroom.jpg",
+    "https://www.thenordroom.com/wp-content/uploads/2026/04/yellow-ikea-lamp-designed-by-lex-pott-milan-design-week-ikea-ps-collection-2026-nordroom.jpg",
+    "https://www.thenordroom.com/wp-content/uploads/2026/04/lex-pott-designed-flexible-colorful-floor-lamp-ikea-ps-collection-2026-nordroom.jpg",
+    "https://cdn.mos.cms.futurecdn.net/nm4YEj99BQSUGPowz8GFp9.jpg"
+  ],
+  "primaryColorPalette": [
+    "0051BA",
+    "FFDA1A",
+    "FFFFFF",
+    "111111",
+    "E0E0E0",
+    "F5F5F5"
+  ],
+  "secondaryColorPalette": [
+    "046A38",
+    "0047AB",
+    "722F37",
+    "E8D44D",
+    "C8A97E",
+    "333333",
+    "1A1A2E"
+  ],
+  "typography": [
+    {
+      "fontFamily": "IKEA Sans",
+      "fontWeight": 800,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Brand logo and wordmark. Custom typeface designed by Robin Nicholas, based on an extra-bold version of Futura with subtle refined serifs. Used exclusively for the IKEA logotype across all formats."
+    },
+    {
+      "fontFamily": "Noto IKEA",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Headings (H1–H3), sub-collection titles such as 'IKEA PS 2026', featured callouts, campaign headlines, and prominent UI labels. Use at 24–48px for display and heading hierarchy."
+    },
+    {
+      "fontFamily": "Noto IKEA",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Subheadings, navigation labels, product names, card titles, and medium-emphasis interface elements. Use at 18–24px for clear secondary hierarchy."
+    },
+    {
+      "fontFamily": "Noto IKEA",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions, long-form editorial content, UI text, form labels, and captions. Use at 14–16px with 1.5 line-height for optimal readability across all platforms and languages (supports 800+ languages via Google/Monotype Noto family)."
+    }
+  ],
+  "brandVision": "IKEA PS 2026 carries forward the original 1995 PS mission of Democratic Design — challenging the design world's exclusivity by making modern, experimental Scandinavian design accessible and affordable to everyone. This tenth edition focuses on playful functionality: creating simple, useful things that bring joy to everyday living. The collection aspires to prove that great design can be fun, affordable, sustainable, and flat-packed, encouraging unexpected moments of delight and engagement in the home. As creative leader Maria O'Brian stated, the direction is about challenging convention and being playful while staying simple and creating interesting design.",
+  "brandValues": "Togetherness — We are strongest when we trust each other and have fun together. Caring for People and Planet — IKEA strives for positive social and environmental impact, using renewable materials and reducing waste (e.g., the PS 2026 inflatable chair minimises raw material use and avoids electronic waste by using a manual foot pump). Democratic Design — Good design, great function, at a low price for everyone; making progressive Scandinavian design accessible to the many. Playful Functionality — The PS 2026 collection embodies the belief that useful objects should also bring joy and surprise, encouraging spontaneous engagement. Innovation and Renewal — Constantly finding better ways, exemplified by decades of experimentation to perfect inflatable furniture. Cost-Consciousness — Reflected in the PS heritage where the price itself becomes the design statement. Simplicity — Designs reduced to their clearest possible form. Sustainability — Products designed for recyclability (e.g., the rocking bench uses reversed wood grain for strength without metal reinforcement, keeping it fully recyclable)."
+}

@@ -35,7 +35,22 @@ interface RenderCreativePngInput {
 interface AssetFile {
   fileName: string;
   filePath: string;
+  fileType: 'logos' | 'products';
 }
+function createAssetDescription(fileName: string, fileType: 'logos' | 'products'): string {
+  const baseName = fileName.replace(/\.[^.]+$/, '');
+  const keywordString = baseName
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const categoryLabel = fileType === 'logos' ? 'logo de marque' : 'visuel produit';
+  const usageHint = fileType === 'logos'
+    ? 'a utiliser en branding (header, badge, signature visuelle)'
+    : 'a utiliser comme visuel hero ou element de scene principal';
+
+  return `Description asset (${categoryLabel}): ${keywordString || baseName}. ${usageHint}.`;
+}
+
 
 interface RenderDefaults {
   devicePreset?: string;
@@ -45,6 +60,8 @@ interface RenderDefaults {
     deviceScaleFactor?: number;
   };
 }
+
+type AssetInputMode = 'base64' | 'url';
 
 const designSkillFiles = [
   '.claude/.skills/ui-design/commands/design-screen.md',
@@ -123,7 +140,8 @@ function extractFontFamiliesFromCss(content: string): Set<string> {
 
 function validateCreativeSkillCompliance(
   files: z.infer<typeof filesSchema>,
-  currentStyleGuide: Omit<StyleGuide, 'logoFileUrls' | 'productPictureUrls'>
+  currentStyleGuide: Omit<StyleGuide, 'logoFileUrls' | 'productPictureUrls'>,
+  assetFiles: AssetFile[]
 ): { ok: true } | { ok: false; issues: string[] } {
   const indexFile = files.find((file) => file.fileName.toLowerCase() === 'index.html');
   if (indexFile === undefined) {
@@ -162,6 +180,17 @@ function validateCreativeSkillCompliance(
     issues.push('Missing required A-Frame setting vr-mode-ui="enabled: false".');
   }
 
+  const logoAssets = assetFiles.filter((asset) => asset.fileType === 'logos');
+  const productAssets = assetFiles.filter((asset) => asset.fileType === 'products');
+  const hasLogoReference = logoAssets.some((asset) => htmlLower.includes(asset.fileName.toLowerCase()));
+  const hasProductReference = productAssets.some((asset) => htmlLower.includes(asset.fileName.toLowerCase()));
+  if (!hasLogoReference) {
+    issues.push('Missing at least one local logo asset reference in index.html.');
+  }
+  if (!hasProductReference) {
+    issues.push('Missing at least one local product asset reference in index.html.');
+  }
+
   if (issues.length > 0) {
     return { ok: false, issues };
   }
@@ -180,6 +209,7 @@ if (directoryUuid === undefined) {
 
 const cliArguments = process.argv.slice(3);
 const renderDefaults: RenderDefaults = {};
+let assetInputMode: AssetInputMode = 'url';
 
 for (let i = 0; i < cliArguments.length; i += 1) {
   const argument = cliArguments[i];
@@ -235,7 +265,20 @@ for (let i = 0; i < cliArguments.length; i += 1) {
     continue;
   }
 
-  throw new Error(`Unknown argument "${argument}". Allowed options: --device, --viewport, --dpr`);
+  if (argument === '--asset-input') {
+    const value = cliArguments[i + 1];
+    if (value === undefined || value.startsWith('--')) {
+      throw new Error('Missing value for --asset-input. Expected "base64" or "url".');
+    }
+    if (!contains([ 'base64', 'url' ] as const, value)) {
+      throw new Error(`Invalid --asset-input value "${value}". Allowed values: base64, url.`);
+    }
+    assetInputMode = value;
+    i += 1;
+    continue;
+  }
+
+  throw new Error(`Unknown argument "${argument}". Allowed options: --device, --viewport, --dpr, --asset-input`);
 }
 
 if (renderDefaults.devicePreset !== undefined && renderDefaults.viewport !== undefined) {
@@ -417,11 +460,12 @@ async function renderCreativePng(input: RenderCreativePngInput): Promise<{ outpu
 }
 
 console.log('Generating creative code ...');
+console.log(`Asset input mode: ${assetInputMode}`);
 
 const fileMessages: (Anthropic.ImageBlockParam | Anthropic.TextBlock)[] = [];
 const assetFiles: AssetFile[] = [];
 
-for (const fileType of [ 'logos', 'products' ]) {
+for (const fileType of [ 'logos', 'products' ] as const) {
   const subdirectoryPath = join(directoryPath, fileType);
   const fileList = readdirSync(subdirectoryPath);
 
@@ -432,8 +476,8 @@ for (const fileType of [ 'logos', 'products' ]) {
 
     const filePath = join(subdirectoryPath, fileName);
     const fileMimeType = mime.getType(fileName);
-    const fileContentBase64 = readFileSync(filePath).toString('base64');
     const { width, height } = await imageSizeFromFile(filePath);
+    const assetDescription = createAssetDescription(fileName, fileType);
 
     if (fileMimeType === null) {
       throw new Error(`Unable to determine MIME type for file ${fileName}`);
@@ -443,20 +487,30 @@ for (const fileType of [ 'logos', 'products' ]) {
 
     fileMessages.push({
       type: 'text',
-      text: `- The ${fileName} file is a ${fileType.slice(0, -1)} with the dimensions ${width}x${height}.`,
+      text:
+        `- Asset: ${fileName}\n` +
+        `  - Category: ${fileType === 'logos' ? 'logo' : 'product image'}\n` +
+        `  - Local path to use in generated code: ./${fileName}\n` +
+        `  - Dimensions: ${width}x${height}\n` +
+        `  - ${assetDescription}\n` +
+        `  - Required: describe this specific image before using it and integrate it visually in the creative.`,
       citations: null
     });
-    fileMessages.push({
-      type: 'image',
-      source: {
-        type: 'base64',
-        media_type: fileMimeType,
-        data: fileContentBase64
-      }
-    });
+    if (assetInputMode === 'base64') {
+      const fileContentBase64 = readFileSync(filePath).toString('base64');
+      fileMessages.push({
+        type: 'image',
+        source: {
+          type: 'base64',
+          media_type: fileMimeType,
+          data: fileContentBase64
+        }
+      });
+    }
     assetFiles.push({
       fileName,
-      filePath
+      filePath,
+      fileType
     });
   }
 }
@@ -506,7 +560,8 @@ while (true) {
       The format, which is the way these graphic elements are articulated together is up to you.
       It should be fresh, modern, inovative, eye catching and should make the viewer want know more or buy the product.
       Ideally the format should be animated and be interactive for the user to make it fun.
-      Logo and product images or pictures are passed as URLs.
+      Logo and product images or pictures are available as local files and source URLs.
+      You must use local file paths (for example: ./logo.png) in the final HTML/CSS/A-Frame output.
 
       The output should be a list of files and the code content they contain.
       All URL or path references should be relative to the root of the project.
@@ -516,6 +571,8 @@ while (true) {
       The colors used should be the ones defined in the style guide.
       The text of the advertisement should be in french.
       The size of the advertisement should be 320x480.
+      You must include at least one logo image and one product image from the provided assets.
+      Do not return final output if no image asset is referenced in index.html.
       Never add browser-like controls, zoom buttons, fullscreen buttons, or VR mode toggles in the creative UI.
       Use A-Frame with vr-mode-ui disabled (vr-mode-ui="enabled: false").
       You can call render_creative_png when useful to quickly preview and improve your output.
@@ -623,7 +680,7 @@ while (true) {
 
   if (creativeCodeResponse.stop_reason !== 'tool_use') {
     if (creativeCodeResponse.parsed_output !== null && creativeCodeResponse.parsed_output.length > 0) {
-      const complianceCheck = validateCreativeSkillCompliance(creativeCodeResponse.parsed_output, prunedStyleGuide);
+      const complianceCheck = validateCreativeSkillCompliance(creativeCodeResponse.parsed_output, prunedStyleGuide, assetFiles);
       if (complianceCheck.ok) {
         codeFileList = creativeCodeResponse.parsed_output;
         break;

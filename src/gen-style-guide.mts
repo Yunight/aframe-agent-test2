@@ -1,4 +1,4 @@
-import { join, basename } from 'node:path';
+import { join, basename, extname } from 'node:path';
 import { mkdirSync, createWriteStream, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
@@ -164,7 +164,9 @@ console.log('Stop details:', styleGuideResponse.stop_details);
 console.log(styleGuideResponse.parsed_output);
 
 const directoryUuid = randomUUID();
-const directoryPath = join(import.meta.dirname, '..', 'output', directoryUuid);
+const generatorScriptName = basename(import.meta.filename, extname(import.meta.filename));
+const outputDirectoryName = `${generatorScriptName}-${directoryUuid}`;
+const directoryPath = join(import.meta.dirname, '..', 'output', outputDirectoryName);
 
 console.log(`Output directory path: ${directoryPath}`);
 

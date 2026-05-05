@@ -338,7 +338,9 @@ if (finalMessageContent === null) {
 }
 
 const directoryUuid = randomUUID();
-const directoryPath = join(import.meta.dirname, '..', 'output', directoryUuid);
+const generatorScriptName = basename(import.meta.filename, extname(import.meta.filename));
+const outputDirectoryName = `${generatorScriptName}-${directoryUuid}`;
+const directoryPath = join(import.meta.dirname, '..', 'output', outputDirectoryName);
 
 console.log(`Output directory path: ${directoryPath}`);
 
