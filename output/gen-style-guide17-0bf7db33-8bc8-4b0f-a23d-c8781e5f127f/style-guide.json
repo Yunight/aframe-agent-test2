@@ -1,0 +1,88 @@
+{
+  "companyName": "Air France-KLM",
+  "companyContext": "Air France-KLM is a Franco-Dutch airline holding company formed in 2004 from the merger of Air France and KLM Royal Dutch Airlines. It is one of the world's largest airline groups, operating global passenger and cargo services through its subsidiaries Air France, KLM, and Transavia. The group is a founding member of the SkyTeam alliance and is headquartered in Tremblay-en-France near Paris Charles de Gaulle Airport.",
+  "companyURL": "https://www.airfrance.com",
+  "brandName": "Air France",
+  "brandContext": "Air France is the flag carrier airline of France, founded in 1933. It serves over 200 destinations in more than 80 countries, operating from its hub at Paris-Charles de Gaulle Airport. The brand embodies French elegance, luxury, and refinement in air travel, offering four cabin classes: Economy, Premium Economy, Business, and La Première. Air France regularly offers promotional flight deals and discount prices on its extensive global route network, including seasonal sales with up to 20-40% off base fares, Flying Blue Promo Rewards offering 25% off award tickets on select routes monthly, student discounts, and promo codes available during checkout. Current deals include round-trip economy flights from as low as $432 to European destinations.",
+  "brandURL": "https://wwws.airfrance.us/en-us/flight-deals",
+  "logoFileUrls": [
+    "https://airhex.com/images/airline-logos/alt/air-france.png",
+    "https://airhex.com/images/airline-logos/air-france.png",
+    "https://cdn.freebiesupply.com/logos/large/2x/air-france-11-logo-png-transparent.png",
+    "https://companieslogo.com/img/orig/AF.PA_BIG.D-9b1453db.png?t=1730518159",
+    "https://companieslogo.com/img/orig/AF.PA.D-612a78f5.png?t=1730518159",
+    "https://airhex.com/images/airline-logos/tail/air-france.png"
+  ],
+  "productName": "Air France Discount Flight Deals",
+  "productPictureUrls": [
+    "https://upload.wikimedia.org/wikipedia/commons/a/ab/Air_france_airbus_a350_f-htya.jpg",
+    "https://i.pinimg.com/originals/94/f9/bd/94f9bd7a2c6c23bdac2a0eb93326de98.jpg",
+    "https://i.pinimg.com/originals/e2/d8/58/e2d858586bfc47154e993a831e96db5c.jpg",
+    "https://www.fly4free.com/wp-content/uploads/2019/06/ST_Air_France_B777.jpg",
+    "https://i.pinimg.com/originals/21/8a/2f/218a2f8bee2329a6759b75c06e32bcb2.jpg",
+    "https://www.nextleveloftravel.com/data/blog/8644/view-outside-the-plane-window-and-view-of-business-class-cabin-on-air-france-airline-review-12.jpg"
+  ],
+  "primaryColorPalette": [
+    "002157",
+    "F71D25",
+    "FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "931116",
+    "000000",
+    "1A3A6B",
+    "F5F5F5",
+    "E0E0E0",
+    "CCE5FF",
+    "D4EDDA",
+    "FFF3CD",
+    "F8D7DA",
+    "D1ECF1"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Excellence In Motion",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Brand name, logo wordmark, hero headings. The custom Air France typeface used across the official website and digital communications. A strict, dark-blue sans-serif, horizontally elongated."
+    },
+    {
+      "fontFamily": "Neo Sans",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Primary headings (H1, H2). A clean geometric sans-serif similar to the Air France brand typeface. Use for section headers, promotional banners, and flight deal headlines."
+    },
+    {
+      "fontFamily": "Neo Sans",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Subheadings (H3, H4). Medium weight for secondary headings, card titles, feature callouts, and navigation labels."
+    },
+    {
+      "fontFamily": "Frutiger",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body text, paragraphs, descriptions, pricing details. A highly legible humanist sans-serif at 16px minimum for comfortable reading across all devices."
+    },
+    {
+      "fontFamily": "Frutiger",
+      "fontWeight": 300,
+      "fontEffect": [],
+      "fontUses": "Captions, fine print, legal disclaimers, metadata, timestamps. Light weight at 12-14px for supplementary information."
+    },
+    {
+      "fontFamily": "Frutiger",
+      "fontWeight": 600,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "CTA buttons, price callouts, promotional discount labels. Semibold for emphasis on actionable elements and key pricing information."
+    }
+  ],
+  "brandVision": "Air France pursues an ambitious upmarket strategy to reassert itself as the global standard for premium air travel. The brand vision centers on providing a pleasurable, elegant, and distinctly French travel experience across every customer touchpoint. Through its 'France is in the air' positioning, Air France claims the universal and positive values associated with France — sophistication, art de vivre, innovation, and warmth — while modernizing for a global audience. The brand also commits to sustainability and reducing its carbon footprint. In the context of discount pricing, Air France positions its deals as premium-quality travel at accessible prices, emphasizing that even promotional fares include the full Air France service experience — not stripped-down offerings.",
+  "brandValues": "Air France is built on three core brand values: Attention — attentive, personalized service that anticipates customer needs; Premium Quality — a commitment to excellence across every aspect of the travel experience, from culinary offerings to cabin design; and Pleasure — the joy and art of traveling à la française. The brand also stands for French heritage and national pride (reflected in its tricolor palette), sustainability and environmental responsibility, innovation in service and technology, global connectivity with a distinctly French character, and accessibility of luxury — making premium travel available through promotional deals, Flying Blue Promo Rewards (25% off select award tickets monthly), student discounts, and seasonal sales of up to 40% off."
+}
