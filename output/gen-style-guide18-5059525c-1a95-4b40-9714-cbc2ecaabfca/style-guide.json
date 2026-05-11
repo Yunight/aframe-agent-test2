@@ -1,0 +1,93 @@
+{
+  "companyName": "Stellantis N.V.",
+  "companyContext": "Stellantis N.V. is a multinational automotive manufacturing corporation formed in January 2021 through the merger of the French PSA Group and Fiat Chrysler Automobiles (FCA). Headquartered in Hoofddorp, Netherlands, the company designs, manufactures, and markets vehicles under 14 iconic automotive brands: Abarth, Alfa Romeo, Chrysler, Citroën, Dodge, DS Automobiles, Fiat, Jeep, Lancia, Maserati, Opel, Peugeot, Ram, and Vauxhall, along with two mobility arms (Free2move and Leasys). Stellantis operates manufacturing in 30 countries with a commercial presence in over 130 markets worldwide, employing approximately 300,000 people. The company is listed on NYSE (STLA), Euronext Milan (STLAM), and Euronext Paris (STLAP).",
+  "companyURL": "https://www.stellantis.com",
+  "brandName": "Stellantis",
+  "brandContext": "Stellantis is the corporate brand identity for the holding company overseeing 14 automotive brands and two mobility arms. The name derives from the Latin verb 'stello,' meaning 'to brighten with stars,' evoking astronomy and capturing the spirit of optimism, energy, and renewal. The brand was designed by Publicis Group in collaboration with internal design teams to create a neutral corporate identity that favored neither FCA nor PSA heritage. Stellantis functions exclusively at corporate group level on investor materials, press releases, corporate communications, and official websites, while each of the 14 automotive brands maintains its own distinct consumer-facing identity.",
+  "brandURL": "https://www.stellantis.com",
+  "logoFileUrls": [
+    "https://brandlogohub.com/wp-content/uploads/2025/08/Stellantis-Logo.png",
+    "https://companieslogo.com/img/orig/STLA_BIG-b23f3d7e.png?t=1720244494",
+    "https://logospng.org/wp-content/uploads/stellantis.png",
+    "https://en.vetores.org/wp-content/uploads/stellantis.png"
+  ],
+  "productName": "2026 Stellantis New Vehicle Wave",
+  "productPictureUrls": [
+    "https://cdn-fastly.autoguide.com/media/2025/10/28/09301/the-2026-jeep-grand-cherokee-is-here-with-stellantis-newest-engine.jpg?size=720x845&nocrop=1",
+    "https://cdn-fastly.autoguide.com/media/2025/10/28/09302/the-2026-jeep-grand-cherokee-is-here-with-stellantis-newest-engine.jpg?size=720x845&nocrop=1",
+    "https://cdn-fastly.autoguide.com/media/2025/10/28/09341/the-2026-jeep-grand-cherokee-is-here-with-stellantis-newest-engine.jpg?size=720x845&nocrop=1",
+    "https://motorweek.org/wp-content/uploads/2025/08/2026-dodge-charger-gas-powered-sixpack-arrives-later-this-year-5.jpg",
+    "https://motorweek.org/wp-content/uploads/2025/08/2026-dodge-charger-gas-powered-sixpack-arrives-later-this-year-7.jpg",
+    "https://motorweek.org/wp-content/uploads/2025/08/2026-dodge-charger-gas-powered-sixpack-arrives-later-this-year-4.jpg"
+  ],
+  "primaryColorPalette": [
+    "243782",
+    "FFFFFF",
+    "000000",
+    "00133b"
+  ],
+  "secondaryColorPalette": [
+    "e94e24",
+    "43aaa0",
+    "ef7d00",
+    "e42313",
+    "f39671",
+    "a0d4cd"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Encode Sans Expanded",
+      "fontWeight": 300,
+      "fontEffect": [],
+      "fontUses": "Primary typeface for headlines, titles, and brand name display. Used in uppercase for major headings and titles on corporate communications. Recommended minimum 47pt for main titles."
+    },
+    {
+      "fontFamily": "Encode Sans Expanded",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Medium weight used for subtitles, sub-headings, and emphasis text in presentations, brochures, and digital media."
+    },
+    {
+      "fontFamily": "Encode Sans Expanded",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Semibold weight used for call-to-action elements, key data highlights, and important labels across print and digital communications."
+    },
+    {
+      "fontFamily": "Encode Sans Expanded",
+      "fontWeight": 100,
+      "fontEffect": [],
+      "fontUses": "Thin weight used for large display text, decorative headings, and oversized typography in premium corporate presentations."
+    },
+    {
+      "fontFamily": "Encode Sans Expanded",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Regular weight used for body text, paragraphs, descriptions, and general reading content in publications, web pages, and internal documents."
+    },
+    {
+      "fontFamily": "Encode Sans Expanded",
+      "fontWeight": 800,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Extrabold weight used for maximum emphasis, hero section titles, and high-impact messaging in advertising and event materials."
+    },
+    {
+      "fontFamily": "Arial",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Fallback font for email signatures and communications where Encode Sans Expanded is not available on recipient systems."
+    },
+    {
+      "fontFamily": "Arial",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Fallback bold font for email signatures, department names, and employee names where Encode Sans Expanded is unavailable."
+    }
+  ],
+  "brandVision": "Stellantis is dedicated to giving its customers the freedom to choose the way they move, embracing the latest technologies and creating value for all stakeholders. The company is executing a decisive business reset focused on returning to sustainable, profitable growth by putting customers back at the center of everything it does. In 2026, Stellantis is broadening market coverage with 10 all-new vehicles and 6 refreshed models, expanding powertrain choices across electric, hybrid, and internal combustion technologies. Key strategic priorities include a $13 billion investment in U.S. operations over 4 years, achieving carbon net zero by 2038, empowering regional teams, and driving innovation in electrification, software, and autonomous mobility.",
+  "brandValues": "Optimism, Energy, and Renewal — captured in the brand name derived from the Latin 'stello' meaning 'to brighten with stars.' Stellantis stands for: (1) Customer Freedom — offering innovative solutions across electric, hybrid, and ICE powertrains so customers choose how they move; (2) Innovation & Technology — pursuing cutting-edge electrification, autonomous driving, and connected vehicle technologies; (3) Heritage & Diversity — honoring 120+ years of combined automotive heritage across 14 iconic brands from multiple cultures and nationalities; (4) Sustainability — committed to carbon net zero by 2038 through responsible energy transition; (5) Excellence & Quality — pursuing greatness in design, engineering, and execution; (6) Stakeholder Value — creating value for shareholders, employees, dealers, suppliers, and the communities in which it operates."
+}
