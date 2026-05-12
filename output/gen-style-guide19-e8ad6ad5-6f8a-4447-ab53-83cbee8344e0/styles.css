@@ -1,0 +1,222 @@
+/* Guide de style — CSS standard (aucun préprocesseur ni framework) */
+:root {
+  --color-primary-1: 003882;
+  --color-primary-2: 009FE3;
+  --color-primary-3: FFD500;
+  --color-primary-4: FFFFFF;
+  --color-secondary-1: E8F4FD;
+  --color-secondary-2: F5F5F5;
+  --color-secondary-3: 1A1A2E;
+  --color-secondary-4: 333333;
+  --color-secondary-5: 00A651;
+  --color-secondary-6: E63312;
+  --color-secondary-7: F5A623;
+  --color-secondary-8: B0D4F1;
+  --accent: 003882;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+  line-height: 1.5;
+  color: var(--fg, #111);
+  background: var(--bg, #fafafa);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.skip-link:focus {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  width: auto;
+  height: auto;
+  padding: 0.5rem 1rem;
+  background: var(--accent, #2563eb);
+  color: #fff;
+  z-index: 1000;
+}
+
+.site-header {
+  padding: 2rem 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border, #e5e5e5);
+  background: linear-gradient(180deg, var(--header-bg, #fff), var(--bg, #fafafa));
+}
+
+.eyebrow {
+  margin: 0 0 0.25rem;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted, #555);
+}
+
+.site-header h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+}
+
+.lede {
+  margin: 0 0 1rem;
+  max-width: 65ch;
+  color: var(--muted, #444);
+}
+
+.header-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+}
+.header-links a {
+  color: var(--accent, #2563eb);
+}
+
+main {
+  flex: 1;
+  padding: 1.25rem;
+  max-width: 72rem;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.panel {
+  margin-bottom: 2rem;
+  padding: 1.25rem 1rem;
+  border: 1px solid var(--border, #e5e5e5);
+  border-radius: 8px;
+  background: var(--panel-bg, #fff);
+}
+
+.panel h2 {
+  margin-top: 0;
+  font-size: 1.25rem;
+}
+
+.panel h3 {
+  margin-top: 1.5rem;
+  font-size: 1rem;
+}
+
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.swatch {
+  margin: 0;
+  min-width: 7rem;
+}
+.swatch-chip {
+  display: block;
+  width: 100%;
+  height: 4rem;
+  border-radius: 6px;
+  background: var(--swatch);
+  border: 1px solid rgba(0,0,0,0.08);
+}
+.swatch figcaption {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--muted, #555);
+}
+.swatch code {
+  display: block;
+  font-size: 0.75rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.data-table th,
+.data-table td {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border, #e5e5e5);
+}
+.data-table th {
+  font-weight: 600;
+  background: var(--table-head, #f4f4f5);
+}
+
+.asset-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+.asset-card {
+  margin: 0;
+  border: 1px solid var(--border, #e5e5e5);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--panel-bg, #fff);
+}
+.asset-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  max-height: 200px;
+  background: repeating-conic-gradient(#f0f0f0 0% 25%, #fff 0% 50%) 50% / 16px 16px;
+}
+
+.site-footer {
+  padding: 1.25rem;
+  border-top: 1px solid var(--border, #e5e5e5);
+  font-size: 0.875rem;
+  color: var(--muted, #555);
+}
+
+.theme-toggle {
+  cursor: pointer;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--border, #ccc);
+  background: var(--panel-bg, #fff);
+  color: inherit;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Thème sombre (classe posée par app.js) */
+html[data-theme="dark"] {
+  --fg: #f4f4f5;
+  --bg: #18181b;
+  --muted: #a1a1aa;
+  --border: #3f3f46;
+  --panel-bg: #27272a;
+  --table-head: #3f3f46;
+  --header-bg: #27272a;
+}

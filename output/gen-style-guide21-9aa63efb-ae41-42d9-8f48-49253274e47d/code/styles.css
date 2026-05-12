@@ -1,0 +1,368 @@
+/* ============================================================
+   Peugeot E-208 GTi – "Velocity Reveal" Interactive Ad
+   320 × 480 creative  |  Peugeot New typeface only
+   ============================================================ */
+
+/* ---------- RESET & PAGE ---------- */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  background:#000000;
+  font-family:'Peugeot New',sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* ---------- CREATIVE FRAME ---------- */
+#ad{
+  width:320px;height:480px;
+  position:relative;overflow:hidden;
+  background:#0A1F44;
+  user-select:none;-webkit-user-select:none;
+  cursor:grab;
+}
+
+/* ---------- SLIDES ---------- */
+.slide{
+  position:absolute;inset:0;
+  opacity:0;visibility:hidden;
+  transition:opacity .55s cubic-bezier(.4,0,.2,1),visibility .55s;
+  z-index:1;
+}
+.slide--active{
+  opacity:1;visibility:visible;z-index:2;
+}
+
+/* — Backgrounds — */
+.slide-bg{position:absolute;inset:0;overflow:hidden}
+.slide-bg--navy{background:#0A1F44}
+.slide-img{
+  width:100%;height:100%;
+  object-fit:cover;object-position:center;
+  transform:scale(1);
+  transition:transform .85s cubic-bezier(.4,0,.2,1);
+}
+.slide--active .slide-img{transform:scale(1.06)}
+
+/* — Gradient overlays — */
+.slide-grad{
+  position:absolute;inset:0;z-index:1;
+  background:linear-gradient(to bottom,
+    rgba(10,31,68,.05) 0%,
+    rgba(10,31,68,.22) 30%,
+    rgba(10,31,68,.72) 68%,
+    rgba(10,31,68,.94) 100%);
+}
+.slide-grad--heavy{
+  background:linear-gradient(to bottom,
+    rgba(0,0,0,.35) 0%,
+    rgba(10,31,68,.52) 32%,
+    rgba(10,31,68,.88) 70%,
+    rgba(0,0,0,.96) 100%);
+}
+
+/* — Content containers — */
+.slide-body{
+  position:absolute;inset:0;z-index:2;
+  display:flex;flex-direction:column;
+  padding:24px 20px;
+}
+.slide-body--center{align-items:center;justify-content:center;gap:12px}
+.slide-body--end{justify-content:flex-end;padding-bottom:38px}
+.slide-body--gallery{align-items:center;justify-content:center;gap:10px;background:#0A1F44}
+
+/* ===================================================
+   S0 – INTRO
+   =================================================== */
+.intro-logo-wrap{
+  opacity:0;transform:translateY(-18px);
+}
+.slide--active .intro-logo-wrap{
+  animation:fadDown .6s .25s ease-out forwards;
+}
+.intro-logo{
+  width:78px;height:auto;
+  filter:brightness(0) invert(1);
+}
+.intro-bar{
+  width:0;height:2px;
+  background:#E2231A;
+  border-radius:1px;
+}
+.slide--active .intro-bar{
+  animation:barGrow .45s .75s ease-out forwards;
+}
+.intro-title{
+  font-size:40px;font-weight:700;
+  color:#FFFFFF;letter-spacing:-.025em;
+  line-height:1.05;text-align:center;
+  opacity:0;transform:translateY(18px);
+}
+.slide--active .intro-title{
+  animation:fadUp .5s 1s ease-out forwards;
+}
+.accent{color:#E2231A;font-style:normal}
+.intro-sub{
+  font-size:12px;font-weight:500;
+  color:#1B7FC4;letter-spacing:.16em;
+  text-transform:uppercase;opacity:0;
+}
+.slide--active .intro-sub{
+  animation:fadIn .45s 1.35s ease-out forwards;
+}
+.hint{
+  position:absolute;bottom:22px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  color:rgba(255,255,255,.42);font-size:10px;font-weight:300;
+  letter-spacing:.04em;opacity:0;
+}
+.slide--active .hint{
+  animation:fadIn .4s 1.9s ease-out forwards;
+}
+.hint-arrow{
+  animation:bob 1.5s 2.3s ease-in-out infinite;
+}
+
+/* ===================================================
+   HEADINGS & TEXT (shared)
+   =================================================== */
+.slide-heading{
+  font-size:26px;font-weight:700;
+  color:#FFFFFF;line-height:1.15;
+  letter-spacing:-.012em;margin-bottom:6px;
+  opacity:0;transform:translateY(16px);
+}
+.slide--active .slide-heading{
+  animation:fadUp .5s .3s ease-out forwards;
+}
+.slide-heading--center{text-align:center}
+.slide-text{
+  font-size:12px;font-weight:400;
+  color:rgba(255,255,255,.78);line-height:1.6;
+  opacity:0;transform:translateY(10px);
+}
+.slide--active .slide-text{
+  animation:fadUp .4s .6s ease-out forwards;
+}
+.slide-caption{
+  font-size:10px;font-weight:400;font-style:italic;
+  color:rgba(255,255,255,.38);text-align:center;
+  opacity:0;
+}
+.slide--active .slide-caption{
+  animation:fadIn .4s .95s ease-out forwards;
+}
+
+/* ===================================================
+   S2 – GALLERY
+   =================================================== */
+.gallery{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:5px;width:276px;
+}
+.gallery-cell{
+  overflow:hidden;border-radius:3px;
+  height:92px;
+  opacity:0;transform:scale(.91);
+}
+.gallery-cell img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .35s ease;
+}
+.gallery-cell:active img{transform:scale(1.12)}
+.slide--active .gallery-cell:nth-child(1){animation:cellIn .38s .42s ease-out forwards}
+.slide--active .gallery-cell:nth-child(2){animation:cellIn .38s .54s ease-out forwards}
+.slide--active .gallery-cell:nth-child(3){animation:cellIn .38s .66s ease-out forwards}
+.slide--active .gallery-cell:nth-child(4){animation:cellIn .38s .78s ease-out forwards}
+
+/* ===================================================
+   S3 – SPECS
+   =================================================== */
+.specs{
+  display:flex;align-items:center;justify-content:center;
+  gap:10px;width:100%;opacity:0;
+}
+.slide--active .specs{animation:fadUp .5s .52s ease-out forwards}
+.spec{
+  display:flex;flex-direction:column;
+  align-items:center;gap:1px;flex:1;
+}
+.spec-val{
+  font-size:30px;font-weight:700;
+  color:#FFFFFF;line-height:1;
+}
+.spec-unit{
+  font-size:13px;font-weight:500;
+  color:#E2231A;line-height:1;
+}
+.spec-label{
+  font-size:9px;font-weight:300;
+  color:rgba(255,255,255,.52);
+  letter-spacing:.05em;text-transform:uppercase;
+  margin-top:3px;
+}
+.spec-div{
+  width:1px;height:44px;
+  background:rgba(255,255,255,.1);
+}
+
+/* — Range bar — */
+.range-bar{
+  width:236px;height:3px;
+  background:rgba(255,255,255,.07);
+  border-radius:2px;position:relative;
+  overflow:visible;margin-top:8px;opacity:0;
+}
+.slide--active .range-bar{animation:fadIn .3s 1.15s ease-out forwards}
+.range-bar-fill{
+  position:absolute;top:0;left:0;
+  width:0;height:100%;
+  background:linear-gradient(90deg,#1B7FC4,#E2231A);
+  border-radius:2px;
+}
+.slide--active .range-bar-fill{
+  animation:barFill 1.5s 1.45s cubic-bezier(.4,0,.2,1) forwards;
+}
+.range-bar-label{
+  position:absolute;top:9px;left:0;right:0;
+  text-align:center;
+  font-size:10px;font-weight:400;
+  color:rgba(255,255,255,.48);opacity:0;
+  white-space:nowrap;
+}
+.slide--active .range-bar-label{
+  animation:fadIn .35s 2.5s ease-out forwards;
+}
+
+/* ===================================================
+   S5 – CTA
+   =================================================== */
+.cta-logo{
+  width:54px;height:auto;
+  filter:brightness(0) invert(1);
+  opacity:0;transform:translateY(-10px);
+}
+.slide--active .cta-logo{animation:fadDown .5s .22s ease-out forwards}
+.cta-title{
+  font-size:30px;font-weight:700;
+  color:#FFFFFF;text-align:center;
+  line-height:1.08;letter-spacing:-.01em;
+  opacity:0;
+}
+.slide--active .cta-title{animation:fadIn .5s .52s ease-out forwards}
+.cta-tagline{
+  font-size:13px;font-weight:400;font-style:italic;
+  color:rgba(255,255,255,.62);text-align:center;opacity:0;
+}
+.slide--active .cta-tagline{animation:fadIn .4s .82s ease-out forwards}
+.cta-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:13px 22px;margin-top:2px;
+  background:#E2231A;color:#FFFFFF;
+  font-family:'Peugeot New',sans-serif;
+  font-size:11px;font-weight:600;
+  letter-spacing:.09em;text-transform:uppercase;
+  border:none;border-radius:3px;
+  cursor:pointer;
+  opacity:0;transform:translateY(10px);
+  transition:background .2s ease,box-shadow .2s ease;
+}
+.slide--active .cta-btn{
+  animation:fadUp .5s 1.1s ease-out forwards,btnPulse 2.2s 2.2s ease-in-out infinite;
+}
+.cta-btn:hover{background:#C8102E}
+.cta-btn:active{transform:scale(.96)!important}
+.cta-url{
+  font-size:10px;font-weight:300;
+  color:rgba(255,255,255,.32);letter-spacing:.04em;
+  opacity:0;
+}
+.slide--active .cta-url{animation:fadIn .3s 1.42s ease-out forwards}
+
+/* ===================================================
+   NAV DOTS
+   =================================================== */
+.dots{
+  position:absolute;right:9px;top:50%;
+  transform:translateY(-50%);
+  display:flex;flex-direction:column;
+  gap:7px;z-index:50;
+}
+.dot{
+  width:7px;height:7px;border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.32);
+  background:transparent;padding:0;
+  cursor:pointer;
+  transition:all .3s ease;
+  box-shadow:0 0 3px rgba(0,0,0,.35);
+}
+.dot--on{
+  background:#E2231A;border-color:#E2231A;
+  transform:scale(1.3);
+  box-shadow:0 0 6px rgba(226,35,26,.45);
+}
+
+/* ===================================================
+   SPEED LINES
+   =================================================== */
+.speed-lines{
+  position:absolute;inset:0;
+  pointer-events:none;z-index:100;
+  overflow:hidden;
+}
+.speed-line{
+  position:absolute;height:1px;
+  background:linear-gradient(90deg,transparent,#E2231A 25%,#E2231A 75%,transparent);
+  opacity:0;will-change:transform;
+}
+
+/* ===================================================
+   KEYFRAMES
+   =================================================== */
+@keyframes fadUp{
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes fadDown{
+  from{opacity:0;transform:translateY(-18px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes fadIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+@keyframes barGrow{
+  from{width:0}
+  to{width:56px}
+}
+@keyframes barFill{
+  from{width:0}
+  to{width:100%}
+}
+@keyframes cellIn{
+  from{opacity:0;transform:scale(.91)}
+  to{opacity:1;transform:scale(1)}
+}
+@keyframes bob{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(5px)}
+}
+@keyframes btnPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(226,35,26,.48)}
+  50%{box-shadow:0 0 0 10px rgba(226,35,26,0)}
+}
+
+/* ===================================================
+   REDUCED MOTION
+   =================================================== */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+  }
+}

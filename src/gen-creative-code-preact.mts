@@ -1,5 +1,5 @@
 import type { StyleGuide } from './gen-style-guide.mjs';
-import { dirname, join } from 'node:path';
+import { basename, dirname, extname, join } from 'node:path';
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
@@ -10,6 +10,237 @@ import { imageSizeFromFile } from 'image-size/fromFile';
 import mime from 'mime';
 import puppeteer, { KnownDevices } from 'puppeteer';
 import { z } from 'zod';
+
+// --- Tokens / coût (Claude Opus 4.7 Flagship : $5/M input, $25/M output) ---
+const USD_PER_MILLION_INPUT_TOKENS = 5;
+const USD_PER_MILLION_OUTPUT_TOKENS = 25;
+
+type UsageLike = {
+  input_tokens: number;
+  output_tokens: number;
+  cache_creation_input_tokens?: number | null;
+  cache_read_input_tokens?: number | null;
+};
+
+type UsageAccumulator = {
+  api_calls: number;
+  input_tokens: number;
+  output_tokens: number;
+  cache_creation_input_tokens: number;
+  cache_read_input_tokens: number;
+};
+
+function createEmptyUsageAccumulator (): UsageAccumulator {
+  return {
+    api_calls: 0,
+    input_tokens: 0,
+    output_tokens: 0,
+    cache_creation_input_tokens: 0,
+    cache_read_input_tokens: 0
+  };
+}
+
+function addUsageToAccumulator (
+  acc: UsageAccumulator,
+  usage: UsageLike | null | undefined
+): void {
+  if (usage === null || usage === undefined) {
+    return;
+  }
+  acc.api_calls += 1;
+  acc.input_tokens += usage.input_tokens;
+  acc.output_tokens += usage.output_tokens;
+  acc.cache_creation_input_tokens += usage.cache_creation_input_tokens ?? 0;
+  acc.cache_read_input_tokens += usage.cache_read_input_tokens ?? 0;
+}
+
+function billedInputTokens (acc: UsageAccumulator): number {
+  return acc.input_tokens + acc.cache_creation_input_tokens + acc.cache_read_input_tokens;
+}
+
+function pricesUsdFromAccumulator (acc: UsageAccumulator): {
+  billed_input_tokens: number;
+  output_tokens: number;
+  input_usd: number;
+  output_usd: number;
+  total_usd: number;
+} {
+  const billed_input_tokens = billedInputTokens(acc);
+  const output_tokens = acc.output_tokens;
+  const input_usd = (billed_input_tokens / 1_000_000) * USD_PER_MILLION_INPUT_TOKENS;
+  const output_usd = (output_tokens / 1_000_000) * USD_PER_MILLION_OUTPUT_TOKENS;
+  return {
+    billed_input_tokens,
+    output_tokens,
+    input_usd,
+    output_usd,
+    total_usd: input_usd + output_usd
+  };
+}
+
+function roundUsd6 (n: number): number {
+  return Math.round(n * 1_000_000) / 1_000_000;
+}
+
+function logAnthropicUsageAndCost (scriptLabel: string, acc: UsageAccumulator): void {
+  const p = pricesUsdFromAccumulator(acc);
+  console.log(`--- ${scriptLabel} (cumulative) ---`);
+  console.log(`call reason : ${acc.api_calls} réponse(s) API — Claude Opus 4.7 Flagship ($5/M input, $25/M output, cache inclus côté input)`);
+  console.log(`input token : ${p.billed_input_tokens}`);
+  console.log(`output token : ${p.output_tokens}`);
+  console.log(`input price (USD) : ${roundUsd6(p.input_usd)}`);
+  console.log(`output price (USD) : ${roundUsd6(p.output_usd)}`);
+  console.log(`total price (USD) : ${roundUsd6(p.total_usd)}`);
+  console.log('');
+}
+function billedInputFromUsage (usage: UsageLike): number {
+  return usage.input_tokens + (usage.cache_creation_input_tokens ?? 0) + (usage.cache_read_input_tokens ?? 0);
+}
+
+function logReadableAnthropicCall (callReason: string, usage: UsageLike | null | undefined): void {
+  console.log(`call reason : ${callReason}`);
+  if (usage === null || usage === undefined) {
+    console.log('input token : —');
+    console.log('output token : —');
+    console.log('');
+    return;
+  }
+  console.log(`input token : ${billedInputFromUsage(usage)}`);
+  console.log(`output token : ${usage.output_tokens}`);
+  console.log('');
+}
+
+function shortenForLog (s: string, max: number): string {
+  const t = s.trim().replace(/\s+/g, ' ');
+  if (t.length <= max) {
+    return t;
+  }
+  return `${t.slice(0, max - 1)}…`;
+}
+
+function pickQueryFromUnknown (input: unknown): string | null {
+  if (input === null || typeof input !== 'object') {
+    return null;
+  }
+  const o = input as Record<string, unknown>;
+  for (const key of [ 'query', 'search_query', 'q' ] as const) {
+    const v = o[key];
+    if (typeof v === 'string' && v.trim().length > 0) {
+      return shortenForLog(v, 160);
+    }
+  }
+  return null;
+}
+
+function describeClientToolUse (name: string, input: unknown): string {
+  switch (name) {
+    case 'web_search':
+      return "recherche web (pages officielles, sources, vérification d'informations)";
+    case 'google_image_search': {
+      const q = pickQueryFromUnknown(input);
+      if (q !== null) {
+        return `recherche d'images Google — requête « ${q} »`;
+      }
+      return "recherche d'images Google (logos, produits, références visuelles)";
+    }
+    case 'render_creative_png': {
+      const o = input !== null && typeof input === 'object' ? (input as Record<string, unknown>) : null;
+      const entry = typeof o?.['entryFile'] === 'string' ? o['entryFile'] : '(fichier non précisé)';
+      const preset = typeof o?.['devicePreset'] === 'string' ? o['devicePreset'] : null;
+      const wait = typeof o?.['waitMs'] === 'number' ? `attente ${o['waitMs']} ms` : null;
+      const bits = [ `entrée ${entry}` ];
+      if (preset !== null) {
+        bits.push(`appareil ${preset}`);
+      }
+      if (wait !== null) {
+        bits.push(wait);
+      }
+      return `génération de prévisualisation PNG (Puppeteer) — ${bits.join(', ')} — pour contrôler la scène avant livraison des fichiers`;
+    }
+    default:
+      return `outil personnalisé « ${name} »`;
+  }
+}
+
+function describeServerToolUse (name: Anthropic.ServerToolUseBlock['name'], input: unknown): string {
+  const q = pickQueryFromUnknown(input);
+  const qSuffix = q !== null ? ` — requête « ${q} »` : '';
+  switch (name) {
+    case 'web_search':
+      return `recherche web intégrée (serveur Anthropic)${qSuffix}`;
+    case 'web_fetch':
+      return `récupération de page distante (web_fetch)${qSuffix}`;
+    case 'code_execution':
+    case 'bash_code_execution':
+    case 'text_editor_code_execution':
+      return `exécution / édition côté serveur (${name})`;
+    case 'tool_search_tool_regex':
+    case 'tool_search_tool_bm25':
+      return `recherche d'outils (${name})`;
+    default:
+      return `outil serveur « ${name} »${qSuffix}`;
+  }
+}
+
+function describeAnthropicTurnForLogs (
+  stopReason: Anthropic.Message['stop_reason'],
+  content: Anthropic.Message['content']
+): string {
+  const segments: string[] = [];
+
+  if (stopReason !== null && stopReason !== undefined) {
+    segments.push(`arrêt: ${stopReason}`);
+  }
+
+  if (content.length === 0) {
+    segments.push('aucun bloc de contenu');
+    return segments.join(' — ');
+  }
+
+  const actions: string[] = [];
+  let hasThinking = false;
+  let hasText = false;
+
+  for (const block of content) {
+    if (block.type === 'tool_use') {
+      actions.push(describeClientToolUse(block.name, block.input));
+    } else if (block.type === 'server_tool_use') {
+      actions.push(describeServerToolUse(block.name, block.input));
+    } else if (block.type === 'thinking' || block.type === 'redacted_thinking') {
+      hasThinking = true;
+    } else if (block.type === 'text') {
+      hasText = true;
+    }
+  }
+
+  if (actions.length > 0) {
+    segments.push(`objectif du tour : ${actions.join(' | ')}`);
+  }
+
+  if (stopReason === 'tool_use' && actions.length === 0) {
+    segments.push('arrêt tool_use sans blocs tool_use reconnus (vérifier la réponse)');
+  }
+
+  if (stopReason !== 'tool_use') {
+    if (hasText && actions.length === 0) {
+      segments.push('réponse textuelle ou JSON structuré (livraison ou étape intermédiaire)');
+    }
+    if (hasThinking && actions.length === 0 && !hasText) {
+      segments.push('réflexion interne uniquement (extended thinking), sans texte ni outil client');
+    }
+    if (!hasText && actions.length === 0 && stopReason === 'end_turn') {
+      segments.push('fin de tour (souvent JSON de guide de style ou liste de fichiers parsée)');
+    }
+  }
+
+  if (hasThinking && actions.length > 0) {
+    segments.push('inclut de la réflexion étendue');
+  }
+
+  return segments.join(' — ');
+}
+
+
 
 function contains<T extends string>(array: readonly T[], value: string): value is T {
   return (array as readonly string[]).includes(value);
@@ -700,6 +931,8 @@ const maxGenerationTurns = 8;
 let structuredOutputRetryCount = 0;
 const maxStructuredOutputRetries = 2;
 
+const creativeUsageTotals = createEmptyUsageAccumulator();
+
 while (true) {
   generationIndex += 1;
   if (generationIndex > maxGenerationTurns) {
@@ -853,6 +1086,11 @@ while (true) {
     ]
   });
   const creativeCodeResponse = await creativeCodeStream.finalMessage();
+  addUsageToAccumulator(creativeUsageTotals, creativeCodeResponse.usage);
+  logReadableAnthropicCall(
+    describeAnthropicTurnForLogs(creativeCodeResponse.stop_reason, creativeCodeResponse.content),
+    creativeCodeResponse.usage ?? undefined
+  );
   if (debugMode) {
     console.log(`[ai] stop_reason=${creativeCodeResponse.stop_reason ?? 'null'}`);
     console.log(`[ai] stop_details=${JSON.stringify(creativeCodeResponse.stop_details ?? null)}`);
@@ -1036,4 +1274,5 @@ if (Number.isFinite(maxExportBytes) && maxExportBytes > 0 && exportResult.totalB
   );
 }
 
+logAnthropicUsageAndCost(basename(import.meta.filename, extname(import.meta.filename)), creativeUsageTotals);
 console.log('End.');

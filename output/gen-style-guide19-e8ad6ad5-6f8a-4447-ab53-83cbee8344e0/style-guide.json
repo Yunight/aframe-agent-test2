@@ -1,0 +1,84 @@
+{
+  "companyName": "La Banque Postale",
+  "companyContext": "La Banque Postale is a French public bank, a 100% subsidiary of the La Poste Group. Founded on January 1, 2006, it inherited the financial services of La Poste. It offers a comprehensive range of financial products and services including retail banking, savings, loans, insurance (life and non-life via La Banque Postale Assurances IARD in partnership with Groupama), asset management, and investment solutions. It serves individuals, professionals, small businesses, and local public authorities. The bank is recognized by law for its accessibility banking mission and is committed to ethical, responsible, and citizen-oriented banking.",
+  "companyURL": "https://www.labanquepostale.com",
+  "brandName": "La Banque Postale",
+  "brandContext": "La Banque Postale is a unique bancassurance brand committed to making a positive societal impact. It positions itself as a bank that serves the general interest, emphasizing accessibility, proximity, trust, and citizen energy. The brand identity is built upon the foundational elements inherited from La Poste: the square, blue, yellow, and the stylized bluebird designed by Guy Georget in 1960. In 2016, agency Dream On redesigned the logo to be modern, simple, luminous, and digitally adaptable while preserving the brand's heritage. The current logo (updated 2022) uses two shades of blue — a light azure blue for the bird symbol and a deep navy blue for the brand text — with yellow on the 'LA' to express postal filiation.",
+  "brandURL": "https://www.labanquepostale.fr",
+  "logoFileUrls": [
+    "https://bootflare.com/wp-content/uploads/2025/08/La-Banque-Postale-Logo.png",
+    "https://images.seeklogo.com/logo-png/44/1/la-banque-postale-logo-png_seeklogo-445325.png",
+    "https://images.seeklogo.com/logo-png/48/2/la-banque-postale-logo-png_seeklogo-483439.png",
+    "https://images.seeklogo.com/logo-png/48/1/la-banque-postale-logo-png_seeklogo-483439.png",
+    "https://www.meilleurtaux.com/images/logo/etablissement/la_banque_postale_assurances.png"
+  ],
+  "productName": "Assurance Auto La Banque Postale — Promo 2 Mois Offerts",
+  "productPictureUrls": [
+    "https://www.labanquepostale.fr/content/dam/lbp/iconographie/typologie/vehicules/master-hd/femme-voyage-voiture-4.jpg-rend-cq5dam.web.1080.1080.jpg",
+    "https://www.labanquepostale.fr/content/dam/lbp/iconographie/typologie/vehicules/master-hd/femme-achat-location-voiture%202.jpg-rend-cq5dam.web.750.750.jpg",
+    "https://www.labanquepostale.fr/content/dam/lbp/iconographie/typologie/vehicules/master-hd/femme-portrait-voiture.jpg-rend-cq5dam.web.750.750.jpg",
+    "https://www.labanquepostale.fr/content/dam/lbp/iconographie/typologie/vehicules/master-hd/femme-trip-nature-voiture.jpg-rend-cq5dam.web.1080.1080.jpg",
+    "https://www.labanquepostale.fr/content/dam/lbp/iconographie/typologie/vehicules/hero-banner/femme-exterieur-voiture-electrique-2.jpg-rend-cq5dam.web.3000.3000.jpg",
+    "https://www.labanquepostale.fr/content/dam/lbp/iconographie/typologie/vehicules/master-hd/couple-achat-voiture.jpg-rend-cq5dam.web.750.750.jpg"
+  ],
+  "primaryColorPalette": [
+    "003882",
+    "009FE3",
+    "FFD500",
+    "FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "E8F4FD",
+    "F5F5F5",
+    "1A1A2E",
+    "333333",
+    "00A651",
+    "E63312",
+    "F5A623",
+    "B0D4F1"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Alpha Poste",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Brand name, logotype, and primary brand identity elements. Custom bespoke sans-serif typeface designed by Jean François Porchez in 2005 for the identity and logotype of La Banque Postale. It is a sans-serif version of the original La Poste lettering designed by Porchez in 1993."
+    },
+    {
+      "fontFamily": "Alpha Poste",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Secondary brand identity elements and sub-brand names such as 'Assurances IARD'. Regular weight for complementary logo text."
+    },
+    {
+      "fontFamily": "Arial",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Headings and display text on web and digital platforms. Used as a web-safe fallback that preserves the clean, modern sans-serif character of the brand identity. Used for H1, H2, H3 headings and promotional titles like '2 mois offerts'."
+    },
+    {
+      "fontFamily": "Arial",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body text, paragraph content, product descriptions, legal mentions, and general website copy. 16px minimum body size for readability. Line height 1.5 for comfortable reading."
+    },
+    {
+      "fontFamily": "Arial",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Subheadings, call-to-action buttons, navigation labels, and emphasis text. Semi-bold weight for UI elements that need hierarchy distinction from body text."
+    },
+    {
+      "fontFamily": "Helvetica Neue",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Fallback font for macOS/iOS devices, maintaining the clean Swiss sans-serif aesthetic. Used across body and UI contexts when Arial is not the preferred rendering."
+    }
+  ],
+  "brandVision": "La Banque Postale positions itself as a citizen-focused bank ('banque citoyenne') that serves the general interest. Its vision is to be a bank that drives positive societal impact through responsible, inclusive, and sustainable banking. It aims to transform into the bank of tomorrow while preserving the foundational values of trust, proximity, and accessibility inherited from La Poste. The brand seeks to make quality banking services accessible to all, including those in situations of financial fragility, and to be a pioneer in ethical and green finance. For its insurance branch, the vision extends to providing simple, readable, and citizen-oriented insurance products with competitive pricing and genuine customer care.",
+  "brandValues": "Trust (Confiance) — Inherited from La Poste, built on 200+ years of public service in France. Proximity (Proximité) — A nationwide network of post offices ensuring close, personal relationships with customers. Accessibility (Accessibilité) — The only French bank legally mandated for banking accessibility via the Livret A. Citizen Energy (Énergie citoyenne) — Serving all citizens and the public interest, not just shareholders. Simplicity — Offering clear, readable, and transparent financial and insurance products. Responsibility — Commitment to corporate social responsibility, ethical banking, sustainability, and inclusion. Innovation — Adapting to modern digital needs while staying true to heritage and values. Solidarity — Supporting customers in financial difficulty and promoting financial literacy."
+}

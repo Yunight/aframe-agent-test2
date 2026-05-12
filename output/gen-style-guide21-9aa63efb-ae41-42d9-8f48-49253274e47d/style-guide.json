@@ -1,0 +1,84 @@
+{
+  "companyName": "Stellantis",
+  "companyContext": "Stellantis is a multinational automotive manufacturer formed in 2021 from the merger of FCA and Groupe PSA. It owns 14 brands including Peugeot, Citroën, DS, Opel, Fiat, Jeep, Alfa Romeo, Maserati and others, designing, manufacturing and selling vehicles worldwide.",
+  "companyURL": "https://www.stellantis.com",
+  "brandName": "Peugeot",
+  "brandContext": "Peugeot is a French automotive brand founded in 1810, part of the Stellantis group. As an innovative high-end generalist car manufacturer, Peugeot designs and produces passenger cars, light commercial vehicles and electric vehicles, drawing on more than two centuries of mobility heritage and a strong motorsport legacy (rally, Le Mans, World Endurance Championship).",
+  "brandURL": "https://www.peugeot.com",
+  "logoFileUrls": [
+    "https://images.seeklogo.com/logo-png/39/2/peugeot-new-2021-black-logo-png_seeklogo-398893.png",
+    "https://images.seeklogo.com/logo-png/39/1/peugeot-new-2021-logo-png_seeklogo-398828.png",
+    "https://brandlogos.net/wp-content/uploads/2024/08/peugeot-2010-2021-logo-512x360.png",
+    "https://images.seeklogo.com/logo-png/54/2/peugeot-gti-logo-png_seeklogo-543191.png",
+    "https://images.seeklogo.com/logo-png/17/1/peugeot-gti-logo-png_seeklogo-170496.png"
+  ],
+  "productName": "Peugeot E-208 GTi",
+  "productPictureUrls": [
+    "https://cdn.mos.cms.futurecdn.net/cX6zra5DWtXkfJFT9JTQfW.jpg",
+    "https://cdn.mos.cms.futurecdn.net/Ri3Q4TonoHvLoRAG8k87DT.jpg",
+    "https://cdn.mos.cms.futurecdn.net/2sbYCAQZtrX76fD9dfCLr.jpg",
+    "https://cdn.mos.cms.futurecdn.net/sFWPhEqwkh7EFXqCA7Ld2e.jpg",
+    "https://cdn.mos.cms.futurecdn.net/mdUfnBEdRWJFGs3Acq7dDh.jpg",
+    "https://media.whatcar.com/wc-image/2025-06/peugeot_e-208_gti_rear_side_static_red.jpg",
+    "https://media.whatcar.com/wc-image/2025-06/peugeot_e-208_gti_interior_dashboard.jpg",
+    "https://static.independent.co.uk/2025/06/13/9/25/PEUGEOT_E208_GTi_2506STYP_303_FR.jpeg"
+  ],
+  "primaryColorPalette": [
+    "000000",
+    "FFFFFF",
+    "E2231A",
+    "1B7FC4"
+  ],
+  "secondaryColorPalette": [
+    "4A4A4A",
+    "002663",
+    "0A1F44",
+    "1F4FA0",
+    "C8102E",
+    "E5E5E5"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Peugeot New",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Brand name, hero displays and large headline reveals; uppercase usage for impact"
+    },
+    {
+      "fontFamily": "Peugeot New",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Section headings and primary CTAs on E-208 GTi communications"
+    },
+    {
+      "fontFamily": "Peugeot New",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Sub-headings, navigation labels and pull quotes"
+    },
+    {
+      "fontFamily": "Peugeot New",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, descriptions and editorial text"
+    },
+    {
+      "fontFamily": "Peugeot New",
+      "fontWeight": 400,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Captions, legal mentions, photo credits and emphasis in long-form copy"
+    },
+    {
+      "fontFamily": "Peugeot New",
+      "fontWeight": 300,
+      "fontEffect": [],
+      "fontUses": "Fine print, footnotes and supporting metadata"
+    }
+  ],
+  "brandVision": "Peugeot aims to be the most attractive innovative high-end generalist brand, blending its rich heritage with cutting-edge technology to deliver bold, sustainable and emotionally engaging mobility. With the E-208 GTi, Peugeot revives the iconic GTi badge — 40 years after the legendary 205 GTi — in a fully electric form, proving that electrification can amplify driving pleasure, performance and emotion. Powered by Peugeot Sport with World Endurance Championship-inspired technology, the brand projects a future where performance, sustainability and French design excellence coexist.",
+  "brandValues": "Allure (attractive, sharp, sensual design), Excellence (quality of materials, execution and finish — a constant move upmarket), Emotion (driving pleasure through the i-Cockpit® and Peugeot Sport-tuned dynamics), Heritage & Audacity (215+ years of pioneering mobility, rally and Le Mans pedigree, daring to electrify the iconic GTi), Innovation & Sustainability (electrification, energy recovery, responsible performance), and French savoir-faire (proudly designed and engineered in France). The Lion emblem embodies pride, strength and status — without aggressiveness."
+}

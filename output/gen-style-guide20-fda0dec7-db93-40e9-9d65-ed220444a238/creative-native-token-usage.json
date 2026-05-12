@@ -1,0 +1,8 @@
+{
+  "api_calls": 4,
+  "input_tokens": 131310,
+  "output_tokens": 46448,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "total_tokens_reported_sum": 177758
+}

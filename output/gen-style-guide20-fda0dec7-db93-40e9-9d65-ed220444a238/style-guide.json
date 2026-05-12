@@ -1,0 +1,82 @@
+{
+  "companyName": "BYD Company Limited",
+  "companyContext": "BYD (Build Your Dreams) is a Chinese multinational high-tech conglomerate founded in 1995, headquartered in Shenzhen, China. The company is devoted to leveraging technological innovations for a better life across four major industries: automobiles, rail transit, new energy, and electronics. BYD is the world's largest manufacturer of new energy vehicles (NEVs), with cumulative NEV sales exceeding 11.9 million units as of April 2025. The company is listed on both the Hong Kong and Shenzhen Stock Exchanges, with annual revenue exceeding RMB 777 billion in 2024, and has a presence in over 112 countries and regions worldwide. BYD is also a pioneer in battery technology, having developed the industry-leading Blade Battery and Flash Charging system.",
+  "companyURL": "https://www.byd.com",
+  "brandName": "BYD Auto",
+  "brandContext": "BYD Auto is the passenger vehicle division of BYD Company, designing, manufacturing, and selling new energy vehicles including battery electric vehicles (BEVs) and plug-in hybrid electric vehicles (PHEVs). The brand operates multiple vehicle series including the Ocean Series (Seagull, Dolphin, Seal, Sealion) and the Dynasty Series (Tang, Han, Qin, Yuan, Song), as well as premium sub-brands Denza, Yangwang, and Fang Cheng Bao. BYD Auto is known for its vertically integrated approach, producing its own batteries, motors, semiconductors, and electronic platforms. The brand was the first automaker to stop production of fossil-fueled vehicles, committing entirely to electrified powertrains.",
+  "brandURL": "https://www.byd.com/en",
+  "logoFileUrls": [
+    "https://companieslogo.com/img/orig/002594.SZ_BIG-d04eb0de.png?t=1745059055",
+    "https://companieslogo.com/img/orig/002594.SZ_BIG.D-c7082222.png?t=1745059055",
+    "https://crystalpng.com/wp-content/uploads/2025/08/Byd-Logo-01.png",
+    "https://images.seeklogo.com/logo-png/19/2/byd-auto-logo-png_seeklogo-194379.png"
+  ],
+  "productName": "BYD Seagull 2026",
+  "productPictureUrls": [
+    "https://www.chinapev.com/wp-content/uploads/2026/04/BYD-Seagull-2026_1.jpg",
+    "https://www.chinapev.com/wp-content/uploads/2026/04/BYD-Seagull-2026_5.jpg",
+    "https://autocar.com.ph/wp-content/uploads/2026/04/1-39.png",
+    "https://autocar.com.ph/wp-content/uploads/2026/04/2-38.png",
+    "https://autocar.com.ph/wp-content/uploads/2026/04/3-25.png",
+    "https://www.evcarnews.net/wp-content/uploads/2026/04/2026-BYD-Seagull.jpeg"
+  ],
+  "primaryColorPalette": [
+    "E91B21",
+    "FFFFFF",
+    "252728"
+  ],
+  "secondaryColorPalette": [
+    "4C4C4C",
+    "F5F5F5",
+    "C0C0C0",
+    "000000",
+    "B71C1C",
+    "FF5252",
+    "1A1A1A",
+    "E0E0E0"
+  ],
+  "typography": [
+    {
+      "fontFamily": "BYD Custom Geometric Sans-Serif",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Brand name and logo wordmark. Proprietary custom-designed typeface with geometric forms, rounded edges, and distinctive internal gaps within each character. Closest commercial alternative is Bitsumishi Pro Medium. Used exclusively for the BYD logotype across all touchpoints."
+    },
+    {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Headings and display text (H1, H2). Clean geometric sans-serif used for primary headlines, hero sections, and section titles across digital and print marketing materials. Provides strong visual hierarchy while complementing the brand's modern, technology-forward identity."
+    },
+    {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Subheadings and secondary headings (H3, H4). Semi-bold weight for sub-section titles, card headings, product feature labels, and call-to-action buttons. Maintains hierarchy distinction from body text."
+    },
+    {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body text and general content. Regular weight for paragraphs, descriptions, specifications, legal text, and all general reading content across web, app, and print. Base size 16px with 1.5 line-height for optimal readability."
+    },
+    {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 300,
+      "fontEffect": [],
+      "fontUses": "Captions, metadata, and fine print. Light weight for supplementary information including timestamps, disclaimers, footnotes, and image captions. Typically set at 12-14px."
+    },
+    {
+      "fontFamily": "Noto Sans Mono",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Technical specifications, data tables, and code. Monospace variant for vehicle specifications, performance data, battery statistics, charging metrics, and any technical numeric content."
+    }
+  ],
+  "brandVision": "BYD's vision is to 'Cool the Earth by 1°C' — leading the global transition to sustainable transportation and clean energy through relentless technological innovation. The brand aims to make advanced green technologies universally affordable and accessible, driving the electrification of vehicles, energy storage, and public transit systems across every market worldwide. BYD aspires to be the definitive global leader in new energy vehicles, energy storage systems, and renewable energy solutions, creating a zero-emission future where cutting-edge technology and environmental stewardship go hand in hand.",
+  "brandValues": "BYD stands for 'Technological innovations for a better life.' The brand is built on core values of Excellence, Pragmatism, Passion, and Innovation. BYD embraces a People-First philosophy, demonstrated through its commitment to safety (exemplified by the Blade Battery), accessibility (making advanced EV technology available at every price point), and environmental responsibility (being the first automaker to fully cease fossil fuel vehicle production). The brand champions integrity, teamwork, customer-centricity, and vertical integration as competitive strengths, enabling it to control quality across the entire value chain from semiconductors to finished vehicles. BYD is dedicated to resolving social and environmental challenges through technological progress, with the mission of 'Building Your Dreams' for a cleaner, smarter, more connected world."
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assurance Auto — La Banque Postale</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="ad" id="ad">
+    <div class="ad__inner" id="adInner">
+      <!-- Brand accent stripe: yellow / azure / navy tricolor -->
+      <div class="ad__bar"></div>
+
+      <!-- Header — La Banque Postale main logo (iconic stylised azure-blue bird with navy LA BANQUE POSTALE text, yellow-highlighted LA) paired with the Assurances sub-brand logo (bird icon + Assurances label) -->
+      <header class="ad__header">
+        <img src="./La-Banque-Postale-Logo.png" alt="La Banque Postale" class="ad__logo ad__logo--main">
+        <span class="ad__header-sep"></span>
+        <img src="./la_banque_postale_assurances.png" alt="La Banque Postale Assurances" class="ad__logo ad__logo--assurance">
+      </header>
+
+      <!-- Hero carousel — three lifestyle auto visuals that crossfade: a happy couple choosing a new car at a dealership, a woman smiling proudly beside her car, and a woman enjoying a scenic road trip -->
+      <section class="ad__hero" id="hero">
+        <img src="./couple-achat-voiture.jpg-rend-cq5dam.web.750.750.jpg"
+             class="ad__hero-img is-active" data-i="0"
+             alt="Un couple heureux choisissant leur nouvelle voiture chez un concessionnaire">
+        <img src="./femme-portrait-voiture.jpg-rend-cq5dam.web.750.750.jpg"
+             class="ad__hero-img" data-i="1"
+             alt="Une femme souriante posant fièrement près de sa voiture">
+        <img src="./femme-voyage-voiture-4.jpg-rend-cq5dam.web.1080.1080.jpg"
+             class="ad__hero-img" data-i="2"
+             alt="Une femme profitant d'un voyage en voiture sur une route ensoleillée">
+        <div class="ad__hero-grad"></div>
+        <nav class="ad__dots" id="dots">
+          <button class="ad__dot is-active" data-i="0" aria-label="Image 1"></button>
+          <button class="ad__dot" data-i="1" aria-label="Image 2"></button>
+          <button class="ad__dot" data-i="2" aria-label="Image 3"></button>
+        </nav>
+      </section>
+
+      <!-- Promo section — navy background -->
+      <section class="ad__promo">
+        <span class="ad__tag">ASSURANCE AUTO</span>
+
+        <div class="ad__offer" id="offer">
+          <span class="ad__offer-num">2</span>
+          <span class="ad__offer-txt">MOIS<br>OFFERTS</span>
+          <div class="ad__offer-shine"></div>
+        </div>
+
+        <p class="ad__subtitle">sur votre nouveau contrat auto*</p>
+
+        <button class="ad__cta" id="cta">
+          Obtenir mon devis
+          <span class="ad__cta-arrow">→</span>
+        </button>
+
+        <p class="ad__legal">*Offre soumise à conditions. Voir détails sur labanquepostale.fr</p>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
