@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diablo IV: Lord of Hatred</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="ad-frame" id="adFrame">
+    <!-- Scene 0 BG: Lord of Hatred cover art – towering dark scene with Mephisto motifs, deep crimson & black palette, portrait orientation -->
+    <div class="scene-bg active" data-scene="0">
+      <img src="./diablo-iv-lord-of-hatred-tag-page-cover-art.jpg" alt="" class="parallax-bg">
+    </div>
+    <!-- Scene 1 BG: Paladin key art – the new holy warrior class radiating light against a dark fantasy vista -->
+    <div class="scene-bg" data-scene="1">
+      <img src="./diablo-4-paladin-key-art.jpg" alt="" class="parallax-bg">
+    </div>
+    <!-- Scene 2 BG: Diablo IV atmospheric game scene, hellfire environment with moody red/black lighting -->
+    <div class="scene-bg" data-scene="2">
+      <img src="./5g958NaXQkb5DN68VrQBoa.jpg" alt="" class="parallax-bg">
+    </div>
+
+    <!-- Gradient & vignette overlay -->
+    <div class="overlay"></div>
+    <!-- Decorative top gold/red hairline -->
+    <div class="top-glow"></div>
+    <!-- Ember particle canvas -->
+    <canvas id="emberCanvas" width="320" height="480"></canvas>
+    <!-- Bottom ambient fire glow -->
+    <div class="bottom-fire"></div>
+
+    <!-- Content layer -->
+    <div class="content">
+      <!-- Blizzard white-on-transparent logo: iconic Blizzard swirl storm emblem above BLIZZARD ENTERTAINMENT wordmark -->
+      <img src="./27-275084_blizzard-entertainment-logo-white-png-transparent-png.png"
+           alt="Blizzard Entertainment" class="blizzard-logo anim-item" data-delay="200">
+
+      <div class="hero-spacer"></div>
+
+      <!-- Title treatment -->
+      <div class="title-block anim-item" data-delay="600" data-anim="scale">
+        <h1 class="main-title">DIABLO IV</h1>
+        <div class="gold-line"></div>
+        <h2 class="sub-title">LORD OF HATRED</h2>
+      </div>
+
+      <!-- Scene-specific taglines (French) -->
+      <div class="tagline-area">
+        <p class="tagline active" data-scene="0">Le Jugement Dernier<br>de Sanctuaire</p>
+        <p class="tagline" data-scene="1">Le Paladin s'éveille<br>dans la Lumière</p>
+        <p class="tagline" data-scene="2">Affrontez Mephisto<br>Seigneur de la Haine</p>
+      </div>
+
+      <!-- Expansion promo banner – official Lord of Hatred key art composition with expansion title treatment -->
+      <div class="product-strip anim-item" data-delay="1300">
+        <img src="./Diablo-IV-Lord-of-Hatred-Expansion.webp" alt="Extension Lord of Hatred" class="product-img">
+        <div class="strip-overlay"></div>
+        <span class="new-badge">NOUVEAU</span>
+      </div>
+
+      <!-- Secondary brand badge – full Blizzard Entertainment wordmark with storm emblem, transparent background -->
+      <div class="brand-row anim-item" data-delay="1500">
+        <img src="./blizzard-entertainment-1-logo-png-transparent.png" alt="Blizzard" class="brand-badge">
+      </div>
+
+      <!-- CTA -->
+      <button class="cta-btn anim-item" data-delay="1700" id="ctaBtn">
+        <span class="cta-text">JOUER MAINTENANT</span>
+        <span class="cta-shine"></span>
+      </button>
+
+      <p class="sub-cta anim-item" data-delay="1900">Disponible sur Battle.net</p>
+
+      <!-- Scene navigation dots -->
+      <div class="indicators">
+        <span class="dot active" data-scene="0"></span>
+        <span class="dot" data-scene="1"></span>
+        <span class="dot" data-scene="2"></span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,13 +1,11 @@
 import type { StyleGuide } from './gen-style-guide.mjs';
 import { basename, dirname, extname, join } from 'node:path';
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { pathToFileURL } from 'node:url';
 import { config as loadDotenv } from 'dotenv';
 import { Anthropic } from '@anthropic-ai/sdk';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
 import { imageSizeFromFile } from 'image-size/fromFile';
 import mime from 'mime';
-import puppeteer, { KnownDevices } from 'puppeteer';
 import { z } from 'zod';
 
 // --- Tokens / coût (Claude Opus 4.7 Flagship : $5/M input, $25/M output) ---
@@ -142,20 +140,6 @@ function describeClientToolUse (name: string, input: unknown): string {
       }
       return "recherche d'images Google (logos, produits, références visuelles)";
     }
-    case 'render_creative_png': {
-      const o = input !== null && typeof input === 'object' ? (input as Record<string, unknown>) : null;
-      const entry = typeof o?.['entryFile'] === 'string' ? o['entryFile'] : '(fichier non précisé)';
-      const preset = typeof o?.['devicePreset'] === 'string' ? o['devicePreset'] : null;
-      const wait = typeof o?.['waitMs'] === 'number' ? `attente ${o['waitMs']} ms` : null;
-      const bits = [ `entrée ${entry}` ];
-      if (preset !== null) {
-        bits.push(`appareil ${preset}`);
-      }
-      if (wait !== null) {
-        bits.push(wait);
-      }
-      return `génération de prévisualisation PNG (Puppeteer) — ${bits.join(', ')} — pour contrôler la scène avant livraison des fichiers`;
-    }
     default:
       return `outil personnalisé « ${name} »`;
   }
@@ -245,24 +229,6 @@ function contains<T extends string>(array: readonly T[], value: string): value i
   return (array as readonly string[]).includes(value);
 }
 
-function sanitizeFilename(name: string): string {
-  return name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 200);
-}
-
-interface RenderCreativePngInput {
-  entryFile: string;
-  outputFileName?: string;
-  devicePreset?: string;
-  viewport?: {
-    width: number;
-    height: number;
-    deviceScaleFactor?: number;
-  };
-  waitMs?: number;
-  ensureSceneReady?: boolean;
-  sceneReadyTimeoutMs?: number;
-}
-
 interface AssetFile {
   fileName: string;
   filePath: string;
@@ -280,16 +246,6 @@ function createAssetDescription(fileName: string, fileType: 'logos' | 'products'
     : 'a utiliser comme visuel hero ou element de scene principal';
 
   return `Description asset (${categoryLabel}): ${keywordString || baseName}. ${usageHint}.`;
-}
-
-
-interface RenderDefaults {
-  devicePreset?: string;
-  viewport?: {
-    width: number;
-    height: number;
-    deviceScaleFactor?: number;
-  };
 }
 
 type AssetInputMode = 'base64' | 'url';
@@ -493,62 +449,10 @@ if (directoryUuid === undefined) {
 }
 
 const cliArguments = process.argv.slice(3);
-const renderDefaults: RenderDefaults = {};
 let assetInputMode: AssetInputMode = 'url';
 
 for (let i = 0; i < cliArguments.length; i += 1) {
   const argument = cliArguments[i];
-
-  if (argument === '--device') {
-    const value = cliArguments[i + 1];
-    if (value === undefined || value.startsWith('--')) {
-      throw new Error('Missing value for --device');
-    }
-    renderDefaults.devicePreset = value;
-    i += 1;
-    continue;
-  }
-
-  if (argument === '--viewport') {
-    const value = cliArguments[i + 1];
-    if (value === undefined || value.startsWith('--')) {
-      throw new Error('Missing value for --viewport. Expected format WIDTHxHEIGHT (example: 390x844).');
-    }
-    const viewportMatch = /^(\d+)x(\d+)$/i.exec(value);
-    if (viewportMatch === null) {
-      throw new Error(`Invalid --viewport value "${value}". Expected format WIDTHxHEIGHT (example: 390x844).`);
-    }
-    const widthMatch = viewportMatch[1];
-    const heightMatch = viewportMatch[2];
-    if (widthMatch === undefined || heightMatch === undefined) {
-      throw new Error(`Invalid --viewport value "${value}". Expected format WIDTHxHEIGHT (example: 390x844).`);
-    }
-    const width = Number.parseInt(widthMatch, 10);
-    const height = Number.parseInt(heightMatch, 10);
-    if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
-      throw new Error(`Invalid --viewport dimensions "${value}". Width and height must be positive integers.`);
-    }
-    renderDefaults.viewport = { width, height };
-    i += 1;
-    continue;
-  }
-
-  if (argument === '--dpr') {
-    const value = cliArguments[i + 1];
-    if (value === undefined || value.startsWith('--')) {
-      throw new Error('Missing value for --dpr (example: 2).');
-    }
-    const dpr = Number.parseFloat(value);
-    if (!Number.isFinite(dpr) || dpr <= 0) {
-      throw new Error(`Invalid --dpr value "${value}". DPR must be a positive number.`);
-    }
-    renderDefaults.viewport = {
-      ...(renderDefaults.viewport ?? { width: 320, height: 480 }),
-      deviceScaleFactor: dpr
-    };
-    i += 1;
-    continue;
-  }
 
   if (argument === '--asset-input') {
     const value = cliArguments[i + 1];
@@ -563,16 +467,11 @@ for (let i = 0; i < cliArguments.length; i += 1) {
     continue;
   }
 
-  throw new Error(`Unknown argument "${argument}". Allowed options: --device, --viewport, --dpr, --asset-input`);
-}
-
-if (renderDefaults.devicePreset !== undefined && renderDefaults.viewport !== undefined) {
-  throw new Error('Do not use --device and --viewport together. Choose one simulation mode.');
+  throw new Error(`Unknown argument "${argument}". Allowed option: --asset-input`);
 }
 
 const directoryPath = join(import.meta.dirname, '..', 'output', directoryUuid);
 const codeDirectoryPath = join(directoryPath, 'code');
-const previewDirectoryPath = join(directoryPath, 'preview');
 const styleGuidePath = join(directoryPath, 'style-guide.json');
 const styleGuide = JSON.parse(readFileSync(styleGuidePath, { encoding: 'utf8' })) as StyleGuide;
 
@@ -595,124 +494,6 @@ const anthropicClient = new Anthropic({
   apiKey: anthropicApiKey
 });
 const localDesignSkillGuidance = loadDesignSkillGuidance();
-
-async function renderCreativePng(input: RenderCreativePngInput): Promise<{ outputPath: string }> {
-  const safeEntryFile = input.entryFile.replace(/\\/g, '/');
-  const entryFileName = safeEntryFile.split('/').pop() ?? '';
-
-  if (entryFileName.length === 0 || entryFileName === '.' || entryFileName === '..') {
-    throw new Error('Invalid entryFile provided.');
-  }
-
-  const entryFilePath = join(codeDirectoryPath, entryFileName);
-  const outputFileName = sanitizeFilename(input.outputFileName ?? `preview-${Date.now()}.png`);
-  const outputPath = join(previewDirectoryPath, outputFileName.endsWith('.png') ? outputFileName : `${outputFileName}.png`);
-  const waitMs = Math.max(0, Math.min(input.waitMs ?? 6_500, 30_000));
-  const ensureSceneReady = input.ensureSceneReady ?? false;
-  const sceneReadyTimeoutMs = Math.max(1_000, Math.min(input.sceneReadyTimeoutMs ?? 15_000, 60_000));
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-      '--allow-file-access-from-files',
-      '--disable-web-security'
-    ]
-  });
-
-  try {
-    const page = await browser.newPage();
-
-    const effectiveDevicePreset = input.devicePreset ?? renderDefaults.devicePreset;
-    const effectiveViewport = input.viewport ?? renderDefaults.viewport;
-
-    if (effectiveDevicePreset !== undefined && effectiveDevicePreset.trim().length > 0) {
-      const knownDevices = KnownDevices as Record<string, (typeof KnownDevices)[keyof typeof KnownDevices]>;
-      const device = knownDevices[effectiveDevicePreset];
-
-      if (device === undefined) {
-        throw new Error(`Unknown device preset: ${effectiveDevicePreset}`);
-      }
-
-      await page.emulate(device);
-    } else if (effectiveViewport !== undefined) {
-      const { width, height, deviceScaleFactor } = effectiveViewport;
-      await page.setViewport({
-        width,
-        height,
-        deviceScaleFactor: deviceScaleFactor ?? 1
-      });
-    } else {
-      await page.setViewport({
-        width: 320,
-        height: 480,
-        deviceScaleFactor: 1
-      });
-    }
-
-    const entryFileUrl = pathToFileURL(entryFilePath).toString();
-    await page.goto(entryFileUrl, { waitUntil: 'networkidle2' });
-
-    if (ensureSceneReady) {
-      await page.evaluate((timeoutMs: number) => {
-        const waitLoaded = (target: EventTarget): Promise<void> => {
-          return new Promise(resolve => {
-            const node = target as { hasLoaded?: boolean; addEventListener: EventTarget['addEventListener'] };
-
-            if (node.hasLoaded === true) {
-              resolve();
-              return;
-            }
-
-            node.addEventListener('loaded', () => resolve(), { once: true });
-          });
-        };
-
-        const withTimeout = (promise: Promise<void>, ms: number): Promise<void> => {
-          return Promise.race([
-            promise,
-            new Promise<void>((_, reject) => {
-              setTimeout(() => reject(new Error('DOM readiness timeout')), ms);
-            })
-          ]);
-        };
-
-        const doc = (globalThis as any).document as {
-          querySelector: (selector: string) => any;
-        };
-        const scene = doc.querySelector('a-scene');
-        const assets = scene?.querySelector('a-assets');
-
-        if (scene === null) {
-          return Promise.resolve();
-        }
-
-        const readyPromise = (async () => {
-          await waitLoaded(scene);
-
-          if (assets !== null) {
-            await waitLoaded(assets);
-          }
-        })();
-
-        return withTimeout(readyPromise, timeoutMs);
-      }, sceneReadyTimeoutMs);
-    }
-
-    if (waitMs > 0) {
-      await new Promise(resolve => setTimeout(resolve, waitMs));
-    }
-
-    mkdirSync(previewDirectoryPath, { recursive: true });
-    await page.screenshot({
-      path: outputPath,
-      type: 'png',
-      fullPage: false
-    });
-
-    return { outputPath };
-  } finally {
-    await browser.close();
-  }
-}
 
 const fileMessages: (Anthropic.ImageBlockParam | Anthropic.TextBlock)[] = [];
 const assetFiles: AssetFile[] = [];
@@ -807,6 +588,7 @@ while (true) {
       Graphic elements (fonts, colors, pictures) must follow only the JSON style guide from the user.
       The layout and interaction design are up to you: fresh, modern, eye-catching, with animation and
       interactivity where appropriate.
+      the logo should be clearly visible and a good scale so it is not too small or too big.
 
       Logo and product images are local files. Reference them with relative paths from the project root
       (for example: ./logo.png).
@@ -825,7 +607,6 @@ while (true) {
       Creative viewport area: 320x480 (the visible ad frame inside the page).
       Include at least one logo and one product image from the provided assets in the HTML/CSS/JS.
       Do not add browser chrome: no zoom, fullscreen, or VR toggles in the creative UI.
-      You may call render_creative_png to preview; entryFile is index.html at project root.
 
       The local design skills below are mandatory constraints.
       Before returning final files, internally run a compliance check against these skills.
@@ -855,66 +636,6 @@ while (true) {
         type: 'web_search_20250305',
         name: 'web_search',
         max_uses: 50
-      },
-      {
-        name: 'render_creative_png',
-        description: `
-          Render a local creative file into a PNG screenshot.
-          Use this to verify visual quality and composition while iterating.
-        `.trim(),
-        input_schema: {
-          type: 'object',
-          properties: {
-            entryFile: {
-              type: 'string',
-              description: 'Entry HTML file located in the generated code directory (for example: index.html).'
-            },
-            outputFileName: {
-              type: 'string',
-              description: 'Optional PNG output file name.'
-            },
-            devicePreset: {
-              type: 'string',
-              description: 'Optional Puppeteer known device preset (for example: iPhone 14 Pro).'
-            },
-            viewport: {
-              type: 'object',
-              description: 'Optional viewport configuration used when devicePreset is not provided.',
-              properties: {
-                width: {
-                  type: 'integer',
-                  minimum: 1
-                },
-                height: {
-                  type: 'integer',
-                  minimum: 1
-                },
-                deviceScaleFactor: {
-                  type: 'number',
-                  minimum: 0.1
-                }
-              },
-              required: [ 'width', 'height' ]
-            },
-            waitMs: {
-              type: 'integer',
-              minimum: 0,
-              maximum: 30000,
-              description: 'Optional wait after page load before screenshot, useful for animations.'
-            },
-            ensureSceneReady: {
-              type: 'boolean',
-              description: 'Optional DOM scene readiness check before screenshot. Defaults to false.'
-            },
-            sceneReadyTimeoutMs: {
-              type: 'integer',
-              minimum: 1000,
-              maximum: 60000,
-              description: 'Timeout for scene/assets readiness wait.'
-            }
-          },
-          required: [ 'entryFile' ]
-        }
       }
     ]
   });
@@ -958,48 +679,13 @@ while (true) {
     continue;
   }
 
-  const toolResults: Anthropic.ToolResultBlockParam[] = [];
-
-  for (const block of creativeCodeResponse.content) {
-    if (block.type === 'tool_use' && block.name === 'render_creative_png') {
-      const args = block.input as RenderCreativePngInput;
-
-      try {
-        const result = await renderCreativePng(args);
-        toolResults.push({
-          type: 'tool_result',
-          tool_use_id: block.id,
-          content: JSON.stringify({
-            success: true,
-            outputPath: result.outputPath
-          })
-        });
-      } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : String(err);
-        toolResults.push({
-          type: 'tool_result',
-          tool_use_id: block.id,
-          content: `Error: ${message}`,
-          is_error: true
-        });
-      }
-    }
-  }
-
-  if (toolResults.length === 0) {
-    structuredOutputRetryCount += 1;
-    if (structuredOutputRetryCount > maxStructuredOutputRetries) {
-      throw new Error('Tool use response contained no executable tool calls.');
-    }
-
-    messages.push({
-      role: 'user',
-      content: `No valid tool call was executed. Continue and return valid structured file output now.`
-    });
-    continue;
-  }
-
-  messages.push({ role: 'user', content: toolResults });
+  messages.push({
+    role: 'user',
+    content:
+      'Continue: return the structured file list (index.html, styles.css, app.js) matching the schema. '
+      + 'No screenshot or preview tools are available.'
+  });
+  continue;
 }
 
 if (codeFileList === null || codeFileList.length === 0) {
@@ -1019,19 +705,6 @@ for (const codeFile of codeFileList) {
 for (const assetFile of assetFiles) {
   const destinationPath = join(codeDirectoryPath, assetFile.fileName);
   copyFileSync(assetFile.filePath, destinationPath);
-}
-
-const indexFilePath = join(codeDirectoryPath, 'index.html');
-if (existsSync(indexFilePath)) {
-  try {
-    await renderCreativePng({
-      entryFile: 'index.html',
-      outputFileName: 'final-preview.png',
-      waitMs: 2_000,
-      ensureSceneReady: false
-    });
-  } catch {
-  }
 }
 
 const sumReportedTokens =

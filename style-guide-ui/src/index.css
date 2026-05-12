@@ -1,0 +1,37 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark, night, dim, nord;
+}
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Sélecteurs studio : fond opaque (évite listes natives illisibles sur cartes translucides) */
+select.studio-select-solid,
+select.studio-select-solid option {
+  background-color: var(--color-base-100);
+  color: var(--color-base-content);
+}
+
+select.studio-select-solid:disabled {
+  opacity: 0.6;
+}
+
+/* Fond discret : maille + léger dégradé (reste compatible thèmes daisyUI) */
+.studio-app-shell {
+  background-color: var(--color-base-200);
+  background-image:
+    radial-gradient(ellipse 120% 80% at 50% -20%, color-mix(in oklch, var(--color-primary) 12%, transparent), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 100% 0%, color-mix(in oklch, var(--color-secondary) 8%, transparent), transparent 45%),
+    radial-gradient(ellipse 50% 35% at 0% 100%, color-mix(in oklch, var(--color-accent) 6%, transparent), transparent 50%);
+}

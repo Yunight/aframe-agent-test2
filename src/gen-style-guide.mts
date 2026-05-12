@@ -90,7 +90,6 @@ function logAnthropicUsageAndCost (scriptLabel: string, acc: UsageAccumulator): 
   console.log(`total price (USD) : ${roundUsd6(p.total_usd)}`);
   console.log('');
 }
-
 function billedInputFromUsage (usage: UsageLike): number {
   return usage.input_tokens + (usage.cache_creation_input_tokens ?? 0) + (usage.cache_read_input_tokens ?? 0);
 }
@@ -239,12 +238,66 @@ function describeAnthropicTurnForLogs (
 }
 
 
-// const contextPrompt = `
-//   The brand is Red Bull and the context is the 2026 Winter Olympics in Milan.
-// `.trim();
-const contextPrompt = `
-  The brand is Parkside (by Lidl) and the context is spring and summer DIYers.
+interface BraveImageResult {
+  type: 'image_result';
+  title: string;
+  url: string;
+  source: string;
+  page_fetched: string;
+  thumbnail: { src: string };
+  properties: {
+    url: string;
+    placeholder: string;
+  };
+  meta_url: {
+    scheme: string;
+    netloc: string;
+    hostname: string;
+    favicon: string;
+    path: string;
+  };
+}
+ 
+interface BraveImageSearchResponse {
+  type: 'images';
+  query: {
+    original: string;
+    altered?: string;
+    spellcheck_off?: boolean;
+    show_strict_warning?: boolean;
+  };
+  results: BraveImageResult[];
+}
+
+const allowedImageMimeTypes = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/gif'
+]);
+
+const mimeTypeToExtension: Record<string, string> = {
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/webp': '.webp',
+  'image/gif': '.gif'
+};
+
+const DEFAULT_STYLE_GUIDE_CONTEXT_PROMPT = `
+  The brand Peugeot and the context is for the new EV GTI 208 they are launching.
 `.trim();
+
+function resolveStyleGuideContextPrompt (fallback: string): string {
+  const raw = process.env['STYLE_GUIDE_CONTEXT'];
+  if (raw === undefined) {
+    return fallback;
+  }
+  const trimmed = raw.trim();
+  if (trimmed.length === 0) {
+    throw new Error('STYLE_GUIDE_CONTEXT is set but empty after trim.');
+  }
+  return trimmed;
+}
 
 const skillFiles = [
   '.claude/.skills/ui-design/commands/color-palette.md',
@@ -255,7 +308,7 @@ const skillFiles = [
   '.claude/.skills/ui-design/skills/visual-hierarchy/SKILL.md'
 ] as const;
 
-function loadSkillGuidance(): string {
+function loadSkillGuidance (): string {
   const rootDir = join(import.meta.dirname, '..');
   const loadedSkills = skillFiles
     .map((relativePath) => {
@@ -290,7 +343,7 @@ async function downloadFileToFileSystem (url: string, destinationPath: string): 
   });
 
   if (!response.ok) {
-    throw new Error(`Downloading of file at URL: ${url} failed with status: ${response.status} and error: ${await response.text()}`);
+    throw new Error(`Downloading of file at URL: ${url} failed with status: ${response.status}`);
   }
 
   const body = response.body;
@@ -302,6 +355,62 @@ async function downloadFileToFileSystem (url: string, destinationPath: string): 
   const fileFetchStream = Readable.fromWeb(body);
   const fileWriteStream = createWriteStream(destinationPath);
   await pipeline(fileFetchStream, fileWriteStream);
+}
+
+async function resolveRemoteImageMetadata(url: string): Promise<{ mimeType: string, extension: string }> {
+  const headResponse = await fetch(url, {
+    method: 'HEAD',
+    headers: {
+      Accept: 'image/*'
+    }
+  });
+
+  if (!headResponse.ok) {
+    throw new Error(`Unable to validate image URL ${url}. HEAD request failed with status ${headResponse.status}`);
+  }
+
+  const contentTypeHeader = headResponse.headers.get('content-type') ?? '';
+  const mimeType = contentTypeHeader.split(';')[0]?.trim().toLowerCase() ?? '';
+
+  if (!allowedImageMimeTypes.has(mimeType)) {
+    throw new Error(`URL ${url} has unsupported content-type "${contentTypeHeader}"`);
+  }
+
+  const extension = mimeTypeToExtension[mimeType];
+  if (extension === undefined) {
+    throw new Error(`Unsupported MIME type "${mimeType}" for URL ${url}`);
+  }
+
+  return { mimeType, extension };
+}
+
+async function braveImageSearch (
+  { query, num = 10 }:
+  { query: string, num: number }
+): Promise<BraveImageResult[]> {
+    const params = new URLSearchParams();
+
+    params.set('q', query);
+    params.set('count', Math.min(Math.max(num, 1), 200).toString());
+    params.set('search_lang', 'fr');
+    params.set('country', 'fr');
+    params.set('safesearch', 'strict');
+    params.set('spellcheck', '0');
+ 
+    const url = `https://api.search.brave.com/res/v1/images/search?${params.toString()}`;
+ 
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'application/json',
+        'X-Subscription-Token': process.env['BRAVE_API_KEY'] ?? '',
+      }
+    });
+ 
+    if (!response.ok) {
+      throw new Error(`Brave image search failed: ${response.status} and error: ${await response.text() ?? ''}`);
+    }
+ 
+    return ((await response.json()) as BraveImageSearchResponse).results;
 }
 
 const brandStyleGuideSchema = z.object({
@@ -338,82 +447,174 @@ if (anthropicApiKey === undefined || anthropicApiKey.trim().length === 0) {
   throw new Error('Missing ANTHROPIC_API_KEY. Set it in project root .env or export it in your shell.');
 }
 
+const contextPrompt = resolveStyleGuideContextPrompt(DEFAULT_STYLE_GUIDE_CONTEXT_PROMPT);
+
 const anthropicClient = new Anthropic({
   apiKey: anthropicApiKey
 });
+const cliArguments = process.argv.slice(2);
+if (cliArguments.length > 0) {
+  throw new Error(`Unknown argument "${cliArguments[0]}". This script no longer supports optional asset download flags.`);
+}
+
+const messages: Anthropic.Messages.MessageParam[] = [{
+  role: 'user',
+  content: contextPrompt
+}];
+let finalMessageContent = null;
 const localSkillGuidance = loadSkillGuidance();
 
-console.log('Generating style guide ...');
+let i = 0;
 
-const styleGuideStream = await anthropicClient.messages.stream({
-  max_tokens: 128_000,
-  system: `
-    You are an agent that assembles brand style guides based on external information.
-    The information should ideally be sourced from the brand or company's official websites.
-    No information should come from the model memory. It should always be fetched remotely to ensure freshness.
-
-    Make sure to understand who the company or brand is and what the context is.
-    If a product name or category is specified analyse the problem with it in mind.
-
-    When specifying URLs, always check that they exist and that they are images (JPG, PNG, WEBP, GIF).
-    When specifying colors, always check that the color exists and matches the one described in the official sources.
-
-    Find at least four versions of the logo (light theme / dark theme and with brand name / without brand name).
-    Find at least four product pictures (light theme / dark theme and a few size and compositions variations).
-    Make sure that both the logo and the product pictures have a transparent background.
-
-    The local skills below are mandatory constraints.
-    Before returning final JSON, internally run a compliance check against these skills.
-    If any skill rule is not satisfied, keep searching and refining, and do not finalize yet.
-    ${localSkillGuidance}
-  `.trim(),
-  messages: [{
-    role: 'user',
-    content: contextPrompt
-  }],
-  model: 'claude-opus-4-6',
-  thinking: {
-    type: 'enabled',
-    budget_tokens: 100_000,
-    display: 'omitted'
-  },
-  output_config: {
-    format: zodOutputFormat(brandStyleGuideSchema)
-  },
-  tools: [
-    {
-      type: 'web_search_20250305',
-      name: 'web_search',
-      max_uses: 25
-    }
-  ]
-});
-const styleGuideResponse = await styleGuideStream.finalMessage();
 const apiUsageTotals = createEmptyUsageAccumulator();
-addUsageToAccumulator(apiUsageTotals, styleGuideResponse.usage);
-logReadableAnthropicCall(
-  describeAnthropicTurnForLogs(styleGuideResponse.stop_reason, styleGuideResponse.content),
-  styleGuideResponse.usage ?? undefined
-);
 
-console.log('Stop reason:', styleGuideResponse.stop_reason);
-console.log('Stop details:', styleGuideResponse.stop_details);
-console.log(styleGuideResponse.parsed_output);
+while (true) {
+  i += 1;
+
+  console.log(`Generating style guide ... (i=${i})`);
+
+  const styleGuideStream = await anthropicClient.messages.stream({
+    // Opus 4.7: max_tokens caps thinking + visible output together (was 128k out + 100k thinking budget).
+    max_tokens: 128000,
+    system: `
+      You are an agent that assembles brand style guides based on external information.
+      The information should ideally be sourced from the brand or company's official websites.
+      No information should come from the model memory. It should always be fetched remotely to ensure freshness.
+
+      Make sure to understand who the company or brand is and what the context is.
+      If a product name or category is specified analyse the problem with it in mind.
+
+      When specifying URLs, always check that they exist and that they are images (JPG, PNG, WEBP, GIF), filetype must be one of the following: JPG, PNG, WEBP, GIF, the logo should always be a transparent PNG file, even if the filename ends with .png you have to check that it is a transparent PNG file.
+      the logo should always be a transparent PNG file.
+      
+      When specifying colors, always check that the color exists and matches the one described in the official sources.
+
+      Find at least four versions of the logo (light theme / dark theme and with brand name / without brand name).
+      Find at least four product pictures (light theme / dark theme and a few size and compositions variations).
+
+      Search for images using the Google Image Search tool.
+      keep it simple and clean, avoid any complex images.
+      The local design skills below are mandatory constraints.
+      Before returning final JSON, internally run a compliance check against these skills.
+      If any skill rule is not satisfied, keep searching and refining, and do not finalize yet.
+      ${localSkillGuidance}
+    `.trim(),
+    messages,
+    model: 'claude-opus-4-7',
+    thinking: {
+      type: 'adaptive',
+      display: 'omitted'
+    },
+    output_config: {
+      format: zodOutputFormat(brandStyleGuideSchema),
+      // Opus 4.7 effort level; SDK union may omit until types ship.
+      effort: 'xhigh' as 'low' | 'medium' | 'high' | 'max' | null
+    },
+    tools: [
+      {
+        type: 'web_search_20250305',
+        name: 'web_search',
+        max_uses: 25
+      },
+      {
+        name: 'google_image_search',
+        description: `
+          Search Google Images and return a list of matching images
+          (title, direct image URL, source page, dimensions).
+          Use this when the user asks for pictures, references, or visual examples of something.
+        `.trim(),
+        input_schema: {
+          type: 'object',
+          properties: {
+            query: {
+              type: 'string',
+              description: 'Search query.',
+            },
+            num: {
+              type: 'integer',
+              description: 'How many results to return (1-10).',
+              minimum: 1,
+              maximum: 20,
+            }
+          },
+          required: [ 'query' ]
+        }
+      }
+    ]
+  });
+  const styleGuideResponse = await styleGuideStream.finalMessage();
+  addUsageToAccumulator(apiUsageTotals, styleGuideResponse.usage);
+  logReadableAnthropicCall(
+    describeAnthropicTurnForLogs(styleGuideResponse.stop_reason, styleGuideResponse.content),
+    styleGuideResponse.usage ?? undefined
+  );
+
+  messages.push({ role: 'assistant', content: styleGuideResponse.content });
+
+  console.log('[Claude]', JSON.stringify(styleGuideResponse.content).slice(0, 100), '...');
+
+  if (styleGuideResponse.stop_reason !== 'tool_use') {
+    console.log('Stop reason:', styleGuideResponse.stop_reason);
+    console.log('Stop details:', styleGuideResponse.stop_details);
+    console.log(styleGuideResponse.parsed_output);
+    finalMessageContent = styleGuideResponse.parsed_output;
+    break;
+  }
+
+  const toolResults: Anthropic.ToolResultBlockParam[] = [];
+
+  for (const block of styleGuideResponse.content) {
+    if (block.type === 'tool_use' && block.name === 'google_image_search') {
+      const args = block.input as Parameters<typeof braveImageSearch>[0];
+
+      try {
+        const result = await braveImageSearch(args);
+        toolResults.push({
+          type: 'tool_result',
+          tool_use_id: block.id,
+          content: JSON.stringify(result),
+        });
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          console.error(`Error while fetching Google Images with query ${args.query} ${err.name}:${err.message}\n${err.stack ?? ''}`);
+          toolResults.push({
+            type: 'tool_result',
+            tool_use_id: block.id,
+            content: `Error: ${err.message}`,
+            is_error: true,
+          });
+        }
+      }
+    }
+  }
+
+  messages.push({ role: 'user', content: toolResults });
+}
+
+if (finalMessageContent === null) {
+  throw new Error('Empty style guide response');
+}
 
 const directoryUuid = randomUUID();
-const generatorScriptName = basename(import.meta.filename, extname(import.meta.filename));
-const outputDirectoryName = `${generatorScriptName}-${directoryUuid}`;
+const outputDirectoryName = directoryUuid;
 const directoryPath = join(import.meta.dirname, '..', 'output', outputDirectoryName);
 
 console.log(`Output directory path: ${directoryPath}`);
+console.log('Download assets: required');
 
 mkdirSync(directoryPath);
 
-for (const fileType of [ 'logos', 'products' ]) {
+const downloadedAssetCounts: Record<'logos' | 'products', number> = {
+  logos: 0,
+  products: 0
+};
+const failedAssetDownloads: Array<{ fileType: 'logos' | 'products'; url: string; reason: string }> = [];
+
+for (const fileType of [ 'logos', 'products' ] as const) {
   const fileUrls = (fileType === 'logos'
-    ? styleGuideResponse.parsed_output?.logoFileUrls
+    ? finalMessageContent?.logoFileUrls
     : fileType === 'products'
-      ? styleGuideResponse.parsed_output?.productPictureUrls
+      ? finalMessageContent?.productPictureUrls
       : []
   ) ?? [];
 
@@ -423,25 +624,57 @@ for (const fileType of [ 'logos', 'products' ]) {
   for (const fileUrl of fileUrls) {
     const logoFileName = basename(fileUrl);
     const logoFileNameSanitized = sanitizeFilename(logoFileName);
-    
-    const filePath = join(subdirectoryPath, logoFileNameSanitized);
-
-    console.log(`Downloading ${filePath} ...`);
+    const originalExtension = extname(logoFileNameSanitized).toLowerCase();
 
     try {
+      const { mimeType, extension } = await resolveRemoteImageMetadata(fileUrl);
+      const resolvedFileName = originalExtension === extension
+        ? logoFileNameSanitized
+        : `${logoFileNameSanitized.replace(/\.[^.]+$/, '')}${extension}`;
+      const filePath = join(subdirectoryPath, resolvedFileName);
+
+      if (originalExtension !== extension) {
+        console.warn(`[download] Extension mismatch for ${fileUrl}. Original "${originalExtension || 'none'}", remote "${mimeType}". Saving as ${resolvedFileName}.`);
+      }
+
+      console.log(`Downloading ${filePath} ...`);
       await downloadFileToFileSystem(fileUrl, filePath);
+      downloadedAssetCounts[fileType] += 1;
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error(err);
+        failedAssetDownloads.push({
+          fileType,
+          url: fileUrl,
+          reason: err.message
+        });
       }
     }
   }
 }
 
+const minimumAssetsPerType = 1;
+const missingTypes = (Object.entries(downloadedAssetCounts) as Array<[ 'logos' | 'products', number ]>)
+  .filter(([, count]) => count < minimumAssetsPerType)
+  .map(([type, count]) => `${type}: ${count}/${minimumAssetsPerType}`);
+
+if (missingTypes.length > 0) {
+  const failedList = failedAssetDownloads.length === 0
+    ? 'none'
+    : failedAssetDownloads
+      .map((entry) => `${entry.fileType} | ${entry.url} | ${entry.reason}`)
+      .join('\n');
+  throw new Error(
+    `Asset download requirements not met (${missingTypes.join(', ')}).\n` +
+    `Downloaded counts: logos=${downloadedAssetCounts.logos}, products=${downloadedAssetCounts.products}\n` +
+    `Failed downloads:\n${failedList}`
+  );
+}
+
 const styleGuideFilePath = join(directoryPath, 'style-guide.json');
 writeFileSync(
   styleGuideFilePath,
-  `${JSON.stringify(styleGuideResponse.parsed_output, null, 2)}\n`,
+  `${JSON.stringify(finalMessageContent, null, 2)}\n`,
   { encoding: 'utf8' }
 );
 
