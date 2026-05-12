@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import studioAdPresetsJson from '../../shared/ad-formats.json'
 
 type RunStatus = 'idle' | 'running' | 'success' | 'error'
 
@@ -24,7 +25,13 @@ interface StudioCatalog {
 
 const PREFERRED_CREATIVE_SCRIPT = 'gen-creative-code-native.mts'
 
-/** Vite proxy: 502 = rien sur 3001 ; 404 = process sur 3001 mais pas l’API studio attendue (souvent API pas redémarrée). */
+type StudioAdPreset = { id: string; width: number; height: number; label: string }
+type StudioAdPresetsFile = { presets: StudioAdPreset[] }
+
+const STUDIO_AD_PRESETS = (studioAdPresetsJson as StudioAdPresetsFile).presets
+
+type CreativeAdFormat = { id: string; width: number; height: number }
+
 function messageForProxyFailure (status: number): string | null {
   if (status === 502 || status === 503 || status === 504) {
     return (
@@ -63,10 +70,53 @@ function App () {
   const [catalogError, setCatalogError] = useState<string | null>(null)
   const [creativeScript, setCreativeScript] = useState(PREFERRED_CREATIVE_SCRIPT)
   const [creativeOutputFolder, setCreativeOutputFolder] = useState('')
+  const [creativeAdFormats, setCreativeAdFormats] = useState<CreativeAdFormat[]>(() => {
+    const p = STUDIO_AD_PRESETS.find((x) => x.id === '320x480') ?? STUDIO_AD_PRESETS[0]
+    return p !== undefined ? [{ id: p.id, width: p.width, height: p.height }] : []
+  })
+  const [customAdW, setCustomAdW] = useState('')
+  const [customAdH, setCustomAdH] = useState('')
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
   }, [ theme ])
+
+  const toggleCreativePreset = useCallback((preset: StudioAdPreset) => {
+    setCreativeAdFormats((prev) => {
+      const idx = prev.findIndex(
+        (f) => f.id === preset.id && f.width === preset.width && f.height === preset.height
+      )
+      if (idx >= 0) {
+        if (prev.length <= 1) {
+          return prev
+        }
+        return prev.filter((_, i) => i !== idx)
+      }
+      if (prev.length >= 8) {
+        return prev
+      }
+      return [ ...prev, { id: preset.id, width: preset.width, height: preset.height } ]
+    })
+  }, [])
+
+  const addCreativeCustomFormat = useCallback(() => {
+    const w = Number.parseInt(customAdW.trim(), 10)
+    const h = Number.parseInt(customAdH.trim(), 10)
+    if (!Number.isFinite(w) || !Number.isFinite(h) || w < 16 || h < 16 || w > 4096 || h > 4096) {
+      return
+    }
+    setCreativeAdFormats((prev) => {
+      if (prev.some((f) => f.width === w && f.height === h)) {
+        return prev
+      }
+      if (prev.length >= 8) {
+        return prev
+      }
+      return [ ...prev, { id: `custom-${String(w)}x${String(h)}`, width: w, height: h } ]
+    })
+    setCustomAdW('')
+    setCustomAdH('')
+  }, [ customAdW, customAdH ])
 
   useEffect(() => {
     return () => {
@@ -344,7 +394,11 @@ function App () {
       const res = await fetch('/api/creative-code/run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ creativeScript, outputFolder: creativeOutputFolder })
+        body: JSON.stringify({
+          creativeScript,
+          outputFolder: creativeOutputFolder,
+          adFormats: creativeAdFormats
+        })
       })
 
       if (res.status === 429) {
@@ -378,7 +432,7 @@ function App () {
       setStatus('error')
       setErrorMessage(e instanceof Error ? e.message : String(e))
     }
-  }, [creativeOutputFolder, creativeScript, subscribeToJobEvents])
+  }, [creativeAdFormats, creativeOutputFolder, creativeScript, subscribeToJobEvents])
 
   const statusBadge =
     status === 'idle'
@@ -406,7 +460,7 @@ function App () {
           </div>
           <div className="flex min-w-0 flex-col leading-tight">
             <span className="truncate text-base font-semibold tracking-tight sm:text-lg">Style guide studio</span>
-            <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-base-content/45 sm:text-xs">
+            <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-base-content/90 sm:text-xs">
               src/ · pipeline Claude
             </span>
           </div>
@@ -574,11 +628,86 @@ function App () {
                     </option>
                   ))}
                 </select>
-                <span className="label-text-alt text-base-content/45">
+                <span className="label-text-alt text-base-content/90">
                   Dossiers avec <code className="font-mono text-xs">style-guide.json</code> et sans <code className="font-mono text-xs">code/</code> ; tri par JSON le plus récent.
                 </span>
               </label>
             </div>
+            <fieldset className="rounded-2xl border border-base-300/50 bg-base-200/15 px-4 py-4">
+              <legend className="px-1 text-xs font-semibold uppercase tracking-wider text-base-content/50">
+                Formats pub (IAB) — <code className="font-mono normal-case text-[11px]">gen-creative-code-native.mts</code>
+              </legend>
+              <p className="mb-3 text-xs leading-relaxed text-base-content/55">
+                Cochez une ou plusieurs tailles (max. 8). Dimensions personnalisées : 16–4096 px. Au moins un format doit rester sélectionné.
+              </p>
+              <div className="grid max-h-52 gap-2 overflow-y-auto sm:grid-cols-2">
+                {STUDIO_AD_PRESETS.map((preset) => {
+                  const checked = creativeAdFormats.some(
+                    (f) => f.id === preset.id && f.width === preset.width && f.height === preset.height
+                  )
+                  return (
+                    <label
+                      key={preset.id}
+                      className="flex cursor-pointer items-start gap-2 rounded-xl border border-base-300/40 bg-base-100/70 px-3 py-2 text-sm shadow-sm transition-colors hover:bg-base-100"
+                    >
+                      <input
+                        type="checkbox"
+                        className="checkbox checkbox-sm checkbox-primary mt-0.5 shrink-0"
+                        checked={checked}
+                        disabled={status === 'running' || (checked && creativeAdFormats.length <= 1)}
+                        onChange={() => { toggleCreativePreset(preset); }}
+                      />
+                      <span className="leading-snug text-base-content/90">{preset.label}</span>
+                    </label>
+                  )
+                })}
+              </div>
+              <div className="mt-4 flex flex-col gap-2 border-t border-base-300/30 pt-4 sm:flex-row sm:flex-wrap sm:items-end">
+                <label className="form-control sm:w-28">
+                  <span className="label-text text-[10px] font-semibold uppercase tracking-wider text-base-content/45">Largeur px</span>
+                  <input
+                    type="number"
+                    min={16}
+                    max={4096}
+                    className="input input-bordered input-sm w-full rounded-xl font-mono"
+                    value={customAdW}
+                    onChange={(e) => { setCustomAdW(e.target.value); }}
+                    disabled={status === 'running'}
+                    aria-label="Largeur personnalisée"
+                  />
+                </label>
+                <label className="form-control sm:w-28">
+                  <span className="label-text text-[10px] font-semibold uppercase tracking-wider text-base-content/45">Hauteur px</span>
+                  <input
+                    type="number"
+                    min={16}
+                    max={4096}
+                    className="input input-bordered input-sm w-full rounded-xl font-mono"
+                    value={customAdH}
+                    onChange={(e) => { setCustomAdH(e.target.value); }}
+                    disabled={status === 'running'}
+                    aria-label="Hauteur personnalisée"
+                  />
+                </label>
+                <button
+                  type="button"
+                  className="btn btn-outline btn-sm rounded-xl"
+                  disabled={
+                    status === 'running' ||
+                    creativeAdFormats.length >= 8 ||
+                    customAdW.trim().length === 0 ||
+                    customAdH.trim().length === 0
+                  }
+                  onClick={() => { addCreativeCustomFormat(); }}
+                >
+                  Ajouter taille perso.
+                </button>
+              </div>
+              <p className="mt-2 font-mono text-[11px] text-base-content/60">
+                Sélection :{' '}
+                {creativeAdFormats.map((f) => `${String(f.width)}×${String(f.height)}`).join(' · ') || '—'}
+              </p>
+            </fieldset>
             <div className="card-actions flex-col items-stretch gap-3 border-t border-base-300/30 pt-6 sm:flex-row sm:items-center sm:justify-between">
               <button
                 type="button"
@@ -586,6 +715,7 @@ function App () {
                 disabled={
                   status === 'running' ||
                   creativeOutputFolder.length === 0 ||
+                  creativeAdFormats.length === 0 ||
                   (catalog?.creativeCodeScripts.length ?? 0) === 0 ||
                   (catalog?.outputFoldersWithStyleGuide.length ?? 0) === 0
                 }
@@ -609,7 +739,7 @@ function App () {
               </summary>
               <div className="grid gap-6 border-t border-base-300/30 pb-4 pt-4 sm:grid-cols-2">
                   <div>
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-base-content/45">gen-style-guide.mts</p>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-base-content/90">gen-style-guide.mts</p>
                     <ul className="max-h-48 overflow-y-auto rounded-xl border border-base-300/40 bg-base-100/80 p-3 font-mono text-[11px] leading-relaxed text-base-content/80">
                       {(catalog?.styleGuideScripts ?? []).map((n) => (
                         <li key={n} className="break-all py-0.5">{n}</li>
@@ -617,7 +747,7 @@ function App () {
                     </ul>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-base-content/45">gen-creative-code*.mts</p>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-base-content/90">gen-creative-code*.mts</p>
                     <ul className="max-h-48 overflow-y-auto rounded-xl border border-base-300/40 bg-base-100/80 p-3 font-mono text-[11px] leading-relaxed text-base-content/80">
                       {(catalog?.creativeCodeScripts ?? []).map((n) => (
                         <li key={n} className="break-all py-0.5">{n}</li>
@@ -632,10 +762,10 @@ function App () {
         <section className="card overflow-hidden rounded-3xl border border-base-300/50 bg-base-100/90 shadow-xl shadow-black/5 ring-1 ring-black/5 backdrop-blur-md dark:ring-white/10 dark:shadow-black/25">
           <div className="flex flex-col gap-4 border-b border-base-300/40 bg-base-200/30 px-6 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-8">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-base-content/45">Bibliothèque</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-base-content/90">Bibliothèque</p>
               <h2 className="mt-1.5 text-xl font-semibold tracking-tight sm:text-2xl">Aperçus</h2>
               <p className="mt-2 max-w-xl text-sm text-base-content/55">
-                Chaque ligne correspond à un <code className="font-mono text-xs">index.html</code> détecté ; le titre affiché reprend la balise{' '}
+                Chaque ligne correspond à un <code className="font-mono text-xs">index.html</code> détecté, le titre affiché reprend la balise{' '}
                 <code className="font-mono text-xs">&lt;title&gt;</code>.
               </p>
             </div>
@@ -676,7 +806,7 @@ function App () {
               <div className="overflow-hidden rounded-2xl border border-base-300/50 bg-base-200/25">
                 <table className="table table-sm [&_tbody_tr]:border-base-300/25 [&_tbody_tr]:transition-colors [&_tbody_tr:hover]:bg-base-100/90">
                   <thead>
-                    <tr className="border-base-300/40 text-[11px] font-semibold uppercase tracking-wider text-base-content/45">
+                    <tr className="border-base-300/40 text-[11px] font-semibold uppercase tracking-wider text-base-content/90">
                       <th className="bg-base-100/50">Titre</th>
                       <th className="bg-base-100/50">Modifié</th>
                       <th className="bg-base-100/50 text-end">Actions</th>
@@ -731,29 +861,20 @@ function App () {
           <div className="border-b border-base-300/40 bg-base-200/25 px-6 py-5 sm:px-8">
             <h2 className="text-lg font-semibold tracking-tight">Progression</h2>
             <p className="mt-2 text-sm leading-relaxed text-base-content/55">
-              Sortie standard du processus Node. Référence composants :{' '}
-              <a
-                className="font-medium text-primary underline-offset-4 hover:underline"
-                href="https://daisyui.com/llms.txt"
-                target="_blank"
-                rel="noreferrer"
-              >
-                daisyUI llms.txt
-              </a>
-              .
+              Sortie standard du processus Node.
             </p>
           </div>
           <div className="max-h-[min(60vh,520px)] overflow-y-auto bg-base-200/20 p-4 sm:p-6">
             <div className="mockup-code w-full rounded-xl border border-base-300/40 text-left text-xs shadow-inner ring-1 ring-black/4 sm:text-sm dark:ring-white/6">
               {logs.length === 0 && status !== 'running' && (
-                <pre data-prefix=" "><code className="text-base-content/45">En attente de logs…</code></pre>
+                <pre data-prefix=" "><code className="text-base-content/90">En attente de logs…</code></pre>
               )}
               {logs.map((line, i) => (
                 <pre
                   key={`${String(i)}-${line.text.slice(0, 48)}`}
                   data-prefix={line.source === 'stderr' ? '!' : '>'}
                 >
-                  <code className={line.source === 'stderr' ? 'text-error' : 'text-base-content/90'}>{line.text}</code>
+                  <code className={line.source === 'stderr' ? 'text-error' : 'text-base-content'}>{line.text}</code>
                 </pre>
               ))}
             </div>
@@ -761,20 +882,6 @@ function App () {
           </div>
         </section>
       </main>
-
-      <footer className="mt-auto border-t border-base-300/40 bg-base-100/40 py-8 text-center backdrop-blur-md">
-        <p className="text-[11px] font-medium tracking-wide text-base-content/45">
-          Interface{' '}
-          <a className="link link-hover text-primary" href="https://daisyui.com/?lang=fr" target="_blank" rel="noreferrer">
-            daisyUI 5
-          </a>
-          {' · '}
-          API <code className="font-mono text-[10px] opacity-80">3001</code>
-          {' · '}
-          Vite <code className="font-mono text-[10px] opacity-80">5173</code>
-        </p>
-      </footer>
-
       {selectedPreviewUrl !== null && (
         <div
           className="modal modal-open"

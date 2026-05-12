@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lancôme – Rénergie Nano-Resurfacer 400 Booster</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="ad-frame" id="adFrame">
+
+    <!-- Layer 1: Revealed Product Ad -->
+    <div class="product-ad" id="productAd">
+      <header class="ad-header" id="adHeader">
+        <img
+          src="./302-3023608_lancome-logo-png-transparent-lancome-logo.png"
+          alt="Lancôme"
+          class="brand-logo"
+        >
+        <div class="gold-divider" id="goldDivider"></div>
+      </header>
+
+      <section class="ad-hero" id="adHero">
+        <div class="product-glow"></div>
+        <img
+          src="./1760437731-download-68ee25b513b76.png"
+          alt="Rénergie Nano-Resurfacer 400 Booster"
+          class="product-image"
+          id="productImage"
+        >
+      </section>
+
+      <section class="ad-copy" id="adCopy">
+        <p class="product-line">RÉNERGIE</p>
+        <h2 class="product-title">Nano-Resurfacer<br><span class="title-accent">400 Booster</span></h2>
+        <p class="product-claim"><span id="nanoCount">484</span> nano-pointes pour une peau visiblement plus jeune</p>
+      </section>
+
+      <footer class="ad-footer" id="adFooter">
+        <button class="cta-button" id="ctaButton">
+          <span class="cta-text">Découvrir</span>
+          <span class="cta-shimmer"></span>
+        </button>
+      </footer>
+    </div>
+
+    <!-- Layer 2: Scratch Canvas -->
+    <canvas id="scratchCanvas"></canvas>
+
+    <!-- Layer 3: Scratch UI overlays (non-interactive) -->
+    <div class="scratch-ui" id="scratchUI">
+      <div class="shimmer-overlay"></div>
+      <p class="scratch-hint" id="scratchHint">Glissez pour révéler<span class="hint-chevron"></span></p>
+    </div>
+
+    <!-- Layer 4: Particle Canvas (non-interactive) -->
+    <canvas id="particleCanvas"></canvas>
+
+  </div>
+</body>
+</html>

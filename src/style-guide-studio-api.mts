@@ -4,6 +4,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { config as loadDotenv } from 'dotenv';
 import Express from 'express';
+import { loadAdFormatPresets, normalizeApiAdFormats } from './studio-ad-formats.mjs';
 
 loadDotenv({ path: join(import.meta.dirname, '..', '.env') });
 
@@ -111,6 +112,11 @@ function attachSubscriber (job: Job, res: Express.Response): void {
 function pushLine (job: Job, source: 'stdout' | 'stderr', text: string): void {
   const entry = { source, text };
   job.lines.push(entry);
+  if (source === 'stderr') {
+    console.error(`[job ${job.id}] ${text}`);
+  } else {
+    console.log(`[job ${job.id}] ${text}`);
+  }
   const m = /^Output directory path:\s*(.+)$/u.exec(text.trim());
   if (m !== null) {
     job.outputDirectoryPath = m[1]?.trim() ?? null;
@@ -365,9 +371,11 @@ app.post('/api/creative-code/run', (req, res) => {
     res.status(429).json({ error: 'Un job studio est déjà en cours.' });
     return;
   }
-  const body = req.body as { creativeScript?: unknown; outputFolder?: unknown };
+  const body = req.body as { creativeScript?: unknown; outputFolder?: unknown; adFormats?: unknown };
   if (typeof body.creativeScript !== 'string' || body.creativeScript.trim().length === 0) {
-    res.status(400).json({ error: 'Expected JSON body { "creativeScript": string, "outputFolder": string }.' });
+    res.status(400).json({
+      error: 'Expected JSON body { "creativeScript": string, "outputFolder": string, "adFormats"?: array }.'
+    });
     return;
   }
   if (typeof body.outputFolder !== 'string' || body.outputFolder.trim().length === 0) {
@@ -396,10 +404,30 @@ app.post('/api/creative-code/run', (req, res) => {
     return;
   }
 
+  const presetList = loadAdFormatPresets(repoRoot);
+  let adFormatsJson: string;
+  if (body.adFormats === undefined) {
+    const first = presetList[0];
+    if (first === undefined) {
+      res.status(500).json({ error: 'No ad format presets configured.' });
+      return;
+    }
+    adFormatsJson = JSON.stringify([ { id: first.id, width: first.width, height: first.height } ]);
+  } else {
+    const normalized = normalizeApiAdFormats(body.adFormats, presetList);
+    if (!normalized.ok) {
+      res.status(400).json({ error: normalized.error });
+      return;
+    }
+    adFormatsJson = JSON.stringify(normalized.formats);
+  }
+
   const job = createJob();
   activeJobId = job.id;
   const creativePath = join(srcDir, creativeScript);
-  attachSpawnedNodeProcess(job, [ creativePath, outputFolder ], {});
+  attachSpawnedNodeProcess(job, [ creativePath, outputFolder ], {
+    CREATIVE_AD_FORMATS: adFormatsJson
+  });
 
   res.status(202).json({ jobId: job.id });
 });

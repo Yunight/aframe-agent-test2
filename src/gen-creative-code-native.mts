@@ -1,4 +1,6 @@
 import type { StyleGuide } from './gen-style-guide.mjs';
+import type { AdFormatSelection } from './studio-ad-formats.mjs';
+import { loadAdFormatPresets, parseCreativeAdFormatsFromEnv } from './studio-ad-formats.mjs';
 import { basename, dirname, extname, join } from 'node:path';
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { config as loadDotenv } from 'dotenv';
@@ -223,7 +225,26 @@ function describeAnthropicTurnForLogs (
   return segments.join(' — ');
 }
 
-
+function buildCreativeAdFormatInstructions (formats: readonly AdFormatSelection[]): string {
+  const lines = formats.map((f) => `      - ${f.id}: ${String(f.width)}×${String(f.height)} px`);
+  const list = lines.join('\n');
+  const first = formats[0];
+  if (formats.length === 1 && first !== undefined) {
+    return (
+      `      Required ad frame (exact pixel size of the visible creative):\n${list}\n` +
+      `      - styles.css — center this single ${String(first.width)}×${String(first.height)} px ad on the page ` +
+      `(e.g. body min-height 100vh, flex, align and justify center).\n` +
+      `      Creative viewport: exactly ${String(first.width)}×${String(first.height)} px for the main ad container.`
+    );
+  }
+  return (
+    `      Required ad frames (multiple standard sizes — include every size in one page):\n${list}\n` +
+    '      - Each format must appear as its own clearly separated ad unit; outer dimensions must match the given width×height in pixels exactly.\n' +
+    '      - Give each unit a unique wrapper id (e.g. id="ad-300x250" using the id above).\n' +
+    '      - styles.css — lay out all units on one page (vertical stack or wrapping gallery). The page may use full viewport; each ad frame stays exactly WxH px.\n' +
+    '      - Reuse logo and product assets across units where appropriate; adapt composition to each aspect ratio.'
+  );
+}
 
 function contains<T extends string>(array: readonly T[], value: string): value is T {
   return (array as readonly string[]).includes(value);
@@ -472,6 +493,10 @@ for (let i = 0; i < cliArguments.length; i += 1) {
 
 const directoryPath = join(import.meta.dirname, '..', 'output', directoryUuid);
 const codeDirectoryPath = join(directoryPath, 'code');
+const repoRoot = join(import.meta.dirname, '..');
+const adFormatPresets = loadAdFormatPresets(repoRoot);
+const adFormats = parseCreativeAdFormatsFromEnv(process.env['CREATIVE_AD_FORMATS'], adFormatPresets);
+console.log('[creative-native] Ad formats:', JSON.stringify(adFormats));
 const styleGuidePath = join(directoryPath, 'style-guide.json');
 const styleGuide = JSON.parse(readFileSync(styleGuidePath, { encoding: 'utf8' })) as StyleGuide;
 
@@ -589,6 +614,7 @@ while (true) {
       The layout and interaction design are up to you: fresh, modern, eye-catching, with animation and
       interactivity where appropriate.
       the logo should be clearly visible and a good scale so it is not too small or too big.
+      Only use one logo image by default the light theme only, if the logo is not visible in the light theme, use the dark theme.
 
       Logo and product images are local files. Reference them with relative paths from the project root
       (for example: ./logo.png).
@@ -597,14 +623,14 @@ while (true) {
 
       You MUST output exactly these root files (no subfolders required for these three):
       - index.html — viewport meta width=device-width; link to styles.css; script src app.js (defer recommended).
-      - styles.css — all presentation (no preprocessor). Center the 320x480 creative on the page
-        (e.g. body as flex container min-height 100vh, align and justify center).
+      - styles.css — all presentation (no preprocessor).
       - app.js — vanilla DOM scripting only (no import maps to npm).
+
+      ${buildCreativeAdFormatInstructions(adFormats)}
 
       Optional: additional static assets only if needed (e.g. extra .svg), still no package.json or bundlers.
 
       Fonts and colors: only those defined in the style guide. Ad copy in French.
-      Creative viewport area: 320x480 (the visible ad frame inside the page).
       Include at least one logo and one product image from the provided assets in the HTML/CSS/JS.
       Do not add browser chrome: no zoom, fullscreen, or VR toggles in the creative UI.
 
@@ -662,7 +688,9 @@ while (true) {
 
       messages.push({
         role: 'user',
-        content: `Your previous output is not compliant with mandatory skills/style-guide constraints: ${complianceCheck.issues.join(' ; ')}. Regenerate all files and fix every issue.`
+        content:
+          `Your previous output is not compliant with mandatory skills/style-guide constraints: ${complianceCheck.issues.join(' ; ')}. `
+          + `Regenerate all files and fix every issue. Required ad sizes (px): ${adFormats.map((f) => `${String(f.width)}×${String(f.height)}`).join(', ')}.`
       });
       continue;
     }
@@ -683,6 +711,7 @@ while (true) {
     role: 'user',
     content:
       'Continue: return the structured file list (index.html, styles.css, app.js) matching the schema. '
+      + `Respect every required ad size: ${adFormats.map((f) => `${String(f.width)}×${String(f.height)}`).join(', ')}. `
       + 'No screenshot or preview tools are available.'
   });
   continue;
@@ -727,5 +756,11 @@ writeFileSync(
       total: cumulativePrices.total_usd
     }
   }, null, 2)}\n`,
+  { encoding: 'utf8' }
+);
+
+writeFileSync(
+  join(directoryPath, 'creative-native-ad-formats.json'),
+  `${JSON.stringify({ adFormats }, null, 2)}\n`,
   { encoding: 'utf8' }
 );

@@ -1,0 +1,85 @@
+{
+  "companyName": "L'Oréal",
+  "companyContext": "L'Oréal is the world's largest cosmetics and beauty company, headquartered in Clichy, France. Through its Luxe division it operates a portfolio of prestige beauty houses including Lancôme, and invests heavily in skin-science research and beauty-tech devices.",
+  "companyURL": "https://www.loreal.com",
+  "brandName": "Lancôme",
+  "brandContext": "Lancôme is a French luxury perfume, skincare and cosmetics maison founded in 1935 by Armand Petitjean, part of L'Oréal's Luxury Products division. It is positioned as a high-end, Parisian house centered on care, happiness and feminine elegance, with the rose as its signature emblem.",
+  "brandURL": "https://www.lancome.com",
+  "logoFileUrls": [
+    "https://toppng.com/uploads/preview/lancome-eps-vector-logo-11574084720thgmaz1xjp.png",
+    "https://www.pngkey.com/png/detail/509-5097268_vendor-logo-lancome-lancome-cosmetics-logo-png.png",
+    "https://www.pngitem.com/pimgs/m/410-4108297_lancome-logo-png-transparent-svg-vector-lancome-make.png",
+    "https://www.pngkey.com/png/detail/302-3023619_lancome-logo-black-and-white-lancome-png-logo.png",
+    "https://www.nicepng.com/png/detail/302-3023608_lancome-logo-png-transparent-lancome-logo.png",
+    "https://toppng.com/uploads/preview/lancome-logo-vector-free-download-11574233803vef3enxcuh.png",
+    "https://www.nicepng.com/png/detail/302-3023659_lancome-logo-png-montale-profumi-logo.png",
+    "https://toppng.com/uploads/preview/logo-lancome-vector-cdr-png-hd-lancome-115629863455k1ezc394y.png"
+  ],
+  "productName": "Rénergie Nano-Resurfacer 400 Booster",
+  "productPictureUrls": [
+    "https://hips.hearstapps.com/vader-prod.s3.amazonaws.com/1760437731-download-68ee25b513b76.png?crop=1xw:1xh;center,top&resize=980:*",
+    "https://cdn.idealo.com/folder/Product/208350/4/208350411/s11_produktbild_gross/lancome-renergie-nano-resurfacer-400-booster-starter-pack.jpg",
+    "https://www.lancome.fr/dw/image/v2/AAQP_PRD/on/demandware.static/-/Sites-lac-master-catalog/default/dw3e3d8d45/images/pdp/01197-LAC/4936968881862_renergie-nano-resurfacer-400-booster_main.jpg?sw=270&sfrm=jpg&q=70",
+    "https://cdn.idealo.com/folder/Product/208350/4/208350411/s11_produktbild_max/lancome-renergie-nano-resurfacer-400-booster-starter-pack.jpg",
+    "https://assets.boots.com/content/dam/boots/brands/brand---l/lancome/lancome_bt/2026_lancome_bt/lancome_bt_2026-01/hero-cp-lancome.dam.ts=1768907778693.jpg",
+    "https://cdn.idealo.com/folder/Product/208350/4/208350411/s11_produktbild_gross_5/lancome-renergie-nano-resurfacer-400-booster-starter-pack.jpg",
+    "https://cdn11.bigcommerce.com/s-ilgxsy4t82/images/stencil/100x100/products/393594/1486545/Nano-Resurfacer-50__58919.1769600208.jpg?c=1",
+    "https://www.lancome.ie/dw/image/v2/AAQP_PRD/on/demandware.static/-/Sites-lac-master-catalog/default/dw95e54c66/images/pdp/01201-LAC/01201-LAC_400-booster-refill-and-hcf-triple-serum-set_alt1.jpg?sw=168&sh=168&sm=cut&sfrm=jpg&q=70"
+  ],
+  "primaryColorPalette": [
+    "000000",
+    "FFFFFF",
+    "C9A66B"
+  ],
+  "secondaryColorPalette": [
+    "E8C7C0",
+    "8B6A3F",
+    "F5EDE4",
+    "6E2A2A",
+    "D4B98C"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Baskerville Old Face",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Lancôme wordmark and primary brand name lockup — classic serif used for the iconic 'Lancôme' inscription with the circumflex over the ô"
+    },
+    {
+      "fontFamily": "Agatho Regular Caps",
+      "fontWeight": 600,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Secondary line of the logo ('PARIS') and product-line headings such as RÉNERGIE — modern bold caps that balance the serif wordmark"
+    },
+    {
+      "fontFamily": "Didot",
+      "fontWeight": 400,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Editorial headlines and campaign typography across Lancôme communications and product packaging"
+    },
+    {
+      "fontFamily": "Futura",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Sub-headings, technical product descriptors ('NANO-RESURFACER | 400 BOOSTER'), and clinical claims"
+    },
+    {
+      "fontFamily": "Helvetica Neue",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, ingredient lists, instructions for use and digital UI text"
+    },
+    {
+      "fontFamily": "Helvetica Neue",
+      "fontWeight": 300,
+      "fontEffect": [],
+      "fontUses": "Long-form editorial body and caption text for a refined, airy feel"
+    }
+  ],
+  "brandVision": "Lancôme champions the 'power of care' — a Parisian vision of beauty as a force that uplifts women and transforms lives. With Rénergie Nano-Resurfacer 400 Booster, the maison extends this vision into beauty-tech, bringing professional-grade, microneedling-inspired performance into the home through 484 ultra-precise nano-tips that amplify the Rénergie H.C.F. Triple Serum for visibly younger-looking skin without pain or downtime.",
+  "brandValues": "French elegance and timeless sophistication; scientific rigor and clinically proven efficacy; care, happiness and self-confidence for women; commitment to biodiversity, refillable/sustainable packaging and responsible consumption; empowerment of vulnerable women through education and entrepreneurship; heritage symbolized by the golden rose paired with cutting-edge innovation."
+}

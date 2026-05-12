@@ -1,0 +1,100 @@
+{
+  "companyName": "The LEGO Group",
+  "companyContext": "The LEGO Group is a Danish family-owned toy manufacturer founded in 1932, headquartered in Billund, Denmark. It is best known for the LEGO brick — an interlocking plastic construction system — and produces sets across original themes (City, Friends, Technic) and licensed properties (Star Wars, Marvel, Harry Potter, etc.). The name comes from the Danish phrase 'leg godt' meaning 'play well'.",
+  "companyURL": "https://www.lego.com",
+  "brandName": "LEGO Marvel",
+  "brandContext": "LEGO Marvel (LEGO Marvel Super Heroes) is the LEGO Group's licensed theme built around Marvel Comics and Marvel Studios characters, films and storylines. The 2026 lineup launches January 1 with six core sets — including 76334 Epic Battle: Spider-Man vs. Sandman, 76335 Spider-Man vs. Ghost Rider Motorcycle, 76336 Spider-Man Car vs. Venomized Wolverine, 76342 Spider-Man vs. Mysterio: The Daily Bugle, 76343 Epic Battle: Hulkbuster vs. The Hulk, and the flagship 18+ collector set 76344 Iron Man Mark 3 Collectors' Edition — followed by summer waves tied to Spider-Man: Brand New Day and Iron Man and His Awesome Friends, plus a returning buildable Groot (Ravager Jumpsuit) and an upcoming S.H.I.E.L.D. Helicarrier.",
+  "brandURL": "https://www.lego.com/en-us/themes/marvel",
+  "logoFileUrls": [
+    "https://www.pngkey.com/png/detail/409-4093885_lego-marvel-super-heroes-logo-lego-dc-comics.png",
+    "https://www.pngitem.com/pimgs/m/379-3796927_lego-marvel-super-heroes-logo-transparent-hd-png.png",
+    "https://www.nicepng.com/png/detail/209-2093287_lego-marvel-super-heroes-png-logo-lego-marvel.png",
+    "https://www.pngitem.com/pimgs/m/87-874707_marvel-png-avengers-lego-transparent-png.png",
+    "https://p7.hiclipart.com/preview/521/380/859/lego-marvel-s-avengers-flash-wanda-maximoff-eobard-thawne-lego-thumbnail.jpg",
+    "https://www.pngitem.com/pimgs/m/62-623783_lego-marvel-super-heroes-png-transparent-png.png",
+    "https://www.pngplay.com/wp-content/uploads/6/Gray-Avengers-Logo-Marvel-Transparent-PNG.png",
+    "https://p7.hiclipart.com/preview/1017/391/760/captain-marvel-comic-book-dc-comics-logo-captain-marvel-thumbnail.jpg"
+  ],
+  "productName": "LEGO Marvel 2026 Sets (flagship: 76344 Iron Man Mark 3 Collectors' Edition)",
+  "productPictureUrls": [
+    "https://img.hothbricks.com/spai/q_lossless+ret_img/www.hothbricks.com/wp-content/uploads/2026/01/lego-marvel-76344-iron-man-led-light-kit-600x600.jpg",
+    "https://www.brickfanatics.com/wp-content/uploads/2025/11/LEGO-Marvel-76344-Iron-Man-Mark-3-Collectors-Edition-review-55-1200x800.jpg",
+    "https://www.brickfanatics.com/wp-content/uploads/2025/11/LEGO-Marvel-76344-Iron-Man-Mark-3-Collectors-Edition-review-47-1200x800.jpg",
+    "https://www.brickfanatics.com/wp-content/uploads/2025/11/LEGO-Marvel-76344-Iron-Man-Mark-3-Collectors-Edition-review-59-1200x800.jpg",
+    "https://www.brickfanatics.com/wp-content/uploads/2025/11/LEGO-Marvel-76344-Iron-Man-Mark-3-Collectors-Edition-review-58-1200x800.jpg",
+    "https://www.brickfanatics.com/wp-content/uploads/2025/11/LEGO-Marvel-76344-Iron-Man-Mark-3-Collectors-Edition-review-57-1200x800.jpg",
+    "https://www.merlinsbriques.fr/articles/lego-marvel-76344-iron-man-mark-3-collectors-edition-review/gallery/09_Baugruppen_B_hu_d7df3d5537f61379.webp",
+    "https://www.brickfanatics.com/wp-content/uploads/2025/11/LEGO-Marvel-76344-Iron-Man-Mark-3-Collectors-Edition-review-75-1200x800.jpg"
+  ],
+  "primaryColorPalette": [
+    "D11013",
+    "F6EC35",
+    "000000",
+    "FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "ED1D24",
+    "0476F2",
+    "FFD200",
+    "B91212",
+    "2E2E2E",
+    "C0C0C0"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 900,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Brand wordmark / LEGO logo lockup substitute (the official logo uses the custom 'Lego Thick' typeface)"
+    },
+    {
+      "fontFamily": "Bree Serif",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Marketing display headlines and hero text on LEGO.com"
+    },
+    {
+      "fontFamily": "Bebas Neue",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold",
+        "italic"
+      ],
+      "fontUses": "Marvel-style comic impact headings, set names, and call-outs like 'EPIC BATTLE'"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Subheadings and section titles (e.g., character names, set numbers)"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions, packaging text"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 500,
+      "fontEffect": [
+        "underline"
+      ],
+      "fontUses": "Links, CTAs and navigation"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Fallback UI/system text for digital interfaces and the LEGO Builder app"
+    }
+  ],
+  "brandVision": "To inspire and develop the builders of tomorrow by giving Marvel fans of every age a hands-on way to step into the Marvel Universe — recreating iconic battles, suiting up alongside Spider-Man, the Avengers and the Guardians of the Galaxy, and turning the joy of play into endlessly rebuildable stories. The 2026 LEGO Marvel direction blends bold, comic-book energy with collector-grade craftsmanship, bridging playsets for kids 4+ and premium 18+ display models like the Iron Man Mark 3.",
+  "brandValues": "Imagination, creativity, fun, learning through play, quality and craftsmanship, family togetherness, and inclusivity — anchored by LEGO's motto 'only the best is good enough.' For LEGO Marvel specifically: heroism, courage, teamwork, the triumph of good over evil, and faithful storytelling that respects the Marvel source material while leaving room for every builder's own adventures."
+}

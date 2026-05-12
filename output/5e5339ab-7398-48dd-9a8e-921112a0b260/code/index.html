@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LEGO Marvel — Iron Man Mark 3 Édition Collector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bree+Serif&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="ad-frame" id="adFrame">
+    <!-- Overlay layers -->
+    <div class="scanlines"></div>
+    <canvas id="particlesCanvas" width="320" height="480"></canvas>
+    <div class="bg-glow"></div>
+
+    <!-- Logo header: LEGO Marvel Super Heroes logo — red/yellow LEGO branding with Marvel text on transparent background -->
+    <header class="logo-bar" id="logoBar">
+      <img src="./209-2093287_lego-marvel-super-heroes-png-logo-lego-marvel.png" alt="LEGO Marvel Super Heroes" class="logo-img">
+    </header>
+
+    <!-- Product showcase: LEGO 76344 Iron Man Mark 3 Collectors Edition — a premium red-and-gold Iron Man bust/figure built entirely from LEGO bricks, displayed on a stand -->
+    <section class="showcase" id="showcase">
+      <div class="hud-corners">
+        <span class="corner tl"></span>
+        <span class="corner tr"></span>
+        <span class="corner bl"></span>
+        <span class="corner br"></span>
+      </div>
+      <div class="scan-line"></div>
+      <div class="image-carousel" id="carousel">
+        <img src="./LEGO-Marvel-76344-Iron-Man-Mark-3-Collectors-Edition-review-47-1200x800.jpg" class="slide active" alt="LEGO Iron Man Mark 3 — vue principale du set collector">
+        <img src="./LEGO-Marvel-76344-Iron-Man-Mark-3-Collectors-Edition-review-55-1200x800.jpg" class="slide" alt="LEGO Iron Man Mark 3 — détails de construction">
+        <img src="./LEGO-Marvel-76344-Iron-Man-Mark-3-Collectors-Edition-review-59-1200x800.jpg" class="slide" alt="LEGO Iron Man Mark 3 — vue de profil">
+      </div>
+      <div class="slide-indicators" id="slideIndicators">
+        <button class="dot active" data-i="0" aria-label="Image 1"></button>
+        <button class="dot" data-i="1" aria-label="Image 2"></button>
+        <button class="dot" data-i="2" aria-label="Image 3"></button>
+      </div>
+      <div class="swipe-hint" id="swipeHint"><span>‹ ›</span></div>
+    </section>
+
+    <!-- HUD data strip -->
+    <div class="hud-data" id="hudData">
+      <span class="hud-label">SET</span>
+      <span class="hud-value">76344</span>
+      <span class="hud-sep"></span>
+      <span class="hud-label">18+</span>
+      <span class="hud-sep"></span>
+      <span class="hud-badge">EXCLUSIF</span>
+      <span class="hud-line"></span>
+    </div>
+
+    <!-- Text content -->
+    <div class="text-block" id="textBlock">
+      <h1 class="hero-title">IRON MAN MARK 3</h1>
+      <h2 class="hero-subtitle">ÉDITION COLLECTOR</h2>
+      <p class="hero-body">Construisez la légende.<br>Pièce par pièce.</p>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-wrap" id="ctaWrap">
+      <button class="cta-btn" id="ctaBtn">
+        <span class="cta-label">DÉCOUVRIR MAINTENANT</span>
+        <div class="cta-shine"></div>
+      </button>
+    </div>
+  </div>
+</body>
+</html>

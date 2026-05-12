@@ -1,0 +1,58 @@
+{
+  "presets": [
+    {
+      "id": "320x480",
+      "width": 320,
+      "height": 480,
+      "label": "320×480 — Interstitiel mobile (portrait)"
+    },
+    {
+      "id": "300x250",
+      "width": 300,
+      "height": 250,
+      "label": "300×250 — Medium Rectangle (IAB)"
+    },
+    {
+      "id": "336x280",
+      "width": 336,
+      "height": 280,
+      "label": "336×280 — Large Rectangle (IAB)"
+    },
+    {
+      "id": "728x90",
+      "width": 728,
+      "height": 90,
+      "label": "728×90 — Leaderboard (IAB)"
+    },
+    {
+      "id": "970x250",
+      "width": 970,
+      "height": 250,
+      "label": "970×250 — Billboard (IAB)"
+    },
+    {
+      "id": "300x600",
+      "width": 300,
+      "height": 600,
+      "label": "300×600 — Half Page (IAB)"
+    },
+    {
+      "id": "160x600",
+      "width": 160,
+      "height": 600,
+      "label": "160×600 — Wide Skyscraper (IAB)"
+    },
+    {
+      "id": "320x50",
+      "width": 320,
+      "height": 50,
+      "label": "320×50 — Mobile Leaderboard (IAB)"
+    },
+    {
+      "id": "468x60",
+      "width": 468,
+      "height": 60,
+      "label": "468×60 — Banner (IAB)"
+    }
+  ]
+}

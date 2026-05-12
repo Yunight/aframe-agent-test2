@@ -1,0 +1,382 @@
+/* ===== Reset ===== */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== Page Centering ===== */
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #000000;
+  font-family: 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Ad Frame (320x480) ===== */
+.ad-frame {
+  position: relative;
+  width: 320px;
+  height: 480px;
+  overflow: hidden;
+  background: #F5EDE4;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* ===== Product Ad (Beneath Scratch) ===== */
+.product-ad {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F5EDE4 35%, #F5EDE4 65%, #FFFFFF 100%);
+  padding: 22px 16px 18px;
+}
+
+/* Header */
+.ad-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(-14px);
+}
+
+.brand-logo {
+  width: 150px;
+  height: auto;
+  display: block;
+}
+
+.gold-divider {
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #C9A66B, transparent);
+  margin-top: 10px;
+  transition: width 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.gold-divider.active {
+  width: 80px;
+}
+
+/* Hero */
+.ad-hero {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(20px) scale(0.96);
+}
+
+.product-glow {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(201, 166, 107, 0.22) 0%,
+    rgba(212, 185, 140, 0.1) 45%,
+    transparent 72%
+  );
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.product-image {
+  width: 170px;
+  height: auto;
+  max-height: 230px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.10));
+  position: relative;
+  z-index: 2;
+}
+
+.product-image.breathing {
+  animation: breathe 4.5s ease-in-out infinite;
+}
+
+/* Copy */
+.ad-copy {
+  text-align: center;
+  padding: 0 20px;
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.product-line {
+  font-family: 'Agatho Regular Caps', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  color: #8B6A3F;
+  margin-bottom: 3px;
+}
+
+.product-title {
+  font-family: 'Didot', serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 20px;
+  line-height: 1.2;
+  color: #000000;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+
+.title-accent {
+  color: #C9A66B;
+}
+
+.product-claim {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 300;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #6E2A2A;
+}
+
+/* Footer / CTA */
+.ad-footer {
+  margin-top: 14px;
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.cta-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 38px;
+  border: 1.5px solid #C9A66B;
+  background: transparent;
+  cursor: pointer;
+  overflow: hidden;
+  transition: background 0.35s ease, border-color 0.35s ease;
+}
+
+.cta-button:active {
+  transform: scale(0.97);
+}
+
+.cta-text {
+  position: relative;
+  z-index: 2;
+  font-family: 'Futura', sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #000000;
+  transition: color 0.35s ease;
+}
+
+.cta-shimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(201, 166, 107, 0.35), transparent);
+  z-index: 1;
+}
+
+.cta-shimmer.animate {
+  animation: ctaShimmer 3s ease-in-out infinite;
+}
+
+.cta-button:hover {
+  background: #C9A66B;
+  border-color: #C9A66B;
+}
+
+.cta-button:hover .cta-text {
+  color: #FFFFFF;
+}
+
+.cta-button:hover .cta-shimmer {
+  animation: none;
+}
+
+/* ===== Scratch Canvas ===== */
+#scratchCanvas {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  width: 320px;
+  height: 480px;
+  cursor: pointer;
+  touch-action: none;
+}
+
+/* ===== Scratch UI Overlays ===== */
+.scratch-ui {
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.shimmer-overlay {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.shimmer-overlay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.10) 42%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0.10) 58%,
+    transparent 100%
+  );
+  animation: shimmerSweep 4.5s ease-in-out infinite;
+}
+
+.scratch-hint {
+  position: absolute;
+  bottom: 48px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 300;
+  font-size: 12px;
+  color: #FFFFFF;
+  animation: hintPulse 2.5s ease-in-out infinite;
+}
+
+.hint-chevron {
+  display: block;
+  margin-top: 6px;
+  font-size: 0;
+}
+
+.hint-chevron::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-right: 1.5px solid rgba(255, 255, 255, 0.7);
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.7);
+  transform: rotate(45deg);
+}
+
+/* ===== Particle Canvas ===== */
+#particleCanvas {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  width: 320px;
+  height: 480px;
+  pointer-events: none;
+}
+
+/* ===== Keyframes ===== */
+@keyframes shimmerSweep {
+  0%, 15% { left: -60%; }
+  85%, 100% { left: 120%; }
+}
+
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.65; }
+  50% { opacity: 1; }
+}
+
+@keyframes ctaShimmer {
+  0%, 25% { left: -100%; }
+  75%, 100% { left: 200%; }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+@keyframes revealFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes revealHero {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Revealed states */
+.ad-header.revealed {
+  animation: revealFadeUp 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.ad-hero.revealed {
+  animation: revealHero 0.75s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s forwards;
+}
+
+.ad-copy.revealed {
+  animation: revealFadeUp 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
+}
+
+.ad-footer.revealed {
+  animation: revealFadeUp 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.85s forwards;
+}
+
+/* ===== Reduced Motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .shimmer-overlay::after,
+  .scratch-hint {
+    animation: none !important;
+  }
+
+  .ad-header,
+  .ad-hero,
+  .ad-copy,
+  .ad-footer {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .product-image.breathing {
+    animation: none !important;
+  }
+}
