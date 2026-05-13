@@ -1,0 +1,543 @@
+/* ==========================================================
+   Gaumont — Un Bon Petit Soldat — Ad Creative "Éclosion"
+   Palette: #C8102E #0A0A0A #FFFFFF #F5F1E8
+            #1F2A37 #6B7280 #8A6E4B #B8956A #D9D5CC #2E3D2C
+   Fonts:   Inter, IBM Plex Mono, Lucida Sans (fallback)
+   ========================================================== */
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  background: #1F2A37;
+  font-family: 'Inter', 'Lucida Sans', sans-serif;
+  color: #FFFFFF;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ---- Gallery Shell ---- */
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 48px;
+  padding: 48px 24px;
+}
+
+.ad-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.ad-size-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: #6B7280;
+  text-transform: uppercase;
+}
+
+/* ==========================================================
+   Ad Unit Base
+   ========================================================== */
+.ad-unit {
+  position: relative;
+  overflow: hidden;
+  background: #0A0A0A;
+  cursor: pointer;
+  flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+}
+
+/* Exact pixel sizes */
+#ad-320x480 { width: 320px; height: 480px; }
+#ad-336x280 { width: 336px; height: 280px; }
+#ad-970x250 { width: 970px; height: 250px; }
+#ad-160x600 { width: 160px; height: 600px; }
+#ad-300x250 { width: 300px; height: 250px; }
+#ad-728x90  { width: 728px; height: 90px; }
+#ad-300x600 { width: 300px; height: 600px; }
+#ad-320x50  { width: 320px; height: 50px; }
+
+/* ---- Background Image Layer ---- */
+.ad-bg-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.ad-bg-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+/* ---- Gradient Overlay ---- */
+.ad-grad {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    to bottom,
+    rgba(10,10,10,0.05) 0%,
+    rgba(10,10,10,0.15) 25%,
+    rgba(10,10,10,0.55) 50%,
+    rgba(10,10,10,0.88) 72%,
+    rgba(10,10,10,0.97) 100%
+  );
+  pointer-events: none;
+}
+
+.ad-grad-h {
+  background: linear-gradient(
+    to right,
+    rgba(10,10,10,0.0) 0%,
+    rgba(10,10,10,0.45) 28%,
+    rgba(10,10,10,0.92) 48%,
+    rgba(10,10,10,1) 100%
+  );
+}
+
+/* ---- Content Layer ---- */
+.ad-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.ad-layer-row {
+  flex-direction: row;
+  align-items: center;
+}
+
+.ad-layer-center {
+  align-items: center;
+  text-align: center;
+}
+
+.ad-top-row {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.ad-bot {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: auto;
+}
+
+.ad-bot-center {
+  align-items: center;
+}
+
+/* ---- Logo (no box — logo seul, plus grand) ---- */
+.logo-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  width: fit-content;
+  opacity: 0;
+  transform: scale(0.85);
+}
+
+.logo-img {
+  height: 64px;
+  width: auto;
+  max-width: 100%;
+  display: block;
+  object-fit: contain;
+  object-position: left center;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 1px rgba(0, 0, 0, 0.5));
+}
+
+/* ---- Red Accent Bar ---- */
+.red-bar {
+  display: block;
+  width: 36px;
+  height: 3px;
+  background: #C8102E;
+  margin-bottom: 6px;
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+.red-bar-center {
+  transform-origin: center center;
+}
+
+.red-bar-v {
+  width: 3px;
+  height: 28px;
+  margin: 0;
+  transform-origin: center top;
+  transform: scaleY(0);
+}
+
+/* ---- Film Title ---- */
+.film-title {
+  font-family: 'Neue Haas Grotesk Display', 'Inter', 'Lucida Sans', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  color: #FFFFFF;
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+/* ---- Director Credit ---- */
+.film-credit {
+  font-family: 'Inter', 'Lucida Sans', sans-serif;
+  font-weight: 500;
+  font-style: italic;
+  color: #D9D5CC;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+/* ---- Cast ---- */
+.film-cast {
+  font-family: 'Inter', 'Lucida Sans', sans-serif;
+  font-weight: 400;
+  color: #B8956A;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+/* ---- Meta (date, technical) ---- */
+.film-meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 400;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* ---- CTA Button ---- */
+.cta-btn {
+  display: inline-block;
+  font-family: 'Inter', 'Lucida Sans', sans-serif;
+  font-weight: 500;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #FFFFFF;
+  background: #C8102E;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  width: fit-content;
+}
+
+.cta-btn:hover {
+  background: #FFFFFF;
+  color: #C8102E;
+}
+
+/* Ripple inside CTA */
+.cta-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+  transform: translate(-50%,-50%) scale(0);
+  animation: rippleAnim 0.6s ease-out forwards;
+}
+
+@keyframes rippleAnim {
+  to { transform: translate(-50%,-50%) scale(20); opacity: 0; }
+}
+
+/* ---- Bloom Dot ---- */
+.bloom-dot {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #C8102E;
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* ==========================================================
+   REVEALED STATE — entrance animations
+   ========================================================== */
+.ad-unit.revealed .logo-pill {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.45s ease-out 0.25s, transform 0.45s ease-out 0.25s;
+}
+
+.ad-unit.revealed .red-bar {
+  transform: scaleX(1);
+  transition: transform 0.55s cubic-bezier(0.25,1,0.5,1) 0.55s;
+}
+
+.ad-unit.revealed .red-bar-v {
+  transform: scaleY(1);
+  transition: transform 0.55s cubic-bezier(0.25,1,0.5,1) 0.55s;
+}
+
+.ad-unit.revealed .film-title {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s ease-out 0.45s, transform 0.5s ease-out 0.45s;
+}
+
+.ad-unit.revealed .film-credit {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s ease-out 0.65s, transform 0.5s ease-out 0.65s;
+}
+
+.ad-unit.revealed .film-cast {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s ease-out 0.75s, transform 0.5s ease-out 0.75s;
+}
+
+.ad-unit.revealed .film-meta {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s ease-out 0.85s, transform 0.5s ease-out 0.85s;
+}
+
+.ad-unit.revealed .cta-btn {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s ease-out 0.95s, transform 0.5s ease-out 0.95s, background-color 0.3s ease, color 0.3s ease;
+}
+
+.ad-unit.revealed .bloom-dot {
+  animation: bloomBurst 1.1s cubic-bezier(0.25,1,0.5,1) 0.05s forwards;
+}
+
+@keyframes bloomBurst {
+  0%   { transform: scale(0); opacity: 0.55; }
+  50%  { opacity: 0.18; }
+  100% { transform: scale(70); opacity: 0; }
+}
+
+/* Logo — léger halo après révélation (sans cadre blanc) */
+.ad-unit.revealed .logo-img {
+  animation: logoGlow 3.5s ease-in-out 2.2s infinite;
+}
+
+@keyframes logoGlow {
+  0%, 100% {
+    filter:
+      drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9))
+      drop-shadow(0 0 0 rgba(200, 16, 46, 0));
+  }
+  50% {
+    filter:
+      drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9))
+      drop-shadow(0 0 12px rgba(200, 16, 46, 0.35));
+  }
+}
+
+/* Film grain overlay via pseudo-element */
+.ad-unit::after {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  z-index: 5;
+  pointer-events: none;
+  background-image:
+    repeating-conic-gradient(#FFFFFF 0% 25%, transparent 0% 50%);
+  background-size: 3px 3px;
+  opacity: 0.018;
+  animation: grainShift 0.5s steps(4) infinite;
+  mix-blend-mode: overlay;
+}
+
+@keyframes grainShift {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-2px, 3px); }
+  50%  { transform: translate(3px, -1px); }
+  75%  { transform: translate(-3px, -2px); }
+  100% { transform: translate(1px, 2px); }
+}
+
+/* ==========================================================
+   SIZE-SPECIFIC OVERRIDES
+   ========================================================== */
+
+/* ---- 320×480 ---- */
+#ad-320x480 .ad-layer   { padding: 18px; }
+#ad-320x480 .film-title { font-size: 30px; margin-bottom: 4px; }
+#ad-320x480 .film-credit{ font-size: 14px; margin-bottom: 2px; }
+#ad-320x480 .film-cast  { font-size: 12px; margin-bottom: 2px; }
+#ad-320x480 .film-meta  { font-size: 10px; margin-bottom: 12px; }
+#ad-320x480 .cta-btn    { font-size: 12px; padding: 10px 26px; }
+#ad-320x480 .logo-img { height: 104px; max-width: 280px; }
+#ad-320x480 .bloom-dot  { top: 26px; left: 26px; }
+
+/* ---- 336×280 ---- */
+#ad-336x280 .ad-layer   { padding: 14px; }
+#ad-336x280 .logo-img   { height: 80px; max-width: 300px; }
+#ad-336x280 .film-title { font-size: 19px; margin-bottom: 3px; }
+#ad-336x280 .film-credit{ font-size: 12px; margin-bottom: 8px; }
+#ad-336x280 .cta-btn    { font-size: 11px; padding: 8px 18px; }
+#ad-336x280 .bloom-dot  { top: 18px; left: 18px; }
+
+/* ---- 970×250 ---- */
+#ad-970x250 .ad-bg-layer { width: 48%; right: auto; }
+#ad-970x250 .ad-layer    { padding: 24px 32px; gap: 16px; }
+#ad-970x250 .ad-spacer-half { flex: 0 0 42%; }
+#ad-970x250 .ad-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+#ad-970x250 .logo-img    { height: 92px; max-width: 400px; }
+#ad-970x250 .film-title  { font-size: 30px; margin-bottom: 2px; }
+#ad-970x250 .film-credit { font-size: 14px; }
+#ad-970x250 .film-cast   { font-size: 12px; }
+#ad-970x250 .film-meta   { font-size: 10px; }
+#ad-970x250 .cta-btn     { font-size: 12px; padding: 10px 24px; margin-top: 2px; }
+#ad-970x250 .bloom-dot   { top: 24px; left: 460px; }
+
+/* ---- 160×600 ---- */
+#ad-160x600 .ad-bg-layer { top: 10%; height: 48%; bottom: auto; }
+#ad-160x600 .ad-grad {
+  background: linear-gradient(
+    to bottom,
+    rgba(10,10,10,0.45) 0%,
+    rgba(10,10,10,0.0) 18%,
+    rgba(10,10,10,0.0) 38%,
+    rgba(10,10,10,0.65) 55%,
+    rgba(10,10,10,1) 72%,
+    rgba(10,10,10,1) 100%
+  );
+}
+#ad-160x600 .ad-layer    { padding: 14px 12px; }
+#ad-160x600 .logo-img    { height: 72px; max-width: 148px; }
+#ad-160x600 .film-title  { font-size: 18px; text-align: center; margin-bottom: 4px; }
+#ad-160x600 .film-credit { font-size: 11px; text-align: center; }
+#ad-160x600 .film-meta   { font-size: 9px; text-align: center; margin-bottom: 8px; }
+#ad-160x600 .cta-btn     { font-size: 10px; padding: 8px 16px; }
+#ad-160x600 .bloom-dot   { top: 22px; left: 58px; }
+
+/* ---- 300×250 ---- */
+#ad-300x250 .ad-layer    { padding: 14px; }
+#ad-300x250 .logo-img    { height: 84px; max-width: 268px; }
+#ad-300x250 .film-title  { font-size: 19px; margin-bottom: 3px; }
+#ad-300x250 .film-credit { font-size: 12px; margin-bottom: 8px; }
+#ad-300x250 .cta-btn     { font-size: 11px; padding: 8px 16px; }
+#ad-300x250 .bloom-dot   { top: 18px; left: 18px; }
+
+/* ---- 728×90 ---- */
+#ad-728x90 .ad-bg-layer  { width: 110px; right: auto; }
+#ad-728x90 .ad-grad-h {
+  background: linear-gradient(
+    to right,
+    rgba(10,10,10,0.0) 0%,
+    rgba(10,10,10,0.75) 10%,
+    rgba(10,10,10,1) 18%,
+    rgba(10,10,10,1) 100%
+  );
+}
+#ad-728x90 .ad-layer-banner {
+  padding: 10px 20px;
+  gap: 14px;
+}
+#ad-728x90 .logo-pill    { flex-shrink: 0; }
+#ad-728x90 .logo-img     { height: 62px; max-width: 200px; }
+#ad-728x90 .ad-inline-text { flex: 1; min-width: 0; }
+#ad-728x90 .film-title   { font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#ad-728x90 .film-credit  { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#ad-728x90 .cta-btn      { font-size: 11px; padding: 8px 18px; white-space: nowrap; flex-shrink: 0; }
+#ad-728x90 .bloom-dot    { top: 36px; left: 44px; }
+#ad-728x90 .red-bar-v    { flex-shrink: 0; }
+
+/* ---- 300×600 ---- */
+#ad-300x600 .ad-layer    { padding: 18px; }
+#ad-300x600 .film-title  { font-size: 28px; margin-bottom: 4px; }
+#ad-300x600 .film-credit { font-size: 13px; margin-bottom: 2px; }
+#ad-300x600 .film-cast   { font-size: 12px; margin-bottom: 2px; }
+#ad-300x600 .film-meta   { font-size: 10px; margin-bottom: 14px; }
+#ad-300x600 .cta-btn     { font-size: 12px; padding: 10px 24px; }
+#ad-300x600 .logo-img    { height: 100px; max-width: 268px; }
+
+/* ---- 320×50 ---- */
+#ad-320x50 {
+  background: #0A0A0A;
+  border-top: 2px solid #C8102E;
+}
+#ad-320x50 .ad-layer-micro {
+  padding: 6px 10px;
+  gap: 10px;
+  position: relative;
+}
+#ad-320x50 .logo-pill    { flex-shrink: 0; }
+#ad-320x50 .logo-img     { height: 36px; max-width: 110px; }
+#ad-320x50 .film-title   {
+  font-size: 12px;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+#ad-320x50 .cta-btn      {
+  font-size: 9px;
+  padding: 5px 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+#ad-320x50 .bloom-dot    { top: 18px; left: 18px; }
+
+/* ==========================================================
+   Reduced Motion
+   ========================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .ad-bg-img { transition: none !important; }
+  .bloom-dot { display: none !important; }
+  .ad-unit::after { animation: none !important; }
+  .ad-unit.revealed .logo-img {
+    animation: none !important;
+  }
+  .logo-pill,
+  .red-bar,
+  .red-bar-v,
+  .film-title,
+  .film-credit,
+  .film-cast,
+  .film-meta,
+  .cta-btn {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}

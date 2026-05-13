@@ -1,22 +1,84 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+export interface ArcheSpec {
+  headerPx: number;
+  gutterPx: number;
+  mainFocusWidthPx: number;
+  maxTotalWeightKB: number;
+  allowedRasterMime: readonly string[];
+  trackingNote: string;
+  companionPresetIds: readonly string[];
+}
+
 export interface AdFormatPreset {
   id: string;
   width: number;
   height: number;
   label: string;
+  arche?: ArcheSpec;
 }
 
 export interface AdFormatSelection {
   id: string;
   width: number;
   height: number;
+  arche?: ArcheSpec;
 }
 
 const MIN_DIM = 16;
 const MAX_DIM = 4096;
 const MAX_FORMATS = 8;
+
+function isPlainObject (v: unknown): v is Record<string, unknown> {
+  return v !== null && typeof v === 'object' && !Array.isArray(v);
+}
+
+function parseArcheSpec (value: unknown): ArcheSpec | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+  if (!isPlainObject(value)) {
+    throw new Error('Preset "arche" must be an object when present.');
+  }
+  const o = value;
+  const headerPx = typeof o['headerPx'] === 'number' && Number.isInteger(o['headerPx']) ? o['headerPx'] : null;
+  const gutterPx = typeof o['gutterPx'] === 'number' && Number.isInteger(o['gutterPx']) ? o['gutterPx'] : null;
+  const mainFocusWidthPx =
+    typeof o['mainFocusWidthPx'] === 'number' && Number.isInteger(o['mainFocusWidthPx']) ? o['mainFocusWidthPx'] : null;
+  const maxTotalWeightKB =
+    typeof o['maxTotalWeightKB'] === 'number' && Number.isInteger(o['maxTotalWeightKB']) ? o['maxTotalWeightKB'] : null;
+  const trackingNote = typeof o['trackingNote'] === 'string' ? o['trackingNote'].trim() : '';
+  const mimeRaw = o['allowedRasterMime'];
+  if (
+    headerPx === null ||
+    gutterPx === null ||
+    mainFocusWidthPx === null ||
+    maxTotalWeightKB === null ||
+    trackingNote.length === 0 ||
+    !Array.isArray(mimeRaw)
+  ) {
+    throw new Error('Invalid "arche" object in ad-formats preset (missing fields).');
+  }
+  const allowedRasterMime = mimeRaw.filter((x): x is string => typeof x === 'string' && x.trim().length > 0);
+  if (allowedRasterMime.length === 0) {
+    throw new Error('Invalid "arche.allowedRasterMime" in ad-formats preset.');
+  }
+  const compRaw = o['companionPresetIds'];
+  if (!Array.isArray(compRaw)) {
+    throw new Error('Invalid "arche.companionPresetIds" in ad-formats preset.');
+  }
+  const companionPresetIds = compRaw.filter((x): x is string => typeof x === 'string' && x.trim().length > 0);
+  return {
+    headerPx,
+    gutterPx,
+    mainFocusWidthPx,
+    maxTotalWeightKB,
+    allowedRasterMime,
+    trackingNote,
+    companionPresetIds
+  };
+}
 
 export function loadAdFormatPresets (repoRoot: string): AdFormatPreset[] {
   const path = join(repoRoot, 'shared', 'ad-formats.json');
@@ -35,26 +97,24 @@ export function loadAdFormatPresets (repoRoot: string): AdFormatPreset[] {
     const height = typeof o['height'] === 'number' ? o['height'] : Number.NaN;
     const label = typeof o['label'] === 'string' ? o['label'].trim() : '';
     if (
-      id.length > 0 &&
-      label.length > 0 &&
-      Number.isInteger(width) &&
-      Number.isInteger(height) &&
-      width >= MIN_DIM &&
-      width <= MAX_DIM &&
-      height >= MIN_DIM &&
-      height <= MAX_DIM
+      id.length === 0 ||
+      label.length === 0 ||
+      !Number.isInteger(width) ||
+      !Number.isInteger(height) ||
+      width < MIN_DIM ||
+      width > MAX_DIM ||
+      height < MIN_DIM ||
+      height > MAX_DIM
     ) {
-      out.push({ id, width, height, label });
+      continue;
     }
+    const arche = o['arche'] === undefined ? undefined : parseArcheSpec(o['arche']);
+    out.push({ id, width, height, label, ...(arche !== undefined ? { arche } : {}) });
   }
   if (out.length === 0) {
     throw new Error(`No valid presets in shared/ad-formats.json (${path}).`);
   }
   return out;
-}
-
-function isPlainObject (v: unknown): v is Record<string, unknown> {
-  return v !== null && typeof v === 'object' && !Array.isArray(v);
 }
 
 function coerceDimension (v: unknown): number | null {
@@ -68,7 +128,16 @@ function coerceDimension (v: unknown): number | null {
   return null;
 }
 
-/** Normalize client JSON: array of { id, width, height } or partial + preset lookup. */
+function selectionFromPreset (preset: AdFormatPreset): AdFormatSelection {
+  return {
+    id: preset.id,
+    width: preset.width,
+    height: preset.height,
+    ...(preset.arche !== undefined ? { arche: preset.arche } : {})
+  };
+}
+
+/** Normalize client JSON: array of { id, width, height } or partial + preset lookup. Arche metadata is taken only from server presets (never from client). */
 export function normalizeApiAdFormats (
   raw: unknown,
   presets: readonly AdFormatPreset[]
@@ -124,7 +193,27 @@ export function normalizeApiAdFormats (
     }
     seen.add(key);
     const finalId = id.length > 0 ? id : key;
-    formats.push({ id: finalId, width, height });
+    let presetMatch = presetById.get(finalId);
+    if (presetMatch === undefined) {
+      const byDims = presets.filter((p) => p.width === width && p.height === height);
+      if (byDims.length === 1) {
+        presetMatch = byDims[0];
+      }
+    }
+    if (
+      presetMatch !== undefined &&
+      (presetMatch.width !== width || presetMatch.height !== height)
+    ) {
+      return {
+        ok: false,
+        error: `Dimensions mismatch for preset "${finalId}" (expected ${String(presetMatch.width)}×${String(presetMatch.height)}).`
+      };
+    }
+    formats.push(
+      presetMatch !== undefined
+        ? selectionFromPreset(presetMatch)
+        : { id: finalId, width, height }
+    );
   }
 
   if (formats.length === 0) {
@@ -143,7 +232,7 @@ export function parseCreativeAdFormatsFromEnv (
     if (first === undefined) {
       throw new Error('No presets loaded; cannot default ad formats.');
     }
-    return [ { id: first.id, width: first.width, height: first.height } ];
+    return [ selectionFromPreset(first) ];
   }
   let parsed: unknown;
   try {

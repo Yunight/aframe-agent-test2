@@ -1,0 +1,89 @@
+{
+  "companyName": "Fast Retailing Co., Ltd.",
+  "companyContext": "Fast Retailing is the Japanese parent company behind UNIQLO, GU, Theory, PLST, Comptoir des Cotonniers, Princesse tam.tam and Helmut Lang. It is one of the world's largest apparel retailers, headquartered in Yamaguchi, Japan, with a mission to create truly great clothing with new and unique value.",
+  "companyURL": "https://www.fastretailing.com",
+  "brandName": "UNIQLO",
+  "brandContext": "UNIQLO is a Japanese casual-wear designer, manufacturer and retailer founded in 1949 by Tadashi Yanai (originally as Unique Clothing Warehouse). The brand is known for its LifeWear philosophy — high-quality, functional, everyday essentials at accessible prices — and for its UT (Uniqlo T-shirt) graphic line, which routinely partners with global pop-culture franchises, artists and museums.",
+  "brandURL": "https://www.uniqlo.com",
+  "logoFileUrls": [
+    "https://toppng.com/uploads/preview/uniqlo-logo-vector-free-download-11574229606oupmg9gqtb.png",
+    "https://crystalpng.com/wp-content/uploads/2025/11/Uniqlo-Logo.png",
+    "https://static.vecteezy.com/system/resources/previews/068/202/953/non_2x/uniqlo-rounded-logo-icon-with-transparent-background-for-modern-japanese-fashion-free-png.png",
+    "https://p7.hiclipart.com/preview/807/826/553/5bbc0f08a92ed-thumbnail.jpg",
+    "https://www.liblogo.com/img-logo/un623u078-uniqlo-logo-uniqlo-logo-png-transparent-amp-svg-vector-freebie-supply.png",
+    "https://p7.hiclipart.com/preview/985/397/271/muse-uniqlo-sapporo-esta-shop-clothing-airport-building-thumbnail.jpg",
+    "https://static.vecteezy.com/system/resources/previews/073/494/888/non_2x/uniqlo-logo-rounded-glossy-icon-with-transparent-background-free-png.png",
+    "https://www.pngkey.com/png/detail/306-3062269_uniqlo-logo.png"
+  ],
+  "productName": "Pokémon UT Graphic T-Shirt Collection (Pokémon 30th Anniversary collaboration)",
+  "productPictureUrls": [
+    "https://japan-figure.com/cdn/shop/files/goods_00_483676_3x4_73ef886d-8ab2-4091-8c6c-c995cee21cbf.jpg?v=1778571225&width=1500",
+    "https://japan-figure.com/cdn/shop/files/goods_483676_sub20_3x4_65b7ff43-b06e-4d24-b739-4b92d6061310.avif?v=1778559140&width=1500",
+    "https://japan-figure.com/cdn/shop/files/goods_00_483676_3x4_45c5411b-6d7b-48f2-998d-46c334a246af.avif?v=1778559140&width=1500",
+    "https://japan-figure.com/cdn/shop/files/goods_00_483677_3x4_1.avif?v=1778571386&width=1500",
+    "https://japan-figure.com/cdn/shop/files/goods_483675_sub14_3x4_e91f6eb8-782a-4ba2-b16f-db369ae75656.avif?v=1778569030&width=1500",
+    "https://japan-figure.com/cdn/shop/files/goods_489908_sub20_3x4_51ab24a6-366b-4368-9b15-6a810cfefa82.avif?v=1778568745&width=1500",
+    "https://japan-figure.com/cdn/shop/files/goods_483678_sub20_3x4_08bd16c3-d3ba-4d54-be99-28dc36f6ab78.avif?v=1778559101&width=1500",
+    "https://japan-figure.com/cdn/shop/files/goods_483677_sub20_3x4_1.avif?v=1778559217&width=1500"
+  ],
+  "primaryColorPalette": [
+    "ED1D24",
+    "FFFFFF",
+    "000000"
+  ],
+  "secondaryColorPalette": [
+    "FFCB05",
+    "3B4CCA",
+    "E03C31",
+    "2A75BB",
+    "F4F4F4",
+    "7F7F7F"
+  ],
+  "typography": [
+    {
+      "fontFamily": "FF DIN",
+      "fontWeight": 800,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "UNIQLO logotype / corporate wordmark — custom monospaced, uppercase, centered cut based on FF DIN Bold (historically also paired with Helvetica Neue Bold for supporting marks)"
+    },
+    {
+      "fontFamily": "Helvetica Neue",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Headings, campaign banners and on-site hero titles for the UT Pokémon collection"
+    },
+    {
+      "fontFamily": "Helvetica Neue",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions and editorial text on uniqlo.com"
+    },
+    {
+      "fontFamily": "Hiragino Kaku Gothic / Noto Sans JP",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Japanese-language wordmark, katakana lockup and JP market typography"
+    },
+    {
+      "fontFamily": "Pokémon Solid (custom Pokémon wordmark)",
+      "fontWeight": 900,
+      "fontEffect": [
+        "bold",
+        "italic"
+      ],
+      "fontUses": "Pokémon brand lockup applied on hangtags, neck labels and key visuals of the collaboration (used only as licensed artwork, never substituted)"
+    },
+    {
+      "fontFamily": "Press Start 2P",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Accent / nostalgic 8-bit treatments referencing the original 1996 Game Boy pixel grid on selected SS26 UT graphics"
+    }
+  ],
+  "brandVision": "LifeWear: simple made better. UNIQLO designs clothing as tools for a better life — universal, refined essentials, made with cutting-edge fabric technology, that empower people everywhere to live freely and authentically. Through UT, the brand becomes a wearable canvas of global culture, translating art, gaming and pop icons like Pokémon into accessible everyday garments. The Pokémon 30th anniversary capsule extends this vision by celebrating three decades of a beloved franchise through the original 1996 Ken Sugimori watercolor artwork, bridging generations of fans.",
+  "brandValues": "Quality, simplicity, functionality and innovation; respect for craftsmanship and the individual creators behind each design; inclusivity and accessibility (one product offered to all ages, genders, ethnicities and ability levels at honest prices); Japanese heritage and ‘Cool Japan’ aesthetics (the red-and-white seal echoes the Hinomaru); sustainability and ethical manufacturing; and a long-standing belief that clothing — including a simple graphic T-shirt — can carry culture, joy and shared stories such as those of the Pokémon universe."
+}

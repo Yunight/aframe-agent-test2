@@ -4,12 +4,31 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { config as loadDotenv } from 'dotenv';
 import Express from 'express';
-import { loadAdFormatPresets, normalizeApiAdFormats } from './studio-ad-formats.mjs';
+import { loadAdFormatPresets, normalizeApiAdFormats } from './studio-ad-formats.mts';
 
 loadDotenv({ path: join(import.meta.dirname, '..', '.env') });
 
 const PORT = Number.parseInt(process.env['STYLE_GUIDE_STUDIO_PORT'] ?? '3001', 10);
 const MAX_CONTEXT_CHARS = 32_000;
+
+function composeStyleGuideContextFromParts (brand: string, context: string): string {
+  const b = brand.trim();
+  const c = context.trim();
+  if (b.length > 0 && c.length > 0) {
+    return `The brand is ${b} and the context is ${c}`;
+  }
+  if (b.length > 0) {
+    return 'The brand is '
+      + b
+      + ' and the context is not specified beyond the brand; infer positioning from official sites and current campaigns.';
+  }
+  if (c.length > 0) {
+    return 'No commercial brand was specified. The context is '
+      + c
+      + '. Infer visuals, tone, typography, and color direction from official trailers, key art, and distributor or studio materials only; do not invent a corporate brand beyond this title or IP.';
+  }
+  return '';
+}
 
 const repoRoot = join(import.meta.dirname, '..');
 const srcDir = join(repoRoot, 'src');
@@ -335,18 +354,35 @@ app.post('/api/style-guide/run', (req, res) => {
     res.status(429).json({ error: 'Un job studio est déjà en cours.' });
     return;
   }
-  const body = req.body as { contextPrompt?: unknown };
-  if (typeof body.contextPrompt !== 'string') {
-    res.status(400).json({ error: 'Expected JSON body { "contextPrompt": string }.' });
+  const body = req.body as { contextPrompt?: unknown; brand?: unknown; context?: unknown };
+  const brandField = typeof body.brand === 'string' ? body.brand : '';
+  const contextField = typeof body.context === 'string' ? body.context : '';
+  const hasBrandOrContext = brandField.trim().length > 0 || contextField.trim().length > 0;
+
+  let contextPrompt: string;
+  if (hasBrandOrContext) {
+    contextPrompt = composeStyleGuideContextFromParts(brandField, contextField);
+  } else if (typeof body.contextPrompt === 'string') {
+    contextPrompt = body.contextPrompt.trim();
+    if (contextPrompt.length === 0) {
+      res.status(400).json({ error: 'contextPrompt must not be empty.' });
+      return;
+    }
+  } else {
+    res.status(400).json({
+      error:
+        'Expected JSON body { "brand"?: string, "context"?: string } with at least one non-empty after trim, or legacy { "contextPrompt": string }.'
+    });
     return;
   }
-  const contextPrompt = body.contextPrompt.trim();
   if (contextPrompt.length === 0) {
-    res.status(400).json({ error: 'contextPrompt must not be empty.' });
+    res.status(400).json({
+      error: 'Provide a non-empty "brand" and/or "context", or legacy "contextPrompt".'
+    });
     return;
   }
   if (contextPrompt.length > MAX_CONTEXT_CHARS) {
-    res.status(400).json({ error: `contextPrompt exceeds ${String(MAX_CONTEXT_CHARS)} characters.` });
+    res.status(400).json({ error: `Resolved context exceeds ${String(MAX_CONTEXT_CHARS)} characters.` });
     return;
   }
 

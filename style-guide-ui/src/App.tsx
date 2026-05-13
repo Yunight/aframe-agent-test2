@@ -25,12 +25,28 @@ interface StudioCatalog {
 
 const PREFERRED_CREATIVE_SCRIPT = 'gen-creative-code-native.mts'
 
-type StudioAdPreset = { id: string; width: number; height: number; label: string }
+type ArchePresetJson = {
+  headerPx: number
+  gutterPx: number
+  mainFocusWidthPx: number
+  maxTotalWeightKB: number
+  allowedRasterMime: string[]
+  trackingNote: string
+  companionPresetIds: string[]
+}
+
+type StudioAdPreset = {
+  id: string
+  width: number
+  height: number
+  label: string
+  arche?: ArchePresetJson
+}
 type StudioAdPresetsFile = { presets: StudioAdPreset[] }
 
 const STUDIO_AD_PRESETS = (studioAdPresetsJson as StudioAdPresetsFile).presets
 
-type CreativeAdFormat = { id: string; width: number; height: number }
+type CreativeAdFormat = { id: string; width: number; height: number; arche?: ArchePresetJson }
 
 function messageForProxyFailure (status: number): string | null {
   if (status === 502 || status === 503 || status === 504) {
@@ -49,10 +65,31 @@ function messageForProxyFailure (status: number): string | null {
   return null
 }
 
+/** Must match `composeStyleGuideContextFromParts` in `src/style-guide-studio-api.mts`. */
+function composeStyleGuideContextFromParts (brand: string, context: string): string {
+  const b = brand.trim()
+  const c = context.trim()
+  if (b.length > 0 && c.length > 0) {
+    return `The brand is ${b} and the context is ${c}`
+  }
+  if (b.length > 0) {
+    return 'The brand is '
+      + b
+      + ' and the context is not specified beyond the brand; infer positioning from official sites and current campaigns.'
+  }
+  if (c.length > 0) {
+    return 'No commercial brand was specified. The context is '
+      + c
+      + '. Infer visuals, tone, typography, and color direction from official trailers, key art, and distributor or studio materials only; do not invent a corporate brand beyond this title or IP.'
+  }
+  return ''
+}
+
 const THEME_OPTIONS = [ 'light', 'dark', 'night', 'dim', 'nord' ] as const
 
 function App () {
-  const [contextPrompt, setContextPrompt] = useState('')
+  const [brand, setBrand] = useState('')
+  const [styleContext, setStyleContext] = useState('')
   const [status, setStatus] = useState<RunStatus>('idle')
   const [logs, setLogs] = useState<LogLine[]>([])
   const [outputDir, setOutputDir] = useState<string | null>(null)
@@ -95,7 +132,15 @@ function App () {
       if (prev.length >= 8) {
         return prev
       }
-      return [ ...prev, { id: preset.id, width: preset.width, height: preset.height } ]
+      return [
+        ...prev,
+        {
+          id: preset.id,
+          width: preset.width,
+          height: preset.height,
+          ...(preset.arche !== undefined ? { arche: preset.arche } : {})
+        }
+      ]
     })
   }, [])
 
@@ -347,7 +392,12 @@ function App () {
       const res = await fetch('/api/style-guide/run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contextPrompt })
+        body: JSON.stringify({
+          brand,
+          context: styleContext,
+          // Legacy studio API (before brand/context) only reads this field.
+          contextPrompt: composeStyleGuideContextFromParts(brand, styleContext)
+        })
       })
 
       if (res.status === 429) {
@@ -381,7 +431,7 @@ function App () {
       setStatus('error')
       setErrorMessage(e instanceof Error ? e.message : String(e))
     }
-  }, [contextPrompt, subscribeToJobEvents])
+  }, [brand, styleContext, subscribeToJobEvents])
 
   const runCreative = useCallback(async () => {
     setErrorMessage(null)
@@ -538,9 +588,10 @@ function App () {
         <section className="card overflow-visible rounded-3xl border border-base-300/50 bg-base-100 shadow-xl shadow-black/5 ring-1 ring-black/5 dark:ring-white/10 dark:shadow-black/25">
           <div className="border-b border-base-300/40 bg-linear-to-br from-base-200/50 via-base-100/80 to-primary/[0.07] px-6 py-6 sm:px-8">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/90">Génération</p>
-            <h2 className="mt-1.5 text-xl font-semibold tracking-tight sm:text-2xl">Contexte marque</h2>
+            <h2 className="mt-1.5 text-xl font-semibold tracking-tight sm:text-2xl">Marque ou contenu</h2>
             <p className="mt-2 max-w-prose text-sm leading-relaxed text-base-content/55">
-              Décrivez marque, produit et tonalité. Envoyé au modèle via{' '}
+              Marque commerciale et/ou contexte (film, série, produit, campagne) : au moins un des deux pour lancer.
+              Assemblé en anglais pour le modèle puis envoyé via{' '}
               <code className="font-mono text-xs">STYLE_GUIDE_CONTEXT</code>.
             </p>
           </div>
@@ -548,23 +599,49 @@ function App () {
 
             <fieldset className="fieldset">
               <legend className="fieldset-legend text-base-content/60">Prompt</legend>
-              <textarea
-                className="textarea textarea-bordered w-full min-h-52 rounded-2xl border-base-300 bg-base-100 font-mono text-sm leading-relaxed transition-[border-color,box-shadow] placeholder:text-base-content/35 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 md:text-[15px]"
-                placeholder="Ex. The brand Peugeot and the context is for the new EV GTI 208 they are launching."
-                value={contextPrompt}
-                onChange={(e) => { setContextPrompt(e.target.value); }}
-                disabled={status === 'running'}
-                aria-label="Contexte marque et usage"
-              />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="form-control w-full">
+                  <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/50">
+                    Marque <span className="font-normal normal-case text-base-content/40">(optionnel)</span>
+                  </span>
+                  <input
+                    type="text"
+                    className="input input-bordered w-full rounded-2xl border-base-300 bg-base-100 font-mono text-sm transition-[border-color,box-shadow] placeholder:text-base-content/35 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15"
+                    placeholder="Ex. Peugeot — laisser vide pour un film / titre sans marque"
+                    value={brand}
+                    onChange={(e) => { setBrand(e.target.value); }}
+                    disabled={status === 'running'}
+                    aria-label="Marque"
+                    autoComplete="organization"
+                  />
+                </label>
+                <label className="form-control w-full sm:col-span-2">
+                  <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/50">
+                    Contexte <span className="font-normal normal-case text-base-content/40">(optionnel si marque remplie)</span>
+                  </span>
+                  <textarea
+                    className="textarea textarea-bordered w-full min-h-28 rounded-2xl border-base-300 bg-base-100 font-mono text-sm leading-relaxed transition-[border-color,box-shadow] placeholder:text-base-content/35 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 md:min-h-32 md:text-[15px]"
+                    placeholder="Ex. feature film Dune: Part Two, theatrical one-sheet and social campaign — ou produit / campagne si marque renseignée."
+                    value={styleContext}
+                    onChange={(e) => { setStyleContext(e.target.value); }}
+                    disabled={status === 'running'}
+                    aria-label="Contexte produit ou campagne"
+                  />
+                </label>
+              </div>
               <p className="label text-base-content/50">
-                Astuce : incluez audience, promesse et contraintes créatives pour un rendu plus ciblé.
+                Astuce : pour une marque seule, le contexte peut rester vide. Pour un film sans marque, décrivez le titre et l’usage dans le contexte.
               </p>
             </fieldset>
             <div className="card-actions justify-end border-t border-base-300/30 pt-6">
               <button
                 type="button"
                 className="btn btn-primary rounded-xl px-8 shadow-lg shadow-primary/20 transition-[filter,transform] hover:brightness-105 active:scale-[0.99] disabled:shadow-none"
-                disabled={status === 'running' || contextPrompt.trim().length === 0 || (catalog?.styleGuideScripts.length ?? 0) === 0}
+                disabled={
+                  status === 'running'
+                  || (brand.trim().length === 0 && styleContext.trim().length === 0)
+                  || (catalog?.styleGuideScripts.length ?? 0) === 0
+                }
                 onClick={() => { void run(); }}
               >
                 {status === 'running'
@@ -639,6 +716,7 @@ function App () {
               </legend>
               <p className="mb-3 text-xs leading-relaxed text-base-content/55">
                 Cochez une ou plusieurs tailles (max. 8). Dimensions personnalisées : 16–4096 px. Au moins un format doit rester sélectionné.
+                L’option <strong>Arche 1600×960</strong> applique header 200 px, gouttières 230 px, trou central, budget image cible 150 Ko (JPEG/PNG), tracking pixel + clic documenté ; combinez avec 300×250 ou 300×600 pour des compagnons.
               </p>
               <div className="grid max-h-52 gap-2 overflow-y-auto sm:grid-cols-2">
                 {STUDIO_AD_PRESETS.map((preset) => {
@@ -867,14 +945,14 @@ function App () {
           <div className="max-h-[min(60vh,520px)] overflow-y-auto bg-base-200/20 p-4 sm:p-6">
             <div className="mockup-code w-full rounded-xl border border-base-300/40 text-left text-xs shadow-inner ring-1 ring-black/4 sm:text-sm dark:ring-white/6">
               {logs.length === 0 && status !== 'running' && (
-                <pre data-prefix=" "><code className="text-base-content/90">En attente de logs…</code></pre>
+                <pre data-prefix=" "><code className="base-100">En attente de logs…</code></pre>
               )}
               {logs.map((line, i) => (
                 <pre
                   key={`${String(i)}-${line.text.slice(0, 48)}`}
                   data-prefix={line.source === 'stderr' ? '!' : '>'}
                 >
-                  <code className={line.source === 'stderr' ? 'text-error' : 'text-base-content'}>{line.text}</code>
+                  <code className={line.source === 'stderr' ? 'text-error' : 'base-100'}>{line.text}</code>
                 </pre>
               ))}
             </div>

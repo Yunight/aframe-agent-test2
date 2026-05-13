@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gaumont — Un Bon Petit Soldat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== ARCHE HABILLAGE 1600x960 ===== -->
+    <div class="arche" id="arche" data-tracking="gaumont-ubps-arche-impression">
+
+      <!-- HEADER 1600x200 -->
+      <header class="arche-header" data-click-zone="header-click">
+        <div class="header-grain" id="headerGrain"></div>
+        <div class="header-content">
+          <div class="header-left anim-enter" data-anim-delay="200">
+            <!-- gaumont-logo-png-transparent.png: The modern Gaumont logo — iconic marguerite (daisy) symbol with 12 irregular red petals forming a luminous halo around a bold G at its centre, on transparent background. Inverted to white via CSS filter on the red header. -->
+            <img src="./gaumont-logo-png-transparent.png" alt="Gaumont — Le plus ancien studio de cinéma au monde, emblème marguerite" class="logo-main">
+          </div>
+          <div class="header-center">
+            <span class="title-overline anim-enter" data-anim-delay="300">Gaumont présente</span>
+            <h1 class="film-title anim-enter" data-anim-delay="100" id="filmTitle">UN BON PETIT SOLDAT</h1>
+            <p class="film-director anim-enter" data-anim-delay="700">Un film de <em>Stéphane Brizé</em></p>
+            <p class="film-cast anim-enter" data-anim-delay="850">Avec Alba Rohrwacher et Vincent Lindon</p>
+          </div>
+          <div class="header-right anim-enter" data-anim-delay="500">
+            <a href="#" class="cta-main" data-click-zone="cta-decouvrir">
+              Découvrir le film
+              <span class="cta-arrow">→</span>
+            </a>
+            <span class="release-tag">Prochainement au cinéma</span>
+          </div>
+        </div>
+        <div class="header-accent"></div>
+      </header>
+
+      <!-- BODY: GUTTERS + CENTER -->
+      <div class="arche-body">
+
+        <!-- LEFT GUTTER 230x760 -->
+        <aside class="gutter gutter-left" data-click-zone="gutter-left-click">
+          <div class="gutter-inner">
+            <div class="gutter-brand anim-enter" data-anim-delay="600">
+              <span class="brand-tag">Distribution</span>
+              <span class="brand-divider"></span>
+              <span class="brand-name">Gaumont</span>
+            </div>
+            <div class="poster-frame anim-enter" data-anim-delay="800">
+              <!-- 61-UC5rvgFL.jpg (329x500): Product image — theatrical poster / key art for Un Bon Petit Soldat, showing a dramatic composition for Brizé's social drama set in a corporate insurance world, exploring themes of compromise and human dignity. -->
+              <img src="./61-UC5rvgFL.jpg" alt="Un Bon Petit Soldat — Affiche officielle du drame social de Stéphane Brizé" class="poster-img">
+              <div class="poster-shine"></div>
+            </div>
+            <div class="gutter-meta anim-enter" data-anim-delay="1000">
+              <span class="meta-genre">Drame social</span>
+              <span class="meta-sep">·</span>
+              <span class="meta-year">2026</span>
+            </div>
+            <a href="#" class="cta-small anim-enter" data-anim-delay="1100" data-click-zone="cta-bande-annonce">
+              Bande-annonce
+            </a>
+          </div>
+        </aside>
+
+        <!-- CENTRAL ZONE 1140x760 (no ad content) -->
+        <div class="central-zone">
+          <div class="zone-placeholder">
+            <span class="zone-text">Contenu éditorial du site</span>
+          </div>
+        </div>
+
+        <!-- RIGHT GUTTER 230x760 -->
+        <aside class="gutter gutter-right" data-click-zone="gutter-right-click">
+          <div class="gutter-inner">
+            <div class="scene-frame anim-enter" data-anim-delay="900">
+              <!-- 2019_un_bon_petit_soldat_coupe8.jpg (400x469): Product image — a dramatic film still from Un Bon Petit Soldat, a cropped scene capturing the intense, quasi-documentary realist visual style of Brizé's cinema exploring corporate life, labour tension and moral compromise within an insurance company setting. -->
+              <img src="./2019_un_bon_petit_soldat_coupe8.jpg" alt="Scène du film Un Bon Petit Soldat — drame réaliste de Stéphane Brizé" class="scene-img">
+              <div class="scene-overlay"></div>
+            </div>
+            <blockquote class="gutter-quote anim-enter" data-anim-delay="1100">
+              <p>« Quand le compromis<br>devient inévitable… »</p>
+            </blockquote>
+            <div class="gutter-footer anim-enter" data-anim-delay="1200">
+              <span class="footer-url">gaumont.com</span>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+
+    
+
+  </div>
+
+  <!-- Tracking pixel (1x1 transparent GIF, no external script) -->
+  <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+       data-tracking-pixel="gaumont-ubps-arche"
+       width="1" height="1" alt=""
+       style="position:absolute;left:-9999px;top:-9999px;pointer-events:none;">
+</body>
+</html>

@@ -276,9 +276,32 @@ const mimeTypeToExtension: Record<string, string> = {
   'image/gif': '.gif'
 };
 
-const DEFAULT_STYLE_GUIDE_CONTEXT_PROMPT = `
-  The brand Peugeot and the context is for the new EV GTI 208 they are launching.
-`.trim();
+const DEFAULT_STYLE_GUIDE_BRAND = 'Peugeot';
+const DEFAULT_STYLE_GUIDE_CONTEXT = 'the new EV GTI 208 they are launching';
+
+/** Same wording as style-guide-studio-api `composeStyleGuideContextFromParts`. */
+function buildStyleGuideContextFromBrandAndContext (brand: string, context: string): string {
+  const b = brand.trim();
+  const c = context.trim();
+  if (b.length > 0 && c.length > 0) {
+    return `The brand is ${b} and the context is ${c}`;
+  }
+  if (b.length > 0) {
+    return 'The brand is '
+      + b
+      + ' and the context is not specified beyond the brand; infer positioning from official sites and current campaigns.';
+  }
+  if (c.length > 0) {
+    return 'No commercial brand was specified. The context is '
+      + c
+      + '. Infer visuals, tone, typography, and color direction from official trailers, key art, and distributor or studio materials only; do not invent a corporate brand beyond this title or IP.';
+  }
+  return '';
+}
+
+function defaultStyleGuideContextPrompt (): string {
+  return buildStyleGuideContextFromBrandAndContext(DEFAULT_STYLE_GUIDE_BRAND, DEFAULT_STYLE_GUIDE_CONTEXT);
+}
 
 function resolveStyleGuideContextPrompt (fallback: string): string {
   const raw = process.env['STYLE_GUIDE_CONTEXT'];
@@ -535,7 +558,7 @@ if (braveApiKeyConfigured === undefined || braveApiKeyConfigured.length === 0) {
   throw new Error('Missing BRAVE_API_KEY. Set it in project root .env (Brave Search API key for image search).');
 }
 
-const contextPrompt = resolveStyleGuideContextPrompt(DEFAULT_STYLE_GUIDE_CONTEXT_PROMPT);
+const contextPrompt = resolveStyleGuideContextPrompt(defaultStyleGuideContextPrompt());
 
 const anthropicClient = new Anthropic({
   apiKey: anthropicApiKey

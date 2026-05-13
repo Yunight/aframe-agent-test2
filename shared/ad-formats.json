@@ -53,6 +53,21 @@
       "width": 468,
       "height": 60,
       "label": "468×60 — Banner (IAB)"
+    },
+    {
+      "id": "arche-1600x960",
+      "width": 1600,
+      "height": 960,
+      "label": "Arche (habillage) 1600×960 — header 200 px, gouttières 230 px",
+      "arche": {
+        "headerPx": 200,
+        "gutterPx": 230,
+        "mainFocusWidthPx": 1280,
+        "maxTotalWeightKB": 150,
+        "allowedRasterMime": ["image/jpeg", "image/png"],
+        "trackingNote": "Tracking accepté : pixel de comptage (image 1×1 ou équivalent documenté) et commande de clic (click command). Prévoir attributs data-* ou zones cliquables nommées, sans charger de scripts tiers opaques.",
+        "companionPresetIds": ["300x250", "300x600"]
+      }
     }
   ]
 }
