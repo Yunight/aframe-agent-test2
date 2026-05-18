@@ -1,0 +1,81 @@
+{
+  "companyName": "Rituals Cosmetics",
+  "companyContext": "Rituals Cosmetics is a Dutch luxury wellbeing company founded in 2000 in Amsterdam by Raymond Cloosterman. It was the first brand in the world to combine home and body cosmetics into a single portfolio, with collections inspired by ancient Asian wisdom and traditions. The company operates over 1,170 stores and 4,200 shop-in-shops across 36+ countries, plus five Body Spas and the world's first Mind Oasis. It is a Certified B Corp™ committed to sustainable wellbeing through its Clean, Conscious and Caring pillars, and dedicates 10% of net profit to causes that improve the wellbeing of people and the planet.",
+  "companyURL": "https://www.rituals.com",
+  "brandName": "Rituals",
+  "brandContext": "Rituals is a soulful home & body cosmetics brand built around 'The Art of Soulful Living' — transforming everyday routines (shower, bath, skincare, home fragrance) into meaningful, sensorial wellbeing moments. Its hero collections (The Ritual of Sakura, Yozakura, Karma, Ayurveda, Jing, Mehr, Namaste) each tell a cultural story through scent, ingredients and ritual. For the upcoming Fête des Mères (31 May 2026), the brand is putting forward its gift sets — most notably The Ritual of Sakura (cherry blossom & rice milk, floral and uplifting), The Ritual of Yozakura (night-blooming sakura), The Ritual of Karma (lotus & white tea, sun-kissed) and The Ritual of Jing (jujube & lotus for sleep/relaxation) — positioned as ways to gift mothers a moment of pause, self-care and luxurious ritual.",
+  "brandURL": "https://www.rituals.com/fr-fr/mag-rituality-mothers-day-gift-guide.html",
+  "logoFileUrls": [
+    "https://cdn.freebiesupply.com/logos/large/2x/rituals-logo-png-transparent.png",
+    "https://p7.hiclipart.com/preview/322/1017/93/church-of-satan-the-satanic-rituals-satanism-baphomet-symbol-symbol-thumbnail.jpg"
+  ],
+  "productName": "The Ritual of Sakura Gift Set — Fête des Mères 2026",
+  "productPictureUrls": [
+    "https://rituals.scene7.com/is/image/rituals/1120172-rituals-ay26069-giftset-mothersday-2026:Square?fmt=webp-alpha&resMode=sharp2",
+    "https://www.lesbonsplansdenaima.fr/wp-content/uploads/2024/05/box-marionnaud-fete-des-meres.jpg",
+    "https://dreamshop.ma/wp-content/uploads/2025/04/rituals-the-ritual-of-sakura-renewing-routine-gift-set-m-430x374.webp",
+    "https://www.lesbonsplansdenaima.fr/wp-content/uploads/2024/05/fete-des-meres-marionnaud.jpg",
+    "https://rituals.scene7.com/is/image/rituals/1120172-rituals-ay26068-mothersday-2026:Widescreen?fmt=webp-alpha&resMode=sharp2",
+    "https://dreamshop.ma/wp-content/uploads/2025/06/rituals-coffret-homme-m-430x323.webp",
+    "https://www.lesbonsplansdenaima.fr/wp-content/uploads/2024/04/coffret-fete-des-meres-marionnaud.jpg",
+    "https://www.lesbonsplansdenaima.fr/wp-content/uploads/2024/04/coffret-fete-des-meres-marionnaud-parfum.jpg"
+  ],
+  "primaryColorPalette": [
+    "1A1919",
+    "242222",
+    "EFEDEA",
+    "B58C6E",
+    "796F63"
+  ],
+  "secondaryColorPalette": [
+    "F4C7D0",
+    "E8A6B3",
+    "D4A574",
+    "8B5A3C",
+    "F7F3EE"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Futura PT",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Brand wordmark / logo — uppercase with wide letter-spacing, evoking the spaced 'RITUALS.' signature"
+    },
+    {
+      "fontFamily": "Futura PT",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Primary headings and campaign titles (e.g. 'Fête des Mères', 'The Ritual of Sakura') — clean, modern sans-serif in uppercase with generous tracking"
+    },
+    {
+      "fontFamily": "Playfair Display",
+      "fontWeight": 400,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Editorial accent / sub-headlines for emotional storytelling around motherhood and ritual moments"
+    },
+    {
+      "fontFamily": "Lato",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions and gift-guide paragraphs — neutral, highly readable humanist sans-serif"
+    },
+    {
+      "fontFamily": "Lato",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Buttons, CTAs ('Shop the Gift', 'Découvrir le coffret') and navigation labels"
+    },
+    {
+      "fontFamily": "Lato",
+      "fontWeight": 400,
+      "fontEffect": [
+        "underline"
+      ],
+      "fontUses": "Inline links and 'Read more' references inside articles"
+    }
+  ],
+  "brandVision": "To be the compass for personal wellbeing — guiding people on a journey to reconnect body, mind and soul through 'The Art of Soulful Living', and to lead the luxury industry toward sustainable wellbeing where beauty is good for both people and planet (Net-Zero by 2050, B Corp standards, refill culture). For Mother's Day, the vision is expressed as honouring mothers with gifts that turn the ordinary into the meaningful — a moment of pause, a sensory escape, a ritual to come back to.",
+  "brandValues": "Soulful living, mindfulness and slowing down; luxurious yet affordable everyday self-care; cultural reverence drawn from ancient Asian traditions; Clean (90%+ natural-origin ingredients, no animal testing); Conscious (refills, reduced packaging, a tree planted/protected/restored for every refill, partnership with Tiny Miracles); Caring (10% of net profit reinvested in wellbeing causes, B Corp™ certified); inclusive celebration of all mother figures and the women who give without expecting in return."
+}

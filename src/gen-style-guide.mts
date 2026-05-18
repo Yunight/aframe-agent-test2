@@ -585,7 +585,7 @@ while (true) {
   console.log(`Generating style guide ... (i=${i})`);
 
   const styleGuideStream = await anthropicClient.messages.stream({
-    // Opus 4.7: max_tokens caps thinking + visible output together (was 128k out + 100k thinking budget).
+
     max_tokens: 128000,
     system: `
       You are an agent that assembles brand style guides based on external information.
@@ -598,7 +598,7 @@ while (true) {
       Do not invent or guess direct image URLs for logos or product photos. Those assets are collected
       separately after your JSON using the Brave Images API from search queries derived from the brand
       and product fields you output.
-
+      the logo should be a single light mode version, it must be the most recent one available and a transparent PNG file, check the mimetype to avoid the fake transparency.
       When specifying colors, always check that the color exists and matches the one described in the official sources.
 
       Use web_search for company/brand facts, official pages, typography and color references only.
@@ -616,7 +616,6 @@ while (true) {
     },
     output_config: {
       format: zodOutputFormat(brandStyleGuideModelSchema),
-      // Opus 4.7 effort level; SDK union may omit until types ship.
       effort: 'xhigh' as 'low' | 'medium' | 'high' | 'max' | null
     },
     tools: [
@@ -661,7 +660,7 @@ if (styleGuideFromModel === null) {
 
 console.log('[Brave images] Collecting logo candidates…');
 const logoFileUrls = await gatherValidatedImageUrls(buildLogoSearchQueries(styleGuideFromModel), {
-  maxResults: 8,
+  maxResults: 2,
   perQuery: 10
 });
 console.log('[Brave images] Collecting product photo candidates…');

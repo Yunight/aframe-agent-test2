@@ -502,12 +502,7 @@ function App () {
     <div className="studio-app-shell flex min-h-dvh flex-col font-sans text-base-content antialiased">
       <header className="navbar sticky top-0 z-40 border-b border-base-300/40 bg-base-100/80 px-3 py-3 shadow-sm backdrop-blur-xl sm:px-6">
         <div className="navbar-start flex items-center gap-3">
-          <div
-            className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-primary via-primary to-secondary shadow-md ring-1 ring-base-content/5"
-            aria-hidden="true"
-          >
-            <span className="font-mono text-sm font-bold text-primary-content">SG</span>
-          </div>
+
           <div className="flex min-w-0 flex-col leading-tight">
             <span className="truncate text-base font-semibold tracking-tight sm:text-lg">Style guide studio</span>
             <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-base-content/90 sm:text-xs">

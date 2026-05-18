@@ -1,8 +1,14 @@
 import type { StyleGuide } from './gen-style-guide.mjs';
-import type { AdFormatSelection } from './studio-ad-formats.mts';
-import { loadAdFormatPresets, parseCreativeAdFormatsFromEnv } from './studio-ad-formats.mts';
+import {
+  contains,
+  creativeNativeStructuredOutputFilesSchema,
+  loadDesignSkillGuidance,
+  validateCreativeSkillCompliance,
+  type AssetFile
+} from './creative-native-skills.mts';
+import { buildCreativeAdFormatInstructions, loadAdFormatPresets, parseCreativeAdFormatsFromEnv } from './studio-ad-formats.mts';
 import { basename, dirname, extname, join } from 'node:path';
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { config as loadDotenv } from 'dotenv';
 import { Anthropic } from '@anthropic-ai/sdk';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
@@ -225,84 +231,6 @@ function describeAnthropicTurnForLogs (
   return segments.join(' — ');
 }
 
-function buildCreativeAdFormatInstructions (formats: readonly AdFormatSelection[]): string {
-  const hasArche = formats.some((f) => f.arche !== undefined);
-  const lines = formats.map((f) => `      - ${f.id}: ${String(f.width)}×${String(f.height)} px`);
-  const list = lines.join('\n');
-  const first = formats[0];
-
-  if (formats.length === 1 && first !== undefined && first.arche !== undefined) {
-    const f = first;
-    const a = first.arche;
-    const innerW = f.width - 2 * a.gutterPx;
-    const innerH = f.height - a.headerPx;
-    const companions = a.companionPresetIds.join(' ou ');
-    return (
-      `      Format **ARCHE / habillage** (cadre livré exactement ${String(f.width)}×${String(f.height)} px) :\n` +
-      `      - Enveloppe en « U » : bandeau **header** public **${String(a.headerPx)} px** de haut sur toute la largeur ${String(f.width)} px ; **gouttières** gauche et droite **${String(a.gutterPx)} px** de large chacune sur la hauteur sous le header (**${String(innerH)} px**).\n` +
-      `      - **Zone centrale « contenu site »** (trou, non pub) : **${String(innerW)}×${String(innerH)} px** — fond neutre en démo ; aucun élément publicitaire dans ce rectangle.\n` +
-      `      - **Hiérarchie créative** : concentrer logo, accroche, produit et CTA pour qu’ils se lisent en priorité sur une largeur **cible ~${String(a.mainFocusWidthPx)} px** centrée sur l’ensemble (tout en respectant les emprises header/gouttières en pixels ci-dessus).\n` +
-      `      - **Poids** : viser **≤ ${String(a.maxTotalWeightKB)} Ko** pour l’ensemble des images raster utilisées dans l’habillage (optimisation forte, pas d’assets superflus).\n` +
-      `      - **Formats raster** pour bitmaps d’habillage : ${a.allowedRasterMime.join(', ')} uniquement.\n` +
-      `      - **Tracking** : ${a.trackingNote}\n` +
-      `      - **Compagnons** possibles avec ce habillage : **${companions}** (pavés). Si d’autres tailles sont aussi demandées dans cette génération, les produire comme unités distinctes sous ou à côté de l’arche sur la même page de preview.\n` +
-      '      - styles.css + app.js : le bloc racine livré pour l’arche doit faire exactement ' +
-      `${String(f.width)}×${String(f.height)} px ; positionner header et gouttières au pixel près ; le centre est le « trou ».\n` +
-      '      - index.html : viewport meta width=device-width ; centrer la démo comme pour les autres formats.'
-    );
-  }
-
-  if (formats.length === 1 && first !== undefined && first.arche === undefined) {
-    return (
-      `      Required ad frame (exact pixel size of the visible creative):\n${list}\n` +
-      `      - styles.css — center this single ${String(first.width)}×${String(first.height)} px ad on the page ` +
-      `(e.g. body min-height 100vh, flex, align and justify center).\n` +
-      `      Creative viewport: exactly ${String(first.width)}×${String(first.height)} px for the main ad container.`
-    );
-  }
-
-  if (hasArche) {
-    const archeBlocks = formats
-      .filter((f): f is AdFormatSelection & { arche: NonNullable<AdFormatSelection['arche']> } => f.arche !== undefined)
-      .map((f) => {
-        const a = f.arche;
-        const innerW = f.width - 2 * a.gutterPx;
-        const innerH = f.height - a.headerPx;
-        return (
-          `      * ${f.id} (${String(f.width)}×${String(f.height)} px) — ARCHE : header ${String(a.headerPx)} px, gouttières ${String(a.gutterPx)} px, ` +
-          `trou central ${String(innerW)}×${String(innerH)} px, focus créatif ~${String(a.mainFocusWidthPx)} px, ` +
-          `poids cible ≤${String(a.maxTotalWeightKB)} Ko, rasters ${a.allowedRasterMime.join('/')}, tracking : ${a.trackingNote} ; compagnons : ${a.companionPresetIds.join(', ')}.`
-        );
-      })
-      .join('\n');
-    return (
-      `      Required ad frames (plusieurs tailles, dont au moins un **habillage Arche**) :\n${list}\n` +
-      `${archeBlocks}\n` +
-      '      - Chaque format non-Arche : un bloc séparé aux dimensions exactes (wrapper id unique).\n' +
-      '      - L’unité Arche : structure U avec header + gouttières + trou central aux dimensions ci-dessus.\n' +
-      '      - styles.css — une page avec toutes les unités (arche + pavés) visibles ; pas mélanger les pixels des zones.\n' +
-      '      - Reuse logo et produits ; JPEG/PNG uniquement pour rasters d’habillage Arche.'
-    );
-  }
-
-  return (
-    `      Required ad frames (multiple standard sizes — include every size in one page):\n${list}\n` +
-    '      - Each format must appear as its own clearly separated ad unit; outer dimensions must match the given width×height in pixels exactly.\n' +
-    '      - Give each unit a unique wrapper id (e.g. id="ad-300x250" using the id above).\n' +
-    '      - styles.css — lay out all units on one page (vertical stack or wrapping gallery). The page may use full viewport; each ad frame stays exactly WxH px.\n' +
-    '      - Reuse logo and product assets across units where appropriate; adapt composition to each aspect ratio.'
-  );
-}
-
-function contains<T extends string>(array: readonly T[], value: string): value is T {
-  return (array as readonly string[]).includes(value);
-}
-
-interface AssetFile {
-  fileName: string;
-  filePath: string;
-  fileType: 'logos' | 'products';
-}
 function createAssetDescription(fileName: string, fileType: 'logos' | 'products'): string {
   const baseName = fileName.replace(/\.[^.]+$/, '');
   const keywordString = baseName
@@ -318,196 +246,6 @@ function createAssetDescription(fileName: string, fileType: 'logos' | 'products'
 }
 
 type AssetInputMode = 'base64' | 'url';
-
-const designSkillFiles = [
-  '.claude/.skills/ui-design/commands/design-screen.md',
-  '.claude/.skills/ui-design/commands/color-palette.md',
-  '.claude/.skills/ui-design/commands/type-system.md',
-  '.claude/.skills/ui-design/skills/color-system/SKILL.md',
-  '.claude/.skills/ui-design/skills/dark-mode-design/SKILL.md',
-  '.claude/.skills/ui-design/skills/layout-grid/SKILL.md',
-  '.claude/.skills/ui-design/skills/responsive-design/SKILL.md',
-  '.claude/.skills/ui-design/skills/typography-scale/SKILL.md',
-  '.claude/.skills/ui-design/skills/visual-hierarchy/SKILL.md',
-  '.claude/.skills/interaction-design/skills/animation-principles/SKILL.md',
-  '.claude/.skills/interaction-design/skills/feedback-patterns/SKILL.md',
-  '.claude/.skills/interaction-design/skills/micro-interaction-spec/SKILL.md'
-] as const;
-
-function loadDesignSkillGuidance(): string {
-  const rootDir = join(import.meta.dirname, '..');
-  const loadedSkills = designSkillFiles
-    .map((relativePath) => {
-      const absolutePath = join(rootDir, relativePath);
-
-      if (!existsSync(absolutePath)) {
-        return null;
-      }
-
-      const content = readFileSync(absolutePath, 'utf8').trim();
-      return `### ${relativePath}\n${content}`;
-    })
-    .filter((value): value is string => value !== null);
-
-  if (loadedSkills.length === 0) {
-    throw new Error('No local design skill files were found in .claude/.skills.');
-  }
-
-  return loadedSkills.join('\n\n');
-}
-
-function normalizeHexColor(value: string): string {
-  const normalized = value.trim().replace(/^#/, '').toUpperCase();
-  return normalized.length === 3
-    ? normalized.split('').map((char) => `${char}${char}`).join('')
-    : normalized;
-}
-
-function extractHexColorsFromCss(content: string): Set<string> {
-  const matches = content.match(/#[0-9a-fA-F]{3,8}\b/g) ?? [];
-  return new Set(
-    matches
-      .map((hexValue) => normalizeHexColor(hexValue))
-      .filter((hexValue) => hexValue.length === 6)
-  );
-}
-
-function extractFontFamiliesFromCss(content: string): Set<string> {
-  const fontFamilyMatches = content.match(/font-family\s*:\s*([^;]+);/gi) ?? [];
-  const familySet = new Set<string>();
-
-  for (const declaration of fontFamilyMatches) {
-    const declarationMatch = declaration.match(/font-family\s*:\s*([^;]+);/i);
-    if (declarationMatch === null) {
-      continue;
-    }
-    const list = declarationMatch[1] ?? '';
-    for (const fontName of list.split(',')) {
-      const cleaned = fontName.trim().replace(/^['"]|['"]$/g, '');
-      if (cleaned.length > 0) {
-        familySet.add(cleaned.toLowerCase());
-      }
-    }
-  }
-
-  return familySet;
-}
-
-function validateCreativeSkillCompliance(
-  files: z.infer<typeof filesSchema>,
-  currentStyleGuide: Omit<StyleGuide, 'logoFileUrls' | 'productPictureUrls'>,
-  assetFiles: AssetFile[]
-): { ok: true } | { ok: false; issues: string[] } {
-  const normalizeGeneratedPath = (fileName: string): string =>
-    fileName.replace(/\\/g, '/').toLowerCase();
-
-  const indexFile = files.find((file) => normalizeGeneratedPath(file.fileName) === 'index.html');
-  if (indexFile === undefined) {
-    return { ok: false, issues: [ 'Missing index.html at project root.' ] };
-  }
-
-  const stylesFile = files.find((file) => normalizeGeneratedPath(file.fileName) === 'styles.css');
-  const appJsFile = files.find((file) => normalizeGeneratedPath(file.fileName) === 'app.js');
-  if (stylesFile === undefined) {
-    return { ok: false, issues: [ 'Missing styles.css at project root (CSS pur, sans préprocesseur).' ] };
-  }
-  if (appJsFile === undefined) {
-    return { ok: false, issues: [ 'Missing app.js at project root (JavaScript vanilla, sans bundler).' ] };
-  }
-
-  const issues: string[] = [];
-  const allContent = files.map((file) => file.fileContent).join('\n');
-  const allContentLower = allContent.toLowerCase();
-
-  const forbiddenLockfiles = new Set([
-    'package.json',
-    'package-lock.json',
-    'pnpm-lock.yaml',
-    'yarn.lock',
-    'bun.lockb'
-  ]);
-  for (const file of files) {
-    const base = (normalizeGeneratedPath(file.fileName).split('/').pop() ?? '');
-    if (forbiddenLockfiles.has(base)) {
-      issues.push(`Fichier interdit pour une sortie statique native : ${file.fileName}`);
-    }
-    const leaf = file.fileName.replace(/\\/g, '/').split('/').pop() ?? '';
-    if (/^vite\.config\.(ts|js|mts|mjs|cjs)$/i.test(leaf)) {
-      issues.push(`Configuration de build interdite : ${file.fileName}`);
-    }
-    if (/tailwind\.config\./i.test(leaf) || /postcss\.config\./i.test(leaf)) {
-      issues.push(`Fichier d’outil CSS interdit : ${file.fileName}`);
-    }
-    if (/\.(jsx|tsx)$/i.test(file.fileName)) {
-      issues.push(`Fichier React/JSX interdit : ${file.fileName} (utiliser uniquement .html et .js).`);
-    }
-  }
-
-  if (!/(href|src)\s*=\s*["'][^"']*styles\.css["']/i.test(indexFile.fileContent)) {
-    issues.push('index.html doit référencer styles.css (ex. <link rel="stylesheet" href="styles.css">).');
-  }
-  if (!/src\s*=\s*["'][^"']*app\.js["']/i.test(indexFile.fileContent)) {
-    issues.push('index.html doit référencer app.js (ex. <script src="app.js" defer></script>).');
-  }
-
-  const forbiddenSnippets: Array<[ string, string ]> = [
-    [ 'from "react"', 'React (import)' ],
-    [ "from 'react'", 'React (import)' ],
-    [ 'from "react-dom"', 'react-dom' ],
-    [ "from 'react-dom'", 'react-dom' ],
-    [ '@vitejs/', 'Vite' ],
-    [ 'tailwindcss', 'Tailwind CSS' ],
-    [ 'daisyui', 'DaisyUI' ],
-    [ 'createRoot(', 'React createRoot' ],
-    [ 'react/jsx-runtime', 'JSX runtime React' ]
-  ];
-  for (const [ needle, label ] of forbiddenSnippets) {
-    if (allContentLower.includes(needle.toLowerCase())) {
-      issues.push(`Le code ne doit pas dépendre de frameworks ou d’outils de build (détecté : ${label}).`);
-    }
-  }
-
-  const styleGuideFonts = new Set(
-    currentStyleGuide.typography
-      .map((item) => item.fontFamily.trim().toLowerCase())
-      .filter((fontName) => fontName.length > 0)
-  );
-  const usedFonts = extractFontFamiliesFromCss(allContent);
-  const disallowedFonts = Array.from(usedFonts).filter((fontName) =>
-    !styleGuideFonts.has(fontName) &&
-    !contains([ 'sans-serif', 'serif', 'monospace', 'cursive', 'fantasy', 'system-ui' ], fontName)
-  );
-  if (disallowedFonts.length > 0) {
-    issues.push(`Contains font families outside style guide: ${disallowedFonts.join(', ')}`);
-  }
-
-  const allowedColors = new Set([
-    ...currentStyleGuide.primaryColorPalette.map(normalizeHexColor),
-    ...currentStyleGuide.secondaryColorPalette.map(normalizeHexColor)
-  ]);
-  const usedHexColors = extractHexColorsFromCss(allContent);
-  const unknownHexColors = Array.from(usedHexColors).filter((hexColor) => !allowedColors.has(hexColor));
-  if (unknownHexColors.length > 0) {
-    issues.push(`Contains colors outside style guide palettes: ${unknownHexColors.slice(0, 10).join(', ')}`);
-  }
-
-  const logoAssets = assetFiles.filter((asset) => asset.fileType === 'logos');
-  const productAssets = assetFiles.filter((asset) => asset.fileType === 'products');
-  const hasLogoReference = logoAssets.some((asset) => allContentLower.includes(asset.fileName.toLowerCase()));
-  const hasProductReference = productAssets.some((asset) => allContentLower.includes(asset.fileName.toLowerCase()));
-  if (!hasLogoReference) {
-    issues.push('Missing at least one local logo asset reference in generated files.');
-  }
-  if (!hasProductReference) {
-    issues.push('Missing at least one local product asset reference in generated files.');
-  }
-
-  if (issues.length > 0) {
-    return { ok: false, issues };
-  }
-
-  return { ok: true };
-}
 
 loadDotenv({ path: join(import.meta.dirname, '..', '.env') });
 
@@ -548,15 +286,7 @@ console.log('[creative-native] Ad formats:', JSON.stringify(adFormats));
 const styleGuidePath = join(directoryPath, 'style-guide.json');
 const styleGuide = JSON.parse(readFileSync(styleGuidePath, { encoding: 'utf8' })) as StyleGuide;
 
-const filesSchema = z.array(
-  z.object({
-    fileName: z.string().describe('File name'),
-    fileContent: z.string().describe('File code content')
-  })
-    .describe('Code file details')
-    .strict()
-)
-  .describe('List of code files');
+const filesSchema = creativeNativeStructuredOutputFilesSchema;
 
 const anthropicApiKey = process.env['ANTHROPIC_API_KEY'];
 if (anthropicApiKey === undefined || anthropicApiKey.trim().length === 0) {
@@ -662,9 +392,8 @@ while (true) {
       Graphic elements (fonts, colors, pictures) must follow only the JSON style guide from the user.
       The layout and interaction design are up to you: fresh, modern, eye-catching, with animation and
       interactivity where appropriate.
-      the logo should be clearly visible and a good scale so it is not too small or too big.
       Only use one logo image by default the light theme only, if the logo is not visible in the light theme, use the dark theme.
-
+      the logo should remains visible and a good scale so it is not too small or too big, do not apply any filter to the logo.
       Logo and product images are local files. Reference them with relative paths from the project root
       (for example: ./logo.png).
 
@@ -694,7 +423,7 @@ while (true) {
     `.trim();
 
   const creativeCodeStream = await anthropicClient.messages.stream({
-    max_tokens: 128_000,
+    max_tokens: 128000,
     system: systemPrompt,
     messages,
     model: 'claude-opus-4-6',
@@ -704,7 +433,7 @@ while (true) {
       display: 'omitted'
     },
     output_config: {
-      format: zodOutputFormat(filesSchema)
+      format: zodOutputFormat(filesSchema),
     },
     tools: [
       {

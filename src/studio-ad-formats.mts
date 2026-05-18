@@ -246,3 +246,73 @@ export function parseCreativeAdFormatsFromEnv (
   }
   return normalized.formats;
 }
+
+/** Instruction block for LLM prompts (creative-native generator / verifier). */
+export function buildCreativeAdFormatInstructions (formats: readonly AdFormatSelection[]): string {
+  const hasArche = formats.some((f) => f.arche !== undefined);
+  const lines = formats.map((f) => `      - ${f.id}: ${String(f.width)}×${String(f.height)} px`);
+  const list = lines.join('\n');
+  const first = formats[0];
+
+  if (formats.length === 1 && first !== undefined && first.arche !== undefined) {
+    const f = first;
+    const a = first.arche;
+    const innerW = f.width - 2 * a.gutterPx;
+    const innerH = f.height - a.headerPx;
+    const companions = a.companionPresetIds.join(' ou ');
+    return (
+      `      Format **ARCHE / habillage** (cadre livré exactement ${String(f.width)}×${String(f.height)} px) :\n` +
+      `      - Enveloppe en « U » : bandeau **header** public **${String(a.headerPx)} px** de haut sur toute la largeur ${String(f.width)} px ; **gouttières** gauche et droite **${String(a.gutterPx)} px** de large chacune sur la hauteur sous le header (**${String(innerH)} px**).\n` +
+      `      - **Zone centrale « contenu site »** (trou, non pub) : **${String(innerW)}×${String(innerH)} px** — fond neutre en démo ; aucun élément publicitaire dans ce rectangle.\n` +
+      `      - **Hiérarchie créative** : concentrer logo, accroche, produit et CTA pour qu’ils se lisent en priorité sur une largeur **cible ~${String(a.mainFocusWidthPx)} px** centrée sur l’ensemble (tout en respectant les emprises header/gouttières en pixels ci-dessus).\n` +
+      `      - **Poids** : viser **≤ ${String(a.maxTotalWeightKB)} Ko** pour l’ensemble des images raster utilisées dans l’habillage (optimisation forte, pas d’assets superflus).\n` +
+      `      - **Formats raster** pour bitmaps d’habillage : ${a.allowedRasterMime.join(', ')} uniquement.\n` +
+      `      - **Tracking** : ${a.trackingNote}\n` +
+      `      - **Compagnons** possibles avec ce habillage : **${companions}** (pavés). Si d’autres tailles sont aussi demandées dans cette génération, les produire comme unités distinctes sous ou à côté de l’arche sur la même page de preview.\n` +
+      '      - styles.css + app.js : le bloc racine livré pour l’arche doit faire exactement ' +
+      `${String(f.width)}×${String(f.height)} px ; positionner header et gouttières au pixel près ; le centre est le « trou ».\n` +
+      '      - index.html : viewport meta width=device-width ; centrer la démo comme pour les autres formats.'
+    );
+  }
+
+  if (formats.length === 1 && first !== undefined && first.arche === undefined) {
+    return (
+      `      Required ad frame (exact pixel size of the visible creative):\n${list}\n` +
+      `      - styles.css — center this single ${String(first.width)}×${String(first.height)} px ad on the page ` +
+      `(e.g. body min-height 100vh, flex, align and justify center).\n` +
+      `      Creative viewport: exactly ${String(first.width)}×${String(first.height)} px for the main ad container.`
+    );
+  }
+
+  if (hasArche) {
+    const archeBlocks = formats
+      .filter((f): f is AdFormatSelection & { arche: NonNullable<AdFormatSelection['arche']> } => f.arche !== undefined)
+      .map((f) => {
+        const a = f.arche;
+        const innerW = f.width - 2 * a.gutterPx;
+        const innerH = f.height - a.headerPx;
+        return (
+          `      * ${f.id} (${String(f.width)}×${String(f.height)} px) — ARCHE : header ${String(a.headerPx)} px, gouttières ${String(a.gutterPx)} px, ` +
+          `trou central ${String(innerW)}×${String(innerH)} px, focus créatif ~${String(a.mainFocusWidthPx)} px, ` +
+          `poids cible ≤${String(a.maxTotalWeightKB)} Ko, rasters ${a.allowedRasterMime.join('/')}, tracking : ${a.trackingNote} ; compagnons : ${a.companionPresetIds.join(', ')}.`
+        );
+      })
+      .join('\n');
+    return (
+      `      Required ad frames (plusieurs tailles, dont au moins un **habillage Arche**) :\n${list}\n` +
+      `${archeBlocks}\n` +
+      '      - Chaque format non-Arche : un bloc séparé aux dimensions exactes (wrapper id unique).\n' +
+      '      - L’unité Arche : structure U avec header + gouttières + trou central aux dimensions ci-dessus.\n' +
+      '      - styles.css — une page avec toutes les unités (arche + pavés) visibles ; pas mélanger les pixels des zones.\n' +
+      '      - Reuse logo et produits ; JPEG/PNG uniquement pour rasters d’habillage Arche.'
+    );
+  }
+
+  return (
+    `      Required ad frames (multiple standard sizes — include every size in one page):\n${list}\n` +
+    '      - Each format must appear as its own clearly separated ad unit; outer dimensions must match the given width×height in pixels exactly.\n' +
+    '      - Give each unit a unique wrapper id (e.g. id="ad-300x250" using the id above).\n' +
+    '      - styles.css — lay out all units on one page (vertical stack or wrapping gallery). The page may use full viewport; each ad frame stays exactly WxH px.\n' +
+    '      - Reuse logo and product assets across units where appropriate; adapt composition to each aspect ratio.'
+  );
+}

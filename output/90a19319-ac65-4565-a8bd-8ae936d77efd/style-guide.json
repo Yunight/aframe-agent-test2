@@ -1,0 +1,72 @@
+{
+  "companyName": "Rituals Cosmetics Enterprise B.V.",
+  "companyContext": "Rituals Cosmetics, fondée en 2000 à Amsterdam par Raymond Cloosterman, est la première marque au monde à combiner cosmétiques pour le corps et la maison. Marque de luxe accessible, certifiée B Corp™, elle s'appuie sur les sagesses et traditions anciennes pour transformer les routines quotidiennes en rituels de bien-être. Avec plus de 1 170 boutiques, 4 200 shop-in-shops dans 36 pays, cinq Body Spas et le premier Mind Oasis au monde, Rituals propose une gamme complète de soins corporels, parfums, bougies, diffuseurs, cosmétiques et articles de décoration intérieure. La marque s'engage à réduire ses émissions de gaz à effet de serre de 52 % par euro de bénéfice brut d'ici 2030 et consacre 10 % de son bénéfice net à des causes sociétales et environnementales.",
+  "companyURL": "https://www.rituals.com",
+  "brandName": "RITUALS",
+  "brandContext": "RITUALS est une marque premium de cosmétiques pour le corps et la maison, inspirée par les traditions ancestrales asiatiques. Chaque produit est formulé à partir d'ingrédients d'origine naturelle et composé par les meilleurs parfumeurs au monde. Les collections phares — Sakura, Ayurveda, Jing, Karma, Mehr, Yozakura — offrent des rituels complets de soin et de bien-être. Dans le cadre de la Fête des Mères 2026, la marque met en avant ses coffrets cadeaux luxueux, ses parfums d'intérieur et ses sets de soins corporels comme cadeaux parfaits pour célébrer toutes les figures maternelles.",
+  "brandURL": "https://www.rituals.com/fr-fr/mag-rituality-mothers-day-gift-guide.html",
+  "logoFileUrls": [
+    "https://cdn.freebiesupply.com/logos/large/2x/rituals-logo-png-transparent.png",
+    "https://p7.hiclipart.com/preview/322/1017/93/church-of-satan-the-satanic-rituals-satanism-baphomet-symbol-symbol-thumbnail.jpg"
+  ],
+  "productName": "Coffrets cadeaux Fête des Mères – The Ritual of Sakura",
+  "productPictureUrls": [
+    "https://rituals.scene7.com/is/image/rituals/1120172-rituals-ay26069-giftset-mothersday-2026:Square?fmt=webp-alpha&resMode=sharp2",
+    "https://rituals.scene7.com/is/image/rituals/1120203-rituals-sakura-gift-set-m-packclosed?resMode=sharp2&fmt=webp-alpha&crop=1250,750,4500,4500",
+    "https://rituals.scene7.com/is/image/rituals/1120334-rituals-sakura-gift-set-l-pack-closed?resMode=sharp2&fmt=webp-alpha&crop=1250,750,4500,4500",
+    "https://media.nocibe.fr/medias/RG6ROK1248572-0-global.jpg?context=bWFzdGVyfGltYWdlc3w4MTUzOXxpbWFnZS9qcGVnfGFHWXpMMmhrTUM4M09UVXlOalUzTnpjek16WTJNaTlTUnpaU1Qwc3hNalE0TlRjeVh6QmZaMnh2WW1Gc0xtcHdad3w4MmRmMTMyOTdmOGNkYjliZDdmNTYxZmYwNWJlNzI5YjIzYTEzYTJiMDUzZmE4NmM2NmNmM2FkYWJhOThlZTM0&grid=true&imPolicy=grayScaled",
+    "https://m.media-amazon.com/images/S/aplus-media-library-service-media/7fbb06ee-e56c-45c9-a3ff-80f0397e5aa9.__AC_SR166,182___.png",
+    "https://media.nocibe.fr/medias/5TEpOt1248569-0-global.jpg?context=bWFzdGVyfGltYWdlc3w5ODE0M3xpbWFnZS9qcGVnfGFHVTRMMmhqT1M4M09UVXlOekF6TkRVMU1qTTFNQzgxVkVWd1QzUXhNalE0TlRZNVh6QmZaMnh2WW1Gc0xtcHdad3w0OGU2Nzk1YWZmNTgwNzJkZmVhZmMwMTYyOWUxNmYzZWUwYjA5ZGUyNzk1MmIwYTg0NTE5YzlmMjUyNGMzNzM2&grid=true&imPolicy=grayScaled",
+    "https://rituals.scene7.com/is/image/rituals/1118484-rituals-sakura-giftset-l-pack-closed?resMode=sharp2&fmt=webp-alpha&crop=1250,750,4500,4500",
+    "https://rituals.scene7.com/is/image/rituals/1120165-rituals-sakura-gift-set-s-pack-closed?resMode=sharp2&fmt=webp-alpha&crop=1250,750,4500,4500"
+  ],
+  "primaryColorPalette": [
+    "1A1919",
+    "FFFFFF",
+    "EFEDEA"
+  ],
+  "secondaryColorPalette": [
+    "B58C6E",
+    "796F63",
+    "242222",
+    "CCCCCC"
+  ],
+  "typography": [
+    {
+      "fontFamily": "EB Garamond",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Titres display et sous-titres éditoriaux – serif classique reflétant l'élégance luxueuse de la marque, utilisé en majuscules avec un espacement généreux pour les titres principaux"
+    },
+    {
+      "fontFamily": "EB Garamond",
+      "fontWeight": 600,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Nom de la marque RITUALS et titres de collections – serif en capitales grasses avec letter-spacing élargi pour le logo et les en-têtes principaux"
+    },
+    {
+      "fontFamily": "Helvetica Neue",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Corps de texte et descriptions produits – sans-serif neutre et moderne assurant une lisibilité optimale sur tous les supports numériques"
+    },
+    {
+      "fontFamily": "Helvetica Neue",
+      "fontWeight": 300,
+      "fontEffect": [],
+      "fontUses": "Légendes, labels et textes secondaires – version light du sans-serif pour les métadonnées, prix et informations complémentaires"
+    },
+    {
+      "fontFamily": "Helvetica Neue",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Boutons CTA et éléments d'interface – sans-serif gras pour les appels à l'action et la navigation"
+    }
+  ],
+  "brandVision": "Devenir la marque de bien-être holistique leader au monde en transformant les routines quotidiennes en moments significatifs, tout en conciliant luxe accessible, durabilité et responsabilité sociale. Rituals vise à doubler son chiffre d'affaires à 2 milliards d'euros en s'appuyant sur l'expansion omnicanale, l'innovation produit durable et sa philosophie « The Art of Soulful Living ».",
+  "brandValues": "Bien-être holistique (unifier corps, esprit et âme) · Luxe accessible inspiré des sagesses anciennes · Durabilité certifiée B Corp™ avec engagement de réduction des émissions de 52 % d'ici 2030 · 10 % du bénéfice net reversé à des causes pour le bien-être des personnes et de la planète · Ingrédients d'origine naturelle et formulations cruelty-free · Un arbre planté, protégé ou restauré pour chaque recharge vendue · Design élégant et packaging responsable (refillable, recyclable) · Expérience client exceptionnelle primée aux Pays-Bas comme entreprise la plus orientée client"
+}
