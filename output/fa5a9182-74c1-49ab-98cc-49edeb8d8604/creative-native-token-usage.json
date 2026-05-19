@@ -1,0 +1,13 @@
+{
+  "api_calls": 3,
+  "input_tokens": 148697,
+  "output_tokens": 94505,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "total_tokens_reported_sum": 243202,
+  "price_usd": {
+    "input": 0.743485,
+    "output": 2.362625,
+    "total": 3.10611
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "companyName": "Chocoladefabriken Lindt & Sprüngli AG",
+  "companyContext": "Swiss chocolatier and confectionery company founded in 1845 in Zurich, headquartered in Kilchberg. One of the world's leading premium chocolate manufacturers, producing 'from bean to bar' and operating 12 factories worldwide. Owns a portfolio of brands including Lindt, Ghirardelli, Russell Stover, Caffarel, Hofbauer and Küfferle, with products sold in more than 120 countries. In 2025, the group posted record organic growth of 12.4% and was named the world's most valuable chocolate brand by Kantar BrandZ.",
+  "companyURL": "https://www.lindt-spruengli.com",
+  "brandName": "Lindt",
+  "brandContext": "Flagship premium chocolate brand of the Lindt & Sprüngli Group, embodying Swiss quality and the savoir-faire of the Lindt Master Chocolatiers since 1845. Key franchises include LINDOR truffles, EXCELLENCE bars and the iconic GOLD BUNNY. The current French campaign promotes the latest Lindt creations ('Nouveautés du moment'), including the new Matcha & Strawberry White Chocolate bar, the new Pistachio LINDOR truffle, the limited-edition EXCELLENCE Cocoa Pure, and the Walmart-exclusive LINDOR Dessert Assortment (Tiramisu, Cheesecake, Double Chocolate).",
+  "brandURL": "https://www.lindt.fr",
+  "logoFileUrls": [
+    "https://img1.pnghut.com/t/14/1/24/cmEf3C6xNm/logo-sydney-monochrome-symbol-chocolate.jpg",
+    "https://www.vhv.rs/dpng/d/133-1331304_lindt-logo-png-lindt-logo-transparent-png.png"
+  ],
+  "productName": "Nouveautés Lindt (LINDOR Pistache, Matcha & Fraise, EXCELLENCE Cocoa Pure, LINDOR Dessert Assortment)",
+  "productPictureUrls": [
+    "https://www.lindt.com.nl/media/catalog/product/l/i/lindt_lindor_strawberries_cream_chocolate_truffles_box_200g.png?quality=80&fit=bounds&height=310&width=310&canvas=310:310",
+    "https://www.lindt.fr/media/catalog/product/a/8/a8bb0b9dc3e0b048cde12657278a09193073efac6912745bf08ab3fa48fbbb36.png?quality=80&fit=bounds&height=260&width=260&canvas=260:260",
+    "https://www.lindt.com.nl/media/catalog/product/l/i/lindt_lindor_strawberries_cream_chocolate_truffles_box_200g.png?quality=80&fit=bounds&height=107&width=107&canvas=107:107",
+    "https://www.cdiscount.com/pdt2/6/0/1/1/300x300/lindt413601/rw/lindt-cornet-assortiment-boules-lindor-337g-x1.jpg",
+    "https://coffeechoc.fr/2820-home_default/assortiment-chocolats-au-lait-fruite-lindor.jpg",
+    "https://i.touslesprix.com/ph_grp/300/5/3/4/3/10773435_0.jpg",
+    "https://www.cdiscount.com/pdt2/8/3/3/1/300x300/aaalp24833/rw/sac-1kg-lindor-assorti-lindt.jpg",
+    "https://www.lindt.com.nl/media/catalog/product/p/i/pi_en_lindor_1kg_strawberry.png?quality=80&fit=bounds&height=310&width=310&canvas=310:310"
+  ],
+  "primaryColorPalette": [
+    "D7B14A",
+    "8B6F2A",
+    "C8102E",
+    "3B1F12",
+    "FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "1F2A44",
+    "6B4226",
+    "E8D9A8",
+    "F5E9C8",
+    "2E7D32",
+    "B71C1C",
+    "D9C27A"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Lindt Custom Script (cursive italic wordmark)",
+      "fontWeight": 400,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Brand name / logotype only — proprietary italic script evoking flowing chocolate, reserved for the Lindt wordmark"
+    },
+    {
+      "fontFamily": "Optima LT (custom cut for Lindt & Sprüngli)",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Primary display headings, product names (e.g. LINDOR, EXCELLENCE) and editorial titles on packaging and web"
+    },
+    {
+      "fontFamily": "Optima LT (custom cut for Lindt & Sprüngli)",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions and marketing text"
+    },
+    {
+      "fontFamily": "Optima LT",
+      "fontWeight": 500,
+      "fontEffect": [
+        "underline"
+      ],
+      "fontUses": "Subheadings, navigation labels and call-to-action links on lindt.fr"
+    },
+    {
+      "fontFamily": "Optima LT",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Tagline 'Maîtres Chocolatiers Suisses depuis 1845' and uppercase labels / captions"
+    },
+    {
+      "fontFamily": "Helvetica Neue",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Fallback web/system font for body text where Optima is unavailable"
+    }
+  ],
+  "brandVision": "Être la référence mondiale du chocolat premium en faisant vivre, à chaque dégustation, l'art et la passion des Maîtres Chocolatiers Lindt. La marque cherche à transformer chaque nouveauté — du LINDOR Pistache au bar Matcha & Fraise inspiré de Tokyo, en passant par l'EXCELLENCE Cocoa Pure — en un moment d'indulgence sophistiquée et accessible, tout en consolidant son positionnement de luxe abordable face à un marché du chocolat en pleine mutation.",
+  "brandValues": "Qualité suisse irréprochable et savoir-faire artisanal 'de la fève à la tablette' ; passion et créativité des Maîtres Chocolatiers ; innovation continue au service du goût ; tradition héritée de 1845 et de l'invention du conchage par Rodolphe Lindt ; positionnement premium et élégance ; engagement durable via le Lindt & Sprüngli Farming Program (traçabilité du cacao, soutien aux fermiers, lutte contre le travail des enfants, biodiversité) ; plaisir partagé et indulgence raffinée pour tous les moments de la vie."
+}

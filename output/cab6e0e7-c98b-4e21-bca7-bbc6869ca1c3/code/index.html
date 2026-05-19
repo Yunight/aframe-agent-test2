@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rituals · Fête des Mères 2026 — Suite Créative</title>
+  <meta name="description" content="Quatre formats publicitaires interactifs pour la Fête des Mères 2026 — The Ritual of Sakura.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+
+  <!--
+    ============================================================
+    ASSETS UTILISÉS (descriptions, conformément au brief)
+    ------------------------------------------------------------
+    • ./rituals-logo-png-transparent.png
+        Wordmark « RITUALS. » sur fond transparent. Lettrage
+        capital géométrique en Futura, point final caractéristique.
+        Sert de signature de marque dans chaque créatif.
+
+    • ./rituals-the-ritual-of-sakura-renewing-routine-gift-set-m-430x374.webp
+        Visuel produit du coffret « The Ritual of Sakura — Renewing
+        Routine » : packaging rose poudré, flacons fleur de cerisier
+        et lait de riz. Hero du format 1, panneau Sakura du format 3.
+
+    • ./1120172-rituals-ay26068-mothersday-2026_Widescreen_fmt_webp-alpha_resMode_sharp2.webp
+        Composition widescreen Fête des Mères 2026 (AY26068),
+        fond transparent, ambiance solaire et florale. Sert de révélation
+        dans le format 2 et de panneau Karma dans le format 3.
+
+    • ./1120172-rituals-ay26069-giftset-mothersday-2026_Square_fmt_webp-alpha_resMode_sharp2.webp
+        Coffret cadeau carré Fête des Mères 2026 (AY26069),
+        nature morte sur fond transparent. Utilisé dans le format 3
+        (Yozakura / Jing) et comme carte produit du format 4.
+    ============================================================
+  -->
+
+  <header class="page-head">
+    <div class="head-mark">RITUALS<span>.</span></div>
+    <h1>Fête des Mères 2026</h1>
+    <p>Quatre formats publicitaires interactifs · 320 × 480 px</p>
+  </header>
+
+  <main class="ad-stage">
+
+    <!-- ============================================================
+         FORMAT 01 — « Floraison Sakura »
+         Éditorial sensoriel. Pluie de pétales générée en JS,
+         hero produit qui flotte, halo lumineux pulsant, CTA marquée.
+         ============================================================ -->
+    <figure class="ad ad-1" data-format="floraison-sakura" aria-label="Format 1 : Floraison Sakura">
+      <span class="ad-tag">01 · Bloom</span>
+      <div class="a1-petals" id="a1-petals" aria-hidden="true"></div>
+
+      <header class="a1-head">
+        <img src="./rituals-logo-png-transparent.png" alt="Rituals" class="a1-logo">
+        <span class="a1-tag">Édition Fête des Mères</span>
+      </header>
+
+      <div class="a1-hero">
+        <div class="a1-aura" aria-hidden="true"></div>
+        <img src="./rituals-the-ritual-of-sakura-renewing-routine-gift-set-m-430x374.webp"
+             alt="Coffret The Ritual of Sakura — fleur de cerisier et lait de riz"
+             class="a1-product">
+      </div>
+
+      <figcaption class="a1-content">
+        <span class="a1-date">31 · 05 · 2026</span>
+        <h2 class="a1-headline">Pour celles qui prennent <em>soin de tout&nbsp;le&nbsp;monde.</em></h2>
+        <button class="a1-cta" type="button">
+          <span>Découvrir le coffret</span>
+          <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </figcaption>
+    </figure>
+
+    <!-- ============================================================
+         FORMAT 02 — « Coffret Révélation »
+         Coffret en CSS pur (couvercle, ruban, nœud, étiquette). Au clic,
+         le couvercle s'ouvre, le ruban se dénoue, une pluie de pétales
+         jaillit et le produit révélé monte de l'intérieur. Fond nocturne.
+         ============================================================ -->
+    <figure class="ad ad-2" data-format="coffret-revelation" aria-label="Format 2 : Coffret Révélation">
+      <span class="ad-tag light">02 · Unwrap</span>
+      <div class="a2-sky" aria-hidden="true"></div>
+      <div class="a2-sparks" id="a2-sparks" aria-hidden="true"></div>
+      <div class="a2-confetti" id="a2-confetti" aria-hidden="true"></div>
+
+      <header class="a2-head">
+        <img src="./rituals-logo-png-transparent.png" alt="Rituals" class="a2-logo">
+      </header>
+
+      <div class="a2-stage">
+        <div class="a2-product-area">
+          <img src="./1120172-rituals-ay26068-mothersday-2026_Widescreen_fmt_webp-alpha_resMode_sharp2.webp"
+               alt="Coffret Rituals Fête des Mères 2026 — composition révélée"
+               class="a2-product">
+        </div>
+
+        <button class="a2-box" id="a2-box" type="button" aria-label="Ouvrir le coffret">
+          <span class="a2-lid" aria-hidden="true">
+            <span class="a2-ribbon-top"></span>
+            <span class="a2-bow"></span>
+          </span>
+          <span class="a2-body" aria-hidden="true">
+            <span class="a2-ribbon-mid"></span>
+            <span class="a2-label">RITUALS.</span>
+          </span>
+          <span class="a2-shadow" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <figcaption class="a2-text">
+        <div class="a2-hints">
+          <span class="a2-hint" data-state="closed">Touchez pour ouvrir</span>
+          <span class="a2-hint" data-state="open">Un cadeau, un rituel.</span>
+        </div>
+        <h2 class="a2-headline">Offrez-lui un <em>moment suspendu.</em></h2>
+        <button class="a2-cta" type="button">Voir le coffret →</button>
+      </figcaption>
+    </figure>
+
+    <!-- ============================================================
+         FORMAT 03 — « Quatre Rituels »
+         Sélecteur à onglets. L'arrière-plan, les accents et le logo
+         changent de palette selon le rituel choisi. Auto-cycle avec
+         pause au survol. Storytelling sensoriel par rituel.
+         ============================================================ -->
+    <figure class="ad ad-3" data-format="quatre-rituels" data-active="sakura" aria-label="Format 3 : Quatre Rituels">
+      <span class="ad-tag">03 · Selector</span>
+
+      <header class="a3-head">
+        <img src="./rituals-logo-png-transparent.png" alt="Rituals" class="a3-logo">
+        <span class="a3-eyebrow">Trouvez son rituel</span>
+      </header>
+
+      <nav class="a3-tabs" role="tablist" aria-label="Choisir un rituel">
+        <button class="a3-tab is-active" data-ritual="sakura"   type="button" role="tab">Sakura</button>
+        <button class="a3-tab"           data-ritual="yozakura" type="button" role="tab">Yozakura</button>
+        <button class="a3-tab"           data-ritual="karma"    type="button" role="tab">Karma</button>
+        <button class="a3-tab"           data-ritual="jing"     type="button" role="tab">Jing</button>
+      </nav>
+
+      <div class="a3-panels">
+        <div class="a3-panel is-active" data-ritual="sakura" role="tabpanel">
+          <div class="a3-glow" aria-hidden="true"></div>
+          <img src="./rituals-the-ritual-of-sakura-renewing-routine-gift-set-m-430x374.webp"
+               alt="Coffret The Ritual of Sakura" class="a3-product">
+          <h3 class="a3-name">The Ritual of <em>Sakura</em></h3>
+          <p class="a3-notes">Fleur de cerisier · Lait de riz</p>
+          <p class="a3-mood">Pour celle qui fait renaître chaque jour.</p>
+        </div>
+        <div class="a3-panel" data-ritual="yozakura" role="tabpanel">
+          <div class="a3-glow" aria-hidden="true"></div>
+          <img src="./1120172-rituals-ay26069-giftset-mothersday-2026_Square_fmt_webp-alpha_resMode_sharp2.webp"
+               alt="Coffret The Ritual of Yozakura" class="a3-product">
+          <h3 class="a3-name">The Ritual of <em>Yozakura</em></h3>
+          <p class="a3-notes">Cerisier de nuit · Mandarine</p>
+          <p class="a3-mood">Pour celle qui s'épanouit après le coucher du soleil.</p>
+        </div>
+        <div class="a3-panel" data-ritual="karma" role="tabpanel">
+          <div class="a3-glow" aria-hidden="true"></div>
+          <img src="./1120172-rituals-ay26068-mothersday-2026_Widescreen_fmt_webp-alpha_resMode_sharp2.webp"
+               alt="Coffret The Ritual of Karma" class="a3-product">
+          <h3 class="a3-name">The Ritual of <em>Karma</em></h3>
+          <p class="a3-notes">Lotus sacré · Thé blanc</p>
+          <p class="a3-mood">Pour celle qui rayonne, où qu'elle aille.</p>
+        </div>
+        <div class="a3-panel" data-ritual="jing" role="tabpanel">
+          <div class="a3-glow" aria-hidden="true"></div>
+          <img src="./1120172-rituals-ay26069-giftset-mothersday-2026_Square_fmt_webp-alpha_resMode_sharp2.webp"
+               alt="Coffret The Ritual of Jing" class="a3-product">
+          <h3 class="a3-name">The Ritual of <em>Jing</em></h3>
+          <p class="a3-notes">Jujube sacré · Lotus blanc</p>
+          <p class="a3-mood">Pour celle qui mérite enfin de poser les yeux.</p>
+        </div>
+      </div>
+
+      <footer class="a3-foot">
+        <span class="a3-price">Coffret dès <strong>32,90&nbsp;€</strong></span>
+        <button class="a3-cta" type="button">Offrir →</button>
+      </footer>
+    </figure>
+
+    <!-- ============================================================
+         FORMAT 04 — « Lettre pour Maman »
+         Lettre éditoriale légèrement inclinée, message manuscrit en
+         Playfair italique qui défile, sceau à cire stylisé et carte
+         produit ancrée en bas. Pluie de pétales décoratives en fond.
+         ============================================================ -->
+    <figure class="ad ad-4" data-format="lettre-maman" aria-label="Format 4 : Lettre pour Maman">
+      <span class="ad-tag">04 · Letter</span>
+      <div class="a4-grain" aria-hidden="true"></div>
+      <div class="a4-petals" id="a4-petals" aria-hidden="true"></div>
+
+      <article class="a4-letter">
+        <div class="a4-stripe" aria-hidden="true"></div>
+        <header class="a4-letter-head">
+          <img src="./rituals-logo-png-transparent.png" alt="Rituals" class="a4-logo">
+          <span class="a4-stamp">FÊTE DES MÈRES<br>31 · 05 · 26</span>
+        </header>
+        <p class="a4-greeting">Chère Maman,</p>
+        <div class="a4-messages" id="a4-messages">
+          <p class="a4-msg is-active">tu mérites un moment qui ne dépend de personne.</p>
+          <p class="a4-msg">un rituel, rien qu'à toi, qui revient chaque jour.</p>
+          <p class="a4-msg">le luxe simple de ralentir, enfin.</p>
+        </div>
+        <p class="a4-signature">— <em>Avec amour, le 31 mai.</em></p>
+        <span class="a4-seal" aria-hidden="true">R<span class="a4-seal-dot">.</span></span>
+      </article>
+
+      <div class="a4-product-card">
+        <img src="./1120172-rituals-ay26069-giftset-mothersday-2026_Square_fmt_webp-alpha_resMode_sharp2.webp"
+             alt="Coffret Rituals Fête des Mères 2026 — édition Sakura"
+             class="a4-product">
+        <div class="a4-pinfo">
+          <span class="a4-pname">Coffret Fête des Mères</span>
+          <span class="a4-psub">L'édition Sakura · 2026</span>
+          <button class="a4-cta" type="button">Composer le coffret →</button>
+        </div>
+      </div>
+    </figure>
+
+  </main>
+
+  <footer class="page-foot">
+    <p>© 2026 Rituals Cosmetics · The Art of Soulful Living</p>
+  </footer>
+
+</body>
+</html>
