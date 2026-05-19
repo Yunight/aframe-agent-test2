@@ -1,0 +1,86 @@
+{
+  "companyName": "Compagnie des Alpes",
+  "companyContext": "Compagnie des Alpes is a French leisure group that owns and operates ski resorts and theme parks across Europe, including the Walibi parks, Parc Astérix and Futuroscope. It has owned Walibi Rhône-Alpes since 2006.",
+  "companyURL": "https://www.compagniedesalpes.com",
+  "brandName": "Walibi Rhône-Alpes",
+  "brandContext": "Walibi Rhône-Alpes is a 35-hectare family theme park located in Les Avenières Veyrins-Thuellin (Isère), opened in 1979 as Avenir Land and rebranded Walibi in 1989. It welcomes around 616,000 visitors a year with 36+ attractions and shows spread across three themed worlds: Explorer Adventure, Festival City and Exotic Island, including the flagship single-rail coaster Mahuka (2024). The summer season is the brand's peak commercial period, promoted around thrills, family adventure and outdoor fun under the sun.",
+  "brandURL": "https://www.walibi.fr",
+  "logoFileUrls": [
+    "https://www.walibi.fr/content/dam/wra/logos/logo-walibi-rhone-alpes-transparent.png"
+  ],
+  "productName": "Promotion saison été — Parc d'attractions Walibi Rhône-Alpes",
+  "productPictureUrls": [
+    "https://www.parc-attraction-loisirs.fr/files/2021/10/halloween-walibi-rhone-alpes-horaire-show-maison-hantee-1024x768.jpg",
+    "https://www.parc-attraction-loisirs.fr/files/2021/10/entree-parc-attractions-walibi-rhone-alpes-entree-du-parc-300x225.jpg",
+    "https://www.parc-attraction-loisirs.fr/files/2021/10/walibi-rhone-alpes-halloween-entree-1024x693.jpg",
+    "https://www.sport-booking.com/16731-large_default/e-billet-1-jour-saison-2026-walibi-rhone-alpes-tarif-unique.jpg",
+    "https://www.parc-attraction-loisirs.fr/files/2021/10/entree-maison-hantee-le-manoir-parc-walibi-rhone-alpes-1024x783.jpg",
+    "https://www.parc-attraction-loisirs.fr/files/2022/07/walibi-rhone-alpes-zone-exotic-island-attraction-aquatique-3-1024x768.jpg",
+    "https://www.parc-attraction-loisirs.fr/files/2021/07/entree-parc-walibi-rhone-alpes-avec-sans-pass-sanitaire-1024x640.jpg",
+    "https://www.parcs-france.com/wp-content/uploads/attraction-parc-walibi-rhone-alpes.jpg"
+  ],
+  "primaryColorPalette": [
+    "F39200",
+    "009FE3",
+    "FFD500",
+    "E30613",
+    "FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "1B1464",
+    "00A551",
+    "00B5A5",
+    "FF6F1F",
+    "2B2B2B",
+    "F5F5F5"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Fredoka",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Brand wordmark / logotype look — rounded playful display used for the Walibi name and hero summer headlines"
+    },
+    {
+      "fontFamily": "Bowlby One",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Poster-style big headlines for summer campaign visuals (e.g. 'L'AVENTURE COMMENCE')"
+    },
+    {
+      "fontFamily": "Poppins",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold",
+        "italic"
+      ],
+      "fontUses": "Section subheadings, attraction names, CTA buttons (Réserver, Acheter mon billet)"
+    },
+    {
+      "fontFamily": "Poppins",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "UI labels, navigation, ticket pricing, badges and tags (Nouveau, Sensations fortes)"
+    },
+    {
+      "fontFamily": "Open Sans",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, descriptions of attractions, practical info, legal mentions"
+    },
+    {
+      "fontFamily": "Open Sans",
+      "fontWeight": 400,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Captions, image legends and small print"
+    }
+  ],
+  "brandVision": "Faire de Walibi Rhône-Alpes la destination loisirs n°1 de l'arc alpin en proposant chaque été une expédition immersive à travers trois univers thématiques (Explorer Adventure, Festival City, Exotic Island), où familles, ados et amis vivent des sensations fortes, des défis partagés et des moments festifs en plein air. La marque se positionne comme un terrain de jeu régional accessible, audacieux et joyeusement irrévérencieux, prolongé par les temps forts saisonniers WAAAlloween et Merry ChristWAAAs.",
+  "brandValues": "Audace et sensations, esprit de famille et de bande, joie débridée et humour (le côté 'WAAA' du kangourou mascotte), aventure et exploration, convivialité accessible, ancrage local en Rhône-Alpes et engagement environnemental porté par Compagnie des Alpes (transition énergétique, recrutement et achats locaux)."
+}

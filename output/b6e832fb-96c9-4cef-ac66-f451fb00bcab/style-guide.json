@@ -1,0 +1,92 @@
+{
+  "companyName": "Compagnie des Alpes",
+  "companyContext": "French operator of leisure parks and ski resorts across Europe; parent company of the Walibi group of amusement parks since 2006.",
+  "companyURL": "https://www.compagniedesalpes.com",
+  "brandName": "Walibi",
+  "brandContext": "European chain of amusement parks (Walibi Belgium, Walibi Holland, Walibi Rhône-Alpes) featuring thrill rides, roller coasters, themed worlds (Explorer Adventure, Festival City, Exotic Island) and family attractions, all anchored by the iconic Walibi kangaroo mascot.",
+  "brandURL": "https://www.walibi.com",
+  "logoFileUrls": [
+    "https://cdn.freebiesupply.com/logos/large/2x/walibi-group-logo-png-transparent.png",
+    "https://www.pngkey.com/png/detail/855-8554778_special-offer-for-our-members-walibi-logo.png",
+    "https://p7.hiclipart.com/preview/730/1012/52/golfclub-efteling-walibi-holland-carnival-festival-raveleijn-1-up-thumbnail.jpg",
+    "https://p7.hiclipart.com/preview/713/363/708/toverland-efteling-duinrell-walibi-holland-liseberg-park-thumbnail.jpg",
+    "https://p7.hiclipart.com/preview/326/536/13/walibi-belgium-dark-ride-alterface-amusement-park-popcorn-popcorn-thumbnail.jpg",
+    "https://cdn.freebiesupply.com/logos/large/2x/walibi-wavre-logo-png-transparent.png",
+    "https://p7.hiclipart.com/preview/286/62/490/2018-defqon-1-australia-walibi-holland-music-festival-defqon-1-thumbnail.jpg",
+    "https://p7.hiclipart.com/preview/736/638/361/walibi-belgium-walibi-holland-walibi-sud-ouest-portaventura-world-amusement-park-park-thumbnail.jpg"
+  ],
+  "productName": "Promotion Été Walibi – Billets et Pass d'été pour le parc d'attractions",
+  "productPictureUrls": [
+    "https://www.echantillonsclub.com/wp-content/uploads/2018/08/pass_parc_walibi_sud_ouest.jpg",
+    "https://parcpascher.fr/wp/files/2023/02/promo-reduc-pass-walibi-belgique-belgium-525x350.jpg",
+    "https://parcpascher.fr/wp/files/2024/04/promo-billet-walibi-belgique-belgium-pas-cher-528x350.jpg",
+    "https://www.parc-attraction-loisirs.fr/files/2021/07/entree-parc-walibi-rhone-alpes-avec-sans-pass-sanitaire-1024x640.jpg",
+    "https://media-mcetv.ouest-france.fr/wp-content/uploads/2026/04/2257038-image.jpg.webp",
+    "https://www.leparisien.fr/resizer/56eNj9u2UNC1XSP9vSWnyKFaTPc=/932x582/cloudfront-eu-central-1.images.arcpublishing.com/lpguideshopping/QVVEQPHWYFBYFMTZSEHK6ZRB7I.jpg",
+    "https://www.bons-plans-astuces.com/wp-content/uploads/2016/05/parc-asterix.jpg",
+    "https://parcpascher.fr/wp/files/2024/07/code-promo-walibi-belgique-belgium-2-525x350.jpg"
+  ],
+  "primaryColorPalette": [
+    "F39200",
+    "009FE3",
+    "E30613",
+    "FFFFFF",
+    "1D2939"
+  ],
+  "secondaryColorPalette": [
+    "FFD500",
+    "00A651",
+    "FF6F61",
+    "F04438",
+    "EAECF0",
+    "0066B3"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Walibi0615 (Custom display)",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Brand wordmark, logo lockup, hero display headlines for summer campaign teasers (e.g. 'L'ÉTÉ À WALIBI')"
+    },
+    {
+      "fontFamily": "Poppins",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Primary headings, section titles, promotional CTAs and price callouts"
+    },
+    {
+      "fontFamily": "Poppins",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Subheadings, attraction names, ticket category labels"
+    },
+    {
+      "fontFamily": "Futura",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, descriptive paragraphs, summer offer details and terms"
+    },
+    {
+      "fontFamily": "Futura",
+      "fontWeight": 500,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Emphasis within body copy, captions and quotes about visitor experience"
+    },
+    {
+      "fontFamily": "Poppins",
+      "fontWeight": 700,
+      "fontEffect": [
+        "underline"
+      ],
+      "fontUses": "Inline links, 'Réservez vos billets' interactive links on web promo pages"
+    }
+  ],
+  "brandVision": "Become the most exhilarating European destination for adventure-seekers and families by turning every visit into an unforgettable expedition through immersive themed worlds, with summer as the peak season to live the WAAA experience under the sun and around the water attractions of Aqualibi and Exotic Island.",
+  "brandValues": "Fun, audacity and shared emotions ('partage d'émotions'); thrills and sensations for all ages; family togetherness; discovery and exploration; safety and care for guests; an energetic, playful and slightly rebellious tone embodied by the cheeky Walibi kangaroo; inclusivity across age and height categories with attractions accessible from 90 cm."
+}

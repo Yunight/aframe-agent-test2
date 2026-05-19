@@ -1,0 +1,719 @@
+:root {
+  --orange: #F39200;
+  --blue: #009FE3;
+  --red: #E30613;
+  --white: #FFFFFF;
+  --dark: #1D2939;
+  --yellow: #FFD500;
+  --green: #00A651;
+  --coral: #FF6F61;
+  --red2: #F04438;
+  --gray: #EAECF0;
+  --darkblue: #0066B3;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--dark);
+  font-family: 'Poppins', sans-serif;
+  padding: 40px 20px;
+  min-height: 100vh;
+}
+
+.page-title {
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: var(--orange);
+  margin-bottom: 48px;
+  letter-spacing: -0.02em;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 48px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.ad-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.ad-size {
+  font-family: 'Futura', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--gray);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ad-unit {
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 8px 32px rgba(29,41,57,0.7);
+  transition: box-shadow 0.3s ease;
+  outline: 1px solid rgba(234,236,240,0.1);
+}
+
+/* ===================================
+   AD 320x480 — IMMERSIVE PARTICLES
+   =================================== */
+#ad-320x480 { width: 320px; height: 480px; background: var(--dark); }
+
+.a1-bg {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  animation: a1Ken 18s ease-in-out infinite alternate;
+}
+@keyframes a1Ken {
+  0%   { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.15) translate(-2%, -2%); }
+}
+
+.a1-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg,
+    rgba(29,41,57,0.15) 0%,
+    rgba(29,41,57,0.05) 30%,
+    rgba(29,41,57,0.7)  65%,
+    rgba(29,41,57,0.97) 100%);
+  z-index: 1;
+}
+
+.a1-particles {
+  position: absolute; inset: 0;
+  z-index: 2; pointer-events: none;
+}
+
+.a1-particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  animation: a1Rise linear infinite;
+}
+@keyframes a1Rise {
+  0%   { opacity: 0;   transform: translateY(0) scale(1); }
+  10%  { opacity: 0.7; }
+  90%  { opacity: 0.15; }
+  100% { opacity: 0;   transform: translateY(-500px) scale(0.2); }
+}
+
+.a1-content {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  z-index: 3;
+}
+
+.a1-logo {
+  width: 90px; height: auto;
+  margin: 20px auto 0;
+  filter: drop-shadow(0 2px 10px rgba(29,41,57,0.6));
+  animation: a1Float 3s ease-in-out infinite;
+}
+@keyframes a1Float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-7px); }
+}
+
+.a1-body {
+  margin-top: auto;
+  padding: 0 24px 28px;
+  text-align: center;
+}
+
+.a1-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 1.05;
+  color: var(--white);
+  text-shadow: 0 2px 18px rgba(29,41,57,0.8);
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.a1-sub {
+  font-family: 'Futura', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--yellow);
+  margin-bottom: 18px;
+}
+
+.a1-price {
+  display: inline-block;
+  background: var(--orange);
+  color: var(--white);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 8px 24px;
+  border-radius: 30px;
+  margin-bottom: 16px;
+  animation: a1Pulse 2.5s ease-in-out infinite;
+}
+@keyframes a1Pulse {
+  0%, 100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(243,146,0,0.5); }
+  50%      { transform: scale(1.04); box-shadow: 0 0 0 10px rgba(243,146,0,0); }
+}
+
+.a1-cta {
+  display: block; width: 100%;
+  background: var(--red); color: var(--white);
+  border: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 15px;
+  padding: 14px 0; border-radius: 30px;
+  cursor: pointer; position: relative; overflow: hidden;
+  transition: background 0.3s, transform 0.2s;
+}
+.a1-cta:hover { background: var(--coral); transform: scale(1.03); }
+
+.ripple {
+  position: absolute; border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  transform: scale(0);
+  animation: rippleAnim 0.6s ease-out;
+  pointer-events: none;
+}
+@keyframes rippleAnim { to { transform: scale(4); opacity: 0; } }
+
+/* ===================================
+   AD 300x250 — IMAGE CAROUSEL
+   =================================== */
+#ad-300x250 { width: 300px; height: 250px; background: var(--dark); }
+
+.a2-carousel { position: absolute; top: 0; left: 0; right: 0; bottom: 78px; }
+
+.a2-slide {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.a2-slide.active { opacity: 1; }
+
+.a2-dots {
+  position: absolute;
+  bottom: 86px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px; z-index: 4;
+}
+
+.a2-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  cursor: pointer; transition: all 0.3s;
+}
+.a2-dot.active { background: var(--orange); transform: scale(1.4); }
+
+.a2-bar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 78px; background: var(--dark);
+  display: flex; align-items: center;
+  padding: 0 14px; gap: 10px;
+  border-top: 2px solid var(--orange);
+}
+
+.a2-logo { width: 42px; height: auto; flex-shrink: 0; }
+
+.a2-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.a2-info strong {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 13px;
+  color: var(--white); line-height: 1.2;
+}
+.a2-info span {
+  font-family: 'Futura', sans-serif;
+  font-weight: 400; font-size: 11px;
+  color: var(--yellow);
+}
+
+.a2-cta {
+  background: var(--orange); color: var(--white); border: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 11px;
+  padding: 10px 16px; border-radius: 20px;
+  cursor: pointer; white-space: nowrap;
+  transition: background 0.3s, transform 0.2s;
+}
+.a2-cta:hover { background: var(--red); transform: scale(1.05); }
+
+/* ===================================
+   AD 728x90 — MARQUEE LEADERBOARD
+   =================================== */
+#ad-728x90 { width: 728px; height: 90px; background: var(--dark); }
+
+.a3-bg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; opacity: 0.2;
+}
+
+.a3-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg,
+    var(--dark) 0%,
+    rgba(29,41,57,0.88) 40%,
+    rgba(29,41,57,0.65) 100%);
+}
+
+.a3-content {
+  position: absolute; inset: 0;
+  display: flex; align-items: center;
+  padding: 0 22px; gap: 20px; z-index: 2;
+}
+
+.a3-logo { width: 60px; height: auto; flex-shrink: 0; }
+
+.a3-center { flex: 1; overflow: hidden; }
+
+.a3-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 20px;
+  color: var(--white); line-height: 1.1;
+}
+
+.a3-ticker { overflow: hidden; margin-top: 4px; }
+
+.a3-ticker-inner {
+  display: inline-block; white-space: nowrap;
+  font-family: 'Futura', sans-serif;
+  font-weight: 400; font-size: 12px;
+  color: var(--yellow);
+  animation: a3Scroll 22s linear infinite;
+}
+@keyframes a3Scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+#ad-728x90:hover .a3-ticker-inner { animation-play-state: paused; }
+
+.a3-cta {
+  background: var(--red); color: var(--white); border: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 14px;
+  padding: 12px 26px; border-radius: 25px;
+  cursor: pointer; flex-shrink: 0;
+  transition: background 0.3s, transform 0.2s;
+  animation: a3CtaPulse 2s ease-in-out infinite;
+}
+@keyframes a3CtaPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(227,6,19,0.5); }
+  50%      { box-shadow: 0 0 0 8px rgba(227,6,19,0); }
+}
+.a3-cta:hover { background: var(--coral); transform: scale(1.05); }
+
+/* ===================================
+   AD 300x600 — SECTIONED STORY
+   =================================== */
+#ad-300x600 { width: 300px; height: 600px; background: var(--white); }
+
+.a4-header {
+  background: var(--dark);
+  padding: 18px 20px 14px;
+  text-align: center;
+  height: 150px;
+}
+
+.a4-logo { width: 60px; height: auto; margin-bottom: 6px; }
+
+.a4-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 24px;
+  color: var(--white); line-height: 1.05;
+}
+
+.a4-sub {
+  font-family: 'Futura', sans-serif;
+  font-weight: 400; font-size: 13px;
+  color: var(--yellow); margin-top: 4px;
+}
+
+.a4-cards {
+  padding: 12px 12px;
+  display: flex; flex-direction: column;
+  gap: 8px; height: 290px;
+}
+
+.a4-card {
+  display: flex; align-items: center; gap: 0;
+  background: var(--gray); border-radius: 10px;
+  overflow: hidden; flex: 1;
+  opacity: 0; transform: translateX(-20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.a4-card.visible { opacity: 1; transform: translateX(0); }
+
+.a4-card img {
+  width: 90px; height: 100%; object-fit: cover; flex-shrink: 0;
+}
+
+.a4-card-text {
+  padding: 6px 12px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+
+.a4-card-text strong {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600; font-size: 13px;
+  color: var(--dark);
+}
+
+.a4-card-text span {
+  font-family: 'Futura', sans-serif;
+  font-weight: 400; font-size: 11px;
+  color: var(--darkblue);
+}
+
+.a4-card[data-accent="orange"] { border-left: 3px solid var(--orange); }
+.a4-card[data-accent="blue"]   { border-left: 3px solid var(--blue); }
+.a4-card[data-accent="red"]    { border-left: 3px solid var(--red); }
+
+.a4-footer {
+  position: relative; height: 160px;
+  background: var(--orange);
+}
+
+.a4-wave {
+  position: absolute; top: -29px; left: 0;
+  width: 100%; height: 30px; display: block;
+}
+
+.a4-footer-inner {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  height: 100%; padding: 20px; gap: 16px;
+}
+
+.a4-price {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600; font-size: 18px;
+  color: var(--white);
+}
+.a4-price strong { font-size: 28px; font-weight: 700; }
+
+.a4-cta {
+  background: var(--dark); color: var(--white); border: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 14px;
+  padding: 12px 28px; border-radius: 30px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+.a4-cta:hover { background: var(--darkblue); transform: scale(1.05); }
+
+/* ===================================
+   AD 336x280 — 3D FLIP CARD
+   =================================== */
+#ad-336x280 {
+  width: 336px; height: 280px;
+  perspective: 1000px;
+  background: var(--dark);
+}
+
+.a5-card {
+  width: 100%; height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+.a5-card.flipped { transform: rotateY(180deg); }
+
+.a5-front, .a5-back {
+  position: absolute; inset: 0;
+  backface-visibility: hidden;
+  border-radius: 6px; overflow: hidden;
+}
+
+.a5-front { z-index: 2; }
+
+.a5-img { width: 100%; height: 100%; object-fit: cover; }
+
+.a5-front-over {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg,
+    rgba(29,41,57,0.25) 0%,
+    rgba(29,41,57,0.88) 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-end;
+  padding: 20px;
+}
+
+.a5-flogo {
+  width: 60px; height: auto;
+  position: absolute; top: 16px; left: 50%;
+  transform: translateX(-50%);
+}
+
+.a5-front-over h3 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 22px;
+  color: var(--white); margin-bottom: 8px;
+}
+
+.a5-hint {
+  font-family: 'Futura', sans-serif;
+  font-weight: 400; font-size: 12px;
+  color: var(--yellow);
+  animation: a5Blink 1.5s ease-in-out infinite;
+}
+@keyframes a5Blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+
+.a5-back {
+  transform: rotateY(180deg);
+  background: var(--dark);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 20px; text-align: center; gap: 5px;
+}
+
+.a5-blogo { width: 48px; height: auto; margin-bottom: 2px; }
+
+.a5-back h3 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 17px;
+  color: var(--white);
+}
+
+.a5-back-label {
+  font-family: 'Futura', sans-serif;
+  font-weight: 400; font-size: 12px;
+  color: var(--blue);
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+.a5-back-price {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 36px;
+  color: var(--yellow); line-height: 1;
+}
+
+.a5-list {
+  list-style: none;
+  display: flex; flex-direction: column; gap: 3px;
+  margin: 4px 0;
+}
+.a5-list li {
+  font-family: 'Futura', sans-serif;
+  font-weight: 400; font-size: 12px;
+  color: var(--green);
+}
+
+.a5-cta {
+  background: var(--red); color: var(--white); border: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 13px;
+  padding: 10px 24px; border-radius: 25px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  margin-top: 4px;
+}
+.a5-cta:hover { background: var(--coral); transform: scale(1.05); }
+
+/* ===================================
+   AD 970x250 — PANORAMIC SPLIT
+   =================================== */
+#ad-970x250 { width: 970px; height: 250px; background: var(--dark); display: flex; }
+
+.a6-left {
+  width: 360px; height: 250px;
+  padding: 22px 28px;
+  display: flex; flex-direction: column;
+  justify-content: center; flex-shrink: 0;
+  position: relative; z-index: 2;
+  background: var(--dark);
+}
+
+.a6-logo { width: 70px; height: auto; margin-bottom: 8px; }
+
+.a6-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 28px;
+  color: var(--white); line-height: 1.05;
+  margin-bottom: 6px; letter-spacing: -0.02em;
+}
+
+.a6-sub {
+  font-family: 'Futura', sans-serif;
+  font-weight: 400; font-size: 13px;
+  color: var(--gray); margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.a6-price {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600; font-size: 16px;
+  color: var(--yellow); margin-bottom: 12px;
+}
+
+.a6-cta {
+  background: var(--orange); color: var(--white); border: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 13px;
+  padding: 10px 22px; border-radius: 25px;
+  cursor: pointer; align-self: flex-start;
+  transition: background 0.3s, transform 0.2s;
+}
+.a6-cta:hover { background: var(--red); transform: scale(1.05); }
+
+.a6-right {
+  flex: 1; position: relative; overflow: hidden;
+}
+
+.a6-slide {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.a6-slide.active { opacity: 1; }
+
+.a6-stripe {
+  position: absolute; top: 0; left: 0; bottom: 0;
+  width: 70px;
+  background: linear-gradient(90deg, var(--dark) 0%, rgba(29,41,57,0) 100%);
+  z-index: 2;
+}
+
+/* ===================================
+   AD 160x600 — VERTICAL CASCADE
+   =================================== */
+#ad-160x600 { width: 160px; height: 600px; background: var(--dark); }
+
+.a7-inner {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center;
+  padding: 20px 10px 20px;
+  gap: 10px;
+}
+
+.a7-logo { width: 80px; height: auto; }
+
+.a7-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 18px;
+  color: var(--white); text-align: center;
+  line-height: 1.05;
+}
+
+.a7-img-wrap {
+  width: 100%; height: 95px;
+  border-radius: 8px; overflow: hidden;
+  opacity: 0; transform: translateY(-15px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  flex-shrink: 0;
+}
+.a7-img-wrap.visible { opacity: 1; transform: translateY(0); }
+
+.a7-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+.a7-feat {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600; font-size: 14px;
+  color: var(--yellow); text-align: center;
+  opacity: 0; transform: translateY(-10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.a7-feat.visible { opacity: 1; transform: translateY(0); }
+
+.a7-spacer { flex: 1; }
+
+.a7-price {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 18px;
+  color: var(--orange);
+}
+
+.a7-cta {
+  background: var(--red); color: var(--white); border: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 12px;
+  padding: 10px 0; border-radius: 20px;
+  cursor: pointer; width: 100%;
+  transition: background 0.3s, transform 0.2s;
+}
+.a7-cta:hover { background: var(--coral); transform: scale(1.05); }
+
+/* ===================================
+   AD 320x50 — PULSE MOBILE BANNER
+   =================================== */
+#ad-320x50 {
+  width: 320px; height: 50px;
+  background: var(--dark);
+  display: flex; align-items: center;
+  padding: 0 12px; gap: 10px;
+}
+
+.a8-bg-anim {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg,
+    var(--dark) 0%,
+    var(--darkblue) 50%,
+    var(--dark) 100%);
+  background-size: 200% 100%;
+  animation: a8Shift 4s ease-in-out infinite;
+}
+@keyframes a8Shift {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+.a8-logo { width: 32px; height: auto; position: relative; z-index: 1; flex-shrink: 0; }
+
+.a8-text {
+  flex: 1; position: relative; z-index: 1;
+}
+.a8-text strong {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 13px;
+  color: var(--white); display: block; line-height: 1.1;
+}
+.a8-text span {
+  font-family: 'Futura', sans-serif;
+  font-weight: 400; font-size: 11px;
+  color: var(--yellow);
+}
+
+.a8-cta {
+  background: var(--orange); color: var(--white); border: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 11px;
+  padding: 8px 14px; border-radius: 16px;
+  cursor: pointer; flex-shrink: 0;
+  position: relative; z-index: 1;
+  transition: background 0.3s;
+  animation: a8Glow 2s ease-in-out infinite;
+}
+@keyframes a8Glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(243,146,0,0.6); }
+  50%      { box-shadow: 0 0 0 6px rgba(243,146,0,0); }
+}
+.a8-cta:hover { background: var(--red); }
+
+/* ===================================
+   REDUCED MOTION
+   =================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
