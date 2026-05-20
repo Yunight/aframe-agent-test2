@@ -367,6 +367,13 @@ const messages: Anthropic.Messages.MessageParam[] = [{
     }
   ]
 }];
+
+const regenFeedback = process.env['CREATIVE_REGEN_FEEDBACK']?.trim();
+if (regenFeedback !== undefined && regenFeedback.length > 0) {
+  messages.push({ role: 'user', content: regenFeedback });
+  console.log('[creative-native] Regeneration from UI review agent feedback.');
+}
+
 let codeFileList: z.infer<typeof filesSchema> | null = null;
 let generationIndex = 0;
 const maxGenerationTurns = 8;
@@ -542,3 +549,5 @@ writeFileSync(
   `${JSON.stringify({ adFormats }, null, 2)}\n`,
   { encoding: 'utf8' }
 );
+
+console.log(`Output directory path: ${directoryPath}`);

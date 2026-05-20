@@ -1,0 +1,61 @@
+{
+  "captured_at": "2026-05-20T13:56:30.593Z",
+  "entry_html": "output\\8b63d828-12d7-4f87-8ed1-bdbd038c7301\\code\\index.html",
+  "entry_url": "file:///C:/Users/Ben/Desktop/formats_creator/aframe-agent-test2/aframe-agent-test2/output/8b63d828-12d7-4f87-8ed1-bdbd038c7301/code/index.html",
+  "formats": [
+    {
+      "format_id": "320x480",
+      "width": 320,
+      "height": 480,
+      "selector": "#ad-320x480",
+      "error": null,
+      "shots": [
+        {
+          "state": "initial",
+          "fileName": "320x480__initial.png",
+          "relativePath": "320x480__initial.png",
+          "captured_at": "2026-05-20T13:56:22.867Z"
+        },
+        {
+          "state": "animated",
+          "fileName": "320x480__animated.png",
+          "relativePath": "320x480__animated.png",
+          "captured_at": "2026-05-20T13:56:25.467Z"
+        },
+        {
+          "state": "settled",
+          "fileName": "320x480__settled.png",
+          "relativePath": "320x480__settled.png",
+          "captured_at": "2026-05-20T13:56:30.568Z"
+        }
+      ]
+    },
+    {
+      "format_id": "300x250",
+      "width": 300,
+      "height": 250,
+      "selector": "#ad-300x250",
+      "error": null,
+      "shots": [
+        {
+          "state": "initial",
+          "fileName": "300x250__initial.png",
+          "relativePath": "300x250__initial.png",
+          "captured_at": "2026-05-20T13:56:22.857Z"
+        },
+        {
+          "state": "animated",
+          "fileName": "300x250__animated.png",
+          "relativePath": "300x250__animated.png",
+          "captured_at": "2026-05-20T13:56:25.456Z"
+        },
+        {
+          "state": "settled",
+          "fileName": "300x250__settled.png",
+          "relativePath": "300x250__settled.png",
+          "captured_at": "2026-05-20T13:56:30.558Z"
+        }
+      ]
+    }
+  ]
+}

@@ -243,40 +243,66 @@ function isSafeOutputFolderSegment (name: string): boolean {
 }
 
 function attachSpawnedNodeProcess (job: Job, argv: string[], extraEnv: Record<string, string | undefined>): void {
-  const child = spawn(process.execPath, argv, {
-    cwd: repoRoot,
-    env: {
-      ...process.env,
-      ...extraEnv
-    },
-    stdio: [ 'ignore', 'pipe', 'pipe' ]
-  });
+  attachSpawnedNodeProcessSequence(job, [ { argv, env: extraEnv } ]);
+}
 
-  const stdoutReader = createLineReader((line) => {
-    pushLine(job, 'stdout', line);
-  });
-  const stderrReader = createLineReader((line) => {
-    pushLine(job, 'stderr', line);
-  });
+function attachSpawnedNodeProcessSequence (
+  job: Job,
+  steps: Array<{ argv: string[]; env?: Record<string, string | undefined> }>
+): void {
+  let stepIndex = 0;
 
-  child.stdout?.on('data', (buf: Buffer) => {
-    stdoutReader.push(buf);
-  });
-  child.stderr?.on('data', (buf: Buffer) => {
-    stderrReader.push(buf);
-  });
+  const runNextStep = (): void => {
+    const step = steps[stepIndex];
+    if (step === undefined) {
+      finishJob(job, 0);
+      return;
+    }
 
-  child.on('close', (code, signal) => {
-    stdoutReader.end();
-    stderrReader.end();
-    const exitCode = signal !== null ? 1 : (code ?? 1);
-    finishJob(job, exitCode);
-  });
+    stepIndex += 1;
+    pushLine(job, 'stdout', `[studio] Step ${String(stepIndex)}/${String(steps.length)}: ${step.argv.join(' ')}`);
 
-  child.on('error', (err) => {
-    pushLine(job, 'stderr', `[spawn error] ${err.message}`);
-    finishJob(job, 1);
-  });
+    const child = spawn(process.execPath, step.argv, {
+      cwd: repoRoot,
+      env: {
+        ...process.env,
+        ...step.env
+      },
+      stdio: [ 'ignore', 'pipe', 'pipe' ]
+    });
+
+    const stdoutReader = createLineReader((line) => {
+      pushLine(job, 'stdout', line);
+    });
+    const stderrReader = createLineReader((line) => {
+      pushLine(job, 'stderr', line);
+    });
+
+    child.stdout?.on('data', (buf: Buffer) => {
+      stdoutReader.push(buf);
+    });
+    child.stderr?.on('data', (buf: Buffer) => {
+      stderrReader.push(buf);
+    });
+
+    child.on('close', (code, signal) => {
+      stdoutReader.end();
+      stderrReader.end();
+      const exitCode = signal !== null ? 1 : (code ?? 1);
+      if (exitCode !== 0) {
+        finishJob(job, exitCode);
+        return;
+      }
+      runNextStep();
+    });
+
+    child.on('error', (err) => {
+      pushLine(job, 'stderr', `[spawn error] ${err.message}`);
+      finishJob(job, 1);
+    });
+  };
+
+  runNextStep();
 }
 
 interface OutputIndexPreview {
@@ -407,10 +433,16 @@ app.post('/api/creative-code/run', (req, res) => {
     res.status(429).json({ error: 'Un job studio est déjà en cours.' });
     return;
   }
-  const body = req.body as { creativeScript?: unknown; outputFolder?: unknown; adFormats?: unknown };
+  const body = req.body as {
+    creativeScript?: unknown;
+    outputFolder?: unknown;
+    adFormats?: unknown;
+    uiReviewAfterGeneration?: unknown;
+  };
   if (typeof body.creativeScript !== 'string' || body.creativeScript.trim().length === 0) {
     res.status(400).json({
-      error: 'Expected JSON body { "creativeScript": string, "outputFolder": string, "adFormats"?: array }.'
+      error:
+        'Expected JSON body { "creativeScript": string, "outputFolder": string, "adFormats"?: array, "uiReviewAfterGeneration"?: boolean }.'
     });
     return;
   }
@@ -458,12 +490,36 @@ app.post('/api/creative-code/run', (req, res) => {
     adFormatsJson = JSON.stringify(normalized.formats);
   }
 
+  const uiReviewRequested =
+    body.uiReviewAfterGeneration === true && creativeScript === 'gen-creative-code-native.mts';
+
   const job = createJob();
   activeJobId = job.id;
   const creativePath = join(srcDir, creativeScript);
-  attachSpawnedNodeProcess(job, [ creativePath, outputFolder ], {
-    CREATIVE_AD_FORMATS: adFormatsJson
-  });
+  const reviewPath = join(srcDir, 'run-creative-native-ui-review.mts');
+
+  const genStep = {
+    argv: [ creativePath, outputFolder ],
+    env: {
+      CREATIVE_AD_FORMATS: adFormatsJson,
+      CREATIVE_UI_REVIEW_MAX_ROUNDS: '0'
+    }
+  };
+
+  if (uiReviewRequested) {
+    attachSpawnedNodeProcessSequence(job, [
+      genStep,
+      {
+        argv: [ reviewPath, outputFolder ],
+        env: {
+          CREATIVE_AD_FORMATS: adFormatsJson,
+          CREATIVE_UI_REVIEW_MAX_ROUNDS: '3'
+        }
+      }
+    ]);
+  } else {
+    attachSpawnedNodeProcess(job, genStep.argv, genStep.env);
+  }
 
   res.status(202).json({ jobId: job.id });
 });

@@ -113,6 +113,9 @@ function App () {
   })
   const [customAdW, setCustomAdW] = useState('')
   const [customAdH, setCustomAdH] = useState('')
+  const [creativeUiReview, setCreativeUiReview] = useState(true)
+
+  const creativeSupportsUiReview = creativeScript === PREFERRED_CREATIVE_SCRIPT
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -447,7 +450,8 @@ function App () {
         body: JSON.stringify({
           creativeScript,
           outputFolder: creativeOutputFolder,
-          adFormats: creativeAdFormats
+          adFormats: creativeAdFormats,
+          uiReviewAfterGeneration: creativeSupportsUiReview && creativeUiReview
         })
       })
 
@@ -482,7 +486,14 @@ function App () {
       setStatus('error')
       setErrorMessage(e instanceof Error ? e.message : String(e))
     }
-  }, [creativeAdFormats, creativeOutputFolder, creativeScript, subscribeToJobEvents])
+  }, [
+    creativeAdFormats,
+    creativeOutputFolder,
+    creativeScript,
+    creativeSupportsUiReview,
+    creativeUiReview,
+    subscribeToJobEvents
+  ])
 
   const statusBadge =
     status === 'idle'
@@ -781,6 +792,31 @@ function App () {
                 {creativeAdFormats.map((f) => `${String(f.width)}×${String(f.height)}`).join(' · ') || '—'}
               </p>
             </fieldset>
+            {creativeSupportsUiReview && (
+              <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-base-300/50 bg-base-200/15 px-4 py-4">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-primary mt-0.5 shrink-0"
+                  checked={creativeUiReview}
+                  disabled={status === 'running'}
+                  onChange={(e) => { setCreativeUiReview(e.target.checked); }}
+                  aria-label="Review UI après génération"
+                />
+                <span className="text-sm leading-relaxed text-base-content/85">
+                  <span className="font-medium text-base-content">Review UI après génération</span>
+                  {' '}
+                  — lance l&apos;agent{' '}
+                  <code className="font-mono text-xs">run-creative-native-ui-review.mts</code>
+                  {' '}
+                  (screenshots Playwright + Haiku) après la génération ; régénération si besoin (3 itérations max).
+                  Artefacts dans{' '}
+                  <code className="font-mono text-xs">review/screenshots/</code>
+                  {' '}
+                  et{' '}
+                  <code className="font-mono text-xs">review/ui-review-final.json</code>.
+                </span>
+              </label>
+            )}
             <div className="card-actions flex-col items-stretch gap-3 border-t border-base-300/30 pt-6 sm:flex-row sm:items-center sm:justify-between">
               <button
                 type="button"
