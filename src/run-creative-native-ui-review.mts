@@ -11,6 +11,10 @@ import type { StyleGuide } from './gen-style-guide.mjs';
 import { captureCreativeNativeScreenshots } from './creative-native-playwright-screenshots.mts';
 import { loadDesignSkillGuidance } from './creative-native-skills.mts';
 import {
+  logPipelineTotalsToConsole,
+  pipelineUsagePath
+} from './creative-pipeline-usage.mts';
+import {
   buildRegenerationUserMessage,
   parseUiReviewMaxRoundsFromEnv,
   runCreativeNativeUiReview,
@@ -85,7 +89,7 @@ const skillGuidance = loadDesignSkillGuidance(repoRoot);
 const genScriptPath = join(repoRoot, 'src', 'gen-creative-code-native.mts');
 const assetInputMode = process.env['CREATIVE_ASSET_INPUT']?.trim() === 'base64' ? 'base64' : 'url';
 
-function runNativeRegeneration (feedback: string): number {
+function runNativeRegeneration (feedback: string, reviewRound: number): number {
   const result = spawnSync(
     process.execPath,
     [ genScriptPath, directoryUuid, '--asset-input', assetInputMode ],
@@ -94,6 +98,7 @@ function runNativeRegeneration (feedback: string): number {
       env: {
         ...process.env,
         CREATIVE_REGEN_FEEDBACK: feedback,
+        CREATIVE_REGEN_REVIEW_ROUND: String(reviewRound),
         CREATIVE_UI_REVIEW_MAX_ROUNDS: '0',
         CREATIVE_AD_FORMATS: JSON.stringify(adFormats)
       },
@@ -117,13 +122,16 @@ while (uiReviewRound < maxUiReviewRounds) {
   const manifest = await captureCreativeNativeScreenshots({
     codeDirectoryPath,
     adFormats,
-    outputScreensDir: screenshotsDirectoryPath
+    outputScreensDir: screenshotsDirectoryPath,
+    directoryPath,
+    reviewRound: uiReviewRound
   });
 
   const { audit, usage } = await runCreativeNativeUiReview({
     anthropicClient,
     manifest,
     screenshotsDir: screenshotsDirectoryPath,
+    directoryPath,
     prunedStyleGuide,
     adFormats,
     skillGuidance,
@@ -150,7 +158,10 @@ while (uiReviewRound < maxUiReviewRounds) {
   }
 
   console.log('[ui-review-agent] Regenerating creative code from review feedback…');
-  const regenExit = runNativeRegeneration(buildRegenerationUserMessage(audit, adFormats, uiReviewRound));
+  const regenExit = runNativeRegeneration(
+    buildRegenerationUserMessage(audit, adFormats, uiReviewRound),
+    uiReviewRound
+  );
   if (regenExit !== 0) {
     console.error(`[ui-review-agent] Regeneration failed with exit code ${String(regenExit)}.`);
     process.exit(regenExit);
@@ -158,6 +169,16 @@ while (uiReviewRound < maxUiReviewRounds) {
 }
 
 writeUiReviewTokenUsage(reviewDirectoryPath, uiReviewUsageRounds);
+
+let pipelineTotalsUsd: { total: number } | null = null;
+const pipelinePath = pipelineUsagePath(directoryPath);
+if (existsSync(pipelinePath)) {
+  const pipelineFile = JSON.parse(readFileSync(pipelinePath, 'utf8')) as {
+    totals?: { price_usd?: { total: number } };
+  };
+  pipelineTotalsUsd = pipelineFile.totals?.price_usd ?? null;
+}
+
 writeFileSync(
   join(reviewDirectoryPath, 'ui-review-final.json'),
   `${JSON.stringify(
@@ -167,13 +188,17 @@ writeFileSync(
       satisfied: lastUiAudit?.satisfied ?? false,
       summary: lastUiAudit?.summary ?? null,
       findings: lastUiAudit?.findings ?? [],
-      screenshots_dir: screenshotsDirectoryPath
+      screenshots_dir: screenshotsDirectoryPath,
+      pipeline_usage_path: pipelinePath,
+      pipeline_totals_usd: pipelineTotalsUsd
     },
     null,
     2
   )}\n`,
   { encoding: 'utf8' }
 );
+
+logPipelineTotalsToConsole(directoryPath);
 
 console.log(`Output directory path: ${directoryPath}`);
 

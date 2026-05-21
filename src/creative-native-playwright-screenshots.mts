@@ -1,4 +1,9 @@
 import type { AdFormatSelection } from './studio-ad-formats.mts';
+import {
+  appendPipelineUsage,
+  entryZeroCost,
+  logPipelineUsageToConsole
+} from './creative-pipeline-usage.mts';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -31,6 +36,9 @@ export type CaptureScreenshotsOptions = {
   codeDirectoryPath: string;
   adFormats: readonly AdFormatSelection[];
   outputScreensDir: string;
+  /** Run root `output/<uuid>/` for pipeline-usage.json ledger. */
+  directoryPath?: string;
+  reviewRound?: number;
   initialWaitMs?: number;
   animatedWaitMs?: number;
   settledWaitMs?: number;
@@ -243,6 +251,7 @@ export async function captureCreativeNativeScreenshots (
   const waits = { initial: initialWaitMs, animated: animatedWaitMs, settled: settledWaitMs };
 
   console.log(`[screenshots] Capturing ${String(adFormats.length)} format(s) → ${outputScreensDir}`);
+  const startedAt = Date.now();
 
   const formatEntries = await Promise.all(
     adFormats.map((format) =>
@@ -260,6 +269,24 @@ export async function captureCreativeNativeScreenshots (
   const manifestPath = join(outputScreensDir, 'manifest.json');
   writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, { encoding: 'utf8' });
   console.log(`[screenshots] Manifest written: ${manifestPath}`);
+
+  const pngCount = formatEntries.reduce((n, f) => n + f.shots.length, 0);
+  const captureErrors = formatEntries.filter((f) => f.error !== null).length;
+  const durationMs = Date.now() - startedAt;
+  const ledgerDir = options.directoryPath;
+  if (ledgerDir !== undefined && ledgerDir.length > 0) {
+    const notes = `${String(pngCount)} PNG, ${String(adFormats.length)} format(s), ${String(captureErrors)} capture error(s), ${String(durationMs)} ms`;
+    const file = appendPipelineUsage(
+      ledgerDir,
+      entryZeroCost({
+        action: 'screenshots',
+        agent: 'creative-native-playwright-screenshots.mts',
+        review_round: options.reviewRound ?? null,
+        notes
+      })
+    );
+    logPipelineUsageToConsole(file.entries[file.entries.length - 1]!);
+  }
 
   return manifest;
 }

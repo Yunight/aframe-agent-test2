@@ -1,7 +1,15 @@
+import { withAnthropicRetry } from './anthropic-retry.mts';
 import type { StyleGuide } from './gen-style-guide.mjs';
 import type { ScreenshotManifest } from './creative-native-playwright-screenshots.mts';
+import {
+  appendPipelineUsage,
+  entryFromSingleUsage,
+  logPipelineUsageToConsole,
+  priceUsdFromTokens,
+  type PriceUsd
+} from './creative-pipeline-usage.mts';
 import { buildCreativeAdFormatInstructions, type AdFormatSelection } from './studio-ad-formats.mts';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Anthropic } from '@anthropic-ai/sdk';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
@@ -66,12 +74,69 @@ export type UiReviewUsageTotals = {
   cache_creation_input_tokens: number;
   cache_read_input_tokens: number;
   model: string;
+  billed_input_tokens: number;
+  price_usd: PriceUsd;
 };
+
+export function logUiReviewAuditToConsole (audit: UiReviewOutput, reviewRound: number): void {
+  console.log(`[ui-review] === Audit round ${String(reviewRound)} ===`);
+  console.log(`[ui-review] satisfied: ${String(audit.satisfied)}`);
+  console.log(`[ui-review] summary: ${audit.summary}`);
+  if (audit.findings.length === 0) {
+    console.log('[ui-review] findings: (none)');
+  } else {
+    console.log(`[ui-review] findings (${String(audit.findings.length)}):`);
+    for (const f of audit.findings) {
+      console.log(`[ui-review]   [${f.severity}] ${f.format_id}: ${f.issue}`);
+      console.log(`[ui-review]     fix: ${f.fix_hint}`);
+    }
+  }
+  const blockers = audit.findings.filter((f) => f.severity === 'blocker');
+  if (blockers.length > 0) {
+    console.log('[ui-review] regeneration_prompt (extrait):');
+    const prompt = audit.regeneration_prompt.trim();
+    const lines = prompt.split('\n').slice(0, 12);
+    for (const line of lines) {
+      console.log(`[ui-review]   ${line}`);
+    }
+    if (prompt.split('\n').length > 12) {
+      console.log('[ui-review]   …');
+    }
+  } else {
+    console.log('[ui-review] regeneration_prompt: (not required — no blockers)');
+  }
+  console.log('');
+}
+
+export function appendUiReviewLog (reviewDir: string, audit: UiReviewOutput, reviewRound: number): void {
+  mkdirSync(reviewDir, { recursive: true });
+  const logPath = join(reviewDir, 'ui-review.log');
+  const lines: string[] = [
+    `=== UI review round ${String(reviewRound)} @ ${new Date().toISOString()} ===`,
+    `satisfied: ${String(audit.satisfied)}`,
+    `summary: ${audit.summary}`,
+    ''
+  ];
+  if (audit.findings.length === 0) {
+    lines.push('findings: (none)', '');
+  } else {
+    lines.push(`findings (${String(audit.findings.length)}):`);
+    for (const f of audit.findings) {
+      lines.push(`  [${f.severity}] ${f.format_id}`);
+      lines.push(`    issue: ${f.issue}`);
+      lines.push(`    fix: ${f.fix_hint}`);
+    }
+    lines.push('');
+  }
+  lines.push('regeneration_prompt:', audit.regeneration_prompt, '', '');
+  appendFileSync(logPath, `${lines.join('\n')}`, { encoding: 'utf8' });
+}
 
 export type RunCreativeNativeUiReviewOptions = {
   anthropicClient: Anthropic;
   manifest: ScreenshotManifest;
   screenshotsDir: string;
+  directoryPath: string;
   prunedStyleGuide: Omit<StyleGuide, 'logoFileUrls' | 'productPictureUrls'>;
   adFormats: readonly AdFormatSelection[];
   skillGuidance: string;
@@ -113,11 +178,13 @@ export async function runCreativeNativeUiReview (
     anthropicClient,
     manifest,
     screenshotsDir,
+    directoryPath,
     prunedStyleGuide,
     adFormats,
     skillGuidance,
     reviewRound
   } = options;
+  const reviewDir = join(directoryPath, 'review');
 
   const model = options.model ?? process.env['CREATIVE_UI_REVIEW_MODEL']?.trim() ?? DEFAULT_UI_REVIEW_MODEL;
 
@@ -176,14 +243,16 @@ export async function runCreativeNativeUiReview (
 
   console.log(`[ui-review] Round ${String(reviewRound)} — model ${model}`);
 
-  const msg = await anthropicClient.messages.parse({
-    model,
-    max_tokens: 8192,
-    system: systemPrompt,
-    messages: [ { role: 'user', content: userContent } ],
-    output_config: {
-      format: zodOutputFormat(uiReviewOutputSchema)
-    }
+  const msg = await withAnthropicRetry(`ui-review round ${String(reviewRound)}`, async () => {
+    return await anthropicClient.messages.parse({
+      model,
+      max_tokens: 8192,
+      system: systemPrompt,
+      messages: [ { role: 'user', content: userContent } ],
+      output_config: {
+        format: zodOutputFormat(uiReviewOutputSchema)
+      }
+    });
   });
 
   const parsed = msg.parsed_output;
@@ -191,13 +260,21 @@ export async function runCreativeNativeUiReview (
     throw new Error('UI review returned no structured output.');
   }
 
+  const billedInput =
+    msg.usage.input_tokens +
+    (msg.usage.cache_creation_input_tokens ?? 0) +
+    (msg.usage.cache_read_input_tokens ?? 0);
+  const price_usd = priceUsdFromTokens(billedInput, msg.usage.output_tokens, model);
+
   const usage: UiReviewUsageTotals = {
     api_calls: 1,
     input_tokens: msg.usage.input_tokens,
     output_tokens: msg.usage.output_tokens,
     cache_creation_input_tokens: msg.usage.cache_creation_input_tokens ?? 0,
     cache_read_input_tokens: msg.usage.cache_read_input_tokens ?? 0,
-    model
+    model,
+    billed_input_tokens: billedInput,
+    price_usd
   };
 
   const blockers = parsed.findings.filter((f) => f.severity === 'blocker');
@@ -225,6 +302,19 @@ export async function runCreativeNativeUiReview (
   console.log(
     `[ui-review] satisfied=${String(parsed.satisfied)} blockers=${String(blockers.length)} warns=${String(parsed.findings.filter((f) => f.severity === 'warn').length)}`
   );
+
+  logUiReviewAuditToConsole(parsed, reviewRound);
+  appendUiReviewLog(reviewDir, parsed, reviewRound);
+
+  const pipelineEntry = entryFromSingleUsage({
+    action: 'ui_review',
+    agent: 'creative-native-ui-review.mts',
+    model,
+    usage: msg.usage,
+    review_round: reviewRound
+  });
+  const file = appendPipelineUsage(directoryPath, pipelineEntry);
+  logPipelineUsageToConsole(file.entries[file.entries.length - 1]!);
 
   return { audit: parsed, usage };
 }
@@ -268,6 +358,10 @@ export function writeUiReviewTokenUsage (
       acc.output_tokens += row.output_tokens;
       acc.cache_creation_input_tokens += row.cache_creation_input_tokens;
       acc.cache_read_input_tokens += row.cache_read_input_tokens;
+      acc.billed_input_tokens += row.billed_input_tokens;
+      acc.price_usd.input += row.price_usd.input;
+      acc.price_usd.output += row.price_usd.output;
+      acc.price_usd.total += row.price_usd.total;
       return acc;
     },
     {
@@ -275,9 +369,14 @@ export function writeUiReviewTokenUsage (
       input_tokens: 0,
       output_tokens: 0,
       cache_creation_input_tokens: 0,
-      cache_read_input_tokens: 0
+      cache_read_input_tokens: 0,
+      billed_input_tokens: 0,
+      price_usd: { input: 0, output: 0, total: 0 }
     }
   );
+  totals.price_usd.input = Math.round(totals.price_usd.input * 1_000_000) / 1_000_000;
+  totals.price_usd.output = Math.round(totals.price_usd.output * 1_000_000) / 1_000_000;
+  totals.price_usd.total = Math.round(totals.price_usd.total * 1_000_000) / 1_000_000;
 
   writeFileSync(
     join(reviewDir, 'ui-review-token-usage.json'),

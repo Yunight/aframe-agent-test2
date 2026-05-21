@@ -7,6 +7,14 @@ import { config as loadDotenv } from 'dotenv';
 import { Anthropic } from '@anthropic-ai/sdk';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
 import { z } from 'zod';
+import { withAnthropicRetry } from './anthropic-retry.mts';
+import {
+  appendPipelineUsage,
+  entryFromAccumulator,
+  logPipelineUsageToConsole
+} from './creative-pipeline-usage.mts';
+
+const STYLE_GUIDE_MODEL = 'claude-opus-4-7';
 
 // --- Tokens / coût (Claude Opus 4.7 Flagship : $5/M input, $25/M output) ---
 const USD_PER_MILLION_INPUT_TOKENS = 5;
@@ -584,10 +592,10 @@ while (true) {
 
   console.log(`Generating style guide ... (i=${i})`);
 
-  const styleGuideStream = await anthropicClient.messages.stream({
-
-    max_tokens: 128000,
-    system: `
+  const styleGuideResponse = await withAnthropicRetry(`style-guide turn ${String(i)}`, async () => {
+    const styleGuideStream = await anthropicClient.messages.stream({
+      max_tokens: 128000,
+      system: `
       You are an agent that assembles brand style guides based on external information.
       The information should ideally be sourced from the brand or company's official websites.
       No information should come from the model memory. It should always be fetched remotely to ensure freshness.
@@ -608,25 +616,26 @@ while (true) {
       If any skill rule is not satisfied, keep searching and refining, and do not finalize yet.
       ${localSkillGuidance}
     `.trim(),
-    messages,
-    model: 'claude-opus-4-7',
-    thinking: {
-      type: 'adaptive',
-      display: 'omitted'
-    },
-    output_config: {
-      format: zodOutputFormat(brandStyleGuideModelSchema),
-      effort: 'xhigh' as 'low' | 'medium' | 'high' | 'max' | null
-    },
-    tools: [
-      {
-        type: 'web_search_20250305',
-        name: 'web_search',
-        max_uses: 25
-      }
-    ]
+      messages,
+      model: 'claude-opus-4-7',
+      thinking: {
+        type: 'adaptive',
+        display: 'omitted'
+      },
+      output_config: {
+        format: zodOutputFormat(brandStyleGuideModelSchema),
+        effort: 'xhigh' as 'low' | 'medium' | 'high' | 'max' | null
+      },
+      tools: [
+        {
+          type: 'web_search_20250305',
+          name: 'web_search',
+          max_uses: 25
+        }
+      ]
+    });
+    return await styleGuideStream.finalMessage();
   });
-  const styleGuideResponse = await styleGuideStream.finalMessage();
   addUsageToAccumulator(apiUsageTotals, styleGuideResponse.usage);
   logReadableAnthropicCall(
     describeAnthropicTurnForLogs(styleGuideResponse.stop_reason, styleGuideResponse.content),
@@ -765,4 +774,14 @@ writeFileSync(
 );
 
 logAnthropicUsageAndCost(basename(import.meta.filename, extname(import.meta.filename)), apiUsageTotals);
+
+const styleGuidePipelineEntry = entryFromAccumulator({
+  action: 'style_guide',
+  agent: 'gen-style-guide.mts',
+  model: STYLE_GUIDE_MODEL,
+  acc: apiUsageTotals
+});
+const styleGuidePipelineFile = appendPipelineUsage(directoryPath, styleGuidePipelineEntry);
+logPipelineUsageToConsole(styleGuidePipelineFile.entries[styleGuidePipelineFile.entries.length - 1]!);
+
 console.log('End.');

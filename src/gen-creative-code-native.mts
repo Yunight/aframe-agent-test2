@@ -1,3 +1,4 @@
+import { withAnthropicRetry } from './anthropic-retry.mts';
 import type { StyleGuide } from './gen-style-guide.mjs';
 import {
   contains,
@@ -6,6 +7,16 @@ import {
   validateCreativeSkillCompliance,
   type AssetFile
 } from './creative-native-skills.mts';
+import {
+  addUsageToAccumulator,
+  appendPipelineUsage,
+  createEmptyUsageAccumulator,
+  entryFromAccumulator,
+  logAnthropicUsageAndCost,
+  logPipelineUsageToConsole,
+  logReadableAnthropicCall,
+  priceUsdFromAccumulator
+} from './creative-pipeline-usage.mts';
 import { buildCreativeAdFormatInstructions, loadAdFormatPresets, parseCreativeAdFormatsFromEnv } from './studio-ad-formats.mts';
 import { basename, dirname, extname, join } from 'node:path';
 import { copyFileSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -16,104 +27,7 @@ import { imageSizeFromFile } from 'image-size/fromFile';
 import mime from 'mime';
 import { z } from 'zod';
 
-// --- Tokens / coût (Claude Opus 4.7 Flagship : $5/M input, $25/M output) ---
-const USD_PER_MILLION_INPUT_TOKENS = 5;
-const USD_PER_MILLION_OUTPUT_TOKENS = 25;
-
-type UsageLike = {
-  input_tokens: number;
-  output_tokens: number;
-  cache_creation_input_tokens?: number | null;
-  cache_read_input_tokens?: number | null;
-};
-
-type UsageAccumulator = {
-  api_calls: number;
-  input_tokens: number;
-  output_tokens: number;
-  cache_creation_input_tokens: number;
-  cache_read_input_tokens: number;
-};
-
-function createEmptyUsageAccumulator (): UsageAccumulator {
-  return {
-    api_calls: 0,
-    input_tokens: 0,
-    output_tokens: 0,
-    cache_creation_input_tokens: 0,
-    cache_read_input_tokens: 0
-  };
-}
-
-function addUsageToAccumulator (
-  acc: UsageAccumulator,
-  usage: UsageLike | null | undefined
-): void {
-  if (usage === null || usage === undefined) {
-    return;
-  }
-  acc.api_calls += 1;
-  acc.input_tokens += usage.input_tokens;
-  acc.output_tokens += usage.output_tokens;
-  acc.cache_creation_input_tokens += usage.cache_creation_input_tokens ?? 0;
-  acc.cache_read_input_tokens += usage.cache_read_input_tokens ?? 0;
-}
-
-function billedInputTokens (acc: UsageAccumulator): number {
-  return acc.input_tokens + acc.cache_creation_input_tokens + acc.cache_read_input_tokens;
-}
-
-function pricesUsdFromAccumulator (acc: UsageAccumulator): {
-  billed_input_tokens: number;
-  output_tokens: number;
-  input_usd: number;
-  output_usd: number;
-  total_usd: number;
-} {
-  const billed_input_tokens = billedInputTokens(acc);
-  const output_tokens = acc.output_tokens;
-  const input_usd = (billed_input_tokens / 1_000_000) * USD_PER_MILLION_INPUT_TOKENS;
-  const output_usd = (output_tokens / 1_000_000) * USD_PER_MILLION_OUTPUT_TOKENS;
-  return {
-    billed_input_tokens,
-    output_tokens,
-    input_usd,
-    output_usd,
-    total_usd: input_usd + output_usd
-  };
-}
-
-function roundUsd6 (n: number): number {
-  return Math.round(n * 1_000_000) / 1_000_000;
-}
-
-function logAnthropicUsageAndCost (scriptLabel: string, acc: UsageAccumulator): void {
-  const p = pricesUsdFromAccumulator(acc);
-  console.log(`--- ${scriptLabel} (cumulative) ---`);
-  console.log(`call reason : ${acc.api_calls} réponse(s) API — Claude Opus 4.7 Flagship ($5/M input, $25/M output, cache inclus côté input)`);
-  console.log(`input token : ${p.billed_input_tokens}`);
-  console.log(`output token : ${p.output_tokens}`);
-  console.log(`input price (USD) : ${roundUsd6(p.input_usd)}`);
-  console.log(`output price (USD) : ${roundUsd6(p.output_usd)}`);
-  console.log(`total price (USD) : ${roundUsd6(p.total_usd)}`);
-  console.log('');
-}
-function billedInputFromUsage (usage: UsageLike): number {
-  return usage.input_tokens + (usage.cache_creation_input_tokens ?? 0) + (usage.cache_read_input_tokens ?? 0);
-}
-
-function logReadableAnthropicCall (callReason: string, usage: UsageLike | null | undefined): void {
-  console.log(`call reason : ${callReason}`);
-  if (usage === null || usage === undefined) {
-    console.log('input token : —');
-    console.log('output token : —');
-    console.log('');
-    return;
-  }
-  console.log(`input token : ${billedInputFromUsage(usage)}`);
-  console.log(`output token : ${usage.output_tokens}`);
-  console.log('');
-}
+const CREATIVE_MODEL = 'claude-opus-4-6';
 
 function shortenForLog (s: string, max: number): string {
   const t = s.trim().replace(/\s+/g, ' ');
@@ -429,28 +343,30 @@ while (true) {
       ${localDesignSkillGuidance}
     `.trim();
 
-  const creativeCodeStream = await anthropicClient.messages.stream({
-    max_tokens: 128000,
-    system: systemPrompt,
-    messages,
-    model: 'claude-opus-4-6',
-    thinking: {
-      type: 'enabled',
-      budget_tokens: 100_000,
-      display: 'omitted'
-    },
-    output_config: {
-      format: zodOutputFormat(filesSchema),
-    },
-    tools: [
-      {
-        type: 'web_search_20250305',
-        name: 'web_search',
-        max_uses: 50
-      }
-    ]
+  const creativeCodeResponse = await withAnthropicRetry('creative generation', async () => {
+    const creativeCodeStream = await anthropicClient.messages.stream({
+      max_tokens: 128000,
+      system: systemPrompt,
+      messages,
+      model: 'claude-opus-4-6',
+      thinking: {
+        type: 'enabled',
+        budget_tokens: 100_000,
+        display: 'omitted'
+      },
+      output_config: {
+        format: zodOutputFormat(filesSchema),
+      },
+      tools: [
+        {
+          type: 'web_search_20250305',
+          name: 'web_search',
+          max_uses: 50
+        }
+      ]
+    });
+    return await creativeCodeStream.finalMessage();
   });
-  const creativeCodeResponse = await creativeCodeStream.finalMessage();
   addUsageToAccumulator(creativeUsageTotals, creativeCodeResponse.usage);
   logReadableAnthropicCall(
     describeAnthropicTurnForLogs(creativeCodeResponse.stop_reason, creativeCodeResponse.content),
@@ -527,22 +443,36 @@ const sumReportedTokens =
   creativeUsageTotals.cache_creation_input_tokens +
   creativeUsageTotals.cache_read_input_tokens;
 
-logAnthropicUsageAndCost(basename(import.meta.filename, extname(import.meta.filename)), creativeUsageTotals);
+logAnthropicUsageAndCost(
+  basename(import.meta.filename, extname(import.meta.filename)),
+  creativeUsageTotals,
+  CREATIVE_MODEL
+);
 
-const cumulativePrices = pricesUsdFromAccumulator(creativeUsageTotals);
+const cumulativePrices = priceUsdFromAccumulator(creativeUsageTotals, CREATIVE_MODEL);
 writeFileSync(
   join(directoryPath, 'creative-native-token-usage.json'),
   `${JSON.stringify({
     ...creativeUsageTotals,
     total_tokens_reported_sum: sumReportedTokens,
-    price_usd: {
-      input: cumulativePrices.input_usd,
-      output: cumulativePrices.output_usd,
-      total: cumulativePrices.total_usd
-    }
+    price_usd: cumulativePrices
   }, null, 2)}\n`,
   { encoding: 'utf8' }
 );
+
+const isRegen = regenFeedback !== undefined && regenFeedback.length > 0;
+const regenRoundRaw = process.env['CREATIVE_REGEN_REVIEW_ROUND']?.trim();
+const regenRound =
+  regenRoundRaw !== undefined && regenRoundRaw.length > 0 ? Number.parseInt(regenRoundRaw, 10) : null;
+const pipelineEntry = entryFromAccumulator({
+  action: isRegen ? 'creative_regeneration' : 'creative_generation',
+  agent: 'gen-creative-code-native.mts',
+  model: CREATIVE_MODEL,
+  acc: creativeUsageTotals,
+  review_round: Number.isFinite(regenRound ?? Number.NaN) ? regenRound : null
+});
+const pipelineFile = appendPipelineUsage(directoryPath, pipelineEntry);
+logPipelineUsageToConsole(pipelineFile.entries[pipelineFile.entries.length - 1]!);
 
 writeFileSync(
   join(directoryPath, 'creative-native-ad-formats.json'),

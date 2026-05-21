@@ -1,3 +1,4 @@
+import { withAnthropicRetry } from './anthropic-retry.mts';
 import type { StyleGuide } from './gen-style-guide.mts';
 import type { AdFormatPreset, AdFormatSelection } from './studio-ad-formats.mts';
 import { loadAdFormatPresets, parseCreativeAdFormatsFromEnv } from './studio-ad-formats.mts';
@@ -737,28 +738,30 @@ while (true) {
       ${localDesignSkillGuidance}
     `.trim();
 
-  const creativeCodeStream = await anthropicClient.messages.stream({
-    max_tokens: 128_000,
-    system: systemPrompt,
-    messages,
-    model: 'claude-opus-4-6',
-    thinking: {
-      type: 'enabled',
-      budget_tokens: 100_000,
-      display: 'omitted'
-    },
-    output_config: {
-      format: zodOutputFormat(filesSchema)
-    },
-    tools: [
-      {
-        type: 'web_search_20250305',
-        name: 'web_search',
-        max_uses: 50
-      }
-    ]
+  const creativeCodeResponse = await withAnthropicRetry('habillage creative generation', async () => {
+    const creativeCodeStream = await anthropicClient.messages.stream({
+      max_tokens: 128_000,
+      system: systemPrompt,
+      messages,
+      model: 'claude-opus-4-6',
+      thinking: {
+        type: 'enabled',
+        budget_tokens: 100_000,
+        display: 'omitted'
+      },
+      output_config: {
+        format: zodOutputFormat(filesSchema)
+      },
+      tools: [
+        {
+          type: 'web_search_20250305',
+          name: 'web_search',
+          max_uses: 50
+        }
+      ]
+    });
+    return await creativeCodeStream.finalMessage();
   });
-  const creativeCodeResponse = await creativeCodeStream.finalMessage();
   addUsageToAccumulator(creativeUsageTotals, creativeCodeResponse.usage);
   logReadableAnthropicCall(
     describeAnthropicTurnForLogs(creativeCodeResponse.stop_reason, creativeCodeResponse.content),
