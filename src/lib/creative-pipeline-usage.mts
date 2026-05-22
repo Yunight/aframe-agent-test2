@@ -45,6 +45,7 @@ export type PipelineUsageEntry = {
   billed_input_tokens: number;
   price_usd: PriceUsd;
   notes?: string;
+  duration_ms?: number;
 };
 
 export type PipelineUsageFile = {
@@ -112,6 +113,14 @@ export function addUsageToAccumulator (
   acc.output_tokens += usage.output_tokens;
   acc.cache_creation_input_tokens += usage.cache_creation_input_tokens ?? 0;
   acc.cache_read_input_tokens += usage.cache_read_input_tokens ?? 0;
+}
+
+export function mergeUsageAccumulators (into: UsageAccumulator, from: UsageAccumulator): void {
+  into.api_calls += from.api_calls;
+  into.input_tokens += from.input_tokens;
+  into.output_tokens += from.output_tokens;
+  into.cache_creation_input_tokens += from.cache_creation_input_tokens;
+  into.cache_read_input_tokens += from.cache_read_input_tokens;
 }
 
 export function billedInputTokensFromAccumulator (acc: UsageAccumulator): number {
@@ -213,6 +222,7 @@ export function entryFromAccumulator (
     acc: UsageAccumulator;
     review_round?: number | null;
     notes?: string;
+    duration_ms?: number;
   }
 ): Omit<PipelineUsageEntry, 'timestamp'> {
   const billed = billedInputTokensFromAccumulator(params.acc);
@@ -228,7 +238,8 @@ export function entryFromAccumulator (
     cache_read_input_tokens: params.acc.cache_read_input_tokens,
     billed_input_tokens: billed,
     price_usd: priceUsdFromAccumulator(params.acc, params.model),
-    ...(params.notes !== undefined ? { notes: params.notes } : {})
+    ...(params.notes !== undefined ? { notes: params.notes } : {}),
+    ...(params.duration_ms !== undefined ? { duration_ms: params.duration_ms } : {})
   };
 }
 
@@ -290,6 +301,9 @@ export function logPipelineUsageToConsole (entry: PipelineUsageEntry): void {
   }
   if (entry.model !== null) {
     console.log(`model : ${entry.model}`);
+  }
+  if (entry.duration_ms !== undefined) {
+    console.log(`duration : ${String(entry.duration_ms)} ms`);
   }
   if (entry.notes !== undefined && entry.notes.length > 0) {
     console.log(`notes : ${entry.notes}`);

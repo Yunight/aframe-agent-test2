@@ -11,6 +11,7 @@ import {
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { imageSizeFromFile } from 'image-size/fromFile';
+import { extractOfficialHeaderLogoUrls } from './official-site-logo-extract.mts';
 import { isUntrustedLogoUrl, validateLogoAssetFile } from './logo-transparency-check.mts';
 
 export interface BraveImageResult {
@@ -774,6 +775,8 @@ export type CollectAndDownloadOptions = {
   excludeUrls?: Set<string>;
   clearFolder?: boolean;
   officialHosts?: readonly string[];
+  /** Header lockup URLs scraped from brandURL (tried before Brave image search). */
+  prioritizeUrls?: readonly string[];
 };
 
 export async function collectAndDownloadValidAssetUrls (
@@ -795,6 +798,30 @@ export async function collectAndDownloadValidAssetUrls (
   const officialHosts = options.officialHosts ?? [];
   const minContentLength =
     fileType === 'products' ? braveProductMinContentLength() : undefined;
+
+  const prioritize = options.prioritizeUrls ?? [];
+  if (fileType === 'logos' && prioritize.length > 0) {
+    console.log(`[download] Trying ${String(prioritize.length)} official-site logo URL(s) before Brave…`);
+    for (const fileUrl of prioritize) {
+      if (downloadedUrls.length >= options.targetCount) {
+        break;
+      }
+      if (excludeUrls.has(fileUrl)) {
+        continue;
+      }
+      const batch = await downloadUrlsToAssetFolder(fileType, directoryPath, [ fileUrl ], {
+        validateDimensions: true,
+        rejectedUrls
+      });
+      if (batch.count > 0) {
+        downloadedUrls.push(...batch.downloadedUrls);
+        console.log(`[download] Official header logo saved: ${fileUrl}`);
+      } else {
+        excludeUrls.add(fileUrl);
+        rejectedUrls.push(fileUrl);
+      }
+    }
+  }
 
   let pass = 0;
   while (downloadedUrls.length < options.targetCount && pass < 4) {
@@ -878,13 +905,15 @@ export async function refreshAssetsFromQueries (
     rejectedUrls: [] as string[]
   };
   if (logoQueries.length > 0) {
+    const officialLogos = await extractOfficialHeaderLogoUrls(context);
     console.log('[Brave images] Refresh — collecting logo candidates…');
     logoDownload = await collectAndDownloadValidAssetUrls('logos', directoryPath, logoQueries, {
       targetCount: logoMax,
       candidatePool: Math.max(logoMax * 5, braveLogoCandidatePool()),
       excludeUrls,
       clearFolder: true,
-      officialHosts: officialHostsFromContext(context)
+      officialHosts: officialHostsFromContext(context),
+      prioritizeUrls: officialLogos
     });
     allRejected.push(...logoDownload.rejectedUrls);
     for (const url of logoDownload.rejectedUrls) {

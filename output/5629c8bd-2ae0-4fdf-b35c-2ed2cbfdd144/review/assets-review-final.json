@@ -1,0 +1,13 @@
+{
+  "assets_review_rounds_run": 1,
+  "max_assets_review_rounds": 3,
+  "post_audit_refresh": false,
+  "satisfied": true,
+  "summary": "All assets pass strict brand audit. Logo SVG (logo-petit-bateau.svg) is the official wordmark from petit-bateau.fr; JPEG logo (A04P501D.jpg) is a product packshot from the official site, not a brand lockup but acceptable as secondary asset. All 6 product images are official packshots from petit-bateau.fr with authentic Petit Bateau styling (marinières, striped basics, colorful prints) aligned with brand identity and Les Journées Extraordinaires campaign context. Colors, typography, and primary/secondary palettes are internally consistent and plausible. No blockers detected.",
+  "findings": [],
+  "brave_retry_queries": {
+    "logos": [],
+    "products": []
+  },
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\5629c8bd-2ae0-4fdf-b35c-2ed2cbfdd144\\pipeline-usage.json"
+}

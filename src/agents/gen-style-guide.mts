@@ -7,6 +7,7 @@ import {
   collectAndDownloadValidAssetUrls,
   officialHostsFromContext
 } from '../lib/brave-image-assets.mts';
+import { extractOfficialHeaderLogoUrls } from '../lib/official-site-logo-extract.mts';
 import { basename, join, extname } from 'node:path';
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
@@ -368,7 +369,7 @@ const logoImageSearchQueriesModel = z
   .min(3)
   .max(12)
   .describe(
-    '3-12 Brave Image Search queries to find the official logo. Prefer site:hostname from brandURL/companyURL, inurl:logo, filetype:svg. No third-party scraper sites.'
+    '3-12 Brave Image Search queries as fallback. Primary logo is scraped from brandURL header (primary-logo, logo-container, img.logo-simple). Use site:hostname, inurl:logo, filetype:svg. No third-party scraper sites.'
   );
 
 const productImageSearchQueriesModel = z
@@ -443,9 +444,10 @@ while (true) {
       downloaded after your JSON via the Brave Images API using logoImageSearchQueries and productImageSearchQueries.
 
       Logo (critical):
-      - Use web_search to find the real logo asset page on companyURL and brandURL (paths like /logo, /brand, /identite-visuelle, /press, /media).
-      - Fill logoImageSearchQueries with 3-12 highly specific Brave queries discovered from that research. Put the best queries first.
-      - Every query should target the official site: use site:hostname, inurl:logo, filetype:svg or filetype:png when appropriate.
+      - The canonical logo is almost always in the site HEADER on brandURL: HTML like div.primary-logo > a.logo-container > img.logo-simple (or any img whose class contains "logo").
+      - Use web_search to confirm brandURL/companyURL and how the header lockup is structured; do NOT rely on random image search results or third-party PNG sites.
+      - After your JSON is saved, the pipeline fetches brandURL HTML and downloads that header img src first (e.g. demandware.static …/logo-*.svg). Brave queries are only a fallback.
+      - Fill logoImageSearchQueries with 3-12 site:official-host queries (inurl:logo, filetype:svg) aligned with the same host as brandURL.
       - Never use KindPNG, PNGaaa, Pinterest, or generic "transparent logo PNG" without site:official host.
       - Opaque PNG/JPEG on brand background and official SVG wordmarks are valid.
 
@@ -535,6 +537,9 @@ const imageContext = {
   productImageSearchQueries: styleGuideFromModel.productImageSearchQueries
 };
 
+console.log('[Official site] Extracting header logo from brand homepage…');
+const officialHeaderLogoUrls = await extractOfficialHeaderLogoUrls(imageContext);
+
 console.log('[Brave images] Collecting logo candidates…');
 const logoDownload = await collectAndDownloadValidAssetUrls(
   'logos',
@@ -544,7 +549,8 @@ const logoDownload = await collectAndDownloadValidAssetUrls(
     targetCount: 2,
     candidatePool: braveLogoCandidatePool(),
     clearFolder: true,
-    officialHosts: officialHostsFromContext(imageContext)
+    officialHosts: officialHostsFromContext(imageContext),
+    prioritizeUrls: officialHeaderLogoUrls
   }
 );
 

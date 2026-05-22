@@ -28,7 +28,12 @@ export const uiReviewOutputSchema = z.object({
   satisfied: z.boolean(),
   summary: z.string(),
   findings: z.array(findingSchema),
-  regeneration_prompt: z.string()
+  regeneration_prompt: z
+    .string()
+    .describe(
+      'Minimal patch instructions for the code agent: specific CSS/HTML/JS fixes only. '
+      + 'Do not ask for a new layout, new concept, or rebuild from scratch. Reference selectors or #ad-{formatId} when relevant.'
+    )
 });
 
 export type UiReviewOutput = z.infer<typeof uiReviewOutputSchema>;
@@ -45,11 +50,16 @@ export function buildRegenerationUserMessage (
           .join('\n')
       : '(no structured findings)';
 
+  const formatIds = adFormats.map((f) => f.id).join(', ');
+
   return (
     `${audit.regeneration_prompt}\n\n` +
-    `Visual UI review (round ${String(reviewRound)}) found issues. Regenerate the full file bundle and fix every blocker.\n` +
+    `Visual UI review (round ${String(reviewRound)}) — **corrective patch only**.\n` +
+    `Patch the existing code bundle provided in the previous message. Fix every blocker below.\n` +
+    `Do NOT redesign the creative, change the overall layout, add new variants, or rebuild from scratch.\n` +
+    `Keep the same DOM structure, class names, and format wrappers unless a blocker requires a structural fix.\n` +
     `Required ad sizes (px): ${adFormats.map((f) => `${String(f.width)}×${String(f.height)}`).join(', ')}.\n` +
-    `Each ad unit MUST use id="ad-{formatId}" on its root container (format ids: ${adFormats.map((f) => f.id).join(', ')}).\n\n` +
+    `Format ids: ${formatIds}. Target fixes inside #ad-{formatId} when a finding names a format.\n\n` +
     `Findings:\n${findingsText}\n\n` +
     `Summary: ${audit.summary}`
   );
@@ -228,8 +238,9 @@ export async function runCreativeNativeUiReview (
     'French copy quality, layout at exact pixel dimensions, no fake browser chrome, consistency across formats.',
     'Set satisfied to true only when there are zero findings with severity "blocker".',
     'Minor polish issues may be "warn" only if the creative is shippable.',
-    'regeneration_prompt must be a complete, actionable instruction block for the code-generation agent to fix all blockers',
-    '(regenerate index.html, styles.css, app.js). Remind: each ad unit needs id="ad-{formatId}" matching the format id.',
+    'regeneration_prompt must be minimal patch instructions for the code agent (specific CSS/HTML/JS changes).',
+    'Do NOT ask for a new layout, different concept, or full rebuild. Example: "Increase .logo img max-height to 32px in #ad-320x480".',
+    'Each ad unit should keep id="ad-{formatId}" matching the format id unless a blocker requires changing structure.',
     '',
     '--- Ad format requirements ---',
     buildCreativeAdFormatInstructions(adFormats),

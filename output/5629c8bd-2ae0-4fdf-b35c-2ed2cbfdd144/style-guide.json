@@ -1,0 +1,114 @@
+{
+  "companyName": "Petit Bateau",
+  "companyContext": "Petit Bateau est une marque française de prêt-à-porter fondée en 1893 à Troyes, spécialisée dans les sous-vêtements et vêtements pour bébés, enfants, femmes et hommes. Filiale du groupe Yves Rocher, la maison est reconnue pour son culture qualité, ses jerseys de coton, ses rayures marinières et son engagement pour la durabilité et l'économie circulaire.",
+  "companyURL": "https://www.petit-bateau.fr/",
+  "brandName": "Petit Bateau",
+  "brandContext": "Marque culte de l'enfance depuis 1893, Petit Bateau habille toute la famille avec des basiques intemporels (bodies, marinières, pyjamas, cirés, maillots de bain) inspirés de l'univers marin. La marque promeut actuellement Les Journées Extraordinaires, opération promotionnelle proposant -30% sur la collection été (avec -10% supplémentaires sur produits remisés à certains moments clés), valable sur petit-bateau.fr et en boutique.",
+  "brandURL": "https://www.petit-bateau.fr/",
+  "logoFileUrls": [
+    "https://www.petit-bateau.fr/on/demandware.static/Sites-PB_FR-Site/-/default/dw89c30cd2/images/logo-petit-bateau.svg",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Sites-PB_master/default/dwd7547851/PB/A04P501D.jpg?sw=800&sh=900&sm=fit&frz-v=51"
+  ],
+  "productName": "Les Journées Extraordinaires – Promotion Collection Été (-30%)",
+  "productPictureUrls": [
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Sites-PB_master/default/dw04b90565/PB/A044E01Z1.jpg?sw=556&sh=680&sm=fit&frz-v=48",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Sites-PB_master/default/dw8ebd6c35/PB/A044E01D.jpg?sw=556&sh=680&sm=fit&frz-v=48",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Sites-PB_master/default/dw0887ab42/PB/A044E01F1.jpg?sw=556&sh=680&sm=fit&frz-v=48",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Sites-PB_master/default/dw377bfa6c/PB/A042E01Z1.jpg?sw=800&sh=900&sm=fit&frz-v=51",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Sites-PB_master/default/dw4549d5be/PB/5093200.jpg?sw=625&sh=725&sm=fit&frz-v=55",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Sites-PB_master/default/dw4f216f46/PB/A09L101D.jpg?sw=800&sh=900&sm=fit&frz-v=50"
+  ],
+  "primaryColorPalette": [
+    "#112351",
+    "#C8102E",
+    "#FFFFFF",
+    "#F4ECDC",
+    "#FFD200"
+  ],
+  "secondaryColorPalette": [
+    "#1E3A6B",
+    "#7FB3D5",
+    "#F7CAC9",
+    "#A8D5BA",
+    "#F5A623",
+    "#2E2E2E",
+    "#E5E5E5",
+    "#8C8C8C"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Petit Bateau Sans (custom – Serge Cortesi)",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Wordmark / lockup du logo Petit Bateau – sans-serif rond et doux, propre à la marque"
+    },
+    {
+      "fontFamily": "Futura",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Titres d'accroche promo type 'LES JOURNÉES EXTRAORDINAIRES', display & hero (sans-serif géométrique rond, proche de l'identité)"
+    },
+    {
+      "fontFamily": "Futura",
+      "fontWeight": 500,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Sous-titres, étiquettes de remise (-30%, -50%, -60%), badges promo"
+    },
+    {
+      "fontFamily": "Helvetica Neue",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Corps de texte, descriptions produits, conditions de l'offre"
+    },
+    {
+      "fontFamily": "Helvetica Neue",
+      "fontWeight": 600,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Boutons d'action (CTA) : J'en profite, Découvrir, Ajouter au panier"
+    },
+    {
+      "fontFamily": "Georgia",
+      "fontWeight": 400,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Citations éditoriales et storytelling marque (liberté, qualité, durabilité)"
+    }
+  ],
+  "brandVision": "Offrir à chaque enfant – et à l'enfant qui sommeille en chaque adulte – la liberté de bouger, de grandir et d'explorer le monde avec confiance, dans des vêtements pensés pour durer et se transmettre. Sur Les Journées Extraordinaires, la marque traduit cette vision joyeuse de l'été : des essentiels colorés, ensoleillés et accessibles pour vivre des journées vraiment extraordinaires en bord de mer comme en ville.",
+  "brandValues": "Liberté · Qualité · Durabilité · Engagement (économie circulaire, Oeko-Tex, made in France pour partie) · Optimisme et joie de vivre · Héritage français depuis 1893 · Transmission entre générations · Accessibilité (offres promotionnelles transparentes)",
+  "logoImageSearchQueries": [
+    "site:petit-bateau.fr logo",
+    "site:petit-bateau.fr filetype:svg logo",
+    "site:petit-bateau.fr inurl:logo",
+    "site:petit-bateau.com logo svg",
+    "Petit Bateau logo officiel marinière navy",
+    "Petit Bateau wordmark logo navy blue svg",
+    "Petit Bateau logo 1893 navy",
+    "site:petit-bateau.co.uk logo",
+    "Petit Bateau logo header navy blue"
+  ],
+  "productImageSearchQueries": [
+    "site:petit-bateau.fr journées extraordinaires",
+    "site:petit-bateau.fr collection été 2026",
+    "site:petit-bateau.fr offre -30% été",
+    "Petit Bateau journées extraordinaires bannière",
+    "Petit Bateau campagne été 2026 visuel",
+    "site:petit-bateau.fr maillot de bain enfant",
+    "site:petit-bateau.fr marinière été",
+    "site:petit-bateau.fr pyjama été",
+    "site:petit-bateau.fr robe fleurie été",
+    "Petit Bateau journées extraordinaires -30% key visual",
+    "Petit Bateau soldes été key visual",
+    "Petit Bateau été 2026 packshot",
+    "site:petit-bateau.fr cirés"
+  ]
+}

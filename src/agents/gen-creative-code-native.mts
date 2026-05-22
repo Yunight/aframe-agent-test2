@@ -1,162 +1,31 @@
-import { withAnthropicRetry } from '../lib/anthropic-retry.mts';
 import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
 import type { StyleGuide } from './gen-style-guide.mjs';
+import { contains, type AssetFile } from '../lib/creative-native-skills.mts';
+import { runCreativeCodegen } from '../lib/creative-native-codegen-loop.mts';
 import {
-  contains,
-  creativeNativeStructuredOutputFilesSchema,
-  loadDesignSkillGuidance,
-  validateCreativeSkillCompliance,
-  type AssetFile
-} from '../lib/creative-native-skills.mts';
+  formatExistingBundleForPrompt,
+  loadExistingCodeBundle
+} from '../lib/creative-native-codegen-regen.mts';
+import { loadSkillsForCodegenPrompt, resolveCreativeModel } from '../lib/creative-native-codegen-prompt.mts';
 import {
-  addUsageToAccumulator,
   appendPipelineUsage,
-  createEmptyUsageAccumulator,
   entryFromAccumulator,
   logAnthropicUsageAndCost,
   logPipelineUsageToConsole,
-  logReadableAnthropicCall,
   priceUsdFromAccumulator
 } from '../lib/creative-pipeline-usage.mts';
 import { isSvgAssetFile, sniffImageMimeFromBuffer } from '../lib/image-mime-sniff.mts';
-import { buildCreativeAdFormatInstructions, loadAdFormatPresets, parseCreativeAdFormatsFromEnv } from '../lib/studio-ad-formats.mts';
+import { loadAdFormatPresets, parseCreativeAdFormatsFromEnv } from '../lib/studio-ad-formats.mts';
 import { basename, dirname, extname, join } from 'node:path';
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { config as loadDotenv } from 'dotenv';
 import { Anthropic } from '@anthropic-ai/sdk';
-import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
 import { imageSizeFromFile } from 'image-size/fromFile';
 import mime from 'mime';
-import { z } from 'zod';
 
-const CREATIVE_MODEL = 'claude-opus-4-6';
-const DEFAULT_CREATIVE_REGEN_MODEL = 'claude-haiku-4-5-20251001';
-const CREATIVE_OPUS_MAX_OUTPUT_TOKENS = 128_000;
-const CREATIVE_HAIKU_MAX_OUTPUT_TOKENS = 64_000;
+type AssetInputMode = 'base64' | 'url';
 
-function maxOutputTokensForModel (model: string): number {
-  return model.toLowerCase().includes('haiku')
-    ? CREATIVE_HAIKU_MAX_OUTPUT_TOKENS
-    : CREATIVE_OPUS_MAX_OUTPUT_TOKENS;
-}
-
-function shortenForLog (s: string, max: number): string {
-  const t = s.trim().replace(/\s+/g, ' ');
-  if (t.length <= max) {
-    return t;
-  }
-  return `${t.slice(0, max - 1)}…`;
-}
-
-function pickQueryFromUnknown (input: unknown): string | null {
-  if (input === null || typeof input !== 'object') {
-    return null;
-  }
-  const o = input as Record<string, unknown>;
-  for (const key of [ 'query', 'search_query', 'q' ] as const) {
-    const v = o[key];
-    if (typeof v === 'string' && v.trim().length > 0) {
-      return shortenForLog(v, 160);
-    }
-  }
-  return null;
-}
-
-function describeClientToolUse (name: string, input: unknown): string {
-  switch (name) {
-    case 'web_search':
-      return "recherche web (pages officielles, sources, vérification d'informations)";
-    case 'google_image_search': {
-      const q = pickQueryFromUnknown(input);
-      if (q !== null) {
-        return `recherche d'images Google — requête « ${q} »`;
-      }
-      return "recherche d'images Google (logos, produits, références visuelles)";
-    }
-    default:
-      return `outil personnalisé « ${name} »`;
-  }
-}
-
-function describeServerToolUse (name: Anthropic.ServerToolUseBlock['name'], input: unknown): string {
-  const q = pickQueryFromUnknown(input);
-  const qSuffix = q !== null ? ` — requête « ${q} »` : '';
-  switch (name) {
-    case 'web_search':
-      return `recherche web intégrée (serveur Anthropic)${qSuffix}`;
-    case 'web_fetch':
-      return `récupération de page distante (web_fetch)${qSuffix}`;
-    case 'code_execution':
-    case 'bash_code_execution':
-    case 'text_editor_code_execution':
-      return `exécution / édition côté serveur (${name})`;
-    case 'tool_search_tool_regex':
-    case 'tool_search_tool_bm25':
-      return `recherche d'outils (${name})`;
-    default:
-      return `outil serveur « ${name} »${qSuffix}`;
-  }
-}
-
-function describeAnthropicTurnForLogs (
-  stopReason: Anthropic.Message['stop_reason'],
-  content: Anthropic.Message['content']
-): string {
-  const segments: string[] = [];
-
-  if (stopReason !== null && stopReason !== undefined) {
-    segments.push(`arrêt: ${stopReason}`);
-  }
-
-  if (content.length === 0) {
-    segments.push('aucun bloc de contenu');
-    return segments.join(' — ');
-  }
-
-  const actions: string[] = [];
-  let hasThinking = false;
-  let hasText = false;
-
-  for (const block of content) {
-    if (block.type === 'tool_use') {
-      actions.push(describeClientToolUse(block.name, block.input));
-    } else if (block.type === 'server_tool_use') {
-      actions.push(describeServerToolUse(block.name, block.input));
-    } else if (block.type === 'thinking' || block.type === 'redacted_thinking') {
-      hasThinking = true;
-    } else if (block.type === 'text') {
-      hasText = true;
-    }
-  }
-
-  if (actions.length > 0) {
-    segments.push(`objectif du tour : ${actions.join(' | ')}`);
-  }
-
-  if (stopReason === 'tool_use' && actions.length === 0) {
-    segments.push('arrêt tool_use sans blocs tool_use reconnus (vérifier la réponse)');
-  }
-
-  if (stopReason !== 'tool_use') {
-    if (hasText && actions.length === 0) {
-      segments.push('réponse textuelle ou JSON structuré (livraison ou étape intermédiaire)');
-    }
-    if (hasThinking && actions.length === 0 && !hasText) {
-      segments.push('réflexion interne uniquement (extended thinking), sans texte ni outil client');
-    }
-    if (!hasText && actions.length === 0 && stopReason === 'end_turn') {
-      segments.push('fin de tour (souvent JSON de guide de style ou liste de fichiers parsée)');
-    }
-  }
-
-  if (hasThinking && actions.length > 0) {
-    segments.push('inclut de la réflexion étendue');
-  }
-
-  return segments.join(' — ');
-}
-
-function createAssetDescription(fileName: string, fileType: 'logos' | 'products'): string {
+function createAssetDescription (fileName: string, fileType: 'logos' | 'products'): string {
   const baseName = fileName.replace(/\.[^.]+$/, '');
   const keywordString = baseName
     .replace(/[_-]+/g, ' ')
@@ -169,8 +38,6 @@ function createAssetDescription(fileName: string, fileType: 'logos' | 'products'
 
   return `Description asset (${categoryLabel}): ${keywordString || baseName}. ${usageHint}.`;
 }
-
-type AssetInputMode = 'base64' | 'url';
 
 loadDotenv({ path: join(repoRootFromModuleDir(import.meta.dirname), '.env') });
 
@@ -202,7 +69,8 @@ for (let i = 0; i < cliArguments.length; i += 1) {
   throw new Error(`Unknown argument "${argument}". Allowed option: --asset-input`);
 }
 
-const directoryPath = join(repoRootFromModuleDir(import.meta.dirname), 'output', directoryUuid);
+const repoRoot = repoRootFromModuleDir(import.meta.dirname);
+const directoryPath = join(repoRoot, 'output', directoryUuid);
 
 const assetsReviewSkip = process.env['CREATIVE_ASSETS_REVIEW_SKIP']?.trim() === '1';
 const assetsReviewFinalPath = join(directoryPath, 'review', 'assets-review-final.json');
@@ -222,14 +90,11 @@ if (!assetsReviewSkip) {
 }
 
 const codeDirectoryPath = join(directoryPath, 'code');
-const repoRoot = repoRootFromModuleDir(import.meta.dirname);
 const adFormatPresets = loadAdFormatPresets(repoRoot);
 const adFormats = parseCreativeAdFormatsFromEnv(process.env['CREATIVE_AD_FORMATS'], adFormatPresets);
 console.log('[creative-native] Ad formats:', JSON.stringify(adFormats));
 const styleGuidePath = join(directoryPath, 'style-guide.json');
 const styleGuide = JSON.parse(readFileSync(styleGuidePath, { encoding: 'utf8' })) as StyleGuide;
-
-const filesSchema = creativeNativeStructuredOutputFilesSchema;
 
 const anthropicApiKey = process.env['ANTHROPIC_API_KEY'];
 if (anthropicApiKey === undefined || anthropicApiKey.trim().length === 0) {
@@ -239,9 +104,9 @@ if (anthropicApiKey === undefined || anthropicApiKey.trim().length === 0) {
 const anthropicClient = new Anthropic({
   apiKey: anthropicApiKey
 });
-const localDesignSkillGuidance = loadDesignSkillGuidance();
+const skillsText = loadSkillsForCodegenPrompt(repoRoot);
 
-const fileMessages: (Anthropic.ImageBlockParam | Anthropic.TextBlock)[] = [];
+const fileMessages: (Anthropic.Messages.TextBlockParam | Anthropic.Messages.ImageBlockParam)[] = [];
 const assetFiles: AssetFile[] = [];
 
 for (const fileType of [ 'logos', 'products' ] as const) {
@@ -269,8 +134,7 @@ for (const fileType of [ 'logos', 'products' ] as const) {
         `  - Required: integrate this SVG logo in the creative via the local path above.`;
       fileMessages.push({
         type: 'text',
-        text: textPayload,
-        citations: null
+        text: textPayload
       });
       assetFiles.push({ fileName, filePath, fileType });
       continue;
@@ -296,8 +160,7 @@ for (const fileType of [ 'logos', 'products' ] as const) {
       `  - Required: describe this specific image before using it and integrate it visually in the creative.`;
     fileMessages.push({
       type: 'text',
-      text: textPayload,
-      citations: null
+      text: textPayload
     });
 
     if (assetInputMode === 'base64') {
@@ -318,11 +181,14 @@ for (const fileType of [ 'logos', 'products' ] as const) {
   }
 }
 
-const prunedStyleGuide = JSON.parse(JSON.stringify(styleGuide));
-delete prunedStyleGuide.logoFileUrls;
-delete prunedStyleGuide.productPictureUrls;
+const prunedStyleGuide = JSON.parse(JSON.stringify(styleGuide)) as Omit<
+StyleGuide,
+'logoFileUrls' | 'productPictureUrls'
+>;
+delete (prunedStyleGuide as { logoFileUrls?: unknown }).logoFileUrls;
+delete (prunedStyleGuide as { productPictureUrls?: unknown }).productPictureUrls;
 
-const messages: Anthropic.Messages.MessageParam[] = [{
+const baseMessages: Anthropic.Messages.MessageParam[] = [{
   role: 'user',
   content: [
     ...fileMessages,
@@ -335,158 +201,40 @@ const messages: Anthropic.Messages.MessageParam[] = [{
 
 const regenFeedback = process.env['CREATIVE_REGEN_FEEDBACK']?.trim();
 const isRegen = regenFeedback !== undefined && regenFeedback.length > 0;
-const activeModel = isRegen
-  ? (process.env['CREATIVE_REGEN_MODEL']?.trim() ?? DEFAULT_CREATIVE_REGEN_MODEL)
-  : CREATIVE_MODEL;
+const activeModel = resolveCreativeModel(isRegen);
 console.log(`[creative-native] Model: ${activeModel} (${isRegen ? 'regeneration' : 'generation'})`);
+
+const messages = [ ...baseMessages ];
 if (isRegen) {
-  messages.push({ role: 'user', content: regenFeedback });
-  console.log('[creative-native] Regeneration from UI review agent feedback.');
-}
-
-let codeFileList: z.infer<typeof filesSchema> | null = null;
-let generationIndex = 0;
-const maxGenerationTurns = 8;
-let structuredOutputRetryCount = 0;
-const maxStructuredOutputRetries = 2;
-
-const creativeUsageTotals = createEmptyUsageAccumulator();
-
-while (true) {
-  generationIndex += 1;
-  if (generationIndex > maxGenerationTurns) {
-    throw new Error(`Generation exceeded ${maxGenerationTurns} turns without valid output.`);
+  const existingBundle = loadExistingCodeBundle(codeDirectoryPath);
+  const truncated = existingBundle.files.some((f) => f.truncated);
+  if (truncated) {
+    console.warn('[creative-native] Regen: one or more code files truncated for prompt context.');
   }
-  const regenSystemPrefix = isRegen
-    ? `You are fixing an existing HTML5/CSS/JS ad bundle from UI review feedback. Change only what is needed to resolve blockers; preserve working structure and assets where possible.
-
-`
-    : '';
-  const systemPrompt = `${regenSystemPrefix}You are an agent that invents modern interactive advertisement creatives.
-
-      Required stack: plain HTML5, CSS, and JavaScript only. No React, Vue, Svelte, no Vite/Webpack,
-      no Tailwind/DaisyUI/npm dependencies, no JSX/TSX, no build step. The result must open from disk
-      (file://) in a browser when index.html is loaded.
-
-      Create a 2D advertisement creative in a new format you invent.
-      create at least 4 differents versions of the creative for the different ad formats, each format should have a unique features and a unique look.
-      Graphic elements (fonts, colors, pictures) must follow only the JSON style guide from the user.
-      The layout and interaction design are up to you: fresh, modern, eye-catching, with animation and
-      interactivity where appropriate.
-      Only use one logo image by default the light theme only, if the logo is not visible in the light theme, use the dark theme.
-      the logo should remains visible and a good scale so it is not too small or too big, do not apply any filter to the logo.
-      Logo and product images are local files copied next to index.html under code/. Reference them with
-      relative paths (for example: ./brand-logo.svg or ./product.jpg). SVG logos are valid — use
-      <img src="./filename.svg">; raster logos/products may also be sent as vision context when base64 mode is on.
-
-      Output: a list of files with their contents. Paths must be relative to the project root.
-
-      You MUST output exactly these root files (no subfolders required for these three):
-      - index.html — viewport meta width=device-width; link to styles.css; script src app.js (defer recommended).
-      - styles.css — all presentation (no preprocessor).
-      - app.js — vanilla DOM scripting only (no import maps to npm).
-
-      ${buildCreativeAdFormatInstructions(adFormats)}
-
-      Optional: additional static assets only if needed (e.g. extra .svg), still no package.json or bundlers.
-
-      Fonts and colors: only those defined in the style guide. Ad copy in French.
-      Include at least one logo and one product image from the provided assets in the HTML/CSS/JS.
-      Do not add browser chrome: no zoom, fullscreen, or VR toggles in the creative UI.
-
-      The local design skills below are mandatory constraints.
-      Before returning final files, internally run a compliance check against these skills.
-      If any skill rule is not satisfied, keep refining and do not finalize.
-      Use only typography families listed in the style guide.
-      Use only hex colors listed in the style guide primary/secondary palettes.
-      Follow the local design skills below as mandatory constraints for layout, color, typography,
-      hierarchy, animation, and interaction decisions:
-      ${localDesignSkillGuidance}
-    `.trim();
-
-  const creativeCodeResponse = await withAnthropicRetry('creative generation', async () => {
-    const streamParams = {
-      max_tokens: maxOutputTokensForModel(activeModel),
-      system: systemPrompt,
-      messages,
-      model: activeModel,
-      output_config: {
-        format: zodOutputFormat(filesSchema)
-      },
-      ...(isRegen
-        ? {}
-        : {
-            thinking: {
-              type: 'enabled' as const,
-              budget_tokens: 100_000,
-              display: 'omitted' as const
-            },
-            tools: [
-              {
-                type: 'web_search_20250305' as const,
-                name: 'web_search' as const,
-                max_uses: 50
-              }
-            ]
-          })
-    };
-    const creativeCodeStream = await anthropicClient.messages.stream(streamParams);
-    return await creativeCodeStream.finalMessage();
-  });
-  addUsageToAccumulator(creativeUsageTotals, creativeCodeResponse.usage);
-  logReadableAnthropicCall(
-    describeAnthropicTurnForLogs(creativeCodeResponse.stop_reason, creativeCodeResponse.content),
-    creativeCodeResponse.usage ?? undefined
-  );
-  messages.push({ role: 'assistant', content: creativeCodeResponse.content });
-
-  if (creativeCodeResponse.stop_reason !== 'tool_use') {
-    if (creativeCodeResponse.parsed_output !== null && creativeCodeResponse.parsed_output.length > 0) {
-      const complianceCheck = validateCreativeSkillCompliance(creativeCodeResponse.parsed_output, prunedStyleGuide, assetFiles);
-      if (complianceCheck.ok) {
-        codeFileList = creativeCodeResponse.parsed_output;
-        break;
-      }
-
-      structuredOutputRetryCount += 1;
-      if (structuredOutputRetryCount > maxStructuredOutputRetries) {
-        throw new Error(`AI output failed skill compliance checks: ${complianceCheck.issues.join(' | ')}`);
-      }
-
-      messages.push({
-        role: 'user',
-        content:
-          `Your previous output is not compliant with mandatory skills/style-guide constraints: ${complianceCheck.issues.join(' ; ')}. `
-          + `Regenerate all files and fix every issue. Required ad sizes (px): ${adFormats.map((f) => `${String(f.width)}×${String(f.height)}`).join(', ')}.`
-      });
-      continue;
-    }
-
-    structuredOutputRetryCount += 1;
-    if (structuredOutputRetryCount > maxStructuredOutputRetries) {
-      throw new Error('AI returned no structured code output after retries.');
-    }
-
-    messages.push({
-      role: 'user',
-      content: `Your previous response did not include the required structured file list. Respond now with only valid structured output matching the expected schema. Do not call tools.`
-    });
-    continue;
-  }
-
   messages.push({
     role: 'user',
-    content:
-      'Continue: return the structured file list (index.html, styles.css, app.js) matching the schema. '
-      + `Respect every required ad size: ${adFormats.map((f) => `${String(f.width)}×${String(f.height)}`).join(', ')}. `
-      + 'No screenshot or preview tools are available.'
+    content: formatExistingBundleForPrompt(existingBundle)
   });
-  continue;
+  messages.push({ role: 'user', content: regenFeedback });
+  console.log('[creative-native] Corrective regen: patching existing index.html, styles.css, app.js.');
 }
 
-if (codeFileList === null || codeFileList.length === 0) {
-  throw new Error('Missing or empty code file list returned by AI.');
-}
+const genStart = Date.now();
+const codegenResult = await runCreativeCodegen({
+  anthropicClient,
+  model: activeModel,
+  isRegen,
+  repoRoot,
+  skillsText,
+  baseMessages: messages,
+  adFormats,
+  prunedStyleGuide,
+  assetFiles
+});
+const durationMsTotal = Date.now() - genStart;
+
+const codeFileList = codegenResult.files;
+const creativeUsageTotals = codegenResult.usage;
 
 mkdirSync(codeDirectoryPath, { recursive: true });
 
@@ -522,7 +270,9 @@ writeFileSync(
     ...creativeUsageTotals,
     model: activeModel,
     total_tokens_reported_sum: sumReportedTokens,
-    price_usd: cumulativePrices
+    price_usd: cumulativePrices,
+    duration_ms_total: durationMsTotal,
+    turn_timings: codegenResult.timings
   }, null, 2)}\n`,
   { encoding: 'utf8' }
 );
@@ -530,12 +280,15 @@ writeFileSync(
 const regenRoundRaw = process.env['CREATIVE_REGEN_REVIEW_ROUND']?.trim();
 const regenRound =
   regenRoundRaw !== undefined && regenRoundRaw.length > 0 ? Number.parseInt(regenRoundRaw, 10) : null;
+const turnNotes = codegenResult.timings.map((t) => `turn${String(t.turn)}=${String(t.duration_ms)}ms`).join(', ');
 const pipelineEntry = entryFromAccumulator({
   action: isRegen ? 'creative_regeneration' : 'creative_generation',
   agent: 'agents/gen-creative-code-native.mts',
   model: activeModel,
   acc: creativeUsageTotals,
-  review_round: Number.isFinite(regenRound ?? Number.NaN) ? regenRound : null
+  review_round: Number.isFinite(regenRound ?? Number.NaN) ? regenRound : null,
+  duration_ms: durationMsTotal,
+  ...(turnNotes.length > 0 ? { notes: turnNotes } : {})
 });
 const pipelineFile = appendPipelineUsage(directoryPath, pipelineEntry);
 logPipelineUsageToConsole(pipelineFile.entries[pipelineFile.entries.length - 1]!);
@@ -546,4 +299,5 @@ writeFileSync(
   { encoding: 'utf8' }
 );
 
+console.log(`[creative-native] Total duration: ${String(durationMsTotal)} ms`);
 console.log(`Output directory path: ${directoryPath}`);

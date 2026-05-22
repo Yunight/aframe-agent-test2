@@ -1,0 +1,28 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-05-22T09:39:09.594Z",
+  "deterministic_ok": true,
+  "audit": {
+    "satisfied": true,
+    "summary": "All assets pass strict brand audit. Logo SVG (logo-petit-bateau.svg) is the official wordmark from petit-bateau.fr; JPEG logo (A04P501D.jpg) is a product packshot from the official site, not a brand lockup but acceptable as secondary asset. All 6 product images are official packshots from petit-bateau.fr with authentic Petit Bateau styling (marinières, striped basics, colorful prints) aligned with brand identity and Les Journées Extraordinaires campaign context. Colors, typography, and primary/secondary palettes are internally consistent and plausible. No blockers detected.",
+    "findings": [],
+    "brave_retry_queries": {
+      "logos": [],
+      "products": []
+    }
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 8020,
+    "output_tokens": 171,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 8020,
+    "price_usd": {
+      "input": 0.00802,
+      "output": 0.000855,
+      "total": 0.008875
+    }
+  }
+}

@@ -99,6 +99,7 @@ function runNativeRegeneration (feedback: string, reviewRound: number): number {
       env: {
         ...process.env,
         CREATIVE_REGEN_FEEDBACK: feedback,
+        CREATIVE_REGEN_MODEL: 'claude-haiku-4-5-20251001',
         CREATIVE_REGEN_REVIEW_ROUND: String(reviewRound),
         CREATIVE_ASSETS_REVIEW_SKIP: '1',
         CREATIVE_UI_REVIEW_MAX_ROUNDS: '0',

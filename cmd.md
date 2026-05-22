@@ -78,8 +78,8 @@ Fichier central : **`output/<uuid>/pipeline-usage.json`** — une entrée par ac
 | `style_guide` | agents/gen-style-guide.mts | Opus | LLM |
 | `assets_review` | agents/creative-native-assets-review.mts | Haiku | LLM |
 | `assets_refresh` | lib/brave-image-assets.mts | — | 0 USD |
-| `creative_generation` | agents/gen-creative-code-native.mts | Opus | LLM |
-| `creative_regeneration` | agents/gen-creative-code-native.mts | Haiku | LLM (ajustement après review UI) |
+| `creative_generation` | agents/gen-creative-code-native.mts | `CREATIVE_MODEL` (déf. Opus) | LLM |
+| `creative_regeneration` | agents/gen-creative-code-native.mts | Haiku (forcé en review UI) | LLM — patch du bundle `code/` existant |
 | `screenshots` | lib/creative-native-playwright-screenshots.mts | — | 0 USD |
 | `ui_review` | agents/creative-native-ui-review.mts | Haiku | LLM |
 
@@ -130,6 +130,51 @@ node src/agents/gen-creative-code-native.mts <directory-uuid> --asset-input url
 ```
 
 Bypass garde (déconseillé) : `set CREATIVE_ASSETS_REVIEW_SKIP=1` avant la gen.
+
+**Recherche d’images** : les logos/produits sont trouvés à l’étape style guide (`web_search` Opus + **Brave Images API**), pas pendant `gen-creative-code-native`. La gen code n’utilise plus `web_search` — uniquement les assets locaux + le JSON style guide.
+
+#### Profils de génération code (vitesse / coût / qualité)
+
+| Profil | Variables suggérées | Usage |
+|--------|---------------------|--------|
+| **fast** | `CREATIVE_MODEL=claude-sonnet-4-6` `CREATIVE_THINKING_MODE=off` | Itération rapide |
+| **balanced** | `CREATIVE_MODEL=claude-sonnet-4-6` (gen) + regen Haiku par défaut | Bon compromis |
+| **quality** | défauts (`CREATIVE_MODEL=claude-opus-4-6`, thinking adaptive) | Livraison finale |
+
+Exemple profil balanced (1 format) :
+
+```bash
+set CREATIVE_MODEL=claude-sonnet-4-6
+set CREATIVE_AD_FORMATS=[{"id":"320x480","width":320,"height":480}]
+node src/agents/gen-creative-code-native.mts <directory-uuid> --asset-input url
+```
+
+### Variables d'environnement (génération code)
+
+| Variable | Défaut | Rôle |
+|----------|--------|------|
+| `CREATIVE_MODEL` | `claude-opus-4-6` | Modèle génération initiale (non regen) |
+| `CREATIVE_REGEN_MODEL` | `claude-haiku-4-5-20251001` | Modèle regen après review UI (forcé par `run-creative-native-ui-review.mts`). Sonnet si patch complexe. |
+| `CREATIVE_REGEN_MAX_FILE_CHARS` | `80000` | Taille max par fichier injecté en regen (index.html, styles.css, app.js) |
+| `CREATIVE_THINKING_MODE` | `adaptive` | `adaptive` \| `budget` \| `off` — extended thinking en gen initiale |
+| `CREATIVE_THINKING_BUDGET_TOKENS` | `32000` | Si `CREATIVE_THINKING_MODE=budget` |
+| `CREATIVE_PROMPT_CACHE` | activé | `0` = désactive le prompt caching sur le bloc skills statique |
+| `CREATIVE_USE_FULL_SKILLS` | — | `1` = injecte les 12 fichiers `.claude/.skills/` complets ; sinon checklist compacte |
+| `CREATIVE_TWO_PHASE` | — | `1` = plan JSON structuré puis génération HTML/CSS/JS |
+| `CREATIVE_PARALLEL_FORMATS` | — | `1` = une gen API par format IAB (2+ formats, hors arche), puis fusion |
+| `CREATIVE_AD_FORMATS` | 1er preset | JSON array des formats IAB à produire |
+
+Les métriques `duration_ms` / `turn_timings` sont écrites dans `creative-native-token-usage.json` et `pipeline-usage.json` (champ `duration_ms` par entrée).
+
+#### Régénération après review UI (patch, pas refonte)
+
+Quand `run-creative-native-ui-review.mts` relance `gen-creative-code-native.mts` :
+
+1. Le script lit le **bundle actuel** dans `output/<uuid>/code/` (`index.html`, `styles.css`, `app.js`) et l’envoie au modèle.
+2. Le system prompt regen demande une **édition minimale** (blockers uniquement), pas un nouveau concept créatif.
+3. L’agent review UI produit un `regeneration_prompt` de correctifs ciblés (CSS, taille logo, overflow, etc.).
+
+Pour des corrections difficiles : `set CREATIVE_REGEN_MODEL=claude-sonnet-4-6` avant la review UI (le spawn hérite sauf override explicite dans le script — le modèle Haiku reste forcé dans `run-creative-native-ui-review.mts` ; pour Sonnet, ajuster ce spawn ou lancer la regen manuellement avec `CREATIVE_REGEN_FEEDBACK`).
 
 ### Habillage vidéo 16:9 (à part)
 
@@ -191,6 +236,7 @@ Puis lancer `style-guide-ui` (Vite).
 | `BRAVE_PRODUCT_TARGET_COUNT` | `6` | Nombre cible de fichiers produit valides (≥ min px) |
 | `BRAVE_PRODUCT_MIN_CONTENT_LENGTH` | `30000` | Ignore URLs produit dont le HEAD `Content-Length` est trop petit (thumbs) |
 | `BRAVE_LOGO_CANDIDATE_POOL` | `30` | Candidats URL logo avant téléchargement |
+| `CREATIVE_OFFICIAL_LOGO_FETCH` | activé | `0` = ne pas scraper le logo header depuis brandURL/companyURL (Brave seul) |
 | `BRAVE_PRODUCT_MIN_REPORTED_W` | `400` | Bonus score Brave si `properties.width` ≥ cette valeur |
 | `BRAVE_PRODUCT_MIN_REPORTED_H` | `300` | Bonus score Brave si `properties.height` ≥ cette valeur |
 | `CREATIVE_ASSETS_LOGO_MIN_TRANSPARENT_RATIO` | `0.02` | Seuil faux « transparent » en mode strict uniquement |
@@ -206,7 +252,8 @@ Puis lancer `style-guide-ui` (Vite).
 | `CREATIVE_SCREENSHOT_ANIMATED_WAIT_MS` | `2500` | Délai capture `animated` |
 | `CREATIVE_SCREENSHOT_SETTLED_WAIT_MS` | `5000` | Délai capture `settled` |
 | `CREATIVE_REGEN_FEEDBACK` | — | Message injecté dans gen (usage interne, regen après review) |
-| `CREATIVE_REGEN_MODEL` | `claude-haiku-4-5-20251001` | Modèle regen créative (ajustement post-review UI) |
+| `CREATIVE_REGEN_MODEL` | `claude-haiku-4-5-20251001` | Modèle regen (patch bundle existant) |
+| `CREATIVE_REGEN_MAX_FILE_CHARS` | `80000` | Limite caractères par fichier envoyé en regen |
 | `CREATIVE_REGEN_REVIEW_ROUND` | — | Numéro de tour review pour l’entrée `creative_regeneration` |
 | `CREATIVE_OPUS_INPUT_USD_PER_M` | `5` | Tarif input Opus (pipeline-usage.json) |
 | `CREATIVE_OPUS_OUTPUT_USD_PER_M` | `25` | Tarif output Opus |
