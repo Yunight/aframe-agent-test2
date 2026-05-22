@@ -1,4 +1,4 @@
-import type { StyleGuide } from './gen-style-guide.mjs';
+import type { StyleGuide } from '../agents/gen-style-guide.mjs';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { z } from 'zod';
@@ -19,7 +19,7 @@ export const designSkillFiles = [
 ] as const;
 
 export function loadDesignSkillGuidance (repoRoot?: string): string {
-  const rootDir = repoRoot ?? join(import.meta.dirname, '..');
+  const rootDir = repoRoot ?? join(import.meta.dirname, '..', '..');
   const loadedSkills = designSkillFiles
     .map((relativePath) => {
       const absolutePath = join(rootDir, relativePath);

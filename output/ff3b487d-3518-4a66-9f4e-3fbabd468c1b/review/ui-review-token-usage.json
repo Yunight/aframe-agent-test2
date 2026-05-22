@@ -1,0 +1,59 @@
+{
+  "rounds": [
+    {
+      "api_calls": 1,
+      "input_tokens": 7466,
+      "output_tokens": 562,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "model": "claude-haiku-4-5-20251001",
+      "billed_input_tokens": 7466,
+      "price_usd": {
+        "input": 0.007466,
+        "output": 0.00281,
+        "total": 0.010276
+      }
+    },
+    {
+      "api_calls": 1,
+      "input_tokens": 8192,
+      "output_tokens": 2486,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "model": "claude-haiku-4-5-20251001",
+      "billed_input_tokens": 8192,
+      "price_usd": {
+        "input": 0.008192,
+        "output": 0.01243,
+        "total": 0.020622
+      }
+    },
+    {
+      "api_calls": 1,
+      "input_tokens": 8192,
+      "output_tokens": 1826,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "model": "claude-haiku-4-5-20251001",
+      "billed_input_tokens": 8192,
+      "price_usd": {
+        "input": 0.008192,
+        "output": 0.00913,
+        "total": 0.017322
+      }
+    }
+  ],
+  "totals": {
+    "api_calls": 3,
+    "input_tokens": 23850,
+    "output_tokens": 4874,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "billed_input_tokens": 23850,
+    "price_usd": {
+      "input": 0.02385,
+      "output": 0.02437,
+      "total": 0.04822
+    }
+  }
+}

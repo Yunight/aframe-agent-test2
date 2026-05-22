@@ -1,7 +1,9 @@
-import { withAnthropicRetry } from './anthropic-retry.mts';
-import type { StyleGuide } from './gen-style-guide.mts';
-import type { AdFormatPreset, AdFormatSelection } from './studio-ad-formats.mts';
-import { loadAdFormatPresets, parseCreativeAdFormatsFromEnv } from './studio-ad-formats.mts';
+import { withAnthropicRetry } from '../lib/anthropic-retry.mts';
+import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
+import type { StyleGuide } from './gen-style-guide.mjs';
+import type { AdFormatPreset, AdFormatSelection } from '../lib/studio-ad-formats.mts';
+import { sniffImageMimeFromBuffer } from '../lib/image-mime-sniff.mts';
+import { loadAdFormatPresets, parseCreativeAdFormatsFromEnv } from '../lib/studio-ad-formats.mts';
 import { basename, dirname, extname, join } from 'node:path';
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { config as loadDotenv } from 'dotenv';
@@ -346,7 +348,7 @@ const designSkillFiles = [
 ] as const;
 
 function loadDesignSkillGuidance(): string {
-  const rootDir = join(import.meta.dirname, '..');
+  const rootDir = repoRootFromModuleDir(import.meta.dirname);
   const loadedSkills = designSkillFiles
     .map((relativePath) => {
       const absolutePath = join(rootDir, relativePath);
@@ -531,7 +533,7 @@ function validateCreativeSkillCompliance(
   return { ok: true };
 }
 
-loadDotenv({ path: join(import.meta.dirname, '..', '.env') });
+loadDotenv({ path: join(repoRootFromModuleDir(import.meta.dirname), '.env') });
 
 const directoryUuid = process.argv[2];
 
@@ -561,9 +563,9 @@ for (let i = 0; i < cliArguments.length; i += 1) {
   throw new Error(`Unknown argument "${argument}". Allowed option: --asset-input`);
 }
 
-const directoryPath = join(import.meta.dirname, '..', 'output', directoryUuid);
+const repoRoot = repoRootFromModuleDir(import.meta.dirname);
+const directoryPath = join(repoRoot, 'output', directoryUuid);
 const codeDirectoryPath = join(directoryPath, 'code');
-const repoRoot = join(import.meta.dirname, '..');
 const adFormatPresets = loadAdFormatPresets(repoRoot);
 const adFormats = parseHabillageAdFormatsFromEnv(process.env['CREATIVE_AD_FORMATS'], adFormatPresets);
 const productsDirectoryPath = join(directoryPath, 'products');
@@ -611,7 +613,9 @@ for (const fileType of [ 'logos', 'products' ] as const) {
     }
 
     const filePath = join(subdirectoryPath, fileName);
-    const fileMimeType = mime.getType(fileName);
+    const fileBuf = readFileSync(filePath);
+    const sniffedMime = sniffImageMimeFromBuffer(fileBuf);
+    const fileMimeType = sniffedMime ?? mime.getType(fileName);
 
     if (fileMimeType === null) {
       throw new Error(`Unable to determine MIME type for file ${fileName}`);
@@ -619,8 +623,8 @@ for (const fileType of [ 'logos', 'products' ] as const) {
     if (contains(VIDEO_MIME_TYPES, fileMimeType)) {
       continue;
     }
-    if (!contains([ 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ], fileMimeType)) {
-      throw new Error(`Unsupported MIME type ${fileMimeType} for file ${fileName}`);
+    if (sniffedMime === null || !contains([ 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ], sniffedMime)) {
+      throw new Error(`Unsupported or undetectable image MIME for file ${fileName}`);
     }
 
     const { width, height } = await imageSizeFromFile(filePath);
@@ -640,13 +644,12 @@ for (const fileType of [ 'logos', 'products' ] as const) {
     });
 
     if (assetInputMode === 'base64') {
-      const fileContentBase64 = readFileSync(filePath).toString('base64');
       fileMessages.push({
         type: 'image',
         source: {
           type: 'base64',
-          media_type: fileMimeType,
-          data: fileContentBase64
+          media_type: sniffedMime,
+          data: fileBuf.toString('base64')
         }
       });
     }

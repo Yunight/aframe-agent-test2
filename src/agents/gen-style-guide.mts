@@ -1,18 +1,27 @@
-import { join, basename, extname } from 'node:path';
-import { mkdirSync, createWriteStream, writeFileSync, readFileSync, existsSync } from 'node:fs';
-import { Readable } from 'node:stream';
-import { pipeline } from 'node:stream/promises';
+import {
+  braveLogoCandidatePool,
+  braveProductCandidatePool,
+  braveProductTargetCount,
+  buildLogoSearchQueries,
+  buildProductSearchQueries,
+  collectAndDownloadValidAssetUrls,
+  officialHostsFromContext
+} from '../lib/brave-image-assets.mts';
+import { basename, join, extname } from 'node:path';
+import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { config as loadDotenv } from 'dotenv';
 import { Anthropic } from '@anthropic-ai/sdk';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
 import { z } from 'zod';
-import { withAnthropicRetry } from './anthropic-retry.mts';
+import { withAnthropicRetry } from '../lib/anthropic-retry.mts';
+import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
+import { toStyleGuideHex } from '../lib/style-guide-colors.mts';
 import {
   appendPipelineUsage,
   entryFromAccumulator,
   logPipelineUsageToConsole
-} from './creative-pipeline-usage.mts';
+} from '../lib/creative-pipeline-usage.mts';
 
 const STYLE_GUIDE_MODEL = 'claude-opus-4-7';
 
@@ -239,51 +248,6 @@ function describeAnthropicTurnForLogs (
 }
 
 
-interface BraveImageResult {
-  type: 'image_result';
-  title: string;
-  url: string;
-  source: string;
-  page_fetched: string;
-  thumbnail: { src: string };
-  properties: {
-    url: string;
-    placeholder: string;
-  };
-  meta_url: {
-    scheme: string;
-    netloc: string;
-    hostname: string;
-    favicon: string;
-    path: string;
-  };
-}
-
-interface BraveImageSearchResponse {
-  type: 'images';
-  query: {
-    original: string;
-    altered?: string;
-    spellcheck_off?: boolean;
-    show_strict_warning?: boolean;
-  };
-  results: BraveImageResult[];
-}
-
-const allowedImageMimeTypes = new Set([
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'image/gif'
-]);
-
-const mimeTypeToExtension: Record<string, string> = {
-  'image/jpeg': '.jpg',
-  'image/png': '.png',
-  'image/webp': '.webp',
-  'image/gif': '.gif'
-};
-
 const DEFAULT_STYLE_GUIDE_BRAND = 'Peugeot';
 const DEFAULT_STYLE_GUIDE_CONTEXT = 'the new EV GTI 208 they are launching';
 
@@ -333,7 +297,7 @@ const skillFiles = [
 ] as const;
 
 function loadSkillGuidance (): string {
-  const rootDir = join(import.meta.dirname, '..');
+  const rootDir = repoRootFromModuleDir(import.meta.dirname);
   const loadedSkills = skillFiles
     .map((relativePath) => {
       const absolutePath = join(rootDir, relativePath);
@@ -355,172 +319,11 @@ function loadSkillGuidance (): string {
   return loadedSkills.join('\n\n');
 }
 
-function sanitizeFilename (name: string): string {
-  return name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 200);
-}
-
-async function downloadFileToFileSystem (url: string, destinationPath: string): Promise<void> {
-  const response = await fetch(url, {
-    headers: {
-      Accept: '*/*'
-    }
-  });
-
-  if (!response.ok) {
-    throw new Error(`Downloading of file at URL: ${url} failed with status: ${response.status}`);
-  }
-
-  const body = response.body;
-
-  if (body === null) {
-    throw new Error(`Downloading of file at URL: ${url} returned empty body`);
-  }
-
-  const fileFetchStream = Readable.fromWeb(body);
-  const fileWriteStream = createWriteStream(destinationPath);
-  await pipeline(fileFetchStream, fileWriteStream);
-}
-
-async function resolveRemoteImageMetadata(url: string): Promise<{ mimeType: string, extension: string }> {
-  const headResponse = await fetch(url, {
-    method: 'HEAD',
-    headers: {
-      Accept: 'image/*'
-    }
-  });
-
-  if (!headResponse.ok) {
-    throw new Error(`Unable to validate image URL ${url}. HEAD request failed with status ${headResponse.status}`);
-  }
-
-  const contentTypeHeader = headResponse.headers.get('content-type') ?? '';
-  const mimeType = contentTypeHeader.split(';')[0]?.trim().toLowerCase() ?? '';
-
-  if (!allowedImageMimeTypes.has(mimeType)) {
-    throw new Error(`URL ${url} has unsupported content-type "${contentTypeHeader}"`);
-  }
-
-  const extension = mimeTypeToExtension[mimeType];
-  if (extension === undefined) {
-    throw new Error(`Unsupported MIME type "${mimeType}" for URL ${url}`);
-  }
-
-  return { mimeType, extension };
-}
-
-async function braveImageSearch (
-  { query, num = 10 }:
-  { query: string, num?: number }
-): Promise<BraveImageResult[]> {
-  const apiKey = process.env['BRAVE_API_KEY']?.trim();
-  if (apiKey === undefined || apiKey.length === 0) {
-    throw new Error('Missing BRAVE_API_KEY for Brave image search.');
-  }
-
-  const params = new URLSearchParams();
-
-  params.set('q', query);
-  params.set('count', Math.min(Math.max(num, 1), 200).toString());
-  params.set('search_lang', 'fr');
-  params.set('country', 'fr');
-  params.set('safesearch', 'strict');
-  params.set('spellcheck', '0');
-
-  const url = `https://api.search.brave.com/res/v1/images/search?${params.toString()}`;
-
-  const response = await fetch(url, {
-    headers: {
-      Accept: 'application/json',
-      'X-Subscription-Token': apiKey
-    }
-  });
-
-  if (!response.ok) {
-    throw new Error(`Brave image search failed: ${response.status} and error: ${await response.text()}`);
-  }
-
-  return ((await response.json()) as BraveImageSearchResponse).results;
-}
-
-function pickDirectImageUrl (r: BraveImageResult): string | null {
-  const fromProps = r.properties?.url?.trim();
-  if (fromProps !== undefined && fromProps.length > 0 && /^https?:\/\//iu.test(fromProps)) {
-    return fromProps;
-  }
-  const direct = r.url?.trim();
-  if (direct.length > 0 && /^https?:\/\//iu.test(direct)) {
-    return direct;
-  }
-  return null;
-}
-
-async function gatherValidatedImageUrls (
-  queries: readonly string[],
-  options: { maxResults: number, perQuery: number }
-): Promise<string[]> {
-  const urls: string[] = [];
-  const seen = new Set<string>();
-  for (const query of queries) {
-    let results: BraveImageResult[];
-    try {
-      results = await braveImageSearch({ query, num: options.perQuery });
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err);
-      console.warn(`[Brave images] query failed "${query}": ${msg}`);
-      continue;
-    }
-    for (const row of results) {
-      const candidate = pickDirectImageUrl(row);
-      if (candidate === null || seen.has(candidate)) {
-        continue;
-      }
-      try {
-        await resolveRemoteImageMetadata(candidate);
-        seen.add(candidate);
-        urls.push(candidate);
-        if (urls.length >= options.maxResults) {
-          return urls;
-        }
-      } catch {
-        /* URL not a usable image */
-      }
-    }
-  }
-  return urls;
-}
-
-interface ImageSearchContext {
-  brandName: string;
-  companyName: string;
-  productName: string;
-}
-
-function buildLogoSearchQueries (base: ImageSearchContext): string[] {
-  const brand = base.brandName.trim();
-  const company = base.companyName.trim();
-  const queries = [
-    `${brand} logo PNG transparent`,
-    `${brand} logo officiel`,
-    `${brand} wordmark logo`
-  ];
-  if (company.length > 0 && company.toLowerCase() !== brand.toLowerCase()) {
-    queries.push(`${company} ${brand} logo`);
-  }
-  return queries;
-}
-
-function buildProductSearchQueries (base: ImageSearchContext): string[] {
-  const brand = base.brandName.trim();
-  const product = base.productName.trim();
-  if (product.length > 0) {
-    return [
-      `${brand} ${product} photo produit`,
-      `${product} packshot`,
-      `${brand} ${product} marketing`
-    ];
-  }
-  return [ `${brand} produit photo`, `${brand} gamme produit` ];
-}
+/** CSS hex with mandatory `#` prefix (model may return bare RRGGBB). */
+const styleGuideHexColor = z
+  .string()
+  .transform((value) => toStyleGuideHex(value))
+  .pipe(z.string().regex(/^#[0-9A-Fa-f]{6}$/u, 'Expected #RRGGBB hex color'));
 
 const brandStyleGuideSchema = z.object({
   companyName: z.string().describe('Company name.'),
@@ -532,8 +335,12 @@ const brandStyleGuideSchema = z.object({
   logoFileUrls: z.array(z.url()).describe('List of brand image logo URLs in different variants.'),
   productName: z.string().describe('Name of product if one is specified'),
   productPictureUrls: z.array(z.url()).describe('List of product pictures or packshots URLs in different variants.'),
-  primaryColorPalette: z.array(z.hex()).describe('List of hexadecimal codes for the colors of primary color palette in descending order of importants.'),
-  secondaryColorPalette: z.array(z.hex()).describe('List of hexadecimal codes for the colors of secondary color palette in descending order of importants.'),
+  primaryColorPalette: z
+    .array(styleGuideHexColor)
+    .describe('List of #RRGGBB hex codes for the primary color palette, most important first.'),
+  secondaryColorPalette: z
+    .array(styleGuideHexColor)
+    .describe('List of #RRGGBB hex codes for the secondary color palette, most important first.'),
   typography: z.array(
     z.object({
       fontFamily: z.string().describe('Font family name'),
@@ -543,19 +350,48 @@ const brandStyleGuideSchema = z.object({
     })
   ),
   brandVision: z.string().describe('Direction taken by the brand.'),
-  brandValues: z.string().describe('What does the brand or company stand for?')
+  brandValues: z.string().describe('What does the brand or company stand for?'),
+  logoImageSearchQueries: z
+    .array(z.string())
+    .default([])
+    .describe('Brave Image Search queries for the official logo (filled by the model at generation time).'),
+  productImageSearchQueries: z
+    .array(z.string())
+    .default([])
+    .describe('Brave Image Search queries for official product/packshot images.')
 })
   .describe('Brand style guide object')
   .strict();
 
+const logoImageSearchQueriesModel = z
+  .array(z.string().min(5))
+  .min(3)
+  .max(12)
+  .describe(
+    '3-12 Brave Image Search queries to find the official logo. Prefer site:hostname from brandURL/companyURL, inurl:logo, filetype:svg. No third-party scraper sites.'
+  );
+
+const productImageSearchQueriesModel = z
+  .array(z.string().min(5))
+  .min(3)
+  .max(15)
+  .describe(
+    '3-15 Brave Image Search queries for official product/packshot images. Prefer site:official host, packshot, key art; avoid thumbnails and wallpapers unless gaming.'
+  );
+
 export type StyleGuide = z.infer<typeof brandStyleGuideSchema>;
 
-const brandStyleGuideModelSchema = brandStyleGuideSchema.omit({
-  logoFileUrls: true,
-  productPictureUrls: true
-});
+const brandStyleGuideModelSchema = brandStyleGuideSchema
+  .omit({
+    logoFileUrls: true,
+    productPictureUrls: true
+  })
+  .extend({
+    logoImageSearchQueries: logoImageSearchQueriesModel,
+    productImageSearchQueries: productImageSearchQueriesModel
+  });
 
-loadDotenv({ path: join(import.meta.dirname, '..', '.env') });
+loadDotenv({ path: join(repoRootFromModuleDir(import.meta.dirname), '.env') });
 const anthropicApiKey = process.env['ANTHROPIC_API_KEY'];
 if (anthropicApiKey === undefined || anthropicApiKey.trim().length === 0) {
   throw new Error('Missing ANTHROPIC_API_KEY. Set it in project root .env or export it in your shell.');
@@ -603,11 +439,24 @@ while (true) {
       Make sure to understand who the company or brand is and what the context is.
       If a product name or category is specified analyse the problem with it in mind.
 
-      Do not invent or guess direct image URLs for logos or product photos. Those assets are collected
-      separately after your JSON using the Brave Images API from search queries derived from the brand
-      and product fields you output.
-      the logo should be a single light mode version, it must be the most recent one available and a transparent PNG file, check the mimetype to avoid the fake transparency.
+      Do not invent or guess direct image URLs for logos or product photos. Logos and product images are
+      downloaded after your JSON via the Brave Images API using logoImageSearchQueries and productImageSearchQueries.
+
+      Logo (critical):
+      - Use web_search to find the real logo asset page on companyURL and brandURL (paths like /logo, /brand, /identite-visuelle, /press, /media).
+      - Fill logoImageSearchQueries with 3-12 highly specific Brave queries discovered from that research. Put the best queries first.
+      - Every query should target the official site: use site:hostname, inurl:logo, filetype:svg or filetype:png when appropriate.
+      - Never use KindPNG, PNGaaa, Pinterest, or generic "transparent logo PNG" without site:official host.
+      - Opaque PNG/JPEG on brand background and official SVG wordmarks are valid.
+
+      Product images:
+      - Use web_search for official product pages, press kits, and catalog imagery on brandURL.
+      - Fill productImageSearchQueries with 3-15 queries: site:official host, product name, packshot, official photo, key art.
+      - Avoid wallpaper, thumbnail, screenshot aggregator URLs in your queries (do not search gaming-cdn thumbs for retail brands).
+
+      companyURL and brandURL must be valid canonical HTTPS URLs from web_search (not guessed).
       When specifying colors, always check that the color exists and matches the one described in the official sources.
+      Every entry in primaryColorPalette and secondaryColorPalette must be a CSS hex with the # prefix (e.g. #1F4E8C, not 1F4E8C).
 
       Use web_search for company/brand facts, official pages, typography and color references only.
       keep it simple and clean for visual direction in text (no image URLs in your output schema for assets).
@@ -667,104 +516,63 @@ if (styleGuideFromModel === null) {
   throw new Error('Empty style guide response');
 }
 
-console.log('[Brave images] Collecting logo candidates…');
-const logoFileUrls = await gatherValidatedImageUrls(buildLogoSearchQueries(styleGuideFromModel), {
-  maxResults: 2,
-  perQuery: 10
-});
-console.log('[Brave images] Collecting product photo candidates…');
-const productPictureUrls = await gatherValidatedImageUrls(buildProductSearchQueries(styleGuideFromModel), {
-  maxResults: 8,
-  perQuery: 10
-});
-
-if (logoFileUrls.length === 0 || productPictureUrls.length === 0) {
-  throw new Error(
-    `Brave image search did not return enough valid image URLs (logos: ${logoFileUrls.length}, products: ${productPictureUrls.length}).`
-  );
-}
-
-const finalMessageContent: StyleGuide = brandStyleGuideSchema.parse({
-  ...styleGuideFromModel,
-  logoFileUrls,
-  productPictureUrls
-});
-
 const directoryUuid = randomUUID();
 const outputDirectoryName = directoryUuid;
-const directoryPath = join(import.meta.dirname, '..', 'output', outputDirectoryName);
+const directoryPath = join(repoRootFromModuleDir(import.meta.dirname), 'output', outputDirectoryName);
 
 console.log(`Output directory path: ${directoryPath}`);
 console.log('Download assets: required');
 
 mkdirSync(directoryPath);
 
-const downloadedAssetCounts: Record<'logos' | 'products', number> = {
-  logos: 0,
-  products: 0
+const imageContext = {
+  brandName: styleGuideFromModel.brandName,
+  companyName: styleGuideFromModel.companyName,
+  productName: styleGuideFromModel.productName,
+  brandURL: styleGuideFromModel.brandURL,
+  companyURL: styleGuideFromModel.companyURL,
+  logoImageSearchQueries: styleGuideFromModel.logoImageSearchQueries,
+  productImageSearchQueries: styleGuideFromModel.productImageSearchQueries
 };
-const failedAssetDownloads: Array<{ fileType: 'logos' | 'products'; url: string; reason: string }> = [];
 
-for (const fileType of [ 'logos', 'products' ] as const) {
-  const fileUrls = (fileType === 'logos'
-    ? finalMessageContent?.logoFileUrls
-    : fileType === 'products'
-      ? finalMessageContent?.productPictureUrls
-      : []
-  ) ?? [];
-
-  const subdirectoryPath = join(directoryPath, fileType);
-  mkdirSync(subdirectoryPath);
-
-  for (const fileUrl of fileUrls) {
-    const logoFileName = basename(fileUrl);
-    const logoFileNameSanitized = sanitizeFilename(logoFileName);
-    const originalExtension = extname(logoFileNameSanitized).toLowerCase();
-
-    try {
-      const { mimeType, extension } = await resolveRemoteImageMetadata(fileUrl);
-      const resolvedFileName = originalExtension === extension
-        ? logoFileNameSanitized
-        : `${logoFileNameSanitized.replace(/\.[^.]+$/, '')}${extension}`;
-      const filePath = join(subdirectoryPath, resolvedFileName);
-
-      if (originalExtension !== extension) {
-        console.warn(`[download] Extension mismatch for ${fileUrl}. Original "${originalExtension || 'none'}", remote "${mimeType}". Saving as ${resolvedFileName}.`);
-      }
-
-      console.log(`Downloading ${filePath} ...`);
-      await downloadFileToFileSystem(fileUrl, filePath);
-      downloadedAssetCounts[fileType] += 1;
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error(err);
-        failedAssetDownloads.push({
-          fileType,
-          url: fileUrl,
-          reason: err.message
-        });
-      }
-    }
+console.log('[Brave images] Collecting logo candidates…');
+const logoDownload = await collectAndDownloadValidAssetUrls(
+  'logos',
+  directoryPath,
+  buildLogoSearchQueries(imageContext),
+  {
+    targetCount: 2,
+    candidatePool: braveLogoCandidatePool(),
+    clearFolder: true,
+    officialHosts: officialHostsFromContext(imageContext)
   }
-}
+);
+
+console.log('[Brave images] Collecting product photo candidates…');
+const productDownload = await collectAndDownloadValidAssetUrls(
+  'products',
+  directoryPath,
+  buildProductSearchQueries(imageContext),
+  {
+    targetCount: braveProductTargetCount(),
+    candidatePool: braveProductCandidatePool(),
+    clearFolder: true,
+    officialHosts: officialHostsFromContext(imageContext)
+  }
+);
 
 const minimumAssetsPerType = 1;
-const missingTypes = (Object.entries(downloadedAssetCounts) as Array<[ 'logos' | 'products', number ]>)
-  .filter(([, count]) => count < minimumAssetsPerType)
-  .map(([type, count]) => `${type}: ${count}/${minimumAssetsPerType}`);
-
-if (missingTypes.length > 0) {
-  const failedList = failedAssetDownloads.length === 0
-    ? 'none'
-    : failedAssetDownloads
-      .map((entry) => `${entry.fileType} | ${entry.url} | ${entry.reason}`)
-      .join('\n');
+if (logoDownload.count < minimumAssetsPerType || productDownload.count < minimumAssetsPerType) {
   throw new Error(
-    `Asset download requirements not met (${missingTypes.join(', ')}).\n` +
-    `Downloaded counts: logos=${downloadedAssetCounts.logos}, products=${downloadedAssetCounts.products}\n` +
-    `Failed downloads:\n${failedList}`
+    `Asset download requirements not met (logos: ${String(logoDownload.count)}/${String(minimumAssetsPerType)}, products: ${String(productDownload.count)}/${String(minimumAssetsPerType)}).`
   );
 }
+
+const finalMessageContent: StyleGuide = brandStyleGuideSchema.parse({
+  ...styleGuideFromModel,
+  logoFileUrls: logoDownload.downloadedUrls,
+  productPictureUrls: productDownload.downloadedUrls
+});
 
 const styleGuideFilePath = join(directoryPath, 'style-guide.json');
 writeFileSync(
@@ -777,7 +585,7 @@ logAnthropicUsageAndCost(basename(import.meta.filename, extname(import.meta.file
 
 const styleGuidePipelineEntry = entryFromAccumulator({
   action: 'style_guide',
-  agent: 'gen-style-guide.mts',
+  agent: 'agents/gen-style-guide.mts',
   model: STYLE_GUIDE_MODEL,
   acc: apiUsageTotals
 });

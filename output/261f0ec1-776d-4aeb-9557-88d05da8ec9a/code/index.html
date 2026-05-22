@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>celio* x McLaren Racing – Collection Capsule</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="ad-container" id="adContainer">
+
+    <!-- ===== V1: VITESSE — Animated speed lines + dramatic hero reveal ===== -->
+    <section class="ad-v v1 active" id="v1" data-version="1">
+      <div class="v1-speed-lines" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="v1-hero">
+        <img src="./191791-956-LNUMCL1_BLACK-WEB3-2.jpg" alt="Veste noire McLaren Racing, coupe moderne avec accents papaya orange" class="v1-hero-img">
+      </div>
+      <div class="v1-gradient" aria-hidden="true"></div>
+      <div class="v1-top">
+        <img src="./logo.DMQGbcqd_2qp3qb.svg" alt="celio" class="logo-main">
+        <img src="./activewear-logo-min.png" alt="celio activewear" class="v1-collab-badge">
+      </div>
+      <div class="v1-tag mono-text">MCL39 — 2024</div>
+      <div class="v1-bottom">
+        <h2 class="v1-title">celio* ×<br>McLaren Racing</h2>
+        <p class="v1-sub">Né pour la piste.</p>
+        <a href="https://www.celio.com/fr-fr/c/collabs-mclaren" class="cta cta-filled" target="_blank" rel="noopener">Découvrir la collection</a>
+      </div>
+    </section>
+
+    <!-- ===== V2: GRILLE — F1 position counter + checkered flag motif ===== -->
+    <section class="ad-v v2" id="v2" data-version="2">
+      <div class="v2-grid-bg" aria-hidden="true"></div>
+      <div class="v2-header">
+        <img src="./logo.DMQGbcqd_2qp3qb.svg" alt="celio" class="logo-main">
+        <span class="v2-collab mono-text">× MCLAREN</span>
+      </div>
+      <div class="v2-pos">
+        <span class="v2-p mono-text">P</span>
+        <span class="v2-num mono-text" id="v2Counter">1</span>
+      </div>
+      <div class="v2-card">
+        <div class="v2-checker" aria-hidden="true"></div>
+        <img src="./191791-956-LNUMCL1_BLACK-WEB3-3.jpg" alt="Veste McLaren Racing vue dos, logo McLaren brodé" class="v2-card-img">
+      </div>
+      <div class="v2-meta">
+        <span class="v2-name mono-text">VESTE MCLAREN RACING</span>
+        <span class="v2-ref mono-text">REF. MCL39-BLK</span>
+      </div>
+      <p class="v2-tagline">Prêt à passer<br>en pole position</p>
+      <a href="https://www.celio.com/fr-fr/c/collabs-mclaren" class="cta cta-outline" target="_blank" rel="noopener">Acheter maintenant</a>
+    </section>
+
+    <!-- ===== V3: GALERIE — Touch-swipeable product carousel ===== -->
+    <section class="ad-v v3" id="v3" data-version="3">
+      <div class="v3-header">
+        <img src="./logo.DMQGbcqd_2qp3qb.svg" alt="celio" class="logo-main">
+        <span class="v3-label mono-text">COLLECTION CAPSULE</span>
+      </div>
+      <div class="v3-carousel-frame">
+        <div class="v3-track" id="v3Track">
+          <div class="v3-slide"><img src="./191791-956-LNUMCL1_BLACK-WEB3-2.jpg" alt="Veste McLaren Racing vue face"></div>
+          <div class="v3-slide"><img src="./191791-956-LNUMCL1_BLACK-WEB3-4.jpg" alt="Veste McLaren Racing vue trois-quarts avec détails coutures"></div>
+          <div class="v3-slide"><img src="./191791-956-LNUMCL1_BLACK-WEB3-5.jpg" alt="Veste McLaren Racing gros plan matière technique"></div>
+          <div class="v3-slide"><img src="./191791-956-LNUMCL1_BLACK-WEB3-9.jpg" alt="Veste McLaren Racing vue lifestyle"></div>
+        </div>
+        <div class="v3-indicators">
+          <div class="v3-dots" id="v3Dots">
+            <span class="v3-dot active" data-idx="0"></span>
+            <span class="v3-dot" data-idx="1"></span>
+            <span class="v3-dot" data-idx="2"></span>
+            <span class="v3-dot" data-idx="3"></span>
+          </div>
+          <span class="v3-count mono-text"><span id="v3Num">01</span> / 04</span>
+        </div>
+      </div>
+      <div class="v3-foot">
+        <h3 class="v3-title">celio* × McLaren Racing</h3>
+        <p class="v3-desc">La performance au quotidien.</p>
+        <a href="https://www.celio.com/fr-fr/c/collabs-mclaren" class="cta cta-text" target="_blank" rel="noopener">Voir la collection →</a>
+      </div>
+    </section>
+
+    <!-- ===== V4: IMPACT — Interactive 3D tilt on product image ===== -->
+    <section class="ad-v v4" id="v4" data-version="4">
+      <div class="v4-stripe" aria-hidden="true"></div>
+      <div class="v4-inner">
+        <div class="v4-header">
+          <img src="./logo.DMQGbcqd_2qp3qb.svg" alt="celio" class="logo-main">
+        </div>
+        <div class="v4-tilt" id="v4Tilt">
+          <img src="./191791-956-LNUMCL1_BLACK-WEB3-6.jpg" alt="Veste McLaren Racing détail zip et finitions papaya" class="v4-tilt-img">
+          <div class="v4-tilt-tag"><span class="mono-text">MCL39</span></div>
+        </div>
+        <div class="v4-copy">
+          <h2 class="v4-headline">Née pour<br>la piste.</h2>
+          <div class="v4-bar" aria-hidden="true"></div>
+          <p class="v4-body">Collection capsule<br>celio* × McLaren Racing</p>
+        </div>
+        <a href="https://www.celio.com/fr-fr/c/collabs-mclaren" class="cta cta-icon" target="_blank" rel="noopener">
+          <span>Explorer</span>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- ===== FORMAT SWITCHER ===== -->
+    <nav class="fmt-nav" id="fmtNav" aria-label="Formats publicitaires">
+      <button class="fmt-btn active" data-v="1" aria-label="Format 1" aria-pressed="true"><span class="mono-text">01</span></button>
+      <button class="fmt-btn" data-v="2" aria-label="Format 2" aria-pressed="false"><span class="mono-text">02</span></button>
+      <button class="fmt-btn" data-v="3" aria-label="Format 3" aria-pressed="false"><span class="mono-text">03</span></button>
+      <button class="fmt-btn" data-v="4" aria-label="Format 4" aria-pressed="false"><span class="mono-text">04</span></button>
+    </nav>
+
+  </div>
+</body>
+</html>

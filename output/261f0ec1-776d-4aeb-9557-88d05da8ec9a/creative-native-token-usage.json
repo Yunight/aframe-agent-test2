@@ -1,0 +1,14 @@
+{
+  "api_calls": 2,
+  "input_tokens": 63246,
+  "output_tokens": 55047,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "model": "claude-opus-4-6",
+  "total_tokens_reported_sum": 118293,
+  "price_usd": {
+    "input": 0.31623,
+    "output": 1.376175,
+    "total": 1.692405
+  }
+}

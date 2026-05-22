@@ -1,0 +1,13 @@
+{
+  "assets_review_rounds_run": 2,
+  "max_assets_review_rounds": 3,
+  "post_audit_refresh": false,
+  "satisfied": true,
+  "summary": "All assets pass audit. Logos (SVG + PNG) are hosted on official celio.com CDN and correctly represent the celio* brand. The 'activewear-logo-min.png' is a faint raster variant suitable for accessible fallback. Product images (6 packshots) are high-quality, official celio.com e-commerce assets depicting the McLaren Racing capsule jacket in full detail, studio, and lifestyle contexts. Colors (#FF8000 papaya orange, #000000 black, #FFFFFF white) and McLaren F1 racing motifs (checkered flag, MCL39, 'Born for the track', 'Formula 1 Team') are consistently applied. All assets are readable at small banner sizes and suitable for HTML5 display ad generation.",
+  "findings": [],
+  "brave_retry_queries": {
+    "logos": [],
+    "products": []
+  },
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\261f0ec1-776d-4aeb-9557-88d05da8ec9a\\pipeline-usage.json"
+}

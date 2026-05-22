@@ -280,7 +280,7 @@ export async function captureCreativeNativeScreenshots (
       ledgerDir,
       entryZeroCost({
         action: 'screenshots',
-        agent: 'creative-native-playwright-screenshots.mts',
+        agent: 'lib/creative-native-playwright-screenshots.mts',
         review_round: options.reviewRound ?? null,
         notes
       })

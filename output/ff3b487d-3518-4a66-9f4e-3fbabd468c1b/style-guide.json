@@ -1,0 +1,105 @@
+{
+  "companyName": "The LEGO Group",
+  "companyContext": "Danish family-owned company founded in 1932 in Billund, Denmark, that designs, manufactures and sells construction toys based on its iconic interlocking plastic brick system, alongside themed sets, minifigures, video games, films and LEGOLAND parks.",
+  "companyURL": "https://www.lego.com",
+  "brandName": "LEGO",
+  "brandContext": "LEGO is the master brand for the construction toy system, minifigures and themed product lines. The 'LEGO Editions' sub-theme launched in 2026 to celebrate the FIFA World Cup with the first-ever official LEGO minifigures of football legends Lionel Messi, Cristiano Ronaldo, Kylian Mbappé and Vinícius Júnior, available in 'Football Highlights' letter-shaped diorama sets and larger 'Football Legend' display sets.",
+  "brandURL": "https://www.lego.com/en-us/categories/football",
+  "logoFileUrls": [
+    "https://assets.lego.com/logos/v8.6.0/brand-legoinsiders-black.svg",
+    "https://www.lego.com/cdn/cs/aboutus/assets/blt39a30c18df3b0931/logo-lego-house.jpg?disable=upscale&width=720&quality=50"
+  ],
+  "productName": "LEGO Editions – Football Legends (Légende du foot): Messi, Ronaldo, Mbappé & Vini Jr.",
+  "productPictureUrls": [
+    "https://www.lego.com/cdn/cs/set/assets/blt92b9ec933bd790fc/43020_Prod.png?fit=bounds&format=jpg&quality=80&width=1500&height=1500&dpr=1",
+    "https://www.lego.com/cdn/cs/set/assets/bltb4df7ffe091cfe82/blt4040f2bc95e1380d-43032_Prod_en-gb.png?fit=bounds&format=jpg&quality=80&width=1500&height=1500&dpr=1",
+    "https://www.lego.com/cdn/cs/set/assets/blta7f780a695377c2e/blt66b06d25e176c52b-43011_Prod_en-gb.png?fit=bounds&format=jpg&quality=80&width=1500&height=1500&dpr=1",
+    "https://www.lego.com/cdn/cs/set/assets/blt6a8b4a052e9b26ae/bltfc4b335f7772a5b7-43012_Prod_en-gb.png?fit=bounds&format=jpg&quality=80&width=1500&height=1500&dpr=1",
+    "https://www.lego.com/cdn/cs/set/assets/bltcfbdce29a4cd3332/blt154d36ee16842b9a-43027_Prod_en-gb.png?fit=bounds&format=jpg&quality=80&width=1500&height=1500&dpr=1",
+    "https://www.lego.com/cdn/cs/set/assets/blt71a2da536acd2460/blt4b2691e217fb0bc0-43015_Prod_en-gb.png?fit=bounds&format=jpg&quality=80&width=1500&height=1500&dpr=1"
+  ],
+  "primaryColorPalette": [
+    "#E3000B",
+    "#FFED00",
+    "#000000",
+    "#FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "#006AA7",
+    "#009739",
+    "#FEDD00",
+    "#012169",
+    "#EF2B2D",
+    "#FFFFFF"
+  ],
+  "typography": [
+    {
+      "fontFamily": "LEGO Thick",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Official LEGO wordmark / logo lockup only (proprietary in-house typeface, not for body copy)"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 800,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Headlines and campaign hero titles such as 'Légende du foot'"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Sub-headings, product names and call-outs"
+    },
+    {
+      "fontFamily": "Arial",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, descriptions, legal mentions and packaging text fallback"
+    },
+    {
+      "fontFamily": "Arial",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold",
+        "underline"
+      ],
+      "fontUses": "CTAs and emphasized inline links"
+    }
+  ],
+  "brandVision": "Inspire and develop the builders of tomorrow by letting fans of every age build, play and celebrate their passions — bringing the magic of football to life brick by brick so that 'everyone wants a piece of the game'.",
+  "brandValues": "Imagination, creativity, fun, learning, caring and quality. The Football Legends activation extends these values into sport: celebrating skill, dedication, diversity (Argentina, Portugal, France, Brazil), teamwork and the joy of play shared between kids, families and global icons.",
+  "logoImageSearchQueries": [
+    "site:lego.com LEGO logo",
+    "site:lego.com/en-us/aboutus/newsroom lego-brand-logos-portfolio-assets",
+    "site:lego.com LEGO logo svg",
+    "site:lego.com LEGO wordmark press",
+    "LEGO logo filetype:svg site:lego.com",
+    "site:lego.com LEGO Editions logo football",
+    "LEGO Editions logo official 2026",
+    "site:lego.com inurl:logo",
+    "LEGO red square logo official PNG site:lego.com",
+    "site:lego.com brand assets download logo"
+  ],
+  "productImageSearchQueries": [
+    "site:lego.com 43011 Lionel Messi Football Highlights",
+    "site:lego.com 43012 Cristiano Ronaldo Football Highlights",
+    "site:lego.com 43013 Kylian Mbappé Football Highlights",
+    "site:lego.com 43027 Vini Jr Football Highlights",
+    "site:lego.com 43016 Cristiano Ronaldo Football Legend",
+    "site:lego.com 43018 Lionel Messi Celebration",
+    "site:lego.com LEGO Editions football minifigure",
+    "site:lego.com/en-us/categories/football",
+    "site:lego.com FIFA World Cup Official Trophy 43020",
+    "site:lego.com aboutus newsroom lego-editions-wants-a-piece",
+    "LEGO Editions Football Highlights packshot site:lego.com",
+    "LEGO Mbappé minifigure box art site:lego.com",
+    "LEGO Messi minifigure official site:lego.com",
+    "LEGO Vini Jr minifigure official site:lego.com",
+    "LEGO Ronaldo Siuuu Football Legend set site:lego.com"
+  ]
+}

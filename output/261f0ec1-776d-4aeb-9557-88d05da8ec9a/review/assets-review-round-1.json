@@ -1,0 +1,55 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-05-21T17:03:06.851Z",
+  "deterministic_ok": true,
+  "audit": {
+    "satisfied": false,
+    "summary": "Two critical blockers identified: (1) Logo 'activewear-logo-min.png' is extremely faint, nearly invisible, and unsuitable for HTML5 banner use at small sizes; (2) Style guide references an SVG logo from celio.com CDN but no clear, readable raster logo is provided for ad layouts. Product images are official celio.com packshots with correct MCL39/McLaren branding and appropriate color scheme (black, white, papaya orange), but logo assets must be replaced with high-contrast, readable versions.",
+    "findings": [
+      {
+        "asset_id": "logos/activewear-logo-min.png",
+        "severity": "blocker",
+        "issue": "Logo image is extremely faint and low-contrast (appears almost white-on-white or washed-out checkerboard). Unreadable at banner sizes (120×40px minimum). Will not render legibly in HTML5 ad creatives.",
+        "fix_hint": "Source a high-contrast, readable celio* wordmark PNG or SVG from site:celio.com; ensure the logo has sufficient padding and contrast against the intended ad background. The PNG file appears to be a placeholder or corrupted export."
+      },
+      {
+        "asset_id": "logos/logo.DMQGbcqd_2qp3qb.svg",
+        "severity": "blocker",
+        "issue": "SVG logo file cannot be visually validated by this auditor (not sent to vision API). However, the provided PNG logo is non-functional. Confirm the SVG is the official celio* wordmark (not a placeholder or low-res export) and that a production-ready raster fallback exists.",
+        "fix_hint": "Verify the SVG with celio brand team or download directly from site:celio.com/fr-fr brand assets. Provide a high-contrast PNG raster version (min 240×80px) as fallback for banner ads. Search: 'site:celio.com logo svg' or 'site:celio.com brand assets'."
+      }
+    ],
+    "brave_retry_queries": {
+      "logos": [
+        "site:celio.com logo svg",
+        "site:celio.com brand celio* wordmark",
+        "site:celio.com/fr-fr assets brand",
+        "celio asterisk logo official png",
+        "site:celio.com collabs-mclaren logo",
+        "site:celio.com celio* logo transparent"
+      ],
+      "products": [
+        "site:celio.com McLaren Racing veste LNUMCL1",
+        "site:celio.com mclaren-racing collection black jacket",
+        "site:celio.com collabs-mclaren packshot",
+        "site:celio.com MCL39 Formula 1 Team collection",
+        "celio x McLaren Racing Born for the track official",
+        "site:celio.com/fr-fr mclaren-racing lookbook"
+      ]
+    }
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 13069,
+    "output_tokens": 637,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 13069,
+    "price_usd": {
+      "input": 0.013069,
+      "output": 0.003185,
+      "total": 0.016254
+    }
+  }
+}

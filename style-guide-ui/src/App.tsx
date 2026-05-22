@@ -25,6 +25,13 @@ interface StudioCatalog {
 
 const PREFERRED_CREATIVE_SCRIPT = 'gen-creative-code-native.mts'
 
+/** Last segment of `Output directory path:` from gen-style-guide (UUID folder under output/). */
+function outputFolderNameFromDirectoryPath (dirPath: string): string {
+  const normalized = dirPath.replace(/\\/gu, '/').replace(/\/+$/u, '')
+  const parts = normalized.split('/')
+  return parts[parts.length - 1] ?? ''
+}
+
 type ArchePresetJson = {
   headerPx: number
   gutterPx: number
@@ -52,20 +59,20 @@ function messageForProxyFailure (status: number): string | null {
   if (status === 502 || status === 503 || status === 504) {
     return (
       'Le proxy Vite n’a pas pu joindre l’API studio (port 3001). '
-      + 'Dans un autre terminal, à la racine du dépôt : node src/style-guide-studio-api.mts'
+      + 'Dans un autre terminal, à la racine du dépôt : node src/studio/style-guide-studio-api.mts'
     )
   }
   if (status === 404) {
     return (
       'Le port 3001 a répondu 404 pour cette route : ce n’est en général pas l’API studio à jour. '
-      + 'Arrêtez le processus sur 3001 puis relancez à la racine du dépôt : node src/style-guide-studio-api.mts '
+      + 'Arrêtez le processus sur 3001 puis relancez à la racine du dépôt : node src/studio/style-guide-studio-api.mts '
       + '(pas src/server.mts, qui sert seulement les fichiers sur le port 3000).'
     )
   }
   return null
 }
 
-/** Must match `composeStyleGuideContextFromParts` in `src/style-guide-studio-api.mts`. */
+/** Must match `composeStyleGuideContextFromParts` in `src/studio/style-guide-studio-api.mts`. */
 function composeStyleGuideContextFromParts (brand: string, context: string): string {
   const b = brand.trim()
   const c = context.trim()
@@ -86,6 +93,21 @@ function composeStyleGuideContextFromParts (brand: string, context: string): str
 }
 
 const THEME_OPTIONS = [ 'light', 'dark', 'night', 'dim', 'nord' ] as const
+
+const STUDIO_DOCUMENT_TITLE_DEFAULT = 'Style guide studio'
+
+function documentTitleForRunStatus (runStatus: RunStatus): string {
+  switch (runStatus) {
+    case 'idle':
+      return 'Prêt'
+    case 'running':
+      return '🔄 En cours'
+    case 'success':
+      return '✅ Terminé'
+    case 'error':
+      return '❌ Raté'
+  }
+}
 
 function App () {
   const [brand, setBrand] = useState('')
@@ -114,12 +136,25 @@ function App () {
   const [customAdW, setCustomAdW] = useState('')
   const [customAdH, setCustomAdH] = useState('')
   const [creativeUiReview, setCreativeUiReview] = useState(true)
+  const [styleGuideAssetsReview, setStyleGuideAssetsReview] = useState(true)
+  const [creativeAssetsReview, setCreativeAssetsReview] = useState(true)
 
-  const creativeSupportsUiReview = creativeScript === PREFERRED_CREATIVE_SCRIPT
+  const creativeSupportsNativePipeline = creativeScript === PREFERRED_CREATIVE_SCRIPT
+  const creativeSupportsUiReview = creativeSupportsNativePipeline
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
   }, [ theme ])
+
+  useEffect(() => {
+    document.title = documentTitleForRunStatus(status)
+  }, [ status ])
+
+  useEffect(() => {
+    return () => {
+      document.title = STUDIO_DOCUMENT_TITLE_DEFAULT
+    }
+  }, [])
 
   const toggleCreativePreset = useCallback((preset: StudioAdPreset) => {
     setCreativeAdFormats((prev) => {
@@ -348,6 +383,10 @@ function App () {
         const payload = JSON.parse(ev.data as string) as { outputDirectoryPath?: string | null }
         if (typeof payload.outputDirectoryPath === 'string' && payload.outputDirectoryPath.length > 0) {
           setOutputDir(payload.outputDirectoryPath)
+          const folder = outputFolderNameFromDirectoryPath(payload.outputDirectoryPath)
+          if (folder.length > 0) {
+            setCreativeOutputFolder(folder)
+          }
         }
       } catch {
         /* ignore */
@@ -399,7 +438,8 @@ function App () {
           brand,
           context: styleContext,
           // Legacy studio API (before brand/context) only reads this field.
-          contextPrompt: composeStyleGuideContextFromParts(brand, styleContext)
+          contextPrompt: composeStyleGuideContextFromParts(brand, styleContext),
+          assetsReviewAfterGeneration: styleGuideAssetsReview
         })
       })
 
@@ -434,7 +474,7 @@ function App () {
       setStatus('error')
       setErrorMessage(e instanceof Error ? e.message : String(e))
     }
-  }, [brand, styleContext, subscribeToJobEvents])
+  }, [brand, styleContext, styleGuideAssetsReview, subscribeToJobEvents])
 
   const runCreative = useCallback(async () => {
     setErrorMessage(null)
@@ -451,6 +491,7 @@ function App () {
           creativeScript,
           outputFolder: creativeOutputFolder,
           adFormats: creativeAdFormats,
+          assetsReviewBeforeGeneration: creativeSupportsNativePipeline && creativeAssetsReview,
           uiReviewAfterGeneration: creativeSupportsUiReview && creativeUiReview
         })
       })
@@ -490,6 +531,8 @@ function App () {
     creativeAdFormats,
     creativeOutputFolder,
     creativeScript,
+    creativeAssetsReview,
+    creativeSupportsNativePipeline,
     creativeSupportsUiReview,
     creativeUiReview,
     subscribeToJobEvents
@@ -586,7 +629,7 @@ function App () {
             className="alert alert-soft alert-warning rounded-2xl border border-warning/20 text-sm sm:alert-horizontal"
           >
             <span>
-              Impossible de charger le catalogue <code className="font-mono text-xs">src/</code> : {catalogError}
+              Impossible de charger le catalogue <code className="font-mono text-xs">src/agents/</code> : {catalogError}
             </span>
           </div>
         )}
@@ -639,6 +682,25 @@ function App () {
                 Astuce : pour une marque seule, le contexte peut rester vide. Pour un film sans marque, décrivez le titre et l’usage dans le contexte.
               </p>
             </fieldset>
+            <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-base-300/50 bg-base-200/15 px-4 py-4">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-primary mt-0.5 shrink-0"
+                checked={styleGuideAssetsReview}
+                disabled={status === 'running'}
+                onChange={(e) => { setStyleGuideAssetsReview(e.target.checked); }}
+                aria-label="Review assets après style guide"
+              />
+              <span className="text-sm leading-relaxed text-base-content/85">
+                <span className="font-medium text-base-content">Review assets après génération</span>
+                {' '}
+                — enchaîne{' '}
+                <code className="font-mono text-xs">run-creative-native-assets-review.mts</code>
+                {' '}
+                (contrôles + Haiku + retry Brave) avant toute génération créative. Produit{' '}
+                <code className="font-mono text-xs">review/assets-review-final.json</code>.
+              </span>
+            </label>
             <div className="card-actions justify-end border-t border-base-300/30 pt-6">
               <button
                 type="button"
@@ -680,7 +742,7 @@ function App () {
             <div className="relative z-10 grid gap-5 sm:grid-cols-2">
               <label className="form-control relative z-20 w-full">
                 <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/50">
-                  Script <code className="font-mono normal-case">src/</code>
+                  Script <code className="font-mono normal-case">src/agents/</code>
                 </span>
                 <select
                   className="studio-select-solid select select-bordered w-full rounded-2xl border-base-300 bg-base-100 font-mono text-sm text-base-content shadow-sm"
@@ -792,6 +854,29 @@ function App () {
                 {creativeAdFormats.map((f) => `${String(f.width)}×${String(f.height)}`).join(' · ') || '—'}
               </p>
             </fieldset>
+            {creativeSupportsNativePipeline && (
+              <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-base-300/50 bg-base-200/15 px-4 py-4">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-primary mt-0.5 shrink-0"
+                  checked={creativeAssetsReview}
+                  disabled={status === 'running'}
+                  onChange={(e) => { setCreativeAssetsReview(e.target.checked); }}
+                  aria-label="Review assets avant génération créative"
+                />
+                <span className="text-sm leading-relaxed text-base-content/85">
+                  <span className="font-medium text-base-content">Review assets avant génération</span>
+                  {' '}
+                  — lance{' '}
+                  <code className="font-mono text-xs">run-creative-native-assets-review.mts</code>
+                  {' '}
+                  si pas déjà fait (sinon no-op rapide si{' '}
+                  <code className="font-mono text-xs">assets-review-final.json</code>
+                  {' '}
+                  est déjà satisfait).
+                </span>
+              </label>
+            )}
             {creativeSupportsUiReview && (
               <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-base-300/50 bg-base-200/15 px-4 py-4">
                 <input
@@ -844,7 +929,7 @@ function App () {
             </div>
             <details className="rounded-2xl border border-base-300/50 bg-base-200/20 px-4 open:bg-base-200/30">
               <summary className="cursor-pointer py-3 text-sm font-medium outline-none marker:text-base-content/40">
-                Fichiers détectés dans <code className="font-mono text-xs">src/</code>
+                Fichiers détectés dans <code className="font-mono text-xs">src/agents/</code>
               </summary>
               <div className="grid gap-6 border-t border-base-300/30 pb-4 pt-4 sm:grid-cols-2">
                   <div>

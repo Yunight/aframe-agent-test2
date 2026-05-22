@@ -1,4 +1,5 @@
-import { withAnthropicRetry } from './anthropic-retry.mts';
+import { withAnthropicRetry } from '../lib/anthropic-retry.mts';
+import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
 import type { StyleGuide } from './gen-style-guide.mjs';
 import {
   contains,
@@ -6,7 +7,7 @@ import {
   loadDesignSkillGuidance,
   validateCreativeSkillCompliance,
   type AssetFile
-} from './creative-native-skills.mts';
+} from '../lib/creative-native-skills.mts';
 import {
   addUsageToAccumulator,
   appendPipelineUsage,
@@ -16,10 +17,11 @@ import {
   logPipelineUsageToConsole,
   logReadableAnthropicCall,
   priceUsdFromAccumulator
-} from './creative-pipeline-usage.mts';
-import { buildCreativeAdFormatInstructions, loadAdFormatPresets, parseCreativeAdFormatsFromEnv } from './studio-ad-formats.mts';
+} from '../lib/creative-pipeline-usage.mts';
+import { isSvgAssetFile, sniffImageMimeFromBuffer } from '../lib/image-mime-sniff.mts';
+import { buildCreativeAdFormatInstructions, loadAdFormatPresets, parseCreativeAdFormatsFromEnv } from '../lib/studio-ad-formats.mts';
 import { basename, dirname, extname, join } from 'node:path';
-import { copyFileSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { config as loadDotenv } from 'dotenv';
 import { Anthropic } from '@anthropic-ai/sdk';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
@@ -28,6 +30,15 @@ import mime from 'mime';
 import { z } from 'zod';
 
 const CREATIVE_MODEL = 'claude-opus-4-6';
+const DEFAULT_CREATIVE_REGEN_MODEL = 'claude-haiku-4-5-20251001';
+const CREATIVE_OPUS_MAX_OUTPUT_TOKENS = 128_000;
+const CREATIVE_HAIKU_MAX_OUTPUT_TOKENS = 64_000;
+
+function maxOutputTokensForModel (model: string): number {
+  return model.toLowerCase().includes('haiku')
+    ? CREATIVE_HAIKU_MAX_OUTPUT_TOKENS
+    : CREATIVE_OPUS_MAX_OUTPUT_TOKENS;
+}
 
 function shortenForLog (s: string, max: number): string {
   const t = s.trim().replace(/\s+/g, ' ');
@@ -161,7 +172,7 @@ function createAssetDescription(fileName: string, fileType: 'logos' | 'products'
 
 type AssetInputMode = 'base64' | 'url';
 
-loadDotenv({ path: join(import.meta.dirname, '..', '.env') });
+loadDotenv({ path: join(repoRootFromModuleDir(import.meta.dirname), '.env') });
 
 const directoryUuid = process.argv[2];
 
@@ -191,9 +202,27 @@ for (let i = 0; i < cliArguments.length; i += 1) {
   throw new Error(`Unknown argument "${argument}". Allowed option: --asset-input`);
 }
 
-const directoryPath = join(import.meta.dirname, '..', 'output', directoryUuid);
+const directoryPath = join(repoRootFromModuleDir(import.meta.dirname), 'output', directoryUuid);
+
+const assetsReviewSkip = process.env['CREATIVE_ASSETS_REVIEW_SKIP']?.trim() === '1';
+const assetsReviewFinalPath = join(directoryPath, 'review', 'assets-review-final.json');
+if (!assetsReviewSkip) {
+  if (!existsSync(assetsReviewFinalPath)) {
+    throw new Error(
+      `Assets pre-flight review required. Run: node src/agents/run-creative-native-assets-review.mts ${directoryUuid}\n` +
+      'Or set CREATIVE_ASSETS_REVIEW_SKIP=1 to bypass (not recommended).'
+    );
+  }
+  const assetsFinal = JSON.parse(readFileSync(assetsReviewFinalPath, 'utf8')) as { satisfied?: boolean };
+  if (assetsFinal.satisfied !== true) {
+    throw new Error(
+      `Assets review not satisfied (${assetsReviewFinalPath}). Re-run: node src/agents/run-creative-native-assets-review.mts ${directoryUuid}`
+    );
+  }
+}
+
 const codeDirectoryPath = join(directoryPath, 'code');
-const repoRoot = join(import.meta.dirname, '..');
+const repoRoot = repoRootFromModuleDir(import.meta.dirname);
 const adFormatPresets = loadAdFormatPresets(repoRoot);
 const adFormats = parseCreativeAdFormatsFromEnv(process.env['CREATIVE_AD_FORMATS'], adFormatPresets);
 console.log('[creative-native] Ad formats:', JSON.stringify(adFormats));
@@ -225,21 +254,44 @@ for (const fileType of [ 'logos', 'products' ] as const) {
     }
 
     const filePath = join(subdirectoryPath, fileName);
-    const fileMimeType = mime.getType(fileName);
-    const { width, height } = await imageSizeFromFile(filePath);
+    const fileBuf = readFileSync(filePath);
     const assetDescription = createAssetDescription(fileName, fileType);
+    const localCodePath = `./${fileName}`;
 
-    if (fileMimeType === null) {
-      throw new Error(`Unable to determine MIME type for file ${fileName}`);
-    } else if (!contains([ 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ], fileMimeType)) {
+    if (isSvgAssetFile(fileName, fileBuf)) {
+      const textPayload =
+        `- Asset: ${fileName}\n` +
+        `  - Category: ${fileType === 'logos' ? 'logo' : 'product image'}\n` +
+        `  - Format: SVG vector (not sent as vision preview)\n` +
+        `  - Local path to use in generated code: ${localCodePath}\n` +
+        `  - Use in HTML as <img src="${localCodePath}" alt="logo"> or inline <object>/<svg> reference; path is relative to index.html in code/\n` +
+        `  - ${assetDescription}\n` +
+        `  - Required: integrate this SVG logo in the creative via the local path above.`;
+      fileMessages.push({
+        type: 'text',
+        text: textPayload,
+        citations: null
+      });
+      assetFiles.push({ fileName, filePath, fileType });
+      continue;
+    }
+
+    const sniffedMime = sniffImageMimeFromBuffer(fileBuf);
+    const fileMimeType = sniffedMime ?? mime.getType(fileName);
+
+    if (fileMimeType === null || sniffedMime === null) {
+      throw new Error(`Unable to detect image MIME for file ${fileName} (extension may not match content).`);
+    }
+    if (!contains([ 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ], fileMimeType)) {
       throw new Error(`Unsupported MIME type ${fileMimeType} for file ${fileName}`);
     }
 
+    const { width, height } = await imageSizeFromFile(filePath);
     const textPayload =
       `- Asset: ${fileName}\n` +
       `  - Category: ${fileType === 'logos' ? 'logo' : 'product image'}\n` +
-      `  - Local path to use in generated code: ./${fileName}\n` +
-      `  - Dimensions: ${width}x${height}\n` +
+      `  - Local path to use in generated code: ${localCodePath}\n` +
+      `  - Dimensions: ${String(width)}x${String(height)}\n` +
       `  - ${assetDescription}\n` +
       `  - Required: describe this specific image before using it and integrate it visually in the creative.`;
     fileMessages.push({
@@ -249,13 +301,12 @@ for (const fileType of [ 'logos', 'products' ] as const) {
     });
 
     if (assetInputMode === 'base64') {
-      const fileContentBase64 = readFileSync(filePath).toString('base64');
       fileMessages.push({
         type: 'image',
         source: {
           type: 'base64',
-          media_type: fileMimeType,
-          data: fileContentBase64
+          media_type: sniffedMime,
+          data: fileBuf.toString('base64')
         }
       });
     }
@@ -283,7 +334,12 @@ const messages: Anthropic.Messages.MessageParam[] = [{
 }];
 
 const regenFeedback = process.env['CREATIVE_REGEN_FEEDBACK']?.trim();
-if (regenFeedback !== undefined && regenFeedback.length > 0) {
+const isRegen = regenFeedback !== undefined && regenFeedback.length > 0;
+const activeModel = isRegen
+  ? (process.env['CREATIVE_REGEN_MODEL']?.trim() ?? DEFAULT_CREATIVE_REGEN_MODEL)
+  : CREATIVE_MODEL;
+console.log(`[creative-native] Model: ${activeModel} (${isRegen ? 'regeneration' : 'generation'})`);
+if (isRegen) {
   messages.push({ role: 'user', content: regenFeedback });
   console.log('[creative-native] Regeneration from UI review agent feedback.');
 }
@@ -301,8 +357,12 @@ while (true) {
   if (generationIndex > maxGenerationTurns) {
     throw new Error(`Generation exceeded ${maxGenerationTurns} turns without valid output.`);
   }
-  const systemPrompt = `
-      You are an agent that invents modern interactive advertisement creatives.
+  const regenSystemPrefix = isRegen
+    ? `You are fixing an existing HTML5/CSS/JS ad bundle from UI review feedback. Change only what is needed to resolve blockers; preserve working structure and assets where possible.
+
+`
+    : '';
+  const systemPrompt = `${regenSystemPrefix}You are an agent that invents modern interactive advertisement creatives.
 
       Required stack: plain HTML5, CSS, and JavaScript only. No React, Vue, Svelte, no Vite/Webpack,
       no Tailwind/DaisyUI/npm dependencies, no JSX/TSX, no build step. The result must open from disk
@@ -315,8 +375,9 @@ while (true) {
       interactivity where appropriate.
       Only use one logo image by default the light theme only, if the logo is not visible in the light theme, use the dark theme.
       the logo should remains visible and a good scale so it is not too small or too big, do not apply any filter to the logo.
-      Logo and product images are local files. Reference them with relative paths from the project root
-      (for example: ./logo.png).
+      Logo and product images are local files copied next to index.html under code/. Reference them with
+      relative paths (for example: ./brand-logo.svg or ./product.jpg). SVG logos are valid — use
+      <img src="./filename.svg">; raster logos/products may also be sent as vision context when base64 mode is on.
 
       Output: a list of files with their contents. Paths must be relative to the project root.
 
@@ -344,27 +405,32 @@ while (true) {
     `.trim();
 
   const creativeCodeResponse = await withAnthropicRetry('creative generation', async () => {
-    const creativeCodeStream = await anthropicClient.messages.stream({
-      max_tokens: 128000,
+    const streamParams = {
+      max_tokens: maxOutputTokensForModel(activeModel),
       system: systemPrompt,
       messages,
-      model: 'claude-opus-4-6',
-      thinking: {
-        type: 'enabled',
-        budget_tokens: 100_000,
-        display: 'omitted'
-      },
+      model: activeModel,
       output_config: {
-        format: zodOutputFormat(filesSchema),
+        format: zodOutputFormat(filesSchema)
       },
-      tools: [
-        {
-          type: 'web_search_20250305',
-          name: 'web_search',
-          max_uses: 50
-        }
-      ]
-    });
+      ...(isRegen
+        ? {}
+        : {
+            thinking: {
+              type: 'enabled' as const,
+              budget_tokens: 100_000,
+              display: 'omitted' as const
+            },
+            tools: [
+              {
+                type: 'web_search_20250305' as const,
+                name: 'web_search' as const,
+                max_uses: 50
+              }
+            ]
+          })
+    };
+    const creativeCodeStream = await anthropicClient.messages.stream(streamParams);
     return await creativeCodeStream.finalMessage();
   });
   addUsageToAccumulator(creativeUsageTotals, creativeCodeResponse.usage);
@@ -446,28 +512,28 @@ const sumReportedTokens =
 logAnthropicUsageAndCost(
   basename(import.meta.filename, extname(import.meta.filename)),
   creativeUsageTotals,
-  CREATIVE_MODEL
+  activeModel
 );
 
-const cumulativePrices = priceUsdFromAccumulator(creativeUsageTotals, CREATIVE_MODEL);
+const cumulativePrices = priceUsdFromAccumulator(creativeUsageTotals, activeModel);
 writeFileSync(
   join(directoryPath, 'creative-native-token-usage.json'),
   `${JSON.stringify({
     ...creativeUsageTotals,
+    model: activeModel,
     total_tokens_reported_sum: sumReportedTokens,
     price_usd: cumulativePrices
   }, null, 2)}\n`,
   { encoding: 'utf8' }
 );
 
-const isRegen = regenFeedback !== undefined && regenFeedback.length > 0;
 const regenRoundRaw = process.env['CREATIVE_REGEN_REVIEW_ROUND']?.trim();
 const regenRound =
   regenRoundRaw !== undefined && regenRoundRaw.length > 0 ? Number.parseInt(regenRoundRaw, 10) : null;
 const pipelineEntry = entryFromAccumulator({
   action: isRegen ? 'creative_regeneration' : 'creative_generation',
-  agent: 'gen-creative-code-native.mts',
-  model: CREATIVE_MODEL,
+  agent: 'agents/gen-creative-code-native.mts',
+  model: activeModel,
   acc: creativeUsageTotals,
   review_round: Number.isFinite(regenRound ?? Number.NaN) ? regenRound : null
 });

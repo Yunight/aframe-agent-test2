@@ -3,6 +3,8 @@ import { join } from 'node:path';
 
 export type PipelineAction =
   | 'style_guide'
+  | 'assets_review'
+  | 'assets_refresh'
   | 'creative_generation'
   | 'creative_regeneration'
   | 'screenshots'
@@ -361,6 +363,7 @@ export function appendFromCreativeNativeTokenFile (
     output_tokens?: number;
     cache_creation_input_tokens?: number;
     cache_read_input_tokens?: number;
+    model?: string;
     price_usd?: PriceUsd;
   };
   const acc: UsageAccumulator = {
@@ -370,10 +373,12 @@ export function appendFromCreativeNativeTokenFile (
     cache_creation_input_tokens: raw.cache_creation_input_tokens ?? 0,
     cache_read_input_tokens: raw.cache_read_input_tokens ?? 0
   };
+  const model =
+    typeof raw.model === 'string' && raw.model.length > 0 ? raw.model : 'claude-opus-4-6';
   const entry = entryFromAccumulator({
     action,
-    agent: 'gen-creative-code-native.mts',
-    model: 'claude-opus-4-6',
+    agent: 'agents/gen-creative-code-native.mts',
+    model,
     acc,
     review_round: reviewRound
   });

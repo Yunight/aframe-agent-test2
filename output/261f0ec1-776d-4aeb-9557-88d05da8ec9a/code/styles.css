@@ -1,0 +1,409 @@
+/* ==========================================================================
+   celio* x McLaren Racing – 320×480 Ad Creative  (4 formats)
+   Palette  : #FF8000 #000000 #FFFFFF #FF4D00 #1A1A1A #4A4A4A #C8C8C8 #F5F5F5 #0A0A0A
+   Fonts    : Helvetica Neue · Inter · Roboto Mono (NO other families)
+   ========================================================================== */
+
+/* ===== RESET ===== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+/* ===== PAGE ===== */
+body{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#1A1A1A;
+  font-family:'Inter',sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* ===== AD CONTAINER ===== */
+.ad-container{
+  width:320px;
+  height:480px;
+  position:relative;
+  overflow:hidden;
+  background:#000000;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+}
+
+/* ===== SHARED TOKENS ===== */
+.logo-main{height:24px;width:auto;display:block}
+.mono-text{font-family:'Roboto Mono',monospace;font-weight:500}
+
+/* ===== VERSION LAYER ===== */
+.ad-v{
+  position:absolute;top:0;left:0;width:320px;height:480px;
+  opacity:0;pointer-events:none;
+  transition:opacity .4s ease-in-out;
+  overflow:hidden;
+}
+.ad-v.active{opacity:1;pointer-events:auto}
+
+/* ===== FORMAT NAV ===== */
+.fmt-nav{
+  position:absolute;bottom:0;left:0;right:0;height:36px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  z-index:200;
+  background:linear-gradient(to top,rgba(0,0,0,.92),rgba(0,0,0,.42));
+}
+.fmt-btn{
+  width:34px;height:24px;
+  border:1px solid rgba(255,255,255,.18);background:transparent;
+  border-radius:4px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .22s ease-out;
+}
+.fmt-btn:hover{border-color:#FF8000}
+.fmt-btn.active{background:#FF8000;border-color:#FF8000}
+.fmt-btn .mono-text{font-size:9px;color:rgba(255,255,255,.55);line-height:1}
+.fmt-btn.active .mono-text{color:#000000}
+
+/* ===== CTA VARIANTS ===== */
+.cta{
+  display:inline-flex;align-items:center;gap:8px;
+  text-decoration:none;cursor:pointer;
+  transition:all .25s ease-out;
+}
+
+/* Filled papaya */
+.cta-filled{
+  background:#FF8000;color:#000000;
+  font-family:'Inter',sans-serif;font-weight:600;font-size:13px;
+  padding:12px 24px;border-radius:6px;letter-spacing:.02em;
+}
+.cta-filled:hover{background:#FF4D00;transform:translateY(-1px)}
+
+/* Outline */
+.cta-outline{
+  background:transparent;color:#FF8000;
+  font-family:'Inter',sans-serif;font-weight:600;font-size:13px;
+  padding:10px 22px;border:2px solid #FF8000;border-radius:6px;
+}
+.cta-outline:hover{background:#FF8000;color:#000000}
+
+/* Text-link */
+.cta-text{
+  color:#FF8000;font-family:'Inter',sans-serif;font-weight:500;font-size:14px;
+  text-decoration:underline;text-underline-offset:4px;
+}
+.cta-text:hover{color:#FF4D00}
+
+/* Dark pill with icon */
+.cta-icon{
+  background:#000000;color:#FF8000;
+  font-family:'Inter',sans-serif;font-weight:600;font-size:13px;
+  padding:12px 24px;border-radius:6px;border:1px solid #4A4A4A;
+}
+.cta-icon:hover{background:#1A1A1A;border-color:#FF8000;transform:translateY(-1px)}
+
+
+/* ==========================================================================
+   V1 · VITESSE – speed-lines + hero reveal
+   ========================================================================== */
+.v1{background:#0A0A0A}
+
+/* Hero image */
+.v1-hero{position:absolute;top:0;left:0;right:0;height:330px;overflow:hidden}
+.v1-hero-img{
+  width:100%;height:100%;object-fit:cover;object-position:center 20%;
+  will-change:transform;
+}
+.v1.active.ready .v1-hero-img{
+  animation:v1ImgIn .8s ease-out both,v1Drift 10s ease-in-out 1s infinite;
+}
+
+/* Speed lines */
+.v1-speed-lines{position:absolute;inset:0;z-index:2;pointer-events:none}
+.v1-speed-lines span{
+  position:absolute;height:1px;
+  background:linear-gradient(90deg,transparent,#FF8000 30%,#FF8000 70%,transparent);
+  opacity:0;
+}
+.v1.active .v1-speed-lines span{
+  animation:speedLine var(--dur) linear infinite;
+  animation-delay:var(--del);
+}
+.v1-speed-lines span:nth-child(1){top:10%;width:55%;--dur:2.1s;--del:0s}
+.v1-speed-lines span:nth-child(2){top:20%;width:35%;--dur:1.6s;--del:.5s}
+.v1-speed-lines span:nth-child(3){top:36%;width:70%;--dur:2.4s;--del:.9s}
+.v1-speed-lines span:nth-child(4){top:50%;width:42%;--dur:1.85s;--del:1.4s}
+.v1-speed-lines span:nth-child(5){top:62%;width:28%;--dur:1.7s;--del:.25s}
+.v1-speed-lines span:nth-child(6){top:76%;width:60%;--dur:2.6s;--del:.7s}
+
+/* Gradient overlay */
+.v1-gradient{
+  position:absolute;bottom:0;left:0;right:0;height:290px;
+  background:linear-gradient(to top,#0A0A0A 35%,rgba(10,10,10,.85) 60%,transparent);
+  z-index:3;
+}
+
+/* Top logos */
+.v1-top{
+  position:absolute;top:16px;left:16px;right:16px;
+  display:flex;align-items:center;justify-content:space-between;
+  z-index:5;
+}
+.v1-collab-badge{height:26px;width:auto;display:block}
+
+/* Tag */
+.v1-tag{
+  position:absolute;top:54px;left:16px;
+  font-size:10px;color:#FF8000;letter-spacing:.12em;z-index:5;
+}
+
+/* Bottom text */
+.v1-bottom{position:absolute;bottom:44px;left:20px;right:20px;z-index:5}
+.v1-title{
+  font-family:'Helvetica Neue',sans-serif;font-weight:700;
+  font-size:28px;line-height:1.12;color:#FFFFFF;
+  margin-bottom:8px;letter-spacing:-.02em;
+}
+.v1-sub{
+  font-family:'Inter',sans-serif;font-weight:400;
+  font-size:14px;color:#C8C8C8;margin-bottom:20px;
+}
+
+/* Entry animations */
+.v1.active.ready .v1-top{animation:fadeIn .4s ease-out .05s both}
+.v1.active.ready .v1-tag{animation:fadeIn .5s ease-out .35s both}
+.v1.active.ready .v1-title{animation:fadeInUp .6s ease-out .1s both}
+.v1.active.ready .v1-sub{animation:fadeInUp .5s ease-out .28s both}
+.v1.active.ready .v1-bottom .cta{animation:fadeInUp .5s ease-out .42s both}
+
+
+/* ==========================================================================
+   V2 · GRILLE – F1 position counter + checkered flag
+   ========================================================================== */
+.v2{
+  background:#000000;
+  display:flex;flex-direction:column;align-items:center;
+  padding:16px 16px 44px;
+}
+
+/* Grid background */
+.v2-grid-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,128,0,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,128,0,.04) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+
+.v2-header{width:100%;display:flex;align-items:center;gap:10px;margin-bottom:10px;z-index:1}
+.v2-collab{font-size:11px;color:#FF8000;letter-spacing:.1em}
+
+/* Position display */
+.v2-pos{display:flex;align-items:baseline;gap:2px;margin-bottom:10px;z-index:1}
+.v2-p{font-size:34px;color:#4A4A4A;line-height:1}
+.v2-num{font-size:68px;color:#FF8000;line-height:1;transition:transform .18s ease-out}
+
+/* Product card */
+.v2-card{
+  width:185px;height:155px;position:relative;
+  border-radius:8px;overflow:hidden;margin-bottom:14px;
+  transform:rotate(-2deg);border:1px solid rgba(255,128,0,.15);
+  z-index:1;
+}
+.v2-checker{
+  position:absolute;top:0;right:0;width:32px;height:32px;z-index:2;
+  clip-path:polygon(100% 0,0 0,100% 100%);
+  background:repeating-conic-gradient(#FF8000 0% 25%,#000000 0% 50%) 0 0/8px 8px;
+}
+.v2-card-img{width:100%;height:100%;object-fit:cover;object-position:center 15%}
+
+/* Meta */
+.v2-meta{display:flex;flex-direction:column;align-items:center;gap:3px;margin-bottom:12px;z-index:1}
+.v2-name{font-size:10px;color:#FFFFFF;letter-spacing:.1em}
+.v2-ref{font-size:9px;color:#4A4A4A;letter-spacing:.12em}
+
+.v2-tagline{
+  font-family:'Helvetica Neue',sans-serif;font-weight:700;
+  font-size:16px;line-height:1.3;color:#FFFFFF;
+  text-align:center;margin-bottom:14px;z-index:1;
+}
+.v2 .cta-outline{z-index:1}
+
+/* Entry */
+.v2.active.ready .v2-pos{animation:fadeInUp .5s ease-out .1s both}
+.v2.active.ready .v2-card{animation:slideInRight .6s ease-out .2s both}
+.v2.active.ready .v2-meta{animation:fadeIn .4s ease-out .5s both}
+.v2.active.ready .v2-tagline{animation:fadeInUp .5s ease-out .45s both}
+.v2.active.ready .cta-outline{animation:fadeInUp .5s ease-out .55s both}
+
+
+/* ==========================================================================
+   V3 · GALERIE – swipeable carousel
+   ========================================================================== */
+.v3{background:#F5F5F5;display:flex;flex-direction:column}
+
+.v3-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px;
+}
+.v3-label{
+  font-size:9px;color:#FF8000;letter-spacing:.1em;
+  background:rgba(255,128,0,.1);padding:4px 8px;border-radius:3px;
+}
+
+/* Carousel */
+.v3-carousel-frame{
+  flex:1;position:relative;overflow:hidden;
+  margin:0 16px;border-radius:12px;
+  background:#FFFFFF;
+  box-shadow:0 4px 20px rgba(0,0,0,.08);
+}
+.v3-track{
+  display:flex;height:100%;
+  transition:transform .5s cubic-bezier(.25,.46,.45,.94);
+  touch-action:pan-y;cursor:grab;
+}
+.v3-track:active{cursor:grabbing}
+.v3-slide{min-width:100%;height:100%}
+.v3-slide img{width:100%;height:100%;object-fit:cover;object-position:center 15%}
+
+.v3-indicators{
+  position:absolute;bottom:12px;left:14px;right:14px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.v3-dots{display:flex;gap:6px}
+.v3-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:rgba(255,255,255,.5);transition:all .3s ease;
+  cursor:pointer;border:none;
+}
+.v3-dot.active{background:#FF8000;width:22px;border-radius:4px}
+.v3-count{font-size:10px;color:rgba(255,255,255,.85);text-shadow:0 1px 4px rgba(0,0,0,.4)}
+
+/* Footer */
+.v3-foot{padding:14px 16px 44px}
+.v3-title{
+  font-family:'Helvetica Neue',sans-serif;font-weight:700;
+  font-size:17px;color:#000000;margin-bottom:4px;
+}
+.v3-desc{
+  font-family:'Inter',sans-serif;font-weight:400;
+  font-size:13px;color:#4A4A4A;margin-bottom:10px;
+}
+
+/* Entry */
+.v3.active.ready .v3-carousel-frame{animation:fadeIn .5s ease-out .1s both}
+.v3.active.ready .v3-foot{animation:fadeInUp .5s ease-out .3s both}
+
+
+/* ==========================================================================
+   V4 · IMPACT – interactive 3D tilt + diagonal stripe
+   ========================================================================== */
+.v4{background:#0A0A0A}
+
+.v4-stripe{
+  position:absolute;top:-60px;left:-30px;
+  width:220px;height:650px;
+  background:linear-gradient(135deg,#FF8000,#FF4D00);
+  transform:rotate(-25deg);transform-origin:top left;
+  opacity:.1;pointer-events:none;
+}
+
+.v4-inner{
+  position:relative;width:100%;height:100%;
+  display:flex;flex-direction:column;
+  padding:16px 16px 44px;z-index:1;
+}
+.v4-header{margin-bottom:14px}
+
+/* 3D tilt card */
+.v4-tilt{
+  width:100%;height:195px;border-radius:10px;overflow:hidden;
+  position:relative;margin-bottom:16px;
+  transition:transform .12s ease-out;will-change:transform;
+  cursor:grab;box-shadow:0 8px 30px rgba(0,0,0,.4);
+}
+.v4-tilt:active{cursor:grabbing}
+.v4-tilt-img{width:100%;height:100%;object-fit:cover;object-position:center 20%}
+.v4-tilt-tag{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:10px 14px;
+  background:linear-gradient(to top,rgba(0,0,0,.75),transparent);
+}
+.v4-tilt-tag span{font-size:11px;color:#FF8000;letter-spacing:.18em}
+
+/* Copy */
+.v4-copy{flex:1;display:flex;flex-direction:column}
+.v4-headline{
+  font-family:'Helvetica Neue',sans-serif;font-weight:700;
+  font-size:30px;line-height:1.1;color:#FFFFFF;
+  margin-bottom:10px;letter-spacing:-.02em;
+}
+.v4-bar{width:40px;height:3px;background:#FF8000;border-radius:2px;margin-bottom:10px}
+.v4-body{
+  font-family:'Inter',sans-serif;font-weight:400;
+  font-size:13px;line-height:1.5;color:#C8C8C8;
+  margin-bottom:16px;
+}
+.v4 .cta-icon{align-self:flex-start}
+
+/* Entry */
+.v4.active.ready .v4-stripe{animation:stripeIn .8s ease-out both}
+.v4.active.ready .v4-tilt{animation:fadeInUp .6s ease-out .12s both}
+.v4.active.ready .v4-headline{animation:fadeInUp .5s ease-out .28s both}
+.v4.active.ready .v4-bar{animation:barGrow .4s ease-out .42s both}
+.v4.active.ready .v4-body{animation:fadeInUp .5s ease-out .48s both}
+.v4.active.ready .cta-icon{animation:fadeInUp .5s ease-out .58s both}
+
+
+/* ==========================================================================
+   KEYFRAMES
+   ========================================================================== */
+@keyframes speedLine{
+  0%{transform:translateX(-100%);opacity:0}
+  5%{opacity:.45}
+  92%{opacity:.45}
+  100%{transform:translateX(640px);opacity:0}
+}
+@keyframes v1ImgIn{
+  from{transform:translateY(30px) scale(1.06);opacity:.4}
+  to{transform:translateY(0) scale(1);opacity:1}
+}
+@keyframes v1Drift{
+  0%,100%{object-position:center 18%}
+  50%{object-position:center 22%}
+}
+@keyframes fadeInUp{
+  from{transform:translateY(22px);opacity:0}
+  to{transform:translateY(0);opacity:1}
+}
+@keyframes fadeIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+@keyframes slideInRight{
+  from{transform:translateX(40px) rotate(-2deg);opacity:0}
+  to{transform:translateX(0) rotate(-2deg);opacity:1}
+}
+@keyframes stripeIn{
+  from{transform:rotate(-25deg) translateY(-80px);opacity:0}
+  to{transform:rotate(-25deg) translateY(0);opacity:.1}
+}
+@keyframes barGrow{
+  from{width:0;opacity:0}
+  to{width:40px;opacity:1}
+}
+@keyframes pulseGlow{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,128,0,.4)}
+  50%{box-shadow:0 0 0 8px rgba(255,128,0,0)}
+}
+
+
+/* ==========================================================================
+   REDUCED MOTION
+   ========================================================================== */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-delay:0ms!important;
+    transition-duration:.01ms!important;
+    animation-iteration-count:1!important;
+  }
+}

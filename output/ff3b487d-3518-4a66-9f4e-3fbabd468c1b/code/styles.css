@@ -1,0 +1,455 @@
+/* ==========================================================================
+   LEGO Editions - Legendes du Foot  320x480 Ad Creative
+   Fonts: Cera Pro (800, 500), Arial (400, 700) only
+   Colors: #E3000B #FFED00 #000000 #FFFFFF (primary palette)
+   ========================================================================== */
+
+/* --- Reset --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* --- Font Declarations (local only, falls back to Arial) --- */
+@font-face {
+  font-family: 'Cera Pro';
+  src: local('Cera Pro Bold'), local('CeraPro-Bold');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cera Pro';
+  src: local('Cera Pro Medium'), local('CeraPro-Medium');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --- Page Layout (center ad on viewport) --- */
+html, body {
+  width: 100%;
+  min-height: 100vh;
+}
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #FFFFFF;
+  font-family: Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Ad Container --- */
+#ad-320x480 {
+  width: 320px;
+  height: 480px;
+  position: relative;
+  overflow: hidden;
+  background-color: #FFED00;
+  transition: background-color 400ms ease-out;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.12);
+}
+#ad-320x480[data-theme="yellow"] {
+  background-color: #FFED00;
+}
+#ad-320x480[data-theme="red"] {
+  background-color: #E3000B;
+}
+
+/* --- Slides --- */
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 380ms ease-out, visibility 0ms 380ms;
+  z-index: 1;
+}
+.slide.active {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 380ms ease-out, visibility 0ms 0ms;
+  z-index: 2;
+}
+.slide-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.bg-yellow {
+  background-color: #FFED00;
+}
+.bg-red {
+  background-color: #E3000B;
+}
+
+/* --- Slide Header (white logo bar) --- */
+.slide-header {
+  width: 100%;
+  height: 72px;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  flex-shrink: 0;
+}
+.brand-logo {
+  height: 60px;
+  max-width: 240px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* --- Slide Body --- */
+.slide-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 16px 6px;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* --- Slide Footer --- */
+.slide-footer {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  padding: 6px 16px 42px;
+}
+
+/* ==========================================================================
+   Typography  (Cera Pro 800 headlines, Cera Pro 500 sub, Arial 400 body)
+   ========================================================================== */
+.hero-title {
+  font-family: 'Cera Pro', Arial, sans-serif;
+  font-weight: 800;
+  font-size: 32px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-align: center;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.hero-title.dark {
+  color: #000000;
+}
+.hero-title.light {
+  color: #FFFFFF;
+}
+
+.sub-copy {
+  font-family: 'Cera Pro', Arial, sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 1.5;
+  text-align: center;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+.sub-copy.dark {
+  color: #000000;
+}
+.sub-copy.light {
+  color: #FFFFFF;
+}
+
+.micro-copy {
+  font-family: Arial, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.micro-copy.light {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* ==========================================================================
+   CTA Buttons  (Arial 700, 44px min-height, pill radius)
+   ========================================================================== */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 12px 24px;
+  border-radius: 24px;
+  border: none;
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 150ms ease-out, filter 150ms ease-out;
+  white-space: nowrap;
+}
+.cta:hover {
+  filter: brightness(0.9);
+}
+.cta:active {
+  transform: scale(0.95);
+}
+.cta-red {
+  background: #E3000B;
+  color: #FFFFFF;
+}
+.cta-yellow {
+  background: #FFED00;
+  color: #000000;
+}
+
+/* ==========================================================================
+   Product Hero Image
+   ========================================================================== */
+.product-hero {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 6px 16px;
+  overflow: hidden;
+  min-height: 0;
+}
+.product-hero img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* ==========================================================================
+   Legends 2x2 Grid  (Slide 1)
+   ========================================================================== */
+.legends-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  margin-top: 8px;
+}
+.legend-card {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 6px 4px;
+  overflow: hidden;
+  min-height: 0;
+}
+.legend-card img {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  object-fit: contain;
+  display: block;
+}
+.legend-label {
+  font-family: 'Cera Pro', Arial, sans-serif;
+  font-weight: 800;
+  font-size: 11px;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+  line-height: 1.5;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   Partner Badge  (Slide 2 – LEGO House logo)
+   ========================================================================== */
+.partner-badge {
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+.partner-logo {
+  height: 30px;
+  width: auto;
+  display: block;
+  border-radius: 4px;
+}
+
+/* ==========================================================================
+   Collect-All Grid  (Slide 3)
+   ========================================================================== */
+.collect-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  flex: 1;
+  min-height: 0;
+  margin-top: 10px;
+}
+.collect-card {
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  overflow: hidden;
+}
+.collect-card img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* ==========================================================================
+   Pagination Dots
+   ========================================================================== */
+.pagination {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  transition: background 300ms ease-out, border-color 300ms ease-out, transform 300ms ease-out;
+  outline: none;
+}
+.dot:focus-visible {
+  box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #000000;
+}
+
+/* Yellow theme dots (dark on bright) */
+#ad-320x480[data-theme="yellow"] .dot {
+  border-color: rgba(0, 0, 0, 0.3);
+  background: transparent;
+}
+#ad-320x480[data-theme="yellow"] .dot.active {
+  background: #000000;
+  border-color: #000000;
+}
+
+/* Red theme dots (light on dark) */
+#ad-320x480[data-theme="red"] .dot {
+  border-color: rgba(255, 255, 255, 0.45);
+  background: transparent;
+}
+#ad-320x480[data-theme="red"] .dot.active {
+  background: #FFFFFF;
+  border-color: #FFFFFF;
+}
+
+/* Active dot pulse */
+.dot.active {
+  animation: dotPulse 2.5s ease-in-out infinite;
+}
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.3); }
+}
+
+/* ==========================================================================
+   Entrance Animations
+   ========================================================================== */
+.slide.active.animating .hero-title {
+  animation: slideDown 380ms ease-out both;
+}
+.slide.active.animating .sub-copy,
+.slide.active.animating .micro-copy {
+  animation: fadeIn 320ms 80ms ease-out both;
+}
+.slide.active.animating .product-hero {
+  animation: slideUp 400ms 60ms ease-out both;
+}
+.slide.active.animating .cta {
+  animation: fadeIn 300ms 200ms ease-out both;
+}
+.slide.active.animating .partner-badge {
+  animation: fadeIn 300ms 160ms ease-out both;
+}
+
+/* Staggered legend cards */
+.slide.active.animating .legend-card:nth-child(1) { animation: slideUp 320ms  80ms ease-out both; }
+.slide.active.animating .legend-card:nth-child(2) { animation: slideUp 320ms 130ms ease-out both; }
+.slide.active.animating .legend-card:nth-child(3) { animation: slideUp 320ms 180ms ease-out both; }
+.slide.active.animating .legend-card:nth-child(4) { animation: slideUp 320ms 230ms ease-out both; }
+
+/* Staggered collect cards */
+.slide.active.animating .collect-card:nth-child(1) { animation: scaleIn 280ms  80ms ease-out both; }
+.slide.active.animating .collect-card:nth-child(2) { animation: scaleIn 280ms 120ms ease-out both; }
+.slide.active.animating .collect-card:nth-child(3) { animation: scaleIn 280ms 160ms ease-out both; }
+.slide.active.animating .collect-card:nth-child(4) { animation: scaleIn 280ms 200ms ease-out both; }
+.slide.active.animating .collect-card:nth-child(5) { animation: scaleIn 280ms 240ms ease-out both; }
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ==========================================================================
+   Reduced Motion
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .slide {
+    transition-duration: 1ms !important;
+  }
+  #ad-320x480 {
+    transition-duration: 1ms !important;
+  }
+  .slide.active.animating .hero-title,
+  .slide.active.animating .sub-copy,
+  .slide.active.animating .micro-copy,
+  .slide.active.animating .product-hero,
+  .slide.active.animating .cta,
+  .slide.active.animating .partner-badge,
+  .slide.active.animating .legend-card,
+  .slide.active.animating .collect-card {
+    animation: none !important;
+  }
+  .dot.active {
+    animation: none !important;
+    transform: scale(1.2);
+  }
+}

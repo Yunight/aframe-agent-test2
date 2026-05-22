@@ -1,0 +1,32 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-05-21T15:15:53.780Z",
+  "manifest_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\ff3b487d-3518-4a66-9f4e-3fbabd468c1b\\review\\screenshots\\manifest.json",
+  "audit": {
+    "satisfied": false,
+    "summary": "Critical structural failure: the 320×480 ad unit cannot be rendered. The DOM lacks the required format container with id=\"ad-320x480\". This is a blocker preventing screenshot capture and ad delivery.",
+    "findings": [
+      {
+        "format_id": "320x480",
+        "severity": "blocker",
+        "issue": "No DOM node found for format \"320x480\". The screenshot capture system tried multiple selectors (#ad-320x480, data attributes, inline styles) but found no matching element. The ad container is missing or incorrectly named.",
+        "fix_hint": "In index.html, ensure the main ad wrapper has id=\"ad-320x480\" (matching the format ID exactly). The element must be a direct or immediate child of the body, with explicit width and height attributes or inline styles set to 320px and 480px. Example structure: <div id=\"ad-320x480\" style=\"width: 320px; height: 480px;\">...</div>. Verify the container exists before any child elements (logo, heading, product image, CTA button)."
+      }
+    ],
+    "regeneration_prompt": "Regenerate index.html with the following mandatory structure: (1) Create a root container with id=\"ad-320x480\" and inline styles width: 320px; height: 480px; positioned at the document root. (2) Center this container on the page using body { min-height: 100vh; display: flex; align-items: center; justify-content: center; }. (3) Inside #ad-320x480, structure the ad layout with LEGO brand logo (top, scaled appropriately), headline in Cera Pro 800 weight (Légende du foot or equivalent French copy), product image (Messi/Ronaldo/Mbappé/Vini Jr LEGO minifigure or set packshot, centered, responsive), and a CTA button (Arial 700 bold underline, in primary LEGO red #E3000B or LEGO yellow #FFED00). (4) Apply styles.css with flexbox column layout, proper color adherence (#E3000B, #FFED00, #000000, #FFFFFF), and responsive typography (Cera Pro for headings, Arial for body). (5) Ensure app.js (if needed) initializes without errors. Verify the rendered ad matches exactly 320×480 px and the DOM is scannable by the screenshot capture system."
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 7466,
+    "output_tokens": 562,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 7466,
+    "price_usd": {
+      "input": 0.007466,
+      "output": 0.00281,
+      "total": 0.010276
+    }
+  }
+}

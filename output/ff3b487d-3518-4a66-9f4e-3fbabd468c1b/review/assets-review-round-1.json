@@ -1,0 +1,28 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-05-21T15:02:47.424Z",
+  "deterministic_ok": true,
+  "audit": {
+    "satisfied": true,
+    "summary": "All brand assets pass audit. Logo SVG verified as official LEGO wordmark from lego.com; JPEG LEGO House logo is official from lego.com CDN. All six product images are authentic Football Legends/Football Highlights packshots from lego.com CDN (set numbers 43020, 43027, 43032, 43015, 43011, 43012 confirmed). Color palette (#E3000B red, #FFED00 yellow, #000000 black, #FFFFFF white) and secondary colors (blue, green) are consistent across all assets. Typography guidelines are plausible. All product images are high-quality official renders suitable for small banner layouts (clear LEGO brick detail, minifigure identification, set number clarity). No third-party scraper sources detected.",
+    "findings": [],
+    "brave_retry_queries": {
+      "logos": [],
+      "products": []
+    }
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 12065,
+    "output_tokens": 211,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 12065,
+    "price_usd": {
+      "input": 0.012065,
+      "output": 0.001055,
+      "total": 0.01312
+    }
+  }
+}

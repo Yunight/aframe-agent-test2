@@ -1,12 +1,14 @@
 import { randomUUID } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 import { config as loadDotenv } from 'dotenv';
 import Express from 'express';
-import { loadAdFormatPresets, normalizeApiAdFormats } from './studio-ad-formats.mts';
+import { loadAdFormatPresets, normalizeApiAdFormats } from '../lib/studio-ad-formats.mts';
+import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
 
-loadDotenv({ path: join(import.meta.dirname, '..', '.env') });
+const repoRoot = repoRootFromModuleDir(import.meta.dirname);
+loadDotenv({ path: join(repoRoot, '.env') });
 
 const PORT = Number.parseInt(process.env['STYLE_GUIDE_STUDIO_PORT'] ?? '3001', 10);
 const MAX_CONTEXT_CHARS = 32_000;
@@ -30,8 +32,7 @@ function composeStyleGuideContextFromParts (brand: string, context: string): str
   return '';
 }
 
-const repoRoot = join(import.meta.dirname, '..');
-const srcDir = join(repoRoot, 'src');
+const agentsDir = join(repoRoot, 'src', 'agents');
 const outputDir = join(repoRoot, 'output');
 const DEFAULT_STYLE_SCRIPT = 'gen-style-guide.mts';
 
@@ -184,17 +185,17 @@ function createLineReader (onLine: (line: string) => void): {
 
 function listStyleGuideScripts (): string[] {
   const name = 'gen-style-guide.mts';
-  if (!existsSync(srcDir)) {
+  if (!existsSync(agentsDir)) {
     return [];
   }
-  return existsSync(join(srcDir, name)) ? [ name ] : [];
+  return existsSync(join(agentsDir, name)) ? [ name ] : [];
 }
 
 function listCreativeCodeScripts (): string[] {
-  if (!existsSync(srcDir)) {
+  if (!existsSync(agentsDir)) {
     return [];
   }
-  return readdirSync(srcDir)
+  return readdirSync(agentsDir)
     .filter((n) => n.startsWith('gen-creative-code') && n.endsWith('.mts'))
     .sort((a, b) => a.localeCompare(b));
 }
@@ -242,13 +243,27 @@ function isSafeOutputFolderSegment (name: string): boolean {
   return /^[\w.-]+$/.test(name);
 }
 
+/** Folder segment under `output/` from `Output directory path:` log line. */
+function outputFolderNameFromDirectoryPath (dirPath: string | null): string | null {
+  if (dirPath === null || dirPath.trim().length === 0) {
+    return null;
+  }
+  const name = basename(dirPath.trim());
+  return isSafeOutputFolderSegment(name) ? name : null;
+}
+
+type StudioJobStep = {
+  argv: string[] | ((job: Job) => string[] | null);
+  env?: Record<string, string | undefined>;
+};
+
 function attachSpawnedNodeProcess (job: Job, argv: string[], extraEnv: Record<string, string | undefined>): void {
   attachSpawnedNodeProcessSequence(job, [ { argv, env: extraEnv } ]);
 }
 
 function attachSpawnedNodeProcessSequence (
   job: Job,
-  steps: Array<{ argv: string[]; env?: Record<string, string | undefined> }>
+  steps: StudioJobStep[]
 ): void {
   let stepIndex = 0;
 
@@ -260,9 +275,20 @@ function attachSpawnedNodeProcessSequence (
     }
 
     stepIndex += 1;
-    pushLine(job, 'stdout', `[studio] Step ${String(stepIndex)}/${String(steps.length)}: ${step.argv.join(' ')}`);
+    const resolvedArgv = typeof step.argv === 'function' ? step.argv(job) : step.argv;
+    if (resolvedArgv === null) {
+      pushLine(
+        job,
+        'stderr',
+        '[studio] Cannot resolve step argv (missing or invalid output directory from previous step).'
+      );
+      finishJob(job, 1);
+      return;
+    }
 
-    const child = spawn(process.execPath, step.argv, {
+    pushLine(job, 'stdout', `[studio] Step ${String(stepIndex)}/${String(steps.length)}: ${resolvedArgv.join(' ')}`);
+
+    const child = spawn(process.execPath, resolvedArgv, {
       cwd: repoRoot,
       env: {
         ...process.env,
@@ -380,7 +406,12 @@ app.post('/api/style-guide/run', (req, res) => {
     res.status(429).json({ error: 'Un job studio est déjà en cours.' });
     return;
   }
-  const body = req.body as { contextPrompt?: unknown; brand?: unknown; context?: unknown };
+  const body = req.body as {
+    contextPrompt?: unknown;
+    brand?: unknown;
+    context?: unknown;
+    assetsReviewAfterGeneration?: unknown;
+  };
   const brandField = typeof body.brand === 'string' ? body.brand : '';
   const contextField = typeof body.context === 'string' ? body.context : '';
   const hasBrandOrContext = brandField.trim().length > 0 || contextField.trim().length > 0;
@@ -412,18 +443,40 @@ app.post('/api/style-guide/run', (req, res) => {
     return;
   }
 
-  const styleScriptPath = join(srcDir, DEFAULT_STYLE_SCRIPT);
+  const styleScriptPath = join(agentsDir, DEFAULT_STYLE_SCRIPT);
   if (!existsSync(styleScriptPath)) {
-    res.status(500).json({ error: `${DEFAULT_STYLE_SCRIPT} is missing from src/.` });
+    res.status(500).json({ error: `${DEFAULT_STYLE_SCRIPT} is missing from src/agents/.` });
     return;
   }
+
+  const assetsReviewAfterGeneration = body.assetsReviewAfterGeneration === true;
+  const assetsReviewPath = join(agentsDir, 'run-creative-native-assets-review.mts');
 
   const job = createJob();
   activeJobId = job.id;
 
-  attachSpawnedNodeProcess(job, [ styleScriptPath ], {
-    STYLE_GUIDE_CONTEXT: contextPrompt
-  });
+  if (assetsReviewAfterGeneration) {
+    if (!existsSync(assetsReviewPath)) {
+      res.status(500).json({ error: 'run-creative-native-assets-review.mts is missing from src/agents/.' });
+      return;
+    }
+    attachSpawnedNodeProcessSequence(job, [
+      {
+        argv: [ styleScriptPath ],
+        env: { STYLE_GUIDE_CONTEXT: contextPrompt }
+      },
+      {
+        argv: (activeJob) => {
+          const folder = outputFolderNameFromDirectoryPath(activeJob.outputDirectoryPath);
+          return folder !== null ? [ assetsReviewPath, folder ] : null;
+        }
+      }
+    ]);
+  } else {
+    attachSpawnedNodeProcess(job, [ styleScriptPath ], {
+      STYLE_GUIDE_CONTEXT: contextPrompt
+    });
+  }
 
   res.status(202).json({ jobId: job.id });
 });
@@ -437,12 +490,13 @@ app.post('/api/creative-code/run', (req, res) => {
     creativeScript?: unknown;
     outputFolder?: unknown;
     adFormats?: unknown;
+    assetsReviewBeforeGeneration?: unknown;
     uiReviewAfterGeneration?: unknown;
   };
   if (typeof body.creativeScript !== 'string' || body.creativeScript.trim().length === 0) {
     res.status(400).json({
       error:
-        'Expected JSON body { "creativeScript": string, "outputFolder": string, "adFormats"?: array, "uiReviewAfterGeneration"?: boolean }.'
+        'Expected JSON body { "creativeScript": string, "outputFolder": string, "adFormats"?: array, "assetsReviewBeforeGeneration"?: boolean, "uiReviewAfterGeneration"?: boolean }.'
     });
     return;
   }
@@ -454,7 +508,7 @@ app.post('/api/creative-code/run', (req, res) => {
   const outputFolder = body.outputFolder.trim();
   const allowedCreative = new Set(listCreativeCodeScripts());
   if (!allowedCreative.has(creativeScript)) {
-    res.status(400).json({ error: 'creativeScript is not an allowed file in src/.' });
+    res.status(400).json({ error: 'creativeScript is not an allowed file in src/agents/.' });
     return;
   }
   if (!isSafeOutputFolderSegment(outputFolder)) {
@@ -490,13 +544,16 @@ app.post('/api/creative-code/run', (req, res) => {
     adFormatsJson = JSON.stringify(normalized.formats);
   }
 
+  const assetsReviewRequested =
+    body.assetsReviewBeforeGeneration === true && creativeScript === 'gen-creative-code-native.mts';
   const uiReviewRequested =
     body.uiReviewAfterGeneration === true && creativeScript === 'gen-creative-code-native.mts';
 
   const job = createJob();
   activeJobId = job.id;
-  const creativePath = join(srcDir, creativeScript);
-  const reviewPath = join(srcDir, 'run-creative-native-ui-review.mts');
+  const creativePath = join(agentsDir, creativeScript);
+  const assetsReviewPath = join(agentsDir, 'run-creative-native-assets-review.mts');
+  const uiReviewPath = join(agentsDir, 'run-creative-native-ui-review.mts');
 
   const genStep = {
     argv: [ creativePath, outputFolder ],
@@ -506,17 +563,24 @@ app.post('/api/creative-code/run', (req, res) => {
     }
   };
 
+  const sequenceSteps: Array<{ argv: string[]; env?: Record<string, string> }> = [];
+
+  if (assetsReviewRequested) {
+    sequenceSteps.push({ argv: [ assetsReviewPath, outputFolder ] });
+  }
+  sequenceSteps.push(genStep);
   if (uiReviewRequested) {
-    attachSpawnedNodeProcessSequence(job, [
-      genStep,
-      {
-        argv: [ reviewPath, outputFolder ],
-        env: {
-          CREATIVE_AD_FORMATS: adFormatsJson,
-          CREATIVE_UI_REVIEW_MAX_ROUNDS: '3'
-        }
+    sequenceSteps.push({
+      argv: [ uiReviewPath, outputFolder ],
+      env: {
+        CREATIVE_AD_FORMATS: adFormatsJson,
+        CREATIVE_UI_REVIEW_MAX_ROUNDS: '3'
       }
-    ]);
+    });
+  }
+
+  if (sequenceSteps.length > 1) {
+    attachSpawnedNodeProcessSequence(job, sequenceSteps);
   } else {
     attachSpawnedNodeProcess(job, genStep.argv, genStep.env);
   }

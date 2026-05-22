@@ -1,0 +1,113 @@
+{
+  "companyName": "Celio",
+  "companyContext": "Celio (stylised celio*) is a French men's ready-to-wear retailer founded in 1985 and headquartered in Saint-Ouen, near Paris. With more than 1,100 stores across 50+ countries, the brand specialises in accessible, simple and well-cut everyday menswear under its 'be normal*' positioning, and is known for high-profile licensed collaborations (sports, pop culture, motorsport).",
+  "companyURL": "https://www.celio.com",
+  "brandName": "celio* x McLaren Racing",
+  "brandContext": "Capsule collection by celio inspired by McLaren Racing and the McLaren Formula 1 Team (MCL39). The line — jackets, sweats, t-shirts, polos, caps — translates the codes of the F1 paddock into an everyday wardrobe: powerful contrasts, sharp lines, racing typography, checkered-flag motifs and the iconic papaya orange signature, under the campaign tagline 'Born for the track / Prêt à passer en pole position'.",
+  "brandURL": "https://www.celio.com/fr-fr/c/collabs-mclaren",
+  "logoFileUrls": [
+    "https://www.celio.com/on/demandware.static/-/Library-Sites-celio-shared-library/default/plp-inoxtag/logo.DMQGbcqd_2qp3qb.svg",
+    "https://www.celio.com/on/demandware.static/-/Library-Sites-celio-shared-library/default/v15e1d50009ca38cd33cea814cc9ebcca896c0b6a/images/content/edito/tennis/activewear-logo-min.png"
+  ],
+  "productName": "McLaren Racing Collection (McLaren Formula 1 Team / MCL39 capsule)",
+  "productPictureUrls": [
+    "https://www.celio.com/dw/image/v2/BGBR_PRD/on/demandware.static/-/Sites-celio-master/default/dw6154c8da/hi-res/191791-956-LNUMCL1_BLACK-WEB3-3.jpg?sw=960&sh=1234&q=85",
+    "https://www.celio.com/dw/image/v2/BGBR_PRD/on/demandware.static/-/Sites-celio-master/default/dw5ca43966/hi-res/191791-956-LNUMCL1_BLACK-WEB3-9.jpg?sw=960&sh=1234&q=85",
+    "https://www.celio.com/dw/image/v2/BGBR_PRD/on/demandware.static/-/Sites-celio-master/default/dw3bfd2666/hi-res/191791-956-LNUMCL1_BLACK-WEB3-5.jpg?sw=960&sh=1234&q=85",
+    "https://www.celio.com/dw/image/v2/BGBR_PRD/on/demandware.static/-/Sites-celio-master/default/dw2e763a47/hi-res/191791-956-LNUMCL1_BLACK-WEB3-6.jpg?sw=960&sh=1234&q=85",
+    "https://www.celio.com/dw/image/v2/BGBR_PRD/on/demandware.static/-/Sites-celio-master/default/dwe0bef273/hi-res/191791-956-LNUMCL1_BLACK-WEB3-2.jpg?sw=960&sh=1234&q=85",
+    "https://www.celio.com/dw/image/v2/BGBR_PRD/on/demandware.static/-/Sites-celio-master/default/dw63afd7e5/hi-res/191791-956-LNUMCL1_BLACK-WEB3-4.jpg?sw=960&sh=1234&q=85"
+  ],
+  "primaryColorPalette": [
+    "#FF8000",
+    "#000000",
+    "#FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "#FF4D00",
+    "#1A1A1A",
+    "#4A4A4A",
+    "#C8C8C8",
+    "#F5F5F5",
+    "#0A0A0A"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Helvetica Neue",
+      "fontWeight": 300,
+      "fontEffect": [],
+      "fontUses": "celio brand wordmark — lowercase, light, airy sans-serif echoing the official celio* logo"
+    },
+    {
+      "fontFamily": "Helvetica Neue",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Primary headlines and campaign titles (e.g. 'McLaren Racing', 'Born for the track')"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 600,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Sub-headings, product names and category labels"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions, e-commerce UI text"
+    },
+    {
+      "fontFamily": "Roboto Mono",
+      "fontWeight": 500,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Racing-style accents and technical callouts (lap-time style: 'MCL39', sizes, codes)"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 500,
+      "fontEffect": [
+        "underline"
+      ],
+      "fontUses": "Hyperlinks and secondary CTAs"
+    }
+  ],
+  "brandVision": "Bring the adrenaline, precision and racing heritage of McLaren Formula 1 into celio's 'be normal*' everyday menswear universe — a wardrobe that does not go unnoticed, blending sharp tailoring, motorsport graphics and the iconic papaya orange to dress the modern man from the city to the grandstand.",
+  "brandValues": "Performance, audacity, accessibility, authenticity, and craftsmanship. celio x McLaren stands for everyday confidence with a competitive edge: high-quality, well-cut pieces at fair prices, infused with the team spirit, speed and bold contrasts of top-tier F1 racing — for real guys, not just fans on the podium.",
+  "logoImageSearchQueries": [
+    "site:celio.com logo",
+    "site:celio.com celio* logo svg",
+    "site:celio.com brand celio",
+    "celio logo official svg",
+    "celio asterisk logo png",
+    "site:celio.com/fr-fr brand",
+    "site:mclaren.com McLaren Racing logo svg",
+    "site:mclaren.com speedmark logo papaya",
+    "McLaren Racing logo official svg filetype:svg",
+    "celio x McLaren Racing logo collab",
+    "site:celio.com collabs-mclaren logo",
+    "McLaren Formula 1 Team logo MCL39 official"
+  ],
+  "productImageSearchQueries": [
+    "site:celio.com McLaren Racing veste noire",
+    "site:celio.com mclaren-racing veste",
+    "site:celio.com McLaren sweat",
+    "site:celio.com McLaren t-shirt",
+    "site:celio.com McLaren Formula 1 Team",
+    "site:celio.com collabs-mclaren",
+    "site:celio.com MCL39",
+    "celio McLaren Racing collection packshot",
+    "celio x McLaren Born for the track",
+    "site:celio.com casquette McLaren",
+    "site:celio.com polo McLaren Racing",
+    "celio McLaren Racing lookbook official",
+    "celio mclaren-racing campaign image",
+    "celio* McLaren capsule press",
+    "site:celio.com mclaren oversize"
+  ]
+}

@@ -3,17 +3,18 @@
  * Boucle jusqu'à satisfaction ou CREATIVE_UI_REVIEW_MAX_ROUNDS (défaut 3).
  * Relance gen-creative-code-native.mts avec feedback si des blockers subsistent.
  *
- * Usage : node src/run-creative-native-ui-review.mts <directory-uuid>
+ * Usage : node src/agents/run-creative-native-ui-review.mts <directory-uuid>
  * Prérequis : output/<uuid>/code/index.html et style-guide.json
  */
 
 import type { StyleGuide } from './gen-style-guide.mjs';
-import { captureCreativeNativeScreenshots } from './creative-native-playwright-screenshots.mts';
-import { loadDesignSkillGuidance } from './creative-native-skills.mts';
+import { captureCreativeNativeScreenshots } from '../lib/creative-native-playwright-screenshots.mts';
+import { loadDesignSkillGuidance } from '../lib/creative-native-skills.mts';
 import {
   logPipelineTotalsToConsole,
   pipelineUsagePath
-} from './creative-pipeline-usage.mts';
+} from '../lib/creative-pipeline-usage.mts';
+import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
 import {
   buildRegenerationUserMessage,
   parseUiReviewMaxRoundsFromEnv,
@@ -23,23 +24,23 @@ import {
   type UiReviewOutput,
   type UiReviewUsageTotals
 } from './creative-native-ui-review.mts';
-import { loadAdFormatPresets, parseCreativeAdFormatsFromEnv, type AdFormatSelection } from './studio-ad-formats.mts';
+import { loadAdFormatPresets, parseCreativeAdFormatsFromEnv, type AdFormatSelection } from '../lib/studio-ad-formats.mts';
 import { spawnSync } from 'node:child_process';
 import { config as loadDotenv } from 'dotenv';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Anthropic } from '@anthropic-ai/sdk';
 
-loadDotenv({ path: join(import.meta.dirname, '..', '.env') });
+const repoRoot = repoRootFromModuleDir(import.meta.dirname);
+loadDotenv({ path: join(repoRoot, '.env') });
 
 const directoryUuidArg = process.argv[2];
 if (directoryUuidArg === undefined || directoryUuidArg.startsWith('--')) {
-  console.error('Usage: node src/run-creative-native-ui-review.mts <directory-uuid>');
+  console.error('Usage: node src/agents/run-creative-native-ui-review.mts <directory-uuid>');
   process.exit(2);
 }
 const directoryUuid: string = directoryUuidArg;
 
-const repoRoot = join(import.meta.dirname, '..');
 const directoryPath = join(repoRoot, 'output', directoryUuid);
 const codeDirectoryPath = join(directoryPath, 'code');
 const reviewDirectoryPath = join(directoryPath, 'review');
@@ -86,7 +87,7 @@ if (maxUiReviewRounds <= 0) {
 
 const anthropicClient = new Anthropic({ apiKey: anthropicApiKey });
 const skillGuidance = loadDesignSkillGuidance(repoRoot);
-const genScriptPath = join(repoRoot, 'src', 'gen-creative-code-native.mts');
+const genScriptPath = join(repoRoot, 'src', 'agents', 'gen-creative-code-native.mts');
 const assetInputMode = process.env['CREATIVE_ASSET_INPUT']?.trim() === 'base64' ? 'base64' : 'url';
 
 function runNativeRegeneration (feedback: string, reviewRound: number): number {
@@ -99,6 +100,7 @@ function runNativeRegeneration (feedback: string, reviewRound: number): number {
         ...process.env,
         CREATIVE_REGEN_FEEDBACK: feedback,
         CREATIVE_REGEN_REVIEW_ROUND: String(reviewRound),
+        CREATIVE_ASSETS_REVIEW_SKIP: '1',
         CREATIVE_UI_REVIEW_MAX_ROUNDS: '0',
         CREATIVE_AD_FORMATS: JSON.stringify(adFormats)
       },

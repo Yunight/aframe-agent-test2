@@ -1,0 +1,34 @@
+{
+  "captured_at": "2026-05-21T15:38:54.361Z",
+  "entry_html": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\ff3b487d-3518-4a66-9f4e-3fbabd468c1b\\code\\index.html",
+  "entry_url": "file:///C:/Users/Ben/Desktop/formats_creator/aframe-agent-test2/aframe-agent-test2/output/ff3b487d-3518-4a66-9f4e-3fbabd468c1b/code/index.html",
+  "formats": [
+    {
+      "format_id": "320x480",
+      "width": 320,
+      "height": 480,
+      "selector": "#ad-320x480",
+      "error": null,
+      "shots": [
+        {
+          "state": "initial",
+          "fileName": "320x480__initial.png",
+          "relativePath": "320x480__initial.png",
+          "captured_at": "2026-05-21T15:38:46.667Z"
+        },
+        {
+          "state": "animated",
+          "fileName": "320x480__animated.png",
+          "relativePath": "320x480__animated.png",
+          "captured_at": "2026-05-21T15:38:49.251Z"
+        },
+        {
+          "state": "settled",
+          "fileName": "320x480__settled.png",
+          "relativePath": "320x480__settled.png",
+          "captured_at": "2026-05-21T15:38:54.336Z"
+        }
+      ]
+    }
+  ]
+}

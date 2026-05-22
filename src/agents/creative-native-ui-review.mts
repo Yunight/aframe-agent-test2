@@ -1,14 +1,14 @@
-import { withAnthropicRetry } from './anthropic-retry.mts';
+import { withAnthropicRetry } from '../lib/anthropic-retry.mts';
 import type { StyleGuide } from './gen-style-guide.mjs';
-import type { ScreenshotManifest } from './creative-native-playwright-screenshots.mts';
+import type { ScreenshotManifest } from '../lib/creative-native-playwright-screenshots.mts';
 import {
   appendPipelineUsage,
   entryFromSingleUsage,
   logPipelineUsageToConsole,
   priceUsdFromTokens,
   type PriceUsd
-} from './creative-pipeline-usage.mts';
-import { buildCreativeAdFormatInstructions, type AdFormatSelection } from './studio-ad-formats.mts';
+} from '../lib/creative-pipeline-usage.mts';
+import { buildCreativeAdFormatInstructions, type AdFormatSelection } from '../lib/studio-ad-formats.mts';
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Anthropic } from '@anthropic-ai/sdk';
@@ -308,7 +308,7 @@ export async function runCreativeNativeUiReview (
 
   const pipelineEntry = entryFromSingleUsage({
     action: 'ui_review',
-    agent: 'creative-native-ui-review.mts',
+    agent: 'agents/creative-native-ui-review.mts',
     model,
     usage: msg.usage,
     review_round: reviewRound
