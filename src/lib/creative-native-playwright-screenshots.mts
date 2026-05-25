@@ -47,6 +47,14 @@ export type CaptureScreenshotsOptions = {
 
 const SCREENSHOT_STATES: readonly ScreenshotState[] = [ 'initial', 'animated', 'settled' ];
 
+function screenshotStatesForProfile (): readonly ScreenshotState[] {
+  const profile = process.env['CREATIVE_SCREENSHOT_PROFILE']?.trim().toLowerCase();
+  if (profile === 'dev' || profile === 'fast') {
+    return [ 'settled' ];
+  }
+  return SCREENSHOT_STATES;
+}
+
 function parsePositiveIntEnv (name: string, fallback: number, max: number): number {
   const raw = process.env[name]?.trim();
   if (raw === undefined || raw.length === 0) {
@@ -182,7 +190,7 @@ async function captureFormatScreenshots (
     const locator = page.locator(resolvedSelector).first();
     await locator.waitFor({ state: 'visible', timeout: 15_000 });
 
-    for (const state of SCREENSHOT_STATES) {
+    for (const state of screenshotStatesForProfile()) {
       await bypassPreviewScale(page, resolvedSelector);
       await scrollAdUnitIntoView(page, resolvedSelector);
 
@@ -240,11 +248,17 @@ export async function captureCreativeNativeScreenshots (
 
   mkdirSync(outputScreensDir, { recursive: true });
 
-  const initialWaitMs = options.initialWaitMs ?? parsePositiveIntEnv('CREATIVE_SCREENSHOT_INITIAL_WAIT_MS', 600, 30_000);
+  const devProfile = process.env['CREATIVE_SCREENSHOT_PROFILE']?.trim().toLowerCase() === 'dev'
+    || process.env['CREATIVE_SCREENSHOT_PROFILE']?.trim().toLowerCase() === 'fast';
+  const initialWaitMs =
+    options.initialWaitMs
+    ?? parsePositiveIntEnv('CREATIVE_SCREENSHOT_INITIAL_WAIT_MS', devProfile ? 200 : 600, 30_000);
   const animatedWaitMs =
-    options.animatedWaitMs ?? parsePositiveIntEnv('CREATIVE_SCREENSHOT_ANIMATED_WAIT_MS', 2500, 60_000);
+    options.animatedWaitMs
+    ?? parsePositiveIntEnv('CREATIVE_SCREENSHOT_ANIMATED_WAIT_MS', devProfile ? 800 : 2500, 60_000);
   const settledWaitMs =
-    options.settledWaitMs ?? parsePositiveIntEnv('CREATIVE_SCREENSHOT_SETTLED_WAIT_MS', 5000, 120_000);
+    options.settledWaitMs
+    ?? parsePositiveIntEnv('CREATIVE_SCREENSHOT_SETTLED_WAIT_MS', devProfile ? 1500 : 5000, 120_000);
   const viewportMarginPx = options.viewportMarginPx ?? 48;
 
   const entryUrl = pathToFileURL(entryHtmlPath).toString();
@@ -282,7 +296,8 @@ export async function captureCreativeNativeScreenshots (
         action: 'screenshots',
         agent: 'lib/creative-native-playwright-screenshots.mts',
         review_round: options.reviewRound ?? null,
-        notes
+        notes,
+        duration_ms: durationMs
       })
     );
     logPipelineUsageToConsole(file.entries[file.entries.length - 1]!);

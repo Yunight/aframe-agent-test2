@@ -1,0 +1,787 @@
+/* ============================================
+   PETIT BATEAU — JOURNÉES EXTRAORDINAIRES
+   ============================================ */
+:root {
+    --navy: #112351;
+    --white: #FFFFFF;
+    --red: #E2231A;
+    --yellow: #F4D03F;
+    --sky: #A8C8E1;
+    --cream: #F5F1EA;
+    --dark: #1F1F1F;
+    --gray: #6E7A8A;
+}
+
+/* --- Reset --- */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+img { display: block; max-width: 100%; }
+a { text-decoration: none; }
+button { border: none; cursor: pointer; background: none; }
+
+/* --- Page --- */
+body {
+    background: var(--cream);
+    font-family: 'Helvetica Neue', sans-serif;
+    color: var(--dark);
+    min-height: 100vh;
+}
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    padding: 32px;
+    justify-content: center;
+    align-items: flex-start;
+}
+.ad-frame { flex-shrink: 0; }
+
+/* --- Ad Unit Base --- */
+.ad-unit {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--sky);
+}
+
+/* --- Shared CTA --- */
+.cta {
+    display: inline-block;
+    background: var(--red);
+    color: var(--white);
+    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.15s ease;
+    text-align: center;
+    line-height: 1.4;
+}
+.cta:hover {
+    background: var(--dark);
+    transform: scale(1.05);
+}
+
+/* --- Shared Legal --- */
+.legal {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--gray);
+}
+
+/* ==============================
+   F1 — 320x480 Mobile Interstitial
+   ============================== */
+#ad-320x480 { width: 320px; height: 480px; }
+
+.f1-header {
+    height: 52px;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.f1-logo { height: 28px; width: auto; }
+
+.f1-body {
+    height: 404px;
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    position: relative;
+}
+
+.f1-badge {
+    position: absolute;
+    top: 10px;
+    right: 16px;
+    width: 64px;
+    height: 64px;
+    background: var(--yellow);
+    color: var(--navy);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Futura', sans-serif;
+    z-index: 2;
+    animation: pulse 2.5s ease-in-out infinite;
+}
+.f1-badge strong { font-size: 18px; line-height: 1; font-weight: 700; }
+.f1-badge small { font-size: 8px; font-weight: 700; letter-spacing: 0.3px; }
+
+.f1-hero {
+    width: 170px;
+    height: 200px;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+}
+.f1-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    animation: float 3s ease-in-out infinite;
+}
+
+.f1-title {
+    font-family: 'Futura', sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    color: var(--white);
+    text-align: center;
+    line-height: 1.1;
+    margin-bottom: 4px;
+    animation: fadeIn 0.8s ease-out 0.2s both;
+}
+
+/* [warn fix] subheading font-size increased to 14px, line-height 1.4, color brightened */
+.f1-sub {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--white);
+    text-align: center;
+    margin-bottom: 16px;
+    line-height: 1.4;
+}
+
+.f1-cta {
+    padding: 10px 36px;
+    font-size: 13px;
+    border-radius: 4px;
+    animation: slideUp 0.6s ease-out 0.4s both;
+}
+
+.f1-footer {
+    height: 24px;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.f1-footer .legal { font-size: 8px; color: var(--sky); }
+
+/* ==============================
+   F2 — 336x280 Large Rectangle
+   ============================== */
+#ad-336x280 { width: 336px; height: 280px; }
+
+.f2-layout {
+    width: 100%;
+    height: 100%;
+    background: var(--cream);
+    display: flex;
+}
+
+.f2-left {
+    width: 55%;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 2;
+}
+.f2-logo { height: 22px; width: auto; margin-bottom: 16px; }
+.f2-title {
+    font-family: 'Futura', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--navy);
+    line-height: 1.15;
+    margin-bottom: 4px;
+    margin-right: 12px;
+}
+.f2-title::after {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 3px;
+    background: var(--red);
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+.f2-offer {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--navy);
+    margin-bottom: 16px;
+    margin-right: 12px;
+}
+/* [warn fix] CTA font-size increased to 13px, padding increased for prominence */
+.f2-cta {
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 3px;
+    align-self: flex-start;
+}
+
+.f2-right {
+    width: 45%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.f2-circle {
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: var(--sky);
+    top: 50%;
+    left: 50%;
+    transform: translate(-30%, -50%);
+}
+/* [blocker fix] product image explicitly sized: max-height 140px, visible product */
+.f2-product {
+    position: relative;
+    z-index: 1;
+    width: auto;
+    max-width: 100%;
+    max-height: 140px;
+    object-fit: contain;
+    animation: slideRight 0.7s ease-out 0.2s both;
+    transition: transform 0.3s ease;
+}
+.f2-product:hover { transform: scale(1.06); }
+
+/* ==============================
+   F3 — 970x250 Billboard
+   ============================== */
+#ad-970x250 { width: 970px; height: 250px; }
+
+/* [warn fix] removed red accent bar from top of 970x250 */
+/* .f3-accent removed intentionally */
+
+.f3-layout {
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.f3-left {
+    width: 320px;
+    background: var(--navy);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.f3-logo-wrap {
+    background: var(--white);
+    padding: 5px 10px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 16px;
+    align-self: flex-start;
+}
+.f3-logo { height: 20px; width: auto; }
+.f3-title {
+    font-family: 'Futura', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 8px;
+}
+.f3-offer {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--white);
+    margin-bottom: 16px;
+}
+.f3-hl {
+    color: var(--yellow);
+    font-weight: 700;
+    font-size: 16px;
+    font-family: 'Futura', sans-serif;
+}
+.f3-cta {
+    padding: 9px 22px;
+    font-size: 12px;
+    border-radius: 4px;
+    align-self: flex-start;
+}
+
+.f3-right {
+    flex: 1;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 24px;
+}
+
+.f3-products {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    height: 200px;
+}
+.f3-pitem {
+    width: 180px;
+    height: 185px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    cursor: pointer;
+}
+.f3-pitem img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.f3-pitem:nth-child(1) { animation: slideUp 0.5s ease-out 0.2s both; }
+.f3-pitem:nth-child(2) { animation: slideUp 0.5s ease-out 0.35s both; }
+.f3-products:hover .f3-pitem { opacity: 0.5; transform: scale(0.95); }
+.f3-products:hover .f3-pitem:hover { opacity: 1; transform: scale(1.06); }
+
+/* ==============================
+   F4 — 300x250 Medium Rectangle
+   ============================== */
+#ad-300x250 { width: 300px; height: 250px; }
+
+/* [blocker fix] background changed from light-blue gradient to cream (#F5F1EA) */
+.f4-layout {
+    width: 100%;
+    height: 100%;
+    background: var(--cream);
+    display: flex;
+    flex-direction: column;
+    padding: 12px 16px;
+}
+.f4-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-shrink: 0;
+}
+.f4-logo { height: 20px; width: auto; }
+.f4-badge {
+    width: 42px;
+    height: 42px;
+    background: var(--yellow);
+    color: var(--navy);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Futura', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    animation: pulse 2.5s ease-in-out infinite;
+}
+.f4-hero {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+}
+.f4-product {
+    max-height: 120px;
+    max-width: 130px;
+    object-fit: contain;
+    animation: scaleIn 0.6s ease-out 0.2s both;
+    transition: transform 0.3s ease;
+}
+.f4-product:hover { transform: scale(1.06); }
+.f4-bottom {
+    flex-shrink: 0;
+    text-align: center;
+}
+.f4-title {
+    font-family: 'Futura', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy);
+    margin-bottom: 8px;
+}
+.f4-cta {
+    padding: 7px 24px;
+    font-size: 11px;
+    border-radius: 3px;
+}
+
+/* ==============================
+   F5 — 728x90 Leaderboard
+   ============================== */
+#ad-728x90 { width: 728px; height: 90px; }
+
+.f5-layout {
+    width: 100%;
+    height: 100%;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 16px;
+}
+.f5-logo-wrap {
+    background: var(--white);
+    padding: 6px 10px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+.f5-logo { height: 22px; width: auto; }
+.f5-content {
+    flex: 1;
+    min-width: 0;
+    animation: fadeIn 0.6s ease-out 0.15s both;
+}
+/* [warn fix] headline font-size 16px bold Futura, white for max contrast */
+.f5-title {
+    font-family: 'Futura', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--white);
+    line-height: 1.2;
+}
+/* [warn fix] subheading 11px, sky color, line-height 1.2 */
+.f5-offer {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 11px;
+    color: var(--sky);
+    margin-top: 2px;
+    line-height: 1.2;
+}
+/* [blocker fix] product image wrap: min-width 80px enforced, height 70px for better visibility */
+.f5-product-wrap {
+    min-width: 80px;
+    width: 80px;
+    height: 70px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.f5-product {
+    max-width: 100%;
+    max-height: 100%;
+    width: 80px;
+    height: 70px;
+    object-fit: contain;
+}
+.f5-cta {
+    padding: 8px 14px;
+    font-size: 11px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+.f5-cta:hover { transform: none; }
+
+/* ==============================
+   F6 — 300x600 Half Page
+   ============================== */
+#ad-300x600 { width: 300px; height: 600px; }
+
+.f6-layout {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.f6-top {
+    background: var(--cream);
+    padding: 16px 16px 12px;
+    text-align: center;
+    flex-shrink: 0;
+}
+.f6-logo {
+    height: 28px;
+    width: auto;
+    margin: 0 auto 12px;
+}
+.f6-title {
+    font-family: 'Futura', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--navy);
+    line-height: 1.1;
+}
+
+/* [warn fix] increased vertical padding on product container to 24px top/bottom */
+.f6-hero {
+    background: var(--white);
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 12px;
+    min-height: 0;
+}
+.f6-product {
+    position: relative;
+    z-index: 1;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    animation: scaleIn 0.7s ease-out 0.3s both;
+    transition: transform 0.3s ease;
+}
+.f6-product:hover { transform: scale(1.04); }
+.f6-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 64px;
+    height: 64px;
+    background: var(--yellow);
+    color: var(--navy);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Futura', sans-serif;
+    z-index: 2;
+    animation: pulse 2.5s ease-in-out infinite;
+}
+.f6-badge strong { font-size: 18px; line-height: 1; font-weight: 700; }
+.f6-badge small { font-size: 8px; font-weight: 700; }
+
+.f6-bottom {
+    background: var(--navy);
+    padding: 12px 16px;
+    text-align: center;
+    flex-shrink: 0;
+}
+.f6-sub {
+    font-family: 'Futura', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--white);
+    line-height: 1.4;
+    margin-bottom: 12px;
+}
+.f6-cta {
+    padding: 11px 48px;
+    font-size: 13px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+.f6-legal {
+    font-size: 8px;
+    color: var(--sky);
+}
+
+/* ==============================
+   F7 — 320x50 Mobile Banner
+   ============================== */
+#ad-320x50 { width: 320px !important; height: 50px; }
+
+.f7-layout {
+    width: 320px;
+    height: 50px;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    gap: 8px;
+    overflow: hidden;
+}
+.f7-logo-wrap {
+    background: var(--white);
+    padding: 4px 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+.f7-logo { height: 14px; width: auto; }
+.f7-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    overflow: hidden;
+}
+/* [blocker fix] heading font-size reduced to 11px to prevent truncation of full title */
+.f7-title {
+    font-family: 'Futura', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--white);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.f7-offer {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: 400;
+    font-size: 9px;
+    color: var(--sky);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.f7-cta {
+    padding: 5px 10px;
+    font-size: 9px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+.f7-cta:hover { transform: none; }
+
+/* ==============================
+   F8 — 160x600 Wide Skyscraper
+   ============================== */
+#ad-160x600 { width: 160px; height: 600px; }
+
+.f8-layout {
+    width: 100%;
+    height: 100%;
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.f8-header {
+    background: var(--cream);
+    width: 100%;
+    padding: 14px;
+    text-align: center;
+    flex-shrink: 0;
+}
+.f8-logo {
+    height: 18px;
+    width: auto;
+    margin: 0 auto;
+}
+.f8-title {
+    font-family: 'Futura', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--white);
+    text-align: center;
+    line-height: 1.15;
+    padding: 20px 12px 16px;
+    flex-shrink: 0;
+}
+.f8-hero {
+    position: relative;
+    width: 130px;
+    height: 200px;
+    flex-shrink: 0;
+}
+.f8-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+.f8-slide.active { opacity: 1; }
+
+/* Carousel navigation dots */
+.f8-dots {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    margin-top: 8px;
+    flex-shrink: 0;
+}
+.f8-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gray);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.3s ease;
+    flex-shrink: 0;
+}
+.f8-dot.active { background: var(--yellow); }
+
+.f8-badge {
+    width: 58px;
+    height: 58px;
+    background: var(--yellow);
+    color: var(--navy);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Futura', sans-serif;
+    margin: 10px 0 8px;
+    flex-shrink: 0;
+    animation: pulse 2.5s ease-in-out infinite;
+}
+.f8-badge strong { font-size: 16px; line-height: 1; font-weight: 700; }
+.f8-badge small { font-size: 7px; font-weight: 700; letter-spacing: 0.2px; }
+
+.f8-sub {
+    font-family: 'Futura', sans-serif;
+    font-weight: 500;
+    font-size: 11px;
+    color: var(--sky);
+    text-align: center;
+    line-height: 1.3;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+}
+.f8-cta {
+    padding: 8px 24px;
+    font-size: 11px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+.f8-legal {
+    font-size: 7px;
+    color: var(--sky);
+    text-align: center;
+    margin-top: auto;
+    padding: 12px 8px;
+}
+
+/* ==============================
+   KEYFRAME ANIMATIONS
+   ============================== */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.07); }
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* ==============================
+   REDUCED MOTION
+   ============================== */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
+}

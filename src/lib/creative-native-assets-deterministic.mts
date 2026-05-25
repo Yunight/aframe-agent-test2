@@ -4,6 +4,7 @@ import { existsSync, readdirSync, readFileSync, statSync, unlinkSync } from 'nod
 import { join, extname } from 'node:path';
 import { imageSizeFromFile } from 'image-size/fromFile';
 import mime from 'mime';
+import { looksLikeProductPackshotInLogosFolder } from './logo-asset-rules.mts';
 import { validateLogoAssetFile } from './logo-transparency-check.mts';
 
 export type DeterministicFinding = {
@@ -69,6 +70,25 @@ export async function pruneUndersizedAssets (directoryPath: string): Promise<{ r
         /* corrupt files stay for deterministic to flag */
       }
     }
+  }
+  return { removed };
+}
+
+/** Remove product packshots mistakenly stored under logos/. */
+export async function pruneNonWordmarkLogos (directoryPath: string): Promise<{ removed: string[] }> {
+  const removed: string[] = [];
+  const subdirectoryPath = join(directoryPath, 'logos');
+  if (!existsSync(subdirectoryPath)) {
+    return { removed };
+  }
+  for (const fileName of listImageFiles(subdirectoryPath)) {
+    if (!looksLikeProductPackshotInLogosFolder(fileName)) {
+      continue;
+    }
+    const filePath = join(subdirectoryPath, fileName);
+    unlinkSync(filePath);
+    removed.push(`logos/${fileName}`);
+    console.log(`[assets-prune] Removed non-wordmark from logos/: ${fileName} (product/packshot heuristic)`);
   }
   return { removed };
 }
@@ -141,6 +161,17 @@ async function checkLogoFiles (
         issue: `File size ${String(sizeBytes)} bytes exceeds max ${String(MAX_FILE_BYTES())}.`,
         fix_hint: 'Use a smaller image or raise CREATIVE_ASSETS_MAX_FILE_BYTES.'
       });
+    }
+
+    if (!isSvg && looksLikeProductPackshotInLogosFolder(fileName)) {
+      findings.push({
+        asset_id: assetId,
+        severity: 'blocker',
+        issue: 'File in logos/ looks like a product packshot, not a brand wordmark.',
+        fix_hint:
+          'Keep only the official header logo (SVG/PNG lockup) in logos/. Move product images to products/ only.'
+      });
+      continue;
     }
 
     const validation = validateLogoAssetFile(filePath);

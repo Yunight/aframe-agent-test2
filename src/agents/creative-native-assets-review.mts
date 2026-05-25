@@ -6,6 +6,7 @@ import {
   entryFromSingleUsage,
   logPipelineUsageToConsole,
   priceUsdFromTokens,
+  timedAnthropicCall,
   type PriceUsd
 } from '../lib/creative-pipeline-usage.mts';
 import { appendFileSync, existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
@@ -56,6 +57,7 @@ export type AssetsReviewUsageTotals = {
   model: string;
   billed_input_tokens: number;
   price_usd: PriceUsd;
+  duration_ms: number;
 };
 
 export function logAssetsReviewAuditToConsole (audit: AssetsReviewOutput, reviewRound: number): void {
@@ -196,6 +198,9 @@ export async function runCreativeNativeAssetsReview (
     'You are a strict brand asset auditor before HTML5 ad code generation.',
     'You receive a JSON style guide (text) and logo/product image files (raster and possibly SVG logos).',
     'Evaluate:',
+    '- logos/ folder must contain ONLY the brand wordmark lockup (SVG or PNG), never product packshots or catalog photos.',
+    '  * BLOCKER if any file in logos/ looks like a product SKU/packshot (e.g. A04P501D.jpg) — those belong in products/ only.',
+    '  * Do NOT accept a product JPEG as a "secondary logo" or alternate brand asset.',
     '- Logo (STRICT on source and brand): must match brandName/companyName (reject wrong brands, e.g. homonyms).',
     '  * BLOCKER if the logo in logos/ is NOT the same lockup as the brand homepage header (e.g. div.primary-logo / img.logo-simple on brandURL) — wrong file from Brave/generic search.',
     '  * BLOCKER if the logo clearly comes from a third-party scraper (KindPNG, PNGaaaa, Pinterest, random blogs) while companyURL/brandURL host an official header lockup.',
@@ -217,17 +222,23 @@ export async function runCreativeNativeAssetsReview (
 
   console.log(`[assets-review] Round ${String(reviewRound)} — model ${model}`);
 
-  const msg = await withAnthropicRetry(`assets-review round ${String(reviewRound)}`, async () => {
-    return await anthropicClient.messages.parse({
-      model,
-      max_tokens: 8192,
-      system: systemPrompt,
-      messages: [ { role: 'user', content: userContent } ],
-      output_config: {
-        format: zodOutputFormat(assetsReviewOutputSchema)
-      }
-    });
-  });
+  const roundStart = Date.now();
+  const { result: msg, duration_ms: apiDurationMs } = await timedAnthropicCall(
+    `assets-review round ${String(reviewRound)}`,
+    async () =>
+      await withAnthropicRetry(`assets-review round ${String(reviewRound)}`, async () => {
+        return await anthropicClient.messages.parse({
+          model,
+          max_tokens: 8192,
+          system: systemPrompt,
+          messages: [ { role: 'user', content: userContent } ],
+          output_config: {
+            format: zodOutputFormat(assetsReviewOutputSchema)
+          }
+        });
+      })
+  );
+  const stepDurationMs = Date.now() - roundStart;
 
   const parsed = msg.parsed_output;
   if (parsed === null) {
@@ -248,7 +259,8 @@ export async function runCreativeNativeAssetsReview (
     cache_read_input_tokens: msg.usage.cache_read_input_tokens ?? 0,
     model,
     billed_input_tokens: billedInput,
-    price_usd
+    price_usd,
+    duration_ms: stepDurationMs
   };
 
   const blockers = parsed.findings.filter((f) => f.severity === 'blocker');
@@ -268,7 +280,16 @@ export async function runCreativeNativeAssetsReview (
     agent: 'agents/creative-native-assets-review.mts',
     model,
     usage: msg.usage,
-    review_round: reviewRound
+    review_round: reviewRound,
+    duration_ms: stepDurationMs,
+    api_call_timings: [
+      {
+        call_index: 1,
+        duration_ms: apiDurationMs,
+        stop_reason: msg.stop_reason,
+        label: `assets-review round ${String(reviewRound)}`
+      }
+    ]
   });
   const file = appendPipelineUsage(directoryPath, pipelineEntry);
   logPipelineUsageToConsole(file.entries[file.entries.length - 1]!);
@@ -319,6 +340,7 @@ export function writeAssetsReviewTokenUsage (
       acc.price_usd.input += row.price_usd.input;
       acc.price_usd.output += row.price_usd.output;
       acc.price_usd.total += row.price_usd.total;
+      acc.duration_ms += row.duration_ms;
       return acc;
     },
     {
@@ -328,7 +350,8 @@ export function writeAssetsReviewTokenUsage (
       cache_creation_input_tokens: 0,
       cache_read_input_tokens: 0,
       billed_input_tokens: 0,
-      price_usd: { input: 0, output: 0, total: 0 }
+      price_usd: { input: 0, output: 0, total: 0 },
+      duration_ms: 0
     }
   );
   totals.price_usd.input = Math.round(totals.price_usd.input * 1_000_000) / 1_000_000;

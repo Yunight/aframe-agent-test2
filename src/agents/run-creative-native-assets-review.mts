@@ -18,10 +18,12 @@ import {
 import {
   logDeterministicFindings,
   pruneInvalidLogos,
+  pruneNonWordmarkLogos,
   pruneUndersizedAssets,
   runDeterministicAssetsCheck
 } from '../lib/creative-native-assets-deterministic.mts';
 import {
+  appendPipelineRunSummary,
   appendPipelineUsage,
   entryZeroCost,
   logPipelineTotalsToConsole,
@@ -44,6 +46,7 @@ import { Anthropic } from '@anthropic-ai/sdk';
 
 const repoRoot = repoRootFromModuleDir(import.meta.dirname);
 loadDotenv({ path: join(repoRoot, '.env') });
+const scriptRunStart = Date.now();
 
 const directoryUuidArg = process.argv[2];
 if (directoryUuidArg === undefined || directoryUuidArg.startsWith('--')) {
@@ -172,6 +175,7 @@ while (reviewRound < maxRounds) {
 
   mkdirSync(reviewDirectoryPath, { recursive: true });
   await pruneUndersizedAssets(directoryPath);
+  await pruneNonWordmarkLogos(directoryPath);
   await pruneInvalidLogos(directoryPath);
 
   const deterministic = await runDeterministicAssetsCheck(directoryPath, styleGuide);
@@ -276,7 +280,8 @@ if (lastAudit !== null && !lastAudit.satisfied) {
     console.log('[assets-review-agent] Post-audit Brave refresh (Haiku retry queries)…');
     postAuditRefreshDone = true;
     await pruneUndersizedAssets(directoryPath);
-    await pruneInvalidLogos(directoryPath);
+    await pruneNonWordmarkLogos(directoryPath);
+  await pruneInvalidLogos(directoryPath);
     await runBraveRefresh({ logos, products }, reviewRound + 1);
     styleGuide = JSON.parse(readFileSync(styleGuidePath, 'utf8')) as StyleGuide;
 
@@ -326,6 +331,7 @@ writeFileSync(
   { encoding: 'utf8' }
 );
 
+appendPipelineRunSummary(directoryPath, { wall_clock_ms: Date.now() - scriptRunStart });
 logPipelineTotalsToConsole(directoryPath);
 console.log(`Output directory path: ${directoryPath}`);
 

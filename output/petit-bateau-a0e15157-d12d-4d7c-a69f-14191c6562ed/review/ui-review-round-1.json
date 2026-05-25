@@ -1,0 +1,75 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-05-22T10:53:34.882Z",
+  "manifest_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\petit-bateau-a0e15157-d12d-4d7c-a69f-14191c6562ed\\review\\screenshots\\manifest.json",
+  "audit": {
+    "satisfied": false,
+    "summary": "The Petit Bateau ad creative suite exhibits strong visual cohesion and proper pixel dimensions across all 8 formats. Logo visibility is consistent, color adherence to the primary palette (#112351 navy, #FFFFFF white, #E2231A red, #F4D03F yellow) is accurate, and French copy is clear. However, there are critical BLOCKER issues: (1) IAB pixel dimension mismatch on 320x50 (appears narrower than 320px), (2) missing or broken product hero image in 300x250, and (3) animation inconsistency in 160x600 where the product image rotates between states without clear carousel controls or timing clarity. Additionally, several formats exhibit typography hierarchy and spacing polish issues warranting warn-level correction.",
+    "findings": [
+      {
+        "format_id": "320x50",
+        "severity": "blocker",
+        "issue": "IAB pixel width violation: format appears narrower than required 320px; outer frame does not match 320×50 specification exactly",
+        "fix_hint": "#ad-320x50 { width: 320px !important; } — verify viewport width and container padding are not causing overflow/underflow"
+      },
+      {
+        "format_id": "300x250",
+        "severity": "blocker",
+        "issue": "Missing or broken product hero image: only a plain striped shirt illustration visible in white box; no actual product photography from style guide URLs loaded",
+        "fix_hint": "Replace placeholder .product-image src with one of the official productPictureUrls (e.g., A03KL01D.jpg or A044E01Z1.jpg); verify img src path and domain access (CORS/CDN)"
+      },
+      {
+        "format_id": "160x600",
+        "severity": "blocker",
+        "issue": "Animation carousel without visible controls or timing clarity: product image cycles between marinière, striped shirt, and swatches across initial/animated/settled states; no indicator of loop duration, carousel buttons, or auto-play intent is evident",
+        "fix_hint": "#ad-160x600 .carousel-container { animation: carousel-rotate 6s ease-in-out infinite; } or add explicit carousel controls (prev/next buttons) with aria-labels; document auto-play timing (e.g., 3s per slide, 1.5s transition)"
+      },
+      {
+        "format_id": "320x480",
+        "severity": "warn",
+        "issue": "Logo scale and positioning: Petit Bateau logo at top is small and subtle; could benefit from slightly larger max-height to improve brand recognition in mobile context",
+        "fix_hint": "#ad-320x480 .logo img { max-height: 28px; } (increase from ~20px if current)"
+      },
+      {
+        "format_id": "300x600",
+        "severity": "warn",
+        "issue": "Hero product image (red/navy striped marinière) is compositionally strong but lacks subtle product detail emphasis; text hierarchy could be tightened to reduce visual clutter in beige footer area",
+        "fix_hint": "#ad-300x600 .footer { padding: 12px 16px; } (reduce from likely 16px+); font-size: 13px for body text (from 14px if needed) to improve text-to-image ratio"
+      },
+      {
+        "format_id": "336x280",
+        "severity": "warn",
+        "issue": "Beige background and text layout: heading text 'JOURNÉES EXTRAORDINAIRES' sits very close to the blue circle element on the right; narrow margin between text and decorative shape creates visual tension",
+        "fix_hint": "#ad-336x280 .headline { margin-right: 12px; } or #ad-336x280 .circle-decoration { margin-left: auto; padding-left: 8px; } to add breathing room"
+      },
+      {
+        "format_id": "728x90",
+        "severity": "warn",
+        "issue": "Horizontal leaderboard proportions: product image (striped shirt) is small and may read poorly on lower-res placements; text-to-image balance could favor text slightly more given the format's editorial context",
+        "fix_hint": "#ad-728x90 .product-image { width: 80px; height: 60px; } and #ad-728x90 .headline { font-size: 16px; } (increase from 14-15px if current) to emphasize title prominence"
+      },
+      {
+        "format_id": "970x250",
+        "severity": "warn",
+        "issue": "Wide billboard layout features three small product detail images (marinière, striped shirt, fabric close-up) in a row; product narrative clarity is diluted across three small thumbnails rather than one hero image; CTA button position is far from product content",
+        "fix_hint": "Consider consolidating to 2 product images or 1 hero + 1 detail; #ad-970x250 .product-carousel { gap: 8px; } (tighten spacing) and move #ad-970x250 .cta-button closer to right product image (margin-left: -20px or reflow grid)"
+      }
+    ],
+    "regeneration_prompt": "1. Fix #ad-320x50 width to exactly 320px: add width: 320px !important; to container, remove any horizontal padding causing shrink.\n2. Replace #ad-300x250 .product-image src with official product photo URL (e.g., A03KL01D.jpg); verify img load and fix CORS if needed.\n3. Document #ad-160x600 carousel timing: add explicit CSS animation duration (e.g., 3s per slide, 6s total loop) or add visible carousel controls (prev/next buttons + aria-labels); clarify auto-play intent.\n4. Increase #ad-320x480 .logo img max-height to ~28px for better mobile brand visibility.\n5. Tighten #ad-300x600 .footer padding to 12px 16px and reduce body font-size to 13px.\n6. Add margin-right: 12px to #ad-336x280 .headline to separate from blue circle decoration.\n7. Increase #ad-728x90 .headline font-size to 16px; keep product image at 80×60px.\n8. For #ad-970x250: consolidate product display to 2 images or 1 hero + 1 detail; tighten .product-carousel gap to 8px; reposition CTA button margin closer to product section."
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 14064,
+    "output_tokens": 1481,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 14064,
+    "price_usd": {
+      "input": 0.014064,
+      "output": 0.007405,
+      "total": 0.021469
+    },
+    "duration_ms": 18341
+  }
+}

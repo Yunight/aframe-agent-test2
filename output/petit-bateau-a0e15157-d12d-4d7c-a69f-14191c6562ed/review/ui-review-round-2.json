@@ -1,0 +1,87 @@
+{
+  "review_round": 2,
+  "captured_at": "2026-05-22T10:56:04.436Z",
+  "manifest_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\petit-bateau-a0e15157-d12d-4d7c-a69f-14191c6562ed\\review\\screenshots\\manifest.json",
+  "audit": {
+    "satisfied": false,
+    "summary": "Multiple critical and warning issues across formats. Key blockers: 320x50 has truncated/unreadable heading text ('JOURNÉES EXTRA' instead of full 'JOURNÉES EXTRAORDINAIRES'); 336x280 missing product image (blank/placeholder only); 300x250 uses light blue background (style-guide primary is navy #112351, secondary blue is #A8C8E1 for accents only); 728x90 product image too small/unclear. Typography and spacing violations across several formats. Logo visibility acceptable but some formats lack proper hierarchy.",
+    "findings": [
+      {
+        "format_id": "320x50",
+        "severity": "blocker",
+        "issue": "Heading text is truncated ('JOURNÉES EXTRA') — unreadable and incomplete product communication.",
+        "fix_hint": "Increase container width or reduce font-size of .heading in #ad-320x50; use font-size: 11px or 12px for heading; ensure text fits within 320px width with padding."
+      },
+      {
+        "format_id": "336x280",
+        "severity": "blocker",
+        "issue": "Product image area is blank or missing — only placeholder/circle background visible, no actual product.",
+        "fix_hint": "Add product image src to #ad-336x280 .product-image; use one of the productPictureUrls (e.g., striped shirt or marinière); apply max-width: 100% and max-height: 140px to fit space."
+      },
+      {
+        "format_id": "300x250",
+        "severity": "blocker",
+        "issue": "Background color is light blue (#A8C8E1 or similar) instead of brand navy (#112351) or cream (#F5F1EA) — violates style guide primary color palette.",
+        "fix_hint": "Change #ad-300x250 background from light blue to #F5F1EA (cream) or #112351 (navy); use background-color: #F5F1EA in CSS."
+      },
+      {
+        "format_id": "728x90",
+        "severity": "blocker",
+        "issue": "Product image (striped shirt graphic in center-right) is too small and unclear for horizontal leaderboard format — lacks visual impact.",
+        "fix_hint": "Increase product image size in #ad-728x90 .product-image to min-width: 80px; ensure visible product detail; consider cropping closer to garment."
+      },
+      {
+        "format_id": "320x480",
+        "severity": "warn",
+        "issue": "Slight text hierarchy issue: 'Sur une large sélection' is in small gray text but could be more prominent to support -30% offer context.",
+        "fix_hint": "Increase font-size of .subheading in #ad-320x480 from current size to 14px (Helvetica Neue 500); increase line-height to 1.4."
+      },
+      {
+        "format_id": "300x600",
+        "severity": "warn",
+        "issue": "Product image (red/navy striped shirt + shorts) slightly compressed vertically; could benefit from more breathing room in the composition.",
+        "fix_hint": "Adjust .product-container padding or max-height in #ad-300x600; increase vertical padding from current value to 24px top/bottom."
+      },
+      {
+        "format_id": "160x600",
+        "severity": "warn",
+        "issue": "Carousel animation (initial → animated → settled) shows different products, but 'settled' state reverts to single light product image (baby onesie) instead of remaining on more compelling striped shirt from animated state.",
+        "fix_hint": "Ensure final carousel frame in #ad-160x600 .carousel displays the striped shirt product (most on-brand for Petit Bateau); update last slide image src or CSS transform to hold strongest visual."
+      },
+      {
+        "format_id": "970x250",
+        "severity": "warn",
+        "issue": "Red border at top of ad frame is not present in style guide — appears to be unintended design element or rendering artifact.",
+        "fix_hint": "Remove border-top: 2px solid red (or similar) from #ad-970x250 if unintended; verify against approved design spec."
+      },
+      {
+        "format_id": "336x280",
+        "severity": "warn",
+        "issue": "Background circle (light blue decorative shape on right) is on-brand but text hierarchy could be stronger — 'DÉCOUVRIR' button is small and not prominent enough for this compact format.",
+        "fix_hint": "Increase .cta-button font-size in #ad-336x280 to 14px (bold); increase padding to 10px 16px; ensure red (#E2231A) is high contrast against navy background."
+      },
+      {
+        "format_id": "728x90",
+        "severity": "warn",
+        "issue": "Typography crowding: 'JOURNÉES EXTRAORDINAIRES' + '-30% des 2 articles · Livraison offerte' + product image all compete for attention in 90px height; fine print at bottom is nearly unreadable.",
+        "fix_hint": "Reduce .heading font-size in #ad-728x90 to 16px (bold Futura); reduce .subheading font-size to 11px; increase line-height to 1.2; ensure text color is white (#FFFFFF) for max contrast on navy."
+      }
+    ],
+    "regeneration_prompt": "Fix critical issues: 1) #ad-320x50: reduce heading font-size to 11px (Futura bold) to fit full text. 2) #ad-336x280: add product-image src (striped shirt or marinière image URL); set max-height: 140px. 3) #ad-300x250: change background-color from light blue to #F5F1EA (cream). 4) #ad-728x90: increase product-image width to 80px min-width; ensure visibility. 5) Remove any unintended red border-top from #ad-970x250. 6) #ad-300x600: increase vertical padding on .product-container to 24px. 7) #ad-160x600: ensure final carousel frame displays striped shirt (high-impact product). 8) #ad-336x280 & #ad-728x90: increase .cta-button and .heading font-sizes/contrast as specified. All changes CSS-only; preserve layout structure."
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 14064,
+    "output_tokens": 1392,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 14064,
+    "price_usd": {
+      "input": 0.014064,
+      "output": 0.00696,
+      "total": 0.021024
+    },
+    "duration_ms": 17244
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "rounds": [
+    {
+      "api_calls": 1,
+      "input_tokens": 10040,
+      "output_tokens": 1534,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "model": "claude-haiku-4-5-20251001",
+      "billed_input_tokens": 10040,
+      "price_usd": {
+        "input": 0.01004,
+        "output": 0.00767,
+        "total": 0.01771
+      },
+      "duration_ms": 17144
+    },
+    {
+      "api_calls": 1,
+      "input_tokens": 10040,
+      "output_tokens": 890,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "model": "claude-haiku-4-5-20251001",
+      "billed_input_tokens": 10040,
+      "price_usd": {
+        "input": 0.01004,
+        "output": 0.00445,
+        "total": 0.01449
+      },
+      "duration_ms": 12858
+    },
+    {
+      "api_calls": 1,
+      "input_tokens": 10040,
+      "output_tokens": 247,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "model": "claude-haiku-4-5-20251001",
+      "billed_input_tokens": 10040,
+      "price_usd": {
+        "input": 0.01004,
+        "output": 0.001235,
+        "total": 0.011275
+      },
+      "duration_ms": 5250
+    }
+  ],
+  "totals": {
+    "api_calls": 3,
+    "input_tokens": 30120,
+    "output_tokens": 2671,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "billed_input_tokens": 30120,
+    "price_usd": {
+      "input": 0.03012,
+      "output": 0.013355,
+      "total": 0.043475
+    },
+    "duration_ms": 35252
+  }
+}

@@ -11,6 +11,7 @@ import type { StyleGuide } from './gen-style-guide.mjs';
 import { captureCreativeNativeScreenshots } from '../lib/creative-native-playwright-screenshots.mts';
 import { loadDesignSkillGuidance } from '../lib/creative-native-skills.mts';
 import {
+  appendPipelineRunSummary,
   logPipelineTotalsToConsole,
   pipelineUsagePath
 } from '../lib/creative-pipeline-usage.mts';
@@ -25,6 +26,13 @@ import {
   type UiReviewUsageTotals
 } from './creative-native-ui-review.mts';
 import { loadAdFormatPresets, parseCreativeAdFormatsFromEnv, type AdFormatSelection } from '../lib/studio-ad-formats.mts';
+import { resolveRegenModelFromUiAudit } from '../lib/creative-native-ui-review-regen.mts';
+import {
+  isRegenDiffGuardEnabled,
+  logRegenDiffSummary,
+  snapshotCodeBundleForDiff,
+  summarizeRegenDiff
+} from '../lib/creative-native-regen-diff.mts';
 import { spawnSync } from 'node:child_process';
 import { config as loadDotenv } from 'dotenv';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -33,6 +41,7 @@ import { Anthropic } from '@anthropic-ai/sdk';
 
 const repoRoot = repoRootFromModuleDir(import.meta.dirname);
 loadDotenv({ path: join(repoRoot, '.env') });
+const scriptRunStart = Date.now();
 
 const directoryUuidArg = process.argv[2];
 if (directoryUuidArg === undefined || directoryUuidArg.startsWith('--')) {
@@ -90,7 +99,12 @@ const skillGuidance = loadDesignSkillGuidance(repoRoot);
 const genScriptPath = join(repoRoot, 'src', 'agents', 'gen-creative-code-native.mts');
 const assetInputMode = process.env['CREATIVE_ASSET_INPUT']?.trim() === 'base64' ? 'base64' : 'url';
 
-function runNativeRegeneration (feedback: string, reviewRound: number): number {
+function runNativeRegeneration (
+  feedback: string,
+  reviewRound: number,
+  regenModel: string,
+  beforeSnapshots: Record<string, string> | null
+): number {
   const result = spawnSync(
     process.execPath,
     [ genScriptPath, directoryUuid, '--asset-input', assetInputMode ],
@@ -99,7 +113,7 @@ function runNativeRegeneration (feedback: string, reviewRound: number): number {
       env: {
         ...process.env,
         CREATIVE_REGEN_FEEDBACK: feedback,
-        CREATIVE_REGEN_MODEL: 'claude-haiku-4-5-20251001',
+        CREATIVE_REGEN_MODEL: regenModel,
         CREATIVE_REGEN_REVIEW_ROUND: String(reviewRound),
         CREATIVE_ASSETS_REVIEW_SKIP: '1',
         CREATIVE_UI_REVIEW_MAX_ROUNDS: '0',
@@ -108,7 +122,12 @@ function runNativeRegeneration (feedback: string, reviewRound: number): number {
       stdio: 'inherit'
     }
   );
-  return result.status ?? 1;
+  const exitCode = result.status ?? 1;
+  if (exitCode === 0 && beforeSnapshots !== null && isRegenDiffGuardEnabled()) {
+    const summary = summarizeRegenDiff(codeDirectoryPath, beforeSnapshots);
+    logRegenDiffSummary(summary);
+  }
+  return exitCode;
 }
 
 const uiReviewUsageRounds: UiReviewUsageTotals[] = [];
@@ -160,10 +179,16 @@ while (uiReviewRound < maxUiReviewRounds) {
     break;
   }
 
-  console.log('[ui-review-agent] Regenerating creative code from review feedback…');
+  const regenModel = resolveRegenModelFromUiAudit(audit);
+  console.log(`[ui-review-agent] Regenerating (model ${regenModel})…`);
+  const beforeSnapshots = isRegenDiffGuardEnabled()
+    ? snapshotCodeBundleForDiff(codeDirectoryPath)
+    : null;
   const regenExit = runNativeRegeneration(
     buildRegenerationUserMessage(audit, adFormats, uiReviewRound),
-    uiReviewRound
+    uiReviewRound,
+    regenModel,
+    beforeSnapshots
   );
   if (regenExit !== 0) {
     console.error(`[ui-review-agent] Regeneration failed with exit code ${String(regenExit)}.`);
@@ -201,6 +226,7 @@ writeFileSync(
   { encoding: 'utf8' }
 );
 
+appendPipelineRunSummary(directoryPath, { wall_clock_ms: Date.now() - scriptRunStart });
 logPipelineTotalsToConsole(directoryPath);
 
 console.log(`Output directory path: ${directoryPath}`);

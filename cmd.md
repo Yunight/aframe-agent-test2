@@ -39,7 +39,7 @@ src/
 
 ```text
 agents/gen-style-guide.mts
-    → output/<uuid>/style-guide.json + logos/ + products/
+    → output/<brand-slug>-<uuid>/style-guide.json + logos/ + products/ (ex. `petit-bateau-5629c8bd-…`)
 agents/run-creative-native-assets-review.mts
     → review/assets-review-final.json
 agents/gen-creative-code-native.mts
@@ -71,7 +71,25 @@ agents/run-creative-native-ui-review.mts   (optionnel)
 
 ## Coûts par action (`pipeline-usage.json`)
 
-Fichier central : **`output/<uuid>/pipeline-usage.json`** — une entrée par action, avec tokens et `price_usd`.
+Fichier central : **`output/<brand-slug>-<uuid>/pipeline-usage.json`** — une entrée par action, avec tokens, `price_usd` et **durées**.
+
+Par entrée :
+
+- `duration_ms` — durée murale de l’étape (script complet)
+- `api_call_timings[]` — une ligne par réponse Claude (`call_index`, `duration_ms`, `stop_reason`, `label`)
+
+Totaux (`totals`) :
+
+- `duration_ms` — somme des durées d’étapes
+- `claude_api_duration_ms` — somme des appels Claude
+- `wall_clock_ms` — écart entre premier et dernier `timestamp` des entrées
+
+`run_summary` (fin de job studio ou fin de script `run-*`) :
+
+- `wall_clock_ms` — chrono job studio ou script runner
+- `claude_api_calls` / `claude_api_duration_ms`
+
+Studio UI : panneau **Coûts et durées** après un job réussi (`GET /api/output/:folderName/pipeline-usage`).
 
 | `action` | Agent / script | Modèle | Coût |
 |----------|----------------|--------|------|
@@ -141,6 +159,8 @@ Bypass garde (déconseillé) : `set CREATIVE_ASSETS_REVIEW_SKIP=1` avant la gen.
 | **balanced** | `CREATIVE_MODEL=claude-sonnet-4-6` (gen) + regen Haiku par défaut | Bon compromis |
 | **quality** | défauts (`CREATIVE_MODEL=claude-opus-4-6`, thinking adaptive) | Livraison finale |
 
+Dans le **studio UI**, le sélecteur « Profil génération code » envoie `creativeCodegenPreset` (`fast` \| `balanced` \| `quality`) à `POST /api/creative-code/run` (même mapping que le tableau ci-dessus).
+
 Exemple profil balanced (1 format) :
 
 ```bash
@@ -154,8 +174,11 @@ node src/agents/gen-creative-code-native.mts <directory-uuid> --asset-input url
 | Variable | Défaut | Rôle |
 |----------|--------|------|
 | `CREATIVE_MODEL` | `claude-opus-4-6` | Modèle génération initiale (non regen) |
-| `CREATIVE_REGEN_MODEL` | `claude-haiku-4-5-20251001` | Modèle regen après review UI (forcé par `run-creative-native-ui-review.mts`). Sonnet si patch complexe. |
+| `CREATIVE_REGEN_MODEL` | (auto) | Si défini, force le modèle regen. Sinon : Haiku par défaut, **Sonnet** si &gt;2 blockers ou consignes « redesign ». |
 | `CREATIVE_REGEN_MAX_FILE_CHARS` | `80000` | Taille max par fichier injecté en regen (index.html, styles.css, app.js) |
+| `CREATIVE_REGEN_DIFF_GUARD` | activé | `0` = pas de comparaison avant/après regen |
+| `CREATIVE_REGEN_DIFF_MAX_RATIO` | `0.5` | Alerte si &gt;50 % des lignes changées (signal refonte) |
+| `CREATIVE_SCREENSHOT_PROFILE` | — | `dev` ou `fast` = 1 capture `settled` / format + délais réduits |
 | `CREATIVE_THINKING_MODE` | `adaptive` | `adaptive` \| `budget` \| `off` — extended thinking en gen initiale |
 | `CREATIVE_THINKING_BUDGET_TOKENS` | `32000` | Si `CREATIVE_THINKING_MODE=budget` |
 | `CREATIVE_PROMPT_CACHE` | activé | `0` = désactive le prompt caching sur le bloc skills statique |
@@ -164,7 +187,7 @@ node src/agents/gen-creative-code-native.mts <directory-uuid> --asset-input url
 | `CREATIVE_PARALLEL_FORMATS` | — | `1` = une gen API par format IAB (2+ formats, hors arche), puis fusion |
 | `CREATIVE_AD_FORMATS` | 1er preset | JSON array des formats IAB à produire |
 
-Les métriques `duration_ms` / `turn_timings` sont écrites dans `creative-native-token-usage.json` et `pipeline-usage.json` (champ `duration_ms` par entrée).
+Les métriques `duration_ms` / `turn_timings` / `api_call_timings` sont dans `creative-native-token-usage.json`, `review/*-token-usage.json` (`duration_ms` par round) et `pipeline-usage.json`.
 
 #### Régénération après review UI (patch, pas refonte)
 
@@ -174,7 +197,13 @@ Quand `run-creative-native-ui-review.mts` relance `gen-creative-code-native.mts`
 2. Le system prompt regen demande une **édition minimale** (blockers uniquement), pas un nouveau concept créatif.
 3. L’agent review UI produit un `regeneration_prompt` de correctifs ciblés (CSS, taille logo, overflow, etc.).
 
-Pour des corrections difficiles : `set CREATIVE_REGEN_MODEL=claude-sonnet-4-6` avant la review UI (le spawn hérite sauf override explicite dans le script — le modèle Haiku reste forcé dans `run-creative-native-ui-review.mts` ; pour Sonnet, ajuster ce spawn ou lancer la regen manuellement avec `CREATIVE_REGEN_FEEDBACK`).
+Logos : `gen-style-guide` ne garde qu’**un** wordmark (`targetCount: 1`) ; si SVG header officiel OK → Brave logos ignoré. Packshots dans `logos/` sont supprimés / bloqués (déterministe + prompt assets review).
+
+Produits : scrape `og:image` / JSON-LD Product sur brandURL avant Brave ; la gen code exige un **héros produit** depuis `products/` (voir message utilisateur dans `gen-creative-code-native.mts`).
+
+Tests unitaires : `npm test` (logo heuristics, extract HTML, compliance skills).
+
+Pour forcer Sonnet en regen : `set CREATIVE_REGEN_MODEL=claude-sonnet-4-6` avant la review UI.
 
 ### Habillage vidéo 16:9 (à part)
 
@@ -236,7 +265,8 @@ Puis lancer `style-guide-ui` (Vite).
 | `BRAVE_PRODUCT_TARGET_COUNT` | `6` | Nombre cible de fichiers produit valides (≥ min px) |
 | `BRAVE_PRODUCT_MIN_CONTENT_LENGTH` | `30000` | Ignore URLs produit dont le HEAD `Content-Length` est trop petit (thumbs) |
 | `BRAVE_LOGO_CANDIDATE_POOL` | `30` | Candidats URL logo avant téléchargement |
-| `CREATIVE_OFFICIAL_LOGO_FETCH` | activé | `0` = ne pas scraper le logo header depuis brandURL/companyURL (Brave seul) |
+| `CREATIVE_OFFICIAL_LOGO_FETCH` | activé | `0` = ne pas scraper le logo/produit depuis les URLs officielles (Brave seul) |
+| `CREATIVE_OFFICIAL_FETCH_FALLBACK` | activé | `0` = pas de repli si HTTP 403/401 sur le site officiel ; sinon Wikipedia (en/fr) + images Wikimedia |
 | `BRAVE_PRODUCT_MIN_REPORTED_W` | `400` | Bonus score Brave si `properties.width` ≥ cette valeur |
 | `BRAVE_PRODUCT_MIN_REPORTED_H` | `300` | Bonus score Brave si `properties.height` ≥ cette valeur |
 | `CREATIVE_ASSETS_LOGO_MIN_TRANSPARENT_RATIO` | `0.02` | Seuil faux « transparent » en mode strict uniquement |

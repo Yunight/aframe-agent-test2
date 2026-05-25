@@ -55,6 +55,53 @@ const STUDIO_AD_PRESETS = (studioAdPresetsJson as StudioAdPresetsFile).presets
 
 type CreativeAdFormat = { id: string; width: number; height: number; arche?: ArchePresetJson }
 
+type ApiCallTimingRow = {
+  call_index: number
+  duration_ms: number
+  stop_reason?: string | null
+  label?: string
+}
+
+type PipelineUsageEntryRow = {
+  action: string
+  model: string | null
+  review_round: number | null
+  api_calls: number
+  billed_input_tokens: number
+  output_tokens: number
+  duration_ms?: number
+  api_call_timings?: ApiCallTimingRow[]
+  price_usd: { total: number }
+}
+
+type PipelineUsagePayload = {
+  entries: PipelineUsageEntryRow[]
+  totals: {
+    billed_input_tokens: number
+    output_tokens: number
+    duration_ms: number
+    claude_api_duration_ms: number
+    wall_clock_ms: number
+    price_usd: { total: number }
+  }
+  run_summary?: {
+    wall_clock_ms: number
+    claude_api_duration_ms: number
+    claude_api_calls: number
+  }
+}
+
+/** Duration as `m:ss` (aligned with pipeline console logs). */
+function formatDurationMinSec (ms: number): string {
+  if (!Number.isFinite(ms) || ms <= 0) {
+    return '—'
+  }
+  const totalSec = Math.round(ms / 1000)
+  const min = Math.floor(totalSec / 60)
+  const sec = totalSec % 60
+  return `${String(min)}:${sec.toString().padStart(2, '0')}`
+}
+
 function messageForProxyFailure (status: number): string | null {
   if (status === 502 || status === 503 || status === 504) {
     return (
@@ -115,6 +162,8 @@ function App () {
   const [status, setStatus] = useState<RunStatus>('idle')
   const [logs, setLogs] = useState<LogLine[]>([])
   const [outputDir, setOutputDir] = useState<string | null>(null)
+  const [pipelineUsage, setPipelineUsage] = useState<PipelineUsagePayload | null>(null)
+  const [pipelineUsageLoading, setPipelineUsageLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [theme, setTheme] = useState<string>(() =>
     document.documentElement.getAttribute('data-theme') ?? 'light'
@@ -138,6 +187,7 @@ function App () {
   const [creativeUiReview, setCreativeUiReview] = useState(true)
   const [styleGuideAssetsReview, setStyleGuideAssetsReview] = useState(true)
   const [creativeAssetsReview, setCreativeAssetsReview] = useState(true)
+  const [creativeCodegenPreset, setCreativeCodegenPreset] = useState<'fast' | 'balanced' | 'quality'>('balanced')
 
   const creativeSupportsNativePipeline = creativeScript === PREFERRED_CREATIVE_SCRIPT
   const creativeSupportsUiReview = creativeSupportsNativePipeline
@@ -145,6 +195,23 @@ function App () {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
   }, [ theme ])
+
+  useEffect(() => {
+    if (status !== 'success' || outputDir === null) {
+      setPipelineUsage(null)
+      return
+    }
+    const folder = outputFolderNameFromDirectoryPath(outputDir)
+    if (folder.length === 0) {
+      return
+    }
+    setPipelineUsageLoading(true)
+    void fetch(`/api/output/${encodeURIComponent(folder)}/pipeline-usage`)
+      .then(async (res) => (res.ok ? (await res.json() as PipelineUsagePayload) : null))
+      .then((data) => { setPipelineUsage(data) })
+      .catch(() => { setPipelineUsage(null) })
+      .finally(() => { setPipelineUsageLoading(false) })
+  }, [ status, outputDir ])
 
   useEffect(() => {
     document.title = documentTitleForRunStatus(status)
@@ -492,7 +559,8 @@ function App () {
           outputFolder: creativeOutputFolder,
           adFormats: creativeAdFormats,
           assetsReviewBeforeGeneration: creativeSupportsNativePipeline && creativeAssetsReview,
-          uiReviewAfterGeneration: creativeSupportsUiReview && creativeUiReview
+          uiReviewAfterGeneration: creativeSupportsUiReview && creativeUiReview,
+          creativeCodegenPreset: creativeSupportsNativePipeline ? creativeCodegenPreset : undefined
         })
       })
 
@@ -535,6 +603,8 @@ function App () {
     creativeSupportsNativePipeline,
     creativeSupportsUiReview,
     creativeUiReview,
+    creativeCodegenPreset,
+    creativeSupportsNativePipeline,
     subscribeToJobEvents
   ])
 
@@ -621,6 +691,87 @@ function App () {
               <code className="break-all rounded-md bg-base-100/60 px-1.5 py-0.5 font-mono text-xs">{outputDir}</code>
             </span>
           </div>
+        )}
+
+        {outputDir !== null && status === 'success' && (
+          <section className="rounded-2xl border border-base-300/50 bg-base-100/80 px-4 py-4 shadow-sm">
+            <h3 className="text-sm font-semibold text-base-content">Coûts et durées</h3>
+            {pipelineUsageLoading && (
+              <p className="mt-2 text-xs text-base-content/60">Chargement de pipeline-usage.json…</p>
+            )}
+            {!pipelineUsageLoading && pipelineUsage === null && (
+              <p className="mt-2 text-xs text-base-content/60">
+                Pas de ledger pipeline pour ce dossier (run antérieur ou étape sans API).
+              </p>
+            )}
+            {pipelineUsage !== null && (
+              <div className="mt-3 space-y-3 text-sm">
+                <div className="flex flex-wrap gap-x-6 gap-y-1 font-mono text-xs text-base-content/80">
+                  <span>
+                    Total USD :{' '}
+                    <strong className="text-base-content">${pipelineUsage.totals.price_usd.total.toFixed(4)}</strong>
+                  </span>
+                  <span>
+                    Temps étapes : <strong className="text-base-content">{formatDurationMinSec(pipelineUsage.totals.duration_ms)}</strong>
+                  </span>
+                  <span>
+                    API Claude :{' '}
+                    <strong className="text-base-content">{formatDurationMinSec(pipelineUsage.totals.claude_api_duration_ms)}</strong>
+                  </span>
+                  {pipelineUsage.run_summary !== undefined && (
+                    <span>
+                      Job studio :{' '}
+                      <strong className="text-base-content">{formatDurationMinSec(pipelineUsage.run_summary.wall_clock_ms)}</strong>
+                    </span>
+                  )}
+                  <span>
+                    Tokens : {String(pipelineUsage.totals.billed_input_tokens)} in /{' '}
+                    {String(pipelineUsage.totals.output_tokens)} out
+                  </span>
+                </div>
+                <div className="overflow-x-auto rounded-xl border border-base-300/40">
+                  <table className="table table-xs">
+                    <thead>
+                      <tr>
+                        <th>Étape</th>
+                        <th>Modèle</th>
+                        <th>Durée</th>
+                        <th>Tokens</th>
+                        <th>USD</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pipelineUsage.entries.map((entry, idx) => (
+                        <tr key={`${entry.action}-${String(idx)}`}>
+                          <td className="font-mono">
+                            {entry.action}
+                            {entry.review_round !== null ? ` (r${String(entry.review_round)})` : ''}
+                          </td>
+                          <td className="max-w-[8rem] truncate font-mono text-[10px]">{entry.model ?? '—'}</td>
+                          <td>
+                            {entry.duration_ms !== undefined ? formatDurationMinSec(entry.duration_ms) : '—'}
+                            {entry.api_call_timings !== undefined && entry.api_call_timings.length > 0 && (
+                              <ul className="mt-1 list-none space-y-0.5 font-mono text-[10px] text-base-content/55">
+                                {entry.api_call_timings.map((t) => (
+                                  <li key={t.call_index}>
+                                    {t.label ?? `call ${String(t.call_index)}`} : {formatDurationMinSec(t.duration_ms)}
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </td>
+                          <td className="font-mono text-[10px]">
+                            {String(entry.billed_input_tokens)} / {String(entry.output_tokens)}
+                          </td>
+                          <td className="font-mono">${entry.price_usd.total.toFixed(4)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </section>
         )}
 
         {catalogError !== null && (
@@ -876,6 +1027,32 @@ function App () {
                   est déjà satisfait).
                 </span>
               </label>
+            )}
+            {creativeSupportsNativePipeline && (
+              <fieldset className="rounded-2xl border border-base-300/50 bg-base-200/15 px-4 py-4">
+                <legend className="px-1 text-sm font-medium text-base-content">Profil génération code</legend>
+                <p className="mb-3 text-xs leading-relaxed text-base-content/65">
+                  fast = Sonnet sans thinking · balanced = Sonnet + thinking adaptatif (défaut) · quality = Opus
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {([ 'fast', 'balanced', 'quality' ] as const).map((id) => (
+                    <label
+                      key={id}
+                      className={`btn btn-sm rounded-xl ${creativeCodegenPreset === id ? 'btn-primary' : 'btn-outline'}`}
+                    >
+                      <input
+                        type="radio"
+                        name="creativeCodegenPreset"
+                        className="sr-only"
+                        checked={creativeCodegenPreset === id}
+                        disabled={status === 'running'}
+                        onChange={() => { setCreativeCodegenPreset(id); }}
+                      />
+                      {id}
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
             )}
             {creativeSupportsUiReview && (
               <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-base-300/50 bg-base-200/15 px-4 py-4">

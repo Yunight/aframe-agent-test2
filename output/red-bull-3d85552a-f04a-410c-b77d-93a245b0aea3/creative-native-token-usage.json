@@ -1,0 +1,22 @@
+{
+  "api_calls": 1,
+  "input_tokens": 10260,
+  "output_tokens": 6562,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "model": "claude-haiku-4-5-20251001",
+  "total_tokens_reported_sum": 16822,
+  "price_usd": {
+    "input": 0.01026,
+    "output": 0.03281,
+    "total": 0.04307
+  },
+  "duration_ms_total": 36615,
+  "turn_timings": [
+    {
+      "turn": 1,
+      "duration_ms": 36613,
+      "stop_reason": "end_turn"
+    }
+  ]
+}

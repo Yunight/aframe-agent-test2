@@ -1,3 +1,4 @@
+import type { StyleGuide } from '../agents/gen-style-guide.mjs';
 import type { AdFormatSelection } from './studio-ad-formats.mts';
 import { buildCreativeAdFormatInstructions } from './studio-ad-formats.mts';
 import { CREATIVE_DESIGN_SKILLS_COMPACT, isFullSkillsModeEnabled } from './creative-native-skills-compact.mts';
@@ -16,6 +17,26 @@ export function resolveCreativeModel (isRegen: boolean): string {
 }
 
 /** Dynamic creative-version rule from actual IAB format count. */
+/** Campaign product hero — required in layout when product assets exist. */
+export function buildCampaignProductHeroInstruction (
+  prunedStyleGuide: Pick<StyleGuide, 'productName' | 'brandName'>
+): string {
+  const product = prunedStyleGuide.productName?.trim() ?? '';
+  const brand = prunedStyleGuide.brandName?.trim() ?? '';
+  const label = product.length > 0 ? product : brand;
+  if (label.length === 0) {
+    return (
+      'Use at least one image from the provided product assets as a visible hero '
+      + '(large packshot) in each format that has room for product focus.'
+    );
+  }
+  return (
+    `Campaign focus: "${label}". Each format MUST show a prominent product hero using a file from products/ `
+    + '(relative path ./filename.jpg). Tall formats (e.g. 300×600): dedicate clear vertical space to the packshot. '
+    + 'Do not substitute unrelated stock imagery.'
+  );
+}
+
 export function buildCreativeVersionsInstruction (formats: readonly AdFormatSelection[]): string {
   const n = formats.length;
   if (n <= 1) {
@@ -120,6 +141,7 @@ Optional: additional static assets only if needed (e.g. extra .svg), still no pa
 
 Fonts and colors: only those defined in the style guide. Ad copy in French.
 Include at least one logo and one product image from the provided assets in the HTML/CSS/JS.
+Product hero requirement is detailed in the user message (campaign product instruction).
 Do not add browser chrome: no zoom, fullscreen, or VR toggles in the creative UI.
 
 The design skills below are mandatory constraints.

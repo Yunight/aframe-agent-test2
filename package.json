@@ -1,7 +1,8 @@
 {
   "module": true,
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "npm run build && node --test build/src/lib/logo-asset-rules.test.mjs build/src/lib/official-site-logo-extract.test.mjs build/src/lib/creative-native-skills-compliance.test.mjs build/src/lib/repo-paths.test.mjs build/src/lib/creative-pipeline-usage.test.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.89.0",

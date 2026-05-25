@@ -7,7 +7,12 @@ import {
   collectAndDownloadValidAssetUrls,
   officialHostsFromContext
 } from '../lib/brave-image-assets.mts';
-import { extractOfficialHeaderLogoUrls } from '../lib/official-site-logo-extract.mts';
+import { officialUrlsIncludeSvg } from '../lib/logo-asset-rules.mts';
+import {
+  extractOfficialHeaderLogoUrls,
+  extractOfficialProductImageUrls
+} from '../lib/official-site-logo-extract.mts';
+import { pruneNonWordmarkLogos } from '../lib/creative-native-assets-deterministic.mts';
 import { basename, join, extname } from 'node:path';
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
@@ -16,12 +21,16 @@ import { Anthropic } from '@anthropic-ai/sdk';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
 import { z } from 'zod';
 import { withAnthropicRetry } from '../lib/anthropic-retry.mts';
-import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
+import { buildOutputDirectoryName, repoRootFromModuleDir } from '../lib/repo-paths.mts';
 import { toStyleGuideHex } from '../lib/style-guide-colors.mts';
 import {
+  appendPipelineRunSummary,
   appendPipelineUsage,
   entryFromAccumulator,
-  logPipelineUsageToConsole
+  logPipelineUsageToConsole,
+  logReadableAnthropicCall,
+  timedAnthropicCall,
+  type ApiCallTiming
 } from '../lib/creative-pipeline-usage.mts';
 
 const STYLE_GUIDE_MODEL = 'claude-opus-4-7';
@@ -108,23 +117,6 @@ function logAnthropicUsageAndCost (scriptLabel: string, acc: UsageAccumulator): 
   console.log(`total price (USD) : ${roundUsd6(p.total_usd)}`);
   console.log('');
 }
-function billedInputFromUsage (usage: UsageLike): number {
-  return usage.input_tokens + (usage.cache_creation_input_tokens ?? 0) + (usage.cache_read_input_tokens ?? 0);
-}
-
-function logReadableAnthropicCall (callReason: string, usage: UsageLike | null | undefined): void {
-  console.log(`call reason : ${callReason}`);
-  if (usage === null || usage === undefined) {
-    console.log('input token : —');
-    console.log('output token : —');
-    console.log('');
-    return;
-  }
-  console.log(`input token : ${billedInputFromUsage(usage)}`);
-  console.log(`output token : ${usage.output_tokens}`);
-  console.log('');
-}
-
 function shortenForLog (s: string, max: number): string {
   const t = s.trim().replace(/\s+/g, ' ');
   if (t.length <= max) {
@@ -423,13 +415,18 @@ const localSkillGuidance = loadSkillGuidance();
 let i = 0;
 
 const apiUsageTotals = createEmptyUsageAccumulator();
+const apiCallTimings: ApiCallTiming[] = [];
+const styleGuideStepStart = Date.now();
 
 while (true) {
   i += 1;
 
   console.log(`Generating style guide ... (i=${i})`);
 
-  const styleGuideResponse = await withAnthropicRetry(`style-guide turn ${String(i)}`, async () => {
+  const { result: styleGuideResponse, duration_ms: turnDurationMs } = await timedAnthropicCall(
+    `style-guide turn ${String(i)}`,
+    async () =>
+      await withAnthropicRetry(`style-guide turn ${String(i)}`, async () => {
     const styleGuideStream = await anthropicClient.messages.stream({
       max_tokens: 128000,
       system: `
@@ -485,12 +482,20 @@ while (true) {
         }
       ]
     });
-    return await styleGuideStream.finalMessage();
+        return await styleGuideStream.finalMessage();
+      })
+  );
+  apiCallTimings.push({
+    call_index: i,
+    duration_ms: turnDurationMs,
+    stop_reason: styleGuideResponse.stop_reason,
+    label: `style-guide turn ${String(i)}`
   });
   addUsageToAccumulator(apiUsageTotals, styleGuideResponse.usage);
   logReadableAnthropicCall(
     describeAnthropicTurnForLogs(styleGuideResponse.stop_reason, styleGuideResponse.content),
-    styleGuideResponse.usage ?? undefined
+    styleGuideResponse.usage ?? undefined,
+    turnDurationMs
   );
 
   messages.push({ role: 'assistant', content: styleGuideResponse.content });
@@ -519,7 +524,9 @@ if (styleGuideFromModel === null) {
 }
 
 const directoryUuid = randomUUID();
-const outputDirectoryName = directoryUuid;
+const brandForFolder =
+  styleGuideFromModel.brandName.trim() || styleGuideFromModel.companyName.trim() || 'brand';
+const outputDirectoryName = buildOutputDirectoryName(brandForFolder, directoryUuid);
 const directoryPath = join(repoRootFromModuleDir(import.meta.dirname), 'output', outputDirectoryName);
 
 console.log(`Output directory path: ${directoryPath}`);
@@ -540,19 +547,27 @@ const imageContext = {
 console.log('[Official site] Extracting header logo from brand homepage…');
 const officialHeaderLogoUrls = await extractOfficialHeaderLogoUrls(imageContext);
 
-console.log('[Brave images] Collecting logo candidates…');
+const skipBraveLogos = officialUrlsIncludeSvg(officialHeaderLogoUrls);
+console.log(
+  `[Brave images] Collecting logo${skipBraveLogos ? ' (official SVG only, skip Brave)' : ''}…`
+);
 const logoDownload = await collectAndDownloadValidAssetUrls(
   'logos',
   directoryPath,
   buildLogoSearchQueries(imageContext),
   {
-    targetCount: 2,
+    targetCount: 1,
     candidatePool: braveLogoCandidatePool(),
     clearFolder: true,
     officialHosts: officialHostsFromContext(imageContext),
-    prioritizeUrls: officialHeaderLogoUrls
+    prioritizeUrls: officialHeaderLogoUrls,
+    skipBraveWhenPrioritizedFilled: skipBraveLogos
   }
 );
+await pruneNonWordmarkLogos(directoryPath);
+
+console.log('[Official site] Extracting product images from brand pages…');
+const officialProductUrls = await extractOfficialProductImageUrls(imageContext);
 
 console.log('[Brave images] Collecting product photo candidates…');
 const productDownload = await collectAndDownloadValidAssetUrls(
@@ -563,7 +578,8 @@ const productDownload = await collectAndDownloadValidAssetUrls(
     targetCount: braveProductTargetCount(),
     candidatePool: braveProductCandidatePool(),
     clearFolder: true,
-    officialHosts: officialHostsFromContext(imageContext)
+    officialHosts: officialHostsFromContext(imageContext),
+    prioritizeUrls: officialProductUrls
   }
 );
 
@@ -593,9 +609,12 @@ const styleGuidePipelineEntry = entryFromAccumulator({
   action: 'style_guide',
   agent: 'agents/gen-style-guide.mts',
   model: STYLE_GUIDE_MODEL,
-  acc: apiUsageTotals
+  acc: apiUsageTotals,
+  duration_ms: Date.now() - styleGuideStepStart,
+  api_call_timings: apiCallTimings
 });
 const styleGuidePipelineFile = appendPipelineUsage(directoryPath, styleGuidePipelineEntry);
 logPipelineUsageToConsole(styleGuidePipelineFile.entries[styleGuidePipelineFile.entries.length - 1]!);
+appendPipelineRunSummary(directoryPath, { wall_clock_ms: Date.now() - styleGuideStepStart });
 
 console.log('End.');

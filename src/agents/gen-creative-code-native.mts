@@ -6,9 +6,14 @@ import {
   formatExistingBundleForPrompt,
   loadExistingCodeBundle
 } from '../lib/creative-native-codegen-regen.mts';
-import { loadSkillsForCodegenPrompt, resolveCreativeModel } from '../lib/creative-native-codegen-prompt.mts';
+import {
+  buildCampaignProductHeroInstruction,
+  loadSkillsForCodegenPrompt,
+  resolveCreativeModel
+} from '../lib/creative-native-codegen-prompt.mts';
 import {
   appendPipelineUsage,
+  codegenTurnTimingsToApiCallTimings,
   entryFromAccumulator,
   logAnthropicUsageAndCost,
   logPipelineUsageToConsole,
@@ -194,6 +199,10 @@ const baseMessages: Anthropic.Messages.MessageParam[] = [{
     ...fileMessages,
     {
       type: 'text',
+      text: buildCampaignProductHeroInstruction(prunedStyleGuide)
+    },
+    {
+      type: 'text',
       text: JSON.stringify(prunedStyleGuide)
     }
   ]
@@ -280,7 +289,7 @@ writeFileSync(
 const regenRoundRaw = process.env['CREATIVE_REGEN_REVIEW_ROUND']?.trim();
 const regenRound =
   regenRoundRaw !== undefined && regenRoundRaw.length > 0 ? Number.parseInt(regenRoundRaw, 10) : null;
-const turnNotes = codegenResult.timings.map((t) => `turn${String(t.turn)}=${String(t.duration_ms)}ms`).join(', ');
+const apiCallTimings = codegenTurnTimingsToApiCallTimings(codegenResult.timings);
 const pipelineEntry = entryFromAccumulator({
   action: isRegen ? 'creative_regeneration' : 'creative_generation',
   agent: 'agents/gen-creative-code-native.mts',
@@ -288,7 +297,7 @@ const pipelineEntry = entryFromAccumulator({
   acc: creativeUsageTotals,
   review_round: Number.isFinite(regenRound ?? Number.NaN) ? regenRound : null,
   duration_ms: durationMsTotal,
-  ...(turnNotes.length > 0 ? { notes: turnNotes } : {})
+  api_call_timings: apiCallTimings
 });
 const pipelineFile = appendPipelineUsage(directoryPath, pipelineEntry);
 logPipelineUsageToConsole(pipelineFile.entries[pipelineFile.entries.length - 1]!);

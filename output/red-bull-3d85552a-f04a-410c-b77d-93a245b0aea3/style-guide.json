@@ -1,0 +1,107 @@
+{
+  "companyName": "Red Bull GmbH",
+  "companyContext": "Austrian company founded in 1984 by Dietrich Mateschitz and Chaleo Yoovidhya, headquartered in Fuschl am See, Austria. Red Bull GmbH produces and markets the world's leading energy drink (launched 1987) and is renowned for its sponsorship of extreme sports, motorsports, music, gaming and proprietary event series worldwide.",
+  "companyURL": "https://www.redbull.com/int-en/energydrink/company-profile",
+  "brandName": "Red Bull",
+  "brandContext": "Red Bull is the world's #1 energy drink brand, famous for its slogan 'Red Bull Gives You Wiiings'. Beyond the product, the brand builds a 'brand myth' by owning and producing extreme-sports content and event series. Red Bull Bowl Rippers is the brand's international bowl-skateboarding contest held at Marseille's legendary Bowl du Prado, gathering the world's top bowl skaters for a contest that mixes 45-second solo runs with collective bowl sessions.",
+  "brandURL": "https://www.redbull.com/int-en/events/red-bull-bowl-rippers",
+  "logoFileUrls": [
+    "https://img.redbull.com/images/c_limit,w_4000/e_trim:1:transparent/c_limit,w_309/bo_5px_solid_rgb:00000000/q_auto:best,f_auto/redbullcom/2026/4/16/mg5hhw5jasfzc4q3tigc/red-bull-bowl-rippers-2026-logo"
+  ],
+  "productName": "Red Bull Bowl Rippers",
+  "productPictureUrls": [
+    "https://img.redbull.com/images/c_crop,x_1076,y_0,h_3324,w_2659/c_fill,w_400,h_500/q_auto,f_auto/redbullcom/2023/8/21/utdrvdrcxnzvjguf5mc8/red-bull-bowl-rippers-2020-adrien-bruguiere",
+    "https://img.redbull.com/images/c_crop,x_2030,y_0,h_3647,w_2188/c_fill,w_450,h_600/q_auto,f_auto/redbullcom/2016/08/29/1331814730971_2/the-famous-du-prado-concrete-skate-bowl-on-the-waterfront-in-marseille",
+    "https://img.redbull.com/images/c_crop,x_2352,y_0,h_3656,w_2194/c_fill,w_450,h_600/q_auto,f_auto/redbullcom/2023/9/4/dw210nzel3ptyyvslaip/spot-skate-marseille",
+    "https://img.redbull.com/images/c_crop,x_1385,y_0,h_1999,w_1200/c_fill,w_450,h_600/q_auto,f_auto/redbullcom/2016/09/06/1331816220855_2/robin-bolian-360-indy-marseille-teddy-morellec",
+    "https://img.redbull.com/images/c_fill,g_auto,w_450,h_600/q_auto,f_auto/redbullcom/2022/8/12/pkvleqqdcqrj5iorriv2/skateboarding",
+    "https://img.redbull.com/images/c_crop,x_1457,y_0,h_2132,w_1599/c_fill,w_450,h_600/q_auto,f_auto/redbullcom/2019/11/19/18656c08-23c4-46c3-bd48-e94674d39ca8/skateboarding-sandro-dias-estaiadinha-bridge"
+  ],
+  "primaryColorPalette": [
+    "#CC1E4A",
+    "#001A70",
+    "#FFC709",
+    "#C0C0C0"
+  ],
+  "secondaryColorPalette": [
+    "#FFFFFF",
+    "#000000",
+    "#1A1A1A",
+    "#E10A17",
+    "#0A2240",
+    "#F5F5F5"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Red Bull Bold Condensed",
+      "fontWeight": 800,
+      "fontEffect": [
+        "bold",
+        "italic"
+      ],
+      "fontUses": "Event title lockup, hero headlines, 'BOWL RIPPERS' wordmark — italic condensed for dynamic energy"
+    },
+    {
+      "fontFamily": "Red Bull Sans Condensed",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Sub-headings, section titles, athlete names, dates and location callouts"
+    },
+    {
+      "fontFamily": "Red Bull Sans",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "UI labels, call-to-action buttons, captions, navigation"
+    },
+    {
+      "fontFamily": "Red Bull Sans",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, event descriptions, paragraph text"
+    },
+    {
+      "fontFamily": "Red Bull Sans Condensed",
+      "fontWeight": 600,
+      "fontEffect": [
+        "italic",
+        "underline"
+      ],
+      "fontUses": "Live ticker, scores, leaderboard and timing overlays"
+    }
+  ],
+  "brandVision": "Give wiiings to people and ideas. Red Bull celebrates the pursuit of human and cultural performance at the highest level — empowering athletes, artists and dreamers to push boundaries. With Bowl Rippers, the vision is to glorify skateboarding culture by bringing the world's best bowl skaters to the iconic Bowl du Prado in Marseille and broadcasting it to a global audience.",
+  "brandValues": "Energy, adrenaline, performance, authenticity, creativity, freedom and self-expression. Red Bull stands for bold ambition, daring exploration of limits, support for action-sports communities, and a deep commitment to youth culture, street culture and the raw, gritty soul of skateboarding.",
+  "logoImageSearchQueries": [
+    "site:redbull.com logo svg",
+    "site:redbull.com Bowl Rippers logo",
+    "site:redbullshop.com logo",
+    "site:redbullcontentpool.com Red Bull logo svg",
+    "site:redbull.com double bull logo",
+    "Red Bull Bowl Rippers official logo site:redbull.com",
+    "Red Bull logo wordmark filetype:svg site:redbull.com",
+    "Red Bull Bowl Rippers event logo Marseille site:redbull.com",
+    "Red Bull primary logo lockup site:redbull.com",
+    "inurl:logo site:redbull.com",
+    "Red Bull energy drink official logo site:redbull.com",
+    "Red Bull two bulls sun emblem site:redbull.com"
+  ],
+  "productImageSearchQueries": [
+    "site:redbull.com Bowl Rippers Marseille",
+    "site:redbull.com Red Bull Bowl Rippers 2023",
+    "site:redbull.com Bowl du Prado skateboarding",
+    "Red Bull Bowl Rippers key art site:redbull.com",
+    "Red Bull Bowl Rippers poster site:redbull.com",
+    "site:redbullcontentpool.com Bowl Rippers",
+    "Red Bull Bowl Rippers skateboard contest Marseille site:redbull.com",
+    "Red Bull Bowl Rippers photo gallery site:redbull.com",
+    "Red Bull Bowl Rippers winners podium site:redbull.com",
+    "Red Bull Bowl Rippers Pedro Barros site:redbull.com",
+    "Red Bull Bowl Rippers event banner site:redbull.com",
+    "Red Bull Bowl Rippers Marseille skatepark official photo",
+    "Red Bull Bowl Rippers livestream key visual site:redbull.com",
+    "site:redbull.com/fr-fr Bowl Rippers",
+    "Red Bull Bowl Rippers press kit packshot"
+  ]
+}

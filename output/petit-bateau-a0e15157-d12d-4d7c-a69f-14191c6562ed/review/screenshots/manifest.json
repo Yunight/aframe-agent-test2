@@ -1,0 +1,223 @@
+{
+  "captured_at": "2026-05-22T10:58:20.844Z",
+  "entry_html": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\petit-bateau-a0e15157-d12d-4d7c-a69f-14191c6562ed\\code\\index.html",
+  "entry_url": "file:///C:/Users/Ben/Desktop/formats_creator/aframe-agent-test2/aframe-agent-test2/output/petit-bateau-a0e15157-d12d-4d7c-a69f-14191c6562ed/code/index.html",
+  "formats": [
+    {
+      "format_id": "320x480",
+      "width": 320,
+      "height": 480,
+      "selector": "#ad-320x480",
+      "error": null,
+      "shots": [
+        {
+          "state": "initial",
+          "fileName": "320x480__initial.png",
+          "relativePath": "320x480__initial.png",
+          "captured_at": "2026-05-22T10:58:13.074Z"
+        },
+        {
+          "state": "animated",
+          "fileName": "320x480__animated.png",
+          "relativePath": "320x480__animated.png",
+          "captured_at": "2026-05-22T10:58:15.660Z"
+        },
+        {
+          "state": "settled",
+          "fileName": "320x480__settled.png",
+          "relativePath": "320x480__settled.png",
+          "captured_at": "2026-05-22T10:58:20.746Z"
+        }
+      ]
+    },
+    {
+      "format_id": "336x280",
+      "width": 336,
+      "height": 280,
+      "selector": "#ad-336x280",
+      "error": null,
+      "shots": [
+        {
+          "state": "initial",
+          "fileName": "336x280__initial.png",
+          "relativePath": "336x280__initial.png",
+          "captured_at": "2026-05-22T10:58:13.073Z"
+        },
+        {
+          "state": "animated",
+          "fileName": "336x280__animated.png",
+          "relativePath": "336x280__animated.png",
+          "captured_at": "2026-05-22T10:58:15.658Z"
+        },
+        {
+          "state": "settled",
+          "fileName": "336x280__settled.png",
+          "relativePath": "336x280__settled.png",
+          "captured_at": "2026-05-22T10:58:20.741Z"
+        }
+      ]
+    },
+    {
+      "format_id": "970x250",
+      "width": 970,
+      "height": 250,
+      "selector": "#ad-970x250",
+      "error": null,
+      "shots": [
+        {
+          "state": "initial",
+          "fileName": "970x250__initial.png",
+          "relativePath": "970x250__initial.png",
+          "captured_at": "2026-05-22T10:58:13.127Z"
+        },
+        {
+          "state": "animated",
+          "fileName": "970x250__animated.png",
+          "relativePath": "970x250__animated.png",
+          "captured_at": "2026-05-22T10:58:15.710Z"
+        },
+        {
+          "state": "settled",
+          "fileName": "970x250__settled.png",
+          "relativePath": "970x250__settled.png",
+          "captured_at": "2026-05-22T10:58:20.806Z"
+        }
+      ]
+    },
+    {
+      "format_id": "300x250",
+      "width": 300,
+      "height": 250,
+      "selector": "#ad-300x250",
+      "error": null,
+      "shots": [
+        {
+          "state": "initial",
+          "fileName": "300x250__initial.png",
+          "relativePath": "300x250__initial.png",
+          "captured_at": "2026-05-22T10:58:13.071Z"
+        },
+        {
+          "state": "animated",
+          "fileName": "300x250__animated.png",
+          "relativePath": "300x250__animated.png",
+          "captured_at": "2026-05-22T10:58:15.658Z"
+        },
+        {
+          "state": "settled",
+          "fileName": "300x250__settled.png",
+          "relativePath": "300x250__settled.png",
+          "captured_at": "2026-05-22T10:58:20.740Z"
+        }
+      ]
+    },
+    {
+      "format_id": "728x90",
+      "width": 728,
+      "height": 90,
+      "selector": "#ad-728x90",
+      "error": null,
+      "shots": [
+        {
+          "state": "initial",
+          "fileName": "728x90__initial.png",
+          "relativePath": "728x90__initial.png",
+          "captured_at": "2026-05-22T10:58:13.071Z"
+        },
+        {
+          "state": "animated",
+          "fileName": "728x90__animated.png",
+          "relativePath": "728x90__animated.png",
+          "captured_at": "2026-05-22T10:58:15.657Z"
+        },
+        {
+          "state": "settled",
+          "fileName": "728x90__settled.png",
+          "relativePath": "728x90__settled.png",
+          "captured_at": "2026-05-22T10:58:20.738Z"
+        }
+      ]
+    },
+    {
+      "format_id": "300x600",
+      "width": 300,
+      "height": 600,
+      "selector": "#ad-300x600",
+      "error": null,
+      "shots": [
+        {
+          "state": "initial",
+          "fileName": "300x600__initial.png",
+          "relativePath": "300x600__initial.png",
+          "captured_at": "2026-05-22T10:58:13.146Z"
+        },
+        {
+          "state": "animated",
+          "fileName": "300x600__animated.png",
+          "relativePath": "300x600__animated.png",
+          "captured_at": "2026-05-22T10:58:15.729Z"
+        },
+        {
+          "state": "settled",
+          "fileName": "300x600__settled.png",
+          "relativePath": "300x600__settled.png",
+          "captured_at": "2026-05-22T10:58:20.814Z"
+        }
+      ]
+    },
+    {
+      "format_id": "320x50",
+      "width": 320,
+      "height": 50,
+      "selector": "#ad-320x50",
+      "error": null,
+      "shots": [
+        {
+          "state": "initial",
+          "fileName": "320x50__initial.png",
+          "relativePath": "320x50__initial.png",
+          "captured_at": "2026-05-22T10:58:13.087Z"
+        },
+        {
+          "state": "animated",
+          "fileName": "320x50__animated.png",
+          "relativePath": "320x50__animated.png",
+          "captured_at": "2026-05-22T10:58:15.654Z"
+        },
+        {
+          "state": "settled",
+          "fileName": "320x50__settled.png",
+          "relativePath": "320x50__settled.png",
+          "captured_at": "2026-05-22T10:58:20.737Z"
+        }
+      ]
+    },
+    {
+      "format_id": "160x600",
+      "width": 160,
+      "height": 600,
+      "selector": "#ad-160x600",
+      "error": null,
+      "shots": [
+        {
+          "state": "initial",
+          "fileName": "160x600__initial.png",
+          "relativePath": "160x600__initial.png",
+          "captured_at": "2026-05-22T10:58:13.155Z"
+        },
+        {
+          "state": "animated",
+          "fileName": "160x600__animated.png",
+          "relativePath": "160x600__animated.png",
+          "captured_at": "2026-05-22T10:58:15.723Z"
+        },
+        {
+          "state": "settled",
+          "fileName": "160x600__settled.png",
+          "relativePath": "160x600__settled.png",
+          "captured_at": "2026-05-22T10:58:20.801Z"
+        }
+      ]
+    }
+  ]
+}

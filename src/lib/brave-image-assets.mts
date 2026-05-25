@@ -777,6 +777,8 @@ export type CollectAndDownloadOptions = {
   officialHosts?: readonly string[];
   /** Header lockup URLs scraped from brandURL (tried before Brave image search). */
   prioritizeUrls?: readonly string[];
+  /** When true and prioritizeUrls filled the target, skip Brave image search entirely. */
+  skipBraveWhenPrioritizedFilled?: boolean;
 };
 
 export async function collectAndDownloadValidAssetUrls (
@@ -821,6 +823,15 @@ export async function collectAndDownloadValidAssetUrls (
         rejectedUrls.push(fileUrl);
       }
     }
+  }
+
+  if (
+    fileType === 'logos' &&
+    options.skipBraveWhenPrioritizedFilled === true &&
+    downloadedUrls.length >= options.targetCount
+  ) {
+    console.log('[download] Official logo satisfied — skipping Brave image search for logos.');
+    return { downloadedUrls, count: downloadedUrls.length, rejectedUrls };
   }
 
   let pass = 0;

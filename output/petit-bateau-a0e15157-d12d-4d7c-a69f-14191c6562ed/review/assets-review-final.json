@@ -1,0 +1,13 @@
+{
+  "assets_review_rounds_run": 1,
+  "max_assets_review_rounds": 3,
+  "post_audit_refresh": false,
+  "satisfied": true,
+  "summary": "All assets pass audit. Logo SVG is confirmed as the official Petit Bateau wordmark from companyURL. All six product images are authentic official packshots from petit-bateau.fr domain, depicting iconic marinière and striped collections (body, t-shirt, shorts) that align with brand heritage and campaign context. Images are suitable for small banner layouts.",
+  "findings": [],
+  "brave_retry_queries": {
+    "logos": [],
+    "products": []
+  },
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\petit-bateau-a0e15157-d12d-4d7c-a69f-14191c6562ed\\pipeline-usage.json"
+}

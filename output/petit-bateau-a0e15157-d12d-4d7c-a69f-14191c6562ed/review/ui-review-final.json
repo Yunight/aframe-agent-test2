@@ -1,0 +1,63 @@
+{
+  "ui_review_rounds_run": 3,
+  "max_ui_review_rounds": 3,
+  "satisfied": false,
+  "summary": "Multiple blockers across formats: 160x600 carousel shows broken/misaligned product images in settled state; 970x250 uses unbranded product images instead of official Petit Bateau assets; 320x50 text is too small and cramped for readability; 336x280 has weak visual hierarchy and missing discount badge prominence. Copy and color guide compliance is acceptable, but image asset quality and carousel functionality need urgent fixes.",
+  "findings": [
+    {
+      "format_id": "160x600",
+      "severity": "blocker",
+      "issue": "Carousel settled state displays broken/distorted product images (fabric close-ups instead of recognizable products); carousel rotation not functioning as intended.",
+      "fix_hint": "Replace carousel image sources in 160x600__settled state with proper product images from productPictureUrls. Check JS carousel logic and ensure all three product images load and rotate correctly. Verify image paths and dimensions."
+    },
+    {
+      "format_id": "970x250",
+      "severity": "blocker",
+      "issue": "Product images appear to be generic/unbranded (close-up fabric texture, basic shirt/shorts) rather than official Petit Bateau campaign assets; does not represent brand positioning.",
+      "fix_hint": "Replace center and right product images in 970x250 with official Petit Bateau product images from the style guide productPictureUrls. Use marinière striped shirt or iconic body pieces to reinforce brand identity."
+    },
+    {
+      "format_id": "320x50",
+      "severity": "blocker",
+      "issue": "Text content is too small and cramped for the 320x50px frame; heading and CTA are barely readable at actual ad size; violates minimum legibility standard.",
+      "fix_hint": "Reduce font-size for .headline and .subtext in #ad-320x50 to fit legibly within 50px height. Use max 14px for main text, 10px for secondary. Adjust padding and line-height to maintain breathing room."
+    },
+    {
+      "format_id": "336x280",
+      "severity": "warn",
+      "issue": "Discount badge ('-30%') is visually subtle and hard to locate; should be more prominent in the visual hierarchy for a promotional ad.",
+      "fix_hint": "Increase badge size and ensure higher z-index and stronger color contrast. Consider moving badge to top-right corner or enlarging the yellow circle in #ad-336x280."
+    },
+    {
+      "format_id": "300x250",
+      "severity": "warn",
+      "issue": "Product image (baby body suit) is quite small relative to frame; could benefit from more generous padding to create stronger visual impact.",
+      "fix_hint": "Increase .product-image max-width in #ad-300x250 from current size by 15-20% and adjust top margin to give the image more breathing room."
+    },
+    {
+      "format_id": "320x480",
+      "severity": "warn",
+      "issue": "Heading line spacing could be tighter to improve visual compactness and hierarchy in the vertical mobile format.",
+      "fix_hint": "Reduce line-height for .headline in #ad-320x480 from current value to 1.1 to tighten 'JOURNÉES EXTRAORDINAIRES' stacking."
+    },
+    {
+      "format_id": "728x90",
+      "severity": "warn",
+      "issue": "Product image very small in 728x90 leaderboard; visual balance skews heavily toward text and CTA on the right.",
+      "fix_hint": "Increase product image size in #ad-728x90 to 60-70px height, adjust spacing and layout to ensure balanced composition."
+    },
+    {
+      "format_id": "300x600",
+      "severity": "warn",
+      "issue": "Product hero image is prominent and clear, but could use a subtle drop shadow or border to separate it from the background.",
+      "fix_hint": "Add subtle box-shadow or 1px border to .product-image in #ad-300x600 for depth (e.g., 'box-shadow: 0 2px 8px rgba(0,0,0,0.1)')."
+    }
+  ],
+  "screenshots_dir": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\petit-bateau-a0e15157-d12d-4d7c-a69f-14191c6562ed\\review\\screenshots",
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\petit-bateau-a0e15157-d12d-4d7c-a69f-14191c6562ed\\pipeline-usage.json",
+  "pipeline_totals_usd": {
+    "input": 1.322543,
+    "output": 2.60715,
+    "total": 3.929693
+  }
+}

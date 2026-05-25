@@ -1,0 +1,106 @@
+{
+  "companyName": "Petit Bateau",
+  "companyContext": "Petit Bateau est une marque française de vêtements et de sous-vêtements fondée en 1893 à Troyes, spécialisée à l'origine dans la layette et les sous-vêtements pour enfants, et appartenant au groupe Rocher depuis 1988. La marque propose aujourd'hui des collections bébé, enfant, femme et homme, avec un fort ancrage dans l'univers marin (marinière, body iconique, ciré jaune).",
+  "companyURL": "https://www.petit-bateau.fr/",
+  "brandName": "Petit Bateau",
+  "brandContext": "Petit Bateau promeut ses 'Journées Extraordinaires', une opération commerciale offrant -30% dès 2 articles achetés sur une large sélection (collection été, prêt-à-porter, sous-vêtements, articles de nuit, accessoires), avec livraison offerte. L'opération s'accompagne ponctuellement de -10% supplémentaires pour les adhérents au programme de fidélité.",
+  "brandURL": "https://www.petit-bateau.fr/offre/les-journees-extraordinaires/.html",
+  "logoFileUrls": [
+    "https://www.petit-bateau.fr/on/demandware.static/Sites-PB_FR-Site/-/default/dw89c30cd2/images/logo-petit-bateau.svg"
+  ],
+  "productName": "Journées Extraordinaires",
+  "productPictureUrls": [
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Sites-PB_master/default/dw7e04bab2/PB/A03KL01D.jpg?sw=556&sh=680&sm=fit",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Sites-PB_master/default/dwa7df6896/PB/A03KL01Z1.jpg?sw=556&sh=680&sm=fit",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Sites-PB_master/default/dw04b90565/PB/A044E01Z1.jpg?sw=556&sh=680&sm=fit&frz-v=48",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Sites-PB_master/default/dw8ebd6c35/PB/A044E01D.jpg?sw=556&sh=680&sm=fit&frz-v=48",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Sites-PB_master/default/dw0887ab42/PB/A044E01F1.jpg?sw=556&sh=680&sm=fit&frz-v=48",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Sites-PB_master/default/dw377bfa6c/PB/A042E01Z1.jpg?sw=800&sh=900&sm=fit&frz-v=51"
+  ],
+  "primaryColorPalette": [
+    "#112351",
+    "#FFFFFF",
+    "#E2231A"
+  ],
+  "secondaryColorPalette": [
+    "#F4D03F",
+    "#A8C8E1",
+    "#F5F1EA",
+    "#1F1F1F",
+    "#6E7A8A"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Petit Bateau Sans",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Logotype / wordmark de la marque (lettrage propriétaire sans-serif arrondi, capitales)"
+    },
+    {
+      "fontFamily": "Futura",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Titres d'accroche promotionnels (ex: 'JOURNÉES EXTRAORDINAIRES', '-30% DÈS 2'), en capitales"
+    },
+    {
+      "fontFamily": "Futura",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Sous-titres et chapôs éditoriaux"
+    },
+    {
+      "fontFamily": "Helvetica Neue",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Corps de texte, descriptions produits, mentions légales"
+    },
+    {
+      "fontFamily": "Helvetica Neue",
+      "fontWeight": 600,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "CTA / boutons (ex: 'J'EN PROFITE', 'DÉCOUVRIR')"
+    },
+    {
+      "fontFamily": "Helvetica Neue",
+      "fontWeight": 400,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Astérisques et conditions de l'offre"
+    }
+  ],
+  "brandVision": "Accompagner toutes les générations avec des vêtements intemporels, confortables et durables, en cultivant un esprit d'enfance joyeux, libre et créatif. Les Journées Extraordinaires traduisent cette vision en rendant les essentiels Petit Bateau plus accessibles le temps d'une opération festive, dans une tonalité enjouée et marine.",
+  "brandValues": "Liberté, Qualité, Durabilité, Engagement — un savoir-faire français depuis 1893, une fabrication soignée (coton certifié Oeko-Tex, économie circulaire avec la seconde main), un imaginaire marin et enfantin, optimisme et transmission entre générations.",
+  "logoImageSearchQueries": [
+    "site:petit-bateau.fr logo",
+    "site:petit-bateau.fr filetype:svg logo",
+    "site:petit-bateau.fr inurl:logo",
+    "Petit Bateau logo officiel marinière navy",
+    "Petit Bateau wordmark SVG",
+    "Petit Bateau logo bateau navy blue",
+    "site:petit-bateau.com logo",
+    "Petit Bateau brand logo press kit",
+    "Petit Bateau logo 1893 vector",
+    "Petit Bateau logo header site officiel"
+  ],
+  "productImageSearchQueries": [
+    "site:petit-bateau.fr Journées Extraordinaires",
+    "site:petit-bateau.fr offre journees-extraordinaires",
+    "Petit Bateau Journées Extraordinaires -30% campagne",
+    "Petit Bateau Journées Extraordinaires visuel officiel",
+    "site:petit-bateau.fr collection été 2026",
+    "Petit Bateau marinière campagne été",
+    "Petit Bateau body bébé packshot officiel",
+    "Petit Bateau ciré jaune enfant officiel",
+    "Petit Bateau pyjama enfant collection été",
+    "Petit Bateau Journées Extraordinaires bannière",
+    "Petit Bateau key visual promotion été",
+    "site:petit-bateau.fr packshot enfant"
+  ]
+}

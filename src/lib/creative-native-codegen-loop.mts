@@ -28,6 +28,7 @@ import { buildCreativeAdFormatInstructions } from './studio-ad-formats.mts';
 import {
   addUsageToAccumulator,
   createEmptyUsageAccumulator,
+  formatDurationMinSec,
   mergeUsageAccumulators,
   type UsageAccumulator
 } from './creative-pipeline-usage.mts';
@@ -113,7 +114,14 @@ async function runSingleCodegenLoop (params: {
       duration_ms: turnMs,
       stop_reason: creativeCodeResponse.stop_reason
     });
-    console.log(`[creative-native] Turn ${String(generationIndex)}: ${String(turnMs)} ms — ${describeTurnForLogs(creativeCodeResponse.stop_reason)}`);
+    const cacheRead = creativeCodeResponse.usage.cache_read_input_tokens ?? 0;
+    const cacheCreate = creativeCodeResponse.usage.cache_creation_input_tokens ?? 0;
+    console.log(
+      `[creative-native] Turn ${String(generationIndex)}: ${formatDurationMinSec(turnMs)} — ${describeTurnForLogs(creativeCodeResponse.stop_reason)}`
+        + (cacheRead > 0 || cacheCreate > 0
+          ? ` (cache read ${String(cacheRead)}, create ${String(cacheCreate)})`
+          : '')
+    );
 
     addUsageToAccumulator(usage, creativeCodeResponse.usage);
     messages.push({ role: 'assistant', content: creativeCodeResponse.content });
@@ -204,7 +212,7 @@ async function runPlanPhase (params: {
     });
     return await stream.finalMessage();
   });
-  console.log(`[creative-native] Plan phase: ${String(Date.now() - planStart)} ms`);
+  console.log(`[creative-native] Plan phase: ${formatDurationMinSec(Date.now() - planStart)}`);
 
   addUsageToAccumulator(usage, response.usage);
   if (response.parsed_output === null) {

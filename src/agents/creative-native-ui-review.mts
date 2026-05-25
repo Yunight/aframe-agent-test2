@@ -6,6 +6,7 @@ import {
   entryFromSingleUsage,
   logPipelineUsageToConsole,
   priceUsdFromTokens,
+  timedAnthropicCall,
   type PriceUsd
 } from '../lib/creative-pipeline-usage.mts';
 import { buildCreativeAdFormatInstructions, type AdFormatSelection } from '../lib/studio-ad-formats.mts';
@@ -86,6 +87,7 @@ export type UiReviewUsageTotals = {
   model: string;
   billed_input_tokens: number;
   price_usd: PriceUsd;
+  duration_ms: number;
 };
 
 export function logUiReviewAuditToConsole (audit: UiReviewOutput, reviewRound: number): void {
@@ -237,10 +239,18 @@ export async function runCreativeNativeUiReview (
     'Evaluate visual quality: logo visibility and scale, typography hierarchy, color adherence to the style guide,',
     'French copy quality, layout at exact pixel dimensions, no fake browser chrome, consistency across formats.',
     'Set satisfied to true only when there are zero findings with severity "blocker".',
-    'Minor polish issues may be "warn" only if the creative is shippable.',
-    'regeneration_prompt must be minimal patch instructions for the code agent (specific CSS/HTML/JS changes).',
-    'Do NOT ask for a new layout, different concept, or full rebuild. Example: "Increase .logo img max-height to 32px in #ad-320x480".',
-    'Each ad unit should keep id="ad-{formatId}" matching the format id unless a blocker requires changing structure.',
+    'Minor polish issues must use severity "warn" only (never blocker) for polish, taste, or "could be nicer" feedback.',
+    '',
+    'Patch vs structural (critical for regen):',
+    '- Default: corrective PATCH only — CSS tweaks, font-size, colors, copy, img src paths, logo max-height, spacing.',
+    '- fix_hint and regeneration_prompt must name concrete selectors or rules (e.g. "#ad-300x600 .hero img { max-height: 180px }").',
+    '- NEVER use words: redesign, rebuild, replace entire, from scratch, new layout, new concept, refonte.',
+    '- BLOCKER only for: wrong IAB pixel size, missing/broken logo, unreadable logo, style-guide color/typography violation, missing required product hero image, fake browser chrome, screenshot capture failure.',
+    '- Product image quality: blocker only if no product image is visible or path is wrong; otherwise warn with a specific src/CSS fix.',
+    '- Carousel/interaction issues: suggest CSS/JS timing or size fixes — not a new carousel design.',
+    '',
+    'regeneration_prompt: minimal ordered patch list for the code agent (no prose marketing).',
+    'Each ad unit keeps id="ad-{formatId}" unless a blocker requires a one-line structural fix.',
     '',
     '--- Ad format requirements ---',
     buildCreativeAdFormatInstructions(adFormats),
@@ -254,17 +264,23 @@ export async function runCreativeNativeUiReview (
 
   console.log(`[ui-review] Round ${String(reviewRound)} — model ${model}`);
 
-  const msg = await withAnthropicRetry(`ui-review round ${String(reviewRound)}`, async () => {
-    return await anthropicClient.messages.parse({
-      model,
-      max_tokens: 8192,
-      system: systemPrompt,
-      messages: [ { role: 'user', content: userContent } ],
-      output_config: {
-        format: zodOutputFormat(uiReviewOutputSchema)
-      }
-    });
-  });
+  const roundStart = Date.now();
+  const { result: msg, duration_ms: apiDurationMs } = await timedAnthropicCall(
+    `ui-review round ${String(reviewRound)}`,
+    async () =>
+      await withAnthropicRetry(`ui-review round ${String(reviewRound)}`, async () => {
+        return await anthropicClient.messages.parse({
+          model,
+          max_tokens: 8192,
+          system: systemPrompt,
+          messages: [ { role: 'user', content: userContent } ],
+          output_config: {
+            format: zodOutputFormat(uiReviewOutputSchema)
+          }
+        });
+      })
+  );
+  const stepDurationMs = Date.now() - roundStart;
 
   const parsed = msg.parsed_output;
   if (parsed === null) {
@@ -285,7 +301,8 @@ export async function runCreativeNativeUiReview (
     cache_read_input_tokens: msg.usage.cache_read_input_tokens ?? 0,
     model,
     billed_input_tokens: billedInput,
-    price_usd
+    price_usd,
+    duration_ms: stepDurationMs
   };
 
   const blockers = parsed.findings.filter((f) => f.severity === 'blocker');
@@ -322,7 +339,16 @@ export async function runCreativeNativeUiReview (
     agent: 'agents/creative-native-ui-review.mts',
     model,
     usage: msg.usage,
-    review_round: reviewRound
+    review_round: reviewRound,
+    duration_ms: stepDurationMs,
+    api_call_timings: [
+      {
+        call_index: 1,
+        duration_ms: apiDurationMs,
+        stop_reason: msg.stop_reason,
+        label: `ui-review round ${String(reviewRound)}`
+      }
+    ]
   });
   const file = appendPipelineUsage(directoryPath, pipelineEntry);
   logPipelineUsageToConsole(file.entries[file.entries.length - 1]!);
@@ -373,6 +399,7 @@ export function writeUiReviewTokenUsage (
       acc.price_usd.input += row.price_usd.input;
       acc.price_usd.output += row.price_usd.output;
       acc.price_usd.total += row.price_usd.total;
+      acc.duration_ms += row.duration_ms;
       return acc;
     },
     {
@@ -382,7 +409,8 @@ export function writeUiReviewTokenUsage (
       cache_creation_input_tokens: 0,
       cache_read_input_tokens: 0,
       billed_input_tokens: 0,
-      price_usd: { input: 0, output: 0, total: 0 }
+      price_usd: { input: 0, output: 0, total: 0 },
+      duration_ms: 0
     }
   );
   totals.price_usd.input = Math.round(totals.price_usd.input * 1_000_000) / 1_000_000;

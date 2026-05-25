@@ -31,6 +31,13 @@ export type PriceUsd = {
   total: number;
 };
 
+export type ApiCallTiming = {
+  call_index: number;
+  duration_ms: number;
+  stop_reason?: string | null;
+  label?: string;
+};
+
 export type PipelineUsageEntry = {
   action: PipelineAction;
   agent: string;
@@ -45,26 +52,103 @@ export type PipelineUsageEntry = {
   billed_input_tokens: number;
   price_usd: PriceUsd;
   notes?: string;
+  /** Wall-clock for the whole step (script), including non-API work. */
   duration_ms?: number;
+  /** One row per Claude API response in this step. */
+  api_call_timings?: ApiCallTiming[];
+};
+
+export type PipelineUsageTotals = {
+  api_calls: number;
+  input_tokens: number;
+  output_tokens: number;
+  cache_creation_input_tokens: number;
+  cache_read_input_tokens: number;
+  billed_input_tokens: number;
+  price_usd: PriceUsd;
+  duration_ms: number;
+  claude_api_duration_ms: number;
+  wall_clock_ms: number;
+};
+
+export type PipelineRunSummary = {
+  wall_clock_ms: number;
+  ended_at: string;
+  claude_api_calls: number;
+  claude_api_duration_ms: number;
+  studio_job_id?: string;
 };
 
 export type PipelineUsageFile = {
   directoryUuid: string;
   updated_at: string;
   entries: PipelineUsageEntry[];
-  totals: {
-    api_calls: number;
-    input_tokens: number;
-    output_tokens: number;
-    cache_creation_input_tokens: number;
-    cache_read_input_tokens: number;
-    billed_input_tokens: number;
-    price_usd: PriceUsd;
-  };
+  totals: PipelineUsageTotals;
+  run_summary?: PipelineRunSummary;
 };
+
+/** Human-readable duration as `m:ss` (e.g. `6:51`, `0:37`). */
+export function formatDurationMinSec (ms: number): string {
+  if (!Number.isFinite(ms) || ms <= 0) {
+    return '—';
+  }
+  const totalSec = Math.round(ms / 1000);
+  const min = Math.floor(totalSec / 60);
+  const sec = totalSec % 60;
+  return `${String(min)}:${sec.toString().padStart(2, '0')}`;
+}
+
+export async function timedAnthropicCall<T> (
+  _label: string,
+  fn: () => Promise<T>
+): Promise<{ result: T; duration_ms: number }> {
+  const start = Date.now();
+  const result = await fn();
+  return { result, duration_ms: Date.now() - start };
+}
+
+export function sumApiCallDurationMs (timings: readonly ApiCallTiming[] | undefined): number {
+  if (timings === undefined || timings.length === 0) {
+    return 0;
+  }
+  return timings.reduce((sum, t) => sum + t.duration_ms, 0);
+}
+
+export function codegenTurnTimingsToApiCallTimings (
+  turns: ReadonlyArray<{ turn: number; duration_ms: number; stop_reason: string | null }>
+): ApiCallTiming[] {
+  return turns.map((t) => ({
+    call_index: t.turn,
+    duration_ms: t.duration_ms,
+    stop_reason: t.stop_reason,
+    label: `codegen turn ${String(t.turn)}`
+  }));
+}
+
+function wallClockMsFromEntryTimestamps (entries: readonly PipelineUsageEntry[]): number {
+  if (entries.length === 0) {
+    return 0;
+  }
+  let minMs = Number.POSITIVE_INFINITY;
+  let maxMs = 0;
+  for (const e of entries) {
+    const ms = Date.parse(e.timestamp);
+    if (!Number.isFinite(ms)) {
+      continue;
+    }
+    minMs = Math.min(minMs, ms);
+    maxMs = Math.max(maxMs, ms);
+  }
+  if (!Number.isFinite(minMs) || maxMs <= minMs) {
+    return 0;
+  }
+  return maxMs - minMs;
+}
 
 const DEFAULT_OPUS_INPUT_USD_PER_M = 5;
 const DEFAULT_OPUS_OUTPUT_USD_PER_M = 25;
+const DEFAULT_SONNET_INPUT_USD_PER_M = 3;
+const DEFAULT_SONNET_OUTPUT_USD_PER_M = 15;
 const DEFAULT_HAIKU_INPUT_USD_PER_M = 1;
 const DEFAULT_HAIKU_OUTPUT_USD_PER_M = 5;
 
@@ -83,6 +167,12 @@ export function getModelPricing (model: string | null): { inputUsdPerM: number; 
     return {
       inputUsdPerM: parseEnvUsdPerM('CREATIVE_HAIKU_INPUT_USD_PER_M', DEFAULT_HAIKU_INPUT_USD_PER_M),
       outputUsdPerM: parseEnvUsdPerM('CREATIVE_HAIKU_OUTPUT_USD_PER_M', DEFAULT_HAIKU_OUTPUT_USD_PER_M)
+    };
+  }
+  if (m.includes('sonnet')) {
+    return {
+      inputUsdPerM: parseEnvUsdPerM('CREATIVE_SONNET_INPUT_USD_PER_M', DEFAULT_SONNET_INPUT_USD_PER_M),
+      outputUsdPerM: parseEnvUsdPerM('CREATIVE_SONNET_OUTPUT_USD_PER_M', DEFAULT_SONNET_OUTPUT_USD_PER_M)
     };
   }
   return {
@@ -158,15 +248,25 @@ export function pipelineUsagePath (directoryPath: string): string {
   return join(directoryPath, 'pipeline-usage.json');
 }
 
-function recomputeTotals (entries: PipelineUsageEntry[]): PipelineUsageFile['totals'] {
-  const totals = {
+function normalizePipelineUsageFile (raw: PipelineUsageFile): PipelineUsageFile {
+  return {
+    ...raw,
+    totals: recomputeTotals(raw.entries)
+  };
+}
+
+export function recomputeTotals (entries: readonly PipelineUsageEntry[]): PipelineUsageTotals {
+  const totals: PipelineUsageTotals = {
     api_calls: 0,
     input_tokens: 0,
     output_tokens: 0,
     cache_creation_input_tokens: 0,
     cache_read_input_tokens: 0,
     billed_input_tokens: 0,
-    price_usd: { input: 0, output: 0, total: 0 }
+    price_usd: { input: 0, output: 0, total: 0 },
+    duration_ms: 0,
+    claude_api_duration_ms: 0,
+    wall_clock_ms: 0
   };
   for (const e of entries) {
     totals.api_calls += e.api_calls;
@@ -178,11 +278,26 @@ function recomputeTotals (entries: PipelineUsageEntry[]): PipelineUsageFile['tot
     totals.price_usd.input += e.price_usd.input;
     totals.price_usd.output += e.price_usd.output;
     totals.price_usd.total += e.price_usd.total;
+    totals.duration_ms += e.duration_ms ?? 0;
+    totals.claude_api_duration_ms += sumApiCallDurationMs(e.api_call_timings);
   }
   totals.price_usd.input = roundUsd6(totals.price_usd.input);
   totals.price_usd.output = roundUsd6(totals.price_usd.output);
   totals.price_usd.total = roundUsd6(totals.price_usd.total);
+  totals.wall_clock_ms = wallClockMsFromEntryTimestamps(entries);
   return totals;
+}
+
+export function countClaudeApiCalls (entries: readonly PipelineUsageEntry[]): number {
+  let n = 0;
+  for (const e of entries) {
+    if (e.api_call_timings !== undefined && e.api_call_timings.length > 0) {
+      n += e.api_call_timings.length;
+    } else {
+      n += e.api_calls;
+    }
+  }
+  return n;
 }
 
 export function appendPipelineUsage (
@@ -193,7 +308,7 @@ export function appendPipelineUsage (
   const path = pipelineUsagePath(directoryPath);
   let file: PipelineUsageFile;
   if (existsSync(path)) {
-    file = JSON.parse(readFileSync(path, 'utf8')) as PipelineUsageFile;
+    file = normalizePipelineUsageFile(JSON.parse(readFileSync(path, 'utf8')) as PipelineUsageFile);
   } else {
     file = {
       directoryUuid,
@@ -223,6 +338,7 @@ export function entryFromAccumulator (
     review_round?: number | null;
     notes?: string;
     duration_ms?: number;
+    api_call_timings?: ApiCallTiming[];
   }
 ): Omit<PipelineUsageEntry, 'timestamp'> {
   const billed = billedInputTokensFromAccumulator(params.acc);
@@ -239,7 +355,10 @@ export function entryFromAccumulator (
     billed_input_tokens: billed,
     price_usd: priceUsdFromAccumulator(params.acc, params.model),
     ...(params.notes !== undefined ? { notes: params.notes } : {}),
-    ...(params.duration_ms !== undefined ? { duration_ms: params.duration_ms } : {})
+    ...(params.duration_ms !== undefined ? { duration_ms: params.duration_ms } : {}),
+    ...(params.api_call_timings !== undefined && params.api_call_timings.length > 0
+      ? { api_call_timings: params.api_call_timings }
+      : {})
   };
 }
 
@@ -251,6 +370,8 @@ export function entryFromSingleUsage (
     usage: UsageLike;
     review_round?: number | null;
     notes?: string;
+    duration_ms?: number;
+    api_call_timings?: ApiCallTiming[];
   }
 ): Omit<PipelineUsageEntry, 'timestamp'> {
   const billed = billedInputFromUsage(params.usage);
@@ -266,7 +387,11 @@ export function entryFromSingleUsage (
     cache_read_input_tokens: params.usage.cache_read_input_tokens ?? 0,
     billed_input_tokens: billed,
     price_usd: priceUsdFromTokens(billed, params.usage.output_tokens, params.model),
-    ...(params.notes !== undefined ? { notes: params.notes } : {})
+    ...(params.notes !== undefined ? { notes: params.notes } : {}),
+    ...(params.duration_ms !== undefined ? { duration_ms: params.duration_ms } : {}),
+    ...(params.api_call_timings !== undefined && params.api_call_timings.length > 0
+      ? { api_call_timings: params.api_call_timings }
+      : {})
   };
 }
 
@@ -276,6 +401,7 @@ export function entryZeroCost (
     agent: string;
     review_round?: number | null;
     notes?: string;
+    duration_ms?: number;
   }
 ): Omit<PipelineUsageEntry, 'timestamp'> {
   return {
@@ -290,7 +416,8 @@ export function entryZeroCost (
     cache_read_input_tokens: 0,
     billed_input_tokens: 0,
     price_usd: { input: 0, output: 0, total: 0 },
-    ...(params.notes !== undefined ? { notes: params.notes } : {})
+    ...(params.notes !== undefined ? { notes: params.notes } : {}),
+    ...(params.duration_ms !== undefined ? { duration_ms: params.duration_ms } : {})
   };
 }
 
@@ -303,7 +430,15 @@ export function logPipelineUsageToConsole (entry: PipelineUsageEntry): void {
     console.log(`model : ${entry.model}`);
   }
   if (entry.duration_ms !== undefined) {
-    console.log(`duration : ${String(entry.duration_ms)} ms`);
+    console.log(`step duration : ${formatDurationMinSec(entry.duration_ms)}`);
+  }
+  if (entry.api_call_timings !== undefined && entry.api_call_timings.length > 0) {
+    for (const t of entry.api_call_timings) {
+      const label = t.label ?? `call ${String(t.call_index)}`;
+      const stop = t.stop_reason !== undefined && t.stop_reason !== null ? ` (${t.stop_reason})` : '';
+      console.log(`  claude api : ${label} — ${formatDurationMinSec(t.duration_ms)}${stop}`);
+    }
+    console.log(`  claude api sum : ${formatDurationMinSec(sumApiCallDurationMs(entry.api_call_timings))}`);
   }
   if (entry.notes !== undefined && entry.notes.length > 0) {
     console.log(`notes : ${entry.notes}`);
@@ -322,13 +457,43 @@ export function logPipelineTotalsToConsole (directoryPath: string): void {
   if (!existsSync(path)) {
     return;
   }
-  const file = JSON.parse(readFileSync(path, 'utf8')) as PipelineUsageFile;
+  const file = normalizePipelineUsageFile(JSON.parse(readFileSync(path, 'utf8')) as PipelineUsageFile);
   console.log('=== pipeline usage totals ===');
   console.log(`entries : ${String(file.entries.length)}`);
+  console.log(`step duration sum : ${formatDurationMinSec(file.totals.duration_ms)}`);
+  console.log(`claude api duration sum : ${formatDurationMinSec(file.totals.claude_api_duration_ms)}`);
+  if (file.totals.wall_clock_ms > 0) {
+    console.log(`wall clock (entry timestamps) : ${formatDurationMinSec(file.totals.wall_clock_ms)}`);
+  }
+  if (file.run_summary !== undefined) {
+    console.log(`run wall clock : ${formatDurationMinSec(file.run_summary.wall_clock_ms)}`);
+    console.log(`run claude api calls : ${String(file.run_summary.claude_api_calls)}`);
+  }
   console.log(`billed input tokens : ${String(file.totals.billed_input_tokens)}`);
   console.log(`output tokens : ${String(file.totals.output_tokens)}`);
   console.log(`total price (USD) : ${String(file.totals.price_usd.total)}`);
   console.log('');
+}
+
+export function appendPipelineRunSummary (
+  directoryPath: string,
+  params: { wall_clock_ms: number; studio_job_id?: string }
+): PipelineUsageFile | null {
+  const path = pipelineUsagePath(directoryPath);
+  if (!existsSync(path)) {
+    return null;
+  }
+  const file = normalizePipelineUsageFile(JSON.parse(readFileSync(path, 'utf8')) as PipelineUsageFile);
+  file.run_summary = {
+    wall_clock_ms: params.wall_clock_ms,
+    ended_at: new Date().toISOString(),
+    claude_api_calls: countClaudeApiCalls(file.entries),
+    claude_api_duration_ms: file.totals.claude_api_duration_ms,
+    ...(params.studio_job_id !== undefined ? { studio_job_id: params.studio_job_id } : {})
+  };
+  file.updated_at = new Date().toISOString();
+  writeFileSync(path, `${JSON.stringify(file, null, 2)}\n`, { encoding: 'utf8' });
+  return file;
 }
 
 export function logAnthropicUsageAndCost (scriptLabel: string, acc: UsageAccumulator, model: string): void {
@@ -348,9 +513,13 @@ export function logAnthropicUsageAndCost (scriptLabel: string, acc: UsageAccumul
 
 export function logReadableAnthropicCall (
   callReason: string,
-  usage: UsageLike | null | undefined
+  usage: UsageLike | null | undefined,
+  durationMs?: number
 ): void {
   console.log(`call reason : ${callReason}`);
+  if (durationMs !== undefined) {
+    console.log(`duration : ${formatDurationMinSec(durationMs)}`);
+  }
   if (usage === null || usage === undefined) {
     console.log('input token : —');
     console.log('output token : —');
@@ -379,6 +548,8 @@ export function appendFromCreativeNativeTokenFile (
     cache_read_input_tokens?: number;
     model?: string;
     price_usd?: PriceUsd;
+    duration_ms_total?: number;
+    turn_timings?: Array<{ turn: number; duration_ms: number; stop_reason: string | null }>;
   };
   const acc: UsageAccumulator = {
     api_calls: raw.api_calls ?? 1,
@@ -389,12 +560,18 @@ export function appendFromCreativeNativeTokenFile (
   };
   const model =
     typeof raw.model === 'string' && raw.model.length > 0 ? raw.model : 'claude-opus-4-6';
+  const apiCallTimings =
+    raw.turn_timings !== undefined && raw.turn_timings.length > 0
+      ? codegenTurnTimingsToApiCallTimings(raw.turn_timings)
+      : undefined;
   const entry = entryFromAccumulator({
     action,
     agent: 'agents/gen-creative-code-native.mts',
     model,
     acc,
-    review_round: reviewRound
+    review_round: reviewRound,
+    ...(raw.duration_ms_total !== undefined ? { duration_ms: raw.duration_ms_total } : {}),
+    ...(apiCallTimings !== undefined ? { api_call_timings: apiCallTimings } : {})
   });
   const logged = appendPipelineUsage(directoryPath, entry);
   logPipelineUsageToConsole(logged.entries[logged.entries.length - 1]!);

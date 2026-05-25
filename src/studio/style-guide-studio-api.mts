@@ -4,6 +4,11 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { config as loadDotenv } from 'dotenv';
 import Express from 'express';
+import {
+  envForCreativeCodegenPreset,
+  isCreativeCodegenPresetId,
+} from '../lib/creative-native-codegen-presets.mts';
+import { appendPipelineRunSummary, pipelineUsagePath } from '../lib/creative-pipeline-usage.mts';
 import { loadAdFormatPresets, normalizeApiAdFormats } from '../lib/studio-ad-formats.mts';
 import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
 
@@ -68,6 +73,7 @@ type JobStatus = 'running' | 'done' | 'error';
 interface Job {
   id: string;
   status: JobStatus;
+  startedAt: number;
   lines: Array<{ source: 'stdout' | 'stderr'; text: string }>;
   exitCode: number | null;
   outputDirectoryPath: string | null;
@@ -82,6 +88,7 @@ function createJob (): Job {
   const job: Job = {
     id,
     status: 'running',
+    startedAt: Date.now(),
     lines: [],
     exitCode: null,
     outputDirectoryPath: null,
@@ -147,6 +154,12 @@ function pushLine (job: Job, source: 'stdout' | 'stderr', text: string): void {
 function finishJob (job: Job, exitCode: number | null): void {
   job.exitCode = exitCode;
   job.status = exitCode === 0 ? 'done' : 'error';
+  if (job.outputDirectoryPath !== null && job.outputDirectoryPath.length > 0) {
+    appendPipelineRunSummary(job.outputDirectoryPath, {
+      wall_clock_ms: Date.now() - job.startedAt,
+      studio_job_id: job.id
+    });
+  }
   broadcast(job, job.status === 'done' ? 'done' : 'failed', {
     exitCode,
     outputDirectoryPath: job.outputDirectoryPath
@@ -492,6 +505,7 @@ app.post('/api/creative-code/run', (req, res) => {
     adFormats?: unknown;
     assetsReviewBeforeGeneration?: unknown;
     uiReviewAfterGeneration?: unknown;
+    creativeCodegenPreset?: unknown;
   };
   if (typeof body.creativeScript !== 'string' || body.creativeScript.trim().length === 0) {
     res.status(400).json({
@@ -549,8 +563,19 @@ app.post('/api/creative-code/run', (req, res) => {
   const uiReviewRequested =
     body.uiReviewAfterGeneration === true && creativeScript === 'gen-creative-code-native.mts';
 
+  let codegenPresetEnv: Record<string, string> = {};
+  if (typeof body.creativeCodegenPreset === 'string' && body.creativeCodegenPreset.trim().length > 0) {
+    const presetRaw = body.creativeCodegenPreset.trim();
+    if (!isCreativeCodegenPresetId(presetRaw)) {
+      res.status(400).json({ error: 'creativeCodegenPreset must be fast, balanced, or quality.' });
+      return;
+    }
+    codegenPresetEnv = envForCreativeCodegenPreset(presetRaw);
+  }
+
   const job = createJob();
   activeJobId = job.id;
+  job.outputDirectoryPath = join(outputDir, outputFolder);
   const creativePath = join(agentsDir, creativeScript);
   const assetsReviewPath = join(agentsDir, 'run-creative-native-assets-review.mts');
   const uiReviewPath = join(agentsDir, 'run-creative-native-ui-review.mts');
@@ -558,6 +583,7 @@ app.post('/api/creative-code/run', (req, res) => {
   const genStep = {
     argv: [ creativePath, outputFolder ],
     env: {
+      ...codegenPresetEnv,
       CREATIVE_AD_FORMATS: adFormatsJson,
       CREATIVE_UI_REVIEW_MAX_ROUNDS: '0'
     }
@@ -612,6 +638,24 @@ app.get('/api/style-guide/stream/:jobId', (req, res) => {
     return;
   }
   attachSubscriber(job, res);
+});
+
+app.get('/api/output/:folderName/pipeline-usage', (req, res) => {
+  const folderName = req.params['folderName'];
+  if (folderName === undefined || !isSafeOutputFolderSegment(folderName)) {
+    res.status(400).json({ error: 'Invalid folder name.' });
+    return;
+  }
+  const usagePath = pipelineUsagePath(join(outputDir, folderName));
+  if (!existsSync(usagePath)) {
+    res.status(404).json({ error: 'pipeline-usage.json not found for this output folder.' });
+    return;
+  }
+  try {
+    res.json(JSON.parse(readFileSync(usagePath, 'utf8')) as unknown);
+  } catch (e) {
+    res.status(500).json({ error: e instanceof Error ? e.message : String(e) });
+  }
 });
 
 app.get('/api/output/index-html-previews', (_req, res) => {
