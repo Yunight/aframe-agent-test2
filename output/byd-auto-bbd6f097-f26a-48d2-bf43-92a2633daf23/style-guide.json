@@ -1,0 +1,99 @@
+{
+  "companyName": "BYD Company Limited",
+  "companyContext": "BYD (Build Your Dreams) est une entreprise multinationale chinoise de haute technologie fondée en 1995 à Shenzhen. Elle est aujourd'hui le premier constructeur mondial de véhicules à énergies nouvelles (NEV) et opère dans quatre secteurs : automobile, transport ferroviaire, énergies renouvelables et électronique. BYD a notamment développé la Blade Battery (LFP) et la technologie hybride Super DM.",
+  "companyURL": "https://www.byd.com/en/about-byd",
+  "brandName": "BYD Auto",
+  "brandContext": "BYD Auto est la division automobile du groupe BYD, spécialisée dans les véhicules 100 % électriques et hybrides rechargeables. En France, la marque commercialise la gamme Ocean Series (DOLPHIN, SEAL, SEAL U, SEALION) et propose le SEAL U, SUV familial décliné en version 100 % électrique et Super Hybride DM-i.",
+  "brandURL": "https://www.byd.com/fr/voitures-electriques/seal-u",
+  "logoFileUrls": [
+    "https://www.byd.com/static_material/byd/overseas/public-icon/logo.svg"
+  ],
+  "productName": "BYD SEAL U",
+  "campaignContext": "promotion de la nouvelle voiture BYD Seal U",
+  "productPictureUrls": [
+    "https://www.byd.com/material/byd-site/fr/promotions/2026/offres-du-moment/Promo_SEAL_U_DM-i.webp",
+    "https://www.byd.com/material/byd-site/italy/promotion/2026/maggio/pc/seal_u_dmi_maggio.webp",
+    "https://www.byd.com/material/byd-site/italy/promotion/2026/maggio/pc/seal_u_maggio.webp",
+    "https://www.byd.com/content/dam/byd-site/fr/promotions/2025/blackfriday/BYD_SEAL_U_DM-i_BlackFriday.png",
+    "https://www.byd.com/material/byd-site/nl/modelpage/seal-u-dm-i/update2/SEAL%20U%20DM-i_PRIORITY%20REFORMATS_MODEL%20PAGE_2048x1356_PC@2x.webp",
+    "https://www.byd.com/material/byd-site/eu/product/seal-u-dm-i/xl/Seal-u-dmi-exterior-03-xl.jpg"
+  ],
+  "primaryColorPalette": [
+    "#EE2427",
+    "#252728",
+    "#FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "#0A2A4A",
+    "#1F4E8C",
+    "#85A8C6",
+    "#C8D6E2",
+    "#4F5356",
+    "#F4F5F7"
+  ],
+  "typography": [
+    {
+      "fontFamily": "BYD Sans",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Logotype officiel BYD (wordmark géométrique sans-serif introduit en 2022, usage exclusif de la marque)"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Titres principaux et accroches campagne (substitut web géométrique proche de l'identité BYD)"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Sous-titres, intertitres produit (ex. caractéristiques SEAL U)"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Corps de texte, descriptions produit et mentions légales"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 500,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Citations, légendes et notes de bas de page tarifaires"
+    },
+    {
+      "fontFamily": "Roboto Mono",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Données techniques et chiffres clés (autonomie WLTP, puissance, dimensions)"
+    }
+  ],
+  "brandVision": "« Build Your Dreams » — accélérer la transition mondiale des véhicules thermiques vers la mobilité électrique grâce à l'innovation technologique, afin de bâtir un futur zéro émission, plus sûr, plus intelligent et plus durable. Pour la SEAL U, cette vision se traduit par un SUV familial qui marie esthétique océanique, technologie de pointe (Blade Battery, e-Platform 3.0, 8-en-1) et accessibilité.",
+  "brandValues": "Innovation technologique, sécurité (Blade Battery, 5 étoiles Euro NCAP), durabilité et zéro émission, intégration verticale et maîtrise de la chaîne de valeur, design « Ocean Aesthetics » inspiré de la nature, qualité et confort haut de gamme, accessibilité de la mobilité électrique pour les familles.",
+  "logoImageSearchQueries": [
+    "site:byd.com BYD logo svg",
+    "BYD logo official wordmark 2022 svg",
+    "site:en.wikipedia.org BYD logo",
+    "site:commons.wikimedia.org BYD logo svg",
+    "BYD Auto logo transparent png official",
+    "BYD red wordmark logo vector"
+  ],
+  "productImageSearchQueries": [
+    "site:byd.com BYD SEAL U SUV électrique",
+    "BYD SEAL U officiel packshot 2024",
+    "BYD SEAL U Ocean Series exterior front",
+    "BYD SEAL U France configurateur",
+    "BYD SEAL U DM-i Super Hybride SUV",
+    "BYD SEAL U double U headlights design",
+    "BYD SEAL U interior crystal gear lever",
+    "BYD SEAL U 19 inch aerodynamic wheels",
+    "BYD SEAL U press image bydukmedia",
+    "BYD SEAL U Atlantis Grey official",
+    "BYD SEAL U Design Comfort trim"
+  ]
+}

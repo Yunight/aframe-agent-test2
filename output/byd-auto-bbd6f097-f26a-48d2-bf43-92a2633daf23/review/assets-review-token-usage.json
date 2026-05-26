@@ -1,0 +1,33 @@
+{
+  "rounds": [
+    {
+      "api_calls": 1,
+      "input_tokens": 9265,
+      "output_tokens": 144,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "model": "claude-haiku-4-5-20251001",
+      "billed_input_tokens": 9265,
+      "price_usd": {
+        "input": 0.009265,
+        "output": 0.00072,
+        "total": 0.009985
+      },
+      "duration_ms": 3562
+    }
+  ],
+  "totals": {
+    "api_calls": 1,
+    "input_tokens": 9265,
+    "output_tokens": 144,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "billed_input_tokens": 9265,
+    "price_usd": {
+      "input": 0.009265,
+      "output": 0.00072,
+      "total": 0.009985
+    },
+    "duration_ms": 3562
+  }
+}

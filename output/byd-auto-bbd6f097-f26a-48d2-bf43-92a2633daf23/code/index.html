@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BYD SEAL U DM-i &ndash; Publicit&eacute;</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Roboto+Mono:wght@400&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!--
+      BYD SEAL U DM-i - Creatif 320x480 px
+
+      Visuels integres :
+
+      1. BYD_SEAL_U_DM-i_BlackFriday.png (1312x640)
+         Visuel promotionnel Black Friday du SEAL U DM-i : fond tres
+         sombre, eclairage studio dramatique accentuant les nervures
+         et la silhouette du SUV. Coloris sombre premium.
+         -> Carrousel hero, slide 1 (visuel d'accroche principal)
+
+      2. Seal-u-dmi-exterior-03-xl.jpg (960x1280)
+         Photo exterieure portrait 3/4-avant du SEAL U DM-i,
+         lumiere naturelle, finition metallique reflets doux,
+         arriere-plan flou (bokeh route/ville).
+         -> Carrousel hero, slide 2
+
+      3. SEAL_20U_20DM-i_PRIORITY_20REFORMATS_MODEL_20PAGE_2048x1356_PC_2x.webp (4096x3072)
+         Image officielle haute resolution page modele : vue propre
+         en studio, eclairage neutre, finition couleur signature.
+         -> Carrousel hero, slide 3
+
+      4. seal_u_dmi_maggio.webp (2025x438)
+         Banniere panoramique saisonniere SEAL U DM-i (printemps),
+         large plan vehicule avec paysage atmospherique ciel-route.
+         -> Carrousel hero, slide 4
+
+      5. Promo_SEAL_U_DM-i.webp (3420x740)
+         Banniere promotionnelle officielle SEAL U DM-i, visuel
+         vehicule centre avec elements graphiques d'offre commerciale.
+         -> Fond image bande promotionnelle (theme A)
+
+      6. seal_u_maggio.webp (2025x438)
+         Banniere panoramique saisonniere SEAL U standard, vue large
+         et dynamique du vehicule, palette printaniere lumineuse.
+         -> Fond image bande promotionnelle (theme B / variante A/B)
+    -->
+    <div class="ad-container" id="adContainer">
+
+      <!-- HEADER -->
+      <header class="ad-header">
+        <img src="./logo.svg" alt="BYD" class="brand-logo">
+        <span class="badge-new">NOUVEAU</span>
+      </header>
+
+      <!-- HERO CAROUSEL -->
+      <div class="hero-carousel">
+
+        <div class="hero-slide active">
+          <img src="./BYD_SEAL_U_DM-i_BlackFriday.png"
+               alt="BYD SEAL U DM-i Black Friday"
+               class="hero-img">
+        </div>
+
+        <div class="hero-slide">
+          <img src="./Seal-u-dmi-exterior-03-xl.jpg"
+               alt="BYD SEAL U DM-i Ext&eacute;rieur"
+               class="hero-img hero-portrait"
+               loading="lazy">
+        </div>
+
+        <div class="hero-slide">
+          <img src="./SEAL_20U_20DM-i_PRIORITY_20REFORMATS_MODEL_20PAGE_2048x1356_PC_2x.webp"
+               alt="BYD SEAL U DM-i Vue officielle"
+               class="hero-img"
+               loading="lazy">
+        </div>
+
+        <div class="hero-slide">
+          <img src="./seal_u_dmi_maggio.webp"
+               alt="BYD SEAL U DM-i Banni&egrave;re saisonni&egrave;re"
+               class="hero-img hero-panoramic"
+               loading="lazy">
+        </div>
+
+        <div class="hero-fade" id="heroFade"></div>
+        <div class="hero-scan" aria-hidden="true"></div>
+
+        <div class="hero-dots">
+          <button class="hero-dot active" data-slide="0" aria-label="Slide 1"></button>
+          <button class="hero-dot" data-slide="1" aria-label="Slide 2"></button>
+          <button class="hero-dot" data-slide="2" aria-label="Slide 3"></button>
+          <button class="hero-dot" data-slide="3" aria-label="Slide 4"></button>
+        </div>
+
+      </div>
+
+      <!-- PROMO STRIP -->
+      <div class="promo-strip">
+        <img src="./Promo_SEAL_U_DM-i.webp"
+             alt="" aria-hidden="true"
+             class="promo-bg" id="promoBg">
+        <div class="promo-inner">
+          <span class="promo-from">&Agrave; partir de</span>
+          <span class="promo-price">35&nbsp;990&nbsp;&euro;</span>
+          <span class="promo-eco">Bonus &eacute;co inclus</span>
+        </div>
+      </div>
+
+      <!-- CONTENT BLOCK -->
+      <section class="content-block">
+
+        <div class="model-row">
+          <span class="model-pfx">BYD</span>
+          <span class="model-name">SEAL U</span>
+          <span class="model-badge">DM-i</span>
+        </div>
+
+        <p class="model-sub">SUV Familial &middot; Super Hybride Rechargeable</p>
+
+        <div class="specs-panel">
+          <div class="spec-col">
+            <div class="spec-row">
+              <span class="spec-num" id="specAuto">0</span>
+              <span class="spec-unit">km</span>
+            </div>
+            <p class="spec-lbl">Autonomie*</p>
+          </div>
+          <div class="spec-sep"></div>
+          <div class="spec-col">
+            <div class="spec-row">
+              <span class="spec-num" id="specPow">0</span>
+              <span class="spec-unit">kW</span>
+            </div>
+            <p class="spec-lbl">Puissance</p>
+          </div>
+          <div class="spec-sep"></div>
+          <div class="spec-col">
+            <div class="spec-row">
+              <span class="spec-num" id="specNcap">0</span>
+              <span class="spec-unit">&#9733;</span>
+            </div>
+            <p class="spec-lbl">Euro NCAP</p>
+          </div>
+        </div>
+
+        <a class="cta-btn" href="#" onclick="return false;" role="button">
+          D&eacute;couvrir maintenant
+          <span class="cta-arr" aria-hidden="true">&rsaquo;</span>
+        </a>
+
+        <p class="legal-txt">
+          *Autonomie totale estim&eacute;e cycle combin&eacute;. Conditions sur byd.com/fr
+        </p>
+
+      </section>
+
+      <!-- A/B TOGGLE -->
+      <button class="ab-tog" id="abTog" title="Variante A/B">A</button>
+
+    </div>
+  </div>
+  <script src="app.js" defer></script>
+</body>
+</html>

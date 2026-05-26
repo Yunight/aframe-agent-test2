@@ -37,6 +37,24 @@ function composeStyleGuideContextFromParts (brand: string, context: string): str
   return '';
 }
 
+type ImageSearchProviderId = 'brave' | 'anthropic';
+
+function parseImageSearchProviderFromBody (
+  raw: unknown
+): { ok: true; provider: ImageSearchProviderId } | { ok: false; error: string } {
+  if (raw === undefined || raw === null) {
+    return { ok: true, provider: 'brave' };
+  }
+  if (raw !== 'brave' && raw !== 'anthropic') {
+    return { ok: false, error: 'imageSearchProvider must be "brave" or "anthropic".' };
+  }
+  return { ok: true, provider: raw };
+}
+
+function imageSearchProviderEnv (provider: ImageSearchProviderId): Record<string, string> {
+  return { CREATIVE_IMAGE_SEARCH_PROVIDER: provider };
+}
+
 const agentsDir = join(repoRoot, 'src', 'agents');
 const outputDir = join(repoRoot, 'output');
 const DEFAULT_STYLE_SCRIPT = 'gen-style-guide.mts';
@@ -78,12 +96,14 @@ interface Job {
   exitCode: number | null;
   outputDirectoryPath: string | null;
   subscribers: Set<Express.Response>;
+  /** Propagated to every spawned agent via CREATIVE_IMAGE_SEARCH_PROVIDER. */
+  imageSearchProvider: ImageSearchProviderId;
 }
 
 const jobs = new Map<string, Job>();
 let activeJobId: string | null = null;
 
-function createJob (): Job {
+function createJob (imageSearchProvider: ImageSearchProviderId): Job {
   const id = randomUUID();
   const job: Job = {
     id,
@@ -92,7 +112,8 @@ function createJob (): Job {
     lines: [],
     exitCode: null,
     outputDirectoryPath: null,
-    subscribers: new Set()
+    subscribers: new Set(),
+    imageSearchProvider
   };
   jobs.set(id, job);
   return job;
@@ -300,11 +321,19 @@ function attachSpawnedNodeProcessSequence (
     }
 
     pushLine(job, 'stdout', `[studio] Step ${String(stepIndex)}/${String(steps.length)}: ${resolvedArgv.join(' ')}`);
+    if (stepIndex === 1) {
+      pushLine(
+        job,
+        'stdout',
+        `[studio] Image search provider for this job: ${job.imageSearchProvider} (CREATIVE_IMAGE_SEARCH_PROVIDER)`
+      );
+    }
 
     const child = spawn(process.execPath, resolvedArgv, {
       cwd: repoRoot,
       env: {
         ...process.env,
+        CREATIVE_IMAGE_SEARCH_PROVIDER: job.imageSearchProvider,
         ...step.env
       },
       stdio: [ 'ignore', 'pipe', 'pipe' ]
@@ -424,7 +453,14 @@ app.post('/api/style-guide/run', (req, res) => {
     brand?: unknown;
     context?: unknown;
     assetsReviewAfterGeneration?: unknown;
+    imageSearchProvider?: unknown;
   };
+  const imageProviderParsed = parseImageSearchProviderFromBody(body.imageSearchProvider);
+  if (!imageProviderParsed.ok) {
+    res.status(400).json({ error: imageProviderParsed.error });
+    return;
+  }
+  const imageEnv = imageSearchProviderEnv(imageProviderParsed.provider);
   const brandField = typeof body.brand === 'string' ? body.brand : '';
   const contextField = typeof body.context === 'string' ? body.context : '';
   const hasBrandOrContext = brandField.trim().length > 0 || contextField.trim().length > 0;
@@ -465,7 +501,7 @@ app.post('/api/style-guide/run', (req, res) => {
   const assetsReviewAfterGeneration = body.assetsReviewAfterGeneration === true;
   const assetsReviewPath = join(agentsDir, 'run-creative-native-assets-review.mts');
 
-  const job = createJob();
+  const job = createJob(imageProviderParsed.provider);
   activeJobId = job.id;
 
   if (assetsReviewAfterGeneration) {
@@ -476,18 +512,20 @@ app.post('/api/style-guide/run', (req, res) => {
     attachSpawnedNodeProcessSequence(job, [
       {
         argv: [ styleScriptPath ],
-        env: { STYLE_GUIDE_CONTEXT: contextPrompt }
+        env: { STYLE_GUIDE_CONTEXT: contextPrompt, ...imageEnv }
       },
       {
         argv: (activeJob) => {
           const folder = outputFolderNameFromDirectoryPath(activeJob.outputDirectoryPath);
           return folder !== null ? [ assetsReviewPath, folder ] : null;
-        }
+        },
+        env: { ...imageEnv }
       }
     ]);
   } else {
     attachSpawnedNodeProcess(job, [ styleScriptPath ], {
-      STYLE_GUIDE_CONTEXT: contextPrompt
+      STYLE_GUIDE_CONTEXT: contextPrompt,
+      ...imageEnv
     });
   }
 
@@ -506,7 +544,14 @@ app.post('/api/creative-code/run', (req, res) => {
     assetsReviewBeforeGeneration?: unknown;
     uiReviewAfterGeneration?: unknown;
     creativeCodegenPreset?: unknown;
+    imageSearchProvider?: unknown;
   };
+  const imageProviderParsed = parseImageSearchProviderFromBody(body.imageSearchProvider);
+  if (!imageProviderParsed.ok) {
+    res.status(400).json({ error: imageProviderParsed.error });
+    return;
+  }
+  const imageEnv = imageSearchProviderEnv(imageProviderParsed.provider);
   if (typeof body.creativeScript !== 'string' || body.creativeScript.trim().length === 0) {
     res.status(400).json({
       error:
@@ -573,7 +618,7 @@ app.post('/api/creative-code/run', (req, res) => {
     codegenPresetEnv = envForCreativeCodegenPreset(presetRaw);
   }
 
-  const job = createJob();
+  const job = createJob(imageProviderParsed.provider);
   activeJobId = job.id;
   job.outputDirectoryPath = join(outputDir, outputFolder);
   const creativePath = join(agentsDir, creativeScript);
@@ -592,7 +637,7 @@ app.post('/api/creative-code/run', (req, res) => {
   const sequenceSteps: Array<{ argv: string[]; env?: Record<string, string> }> = [];
 
   if (assetsReviewRequested) {
-    sequenceSteps.push({ argv: [ assetsReviewPath, outputFolder ] });
+    sequenceSteps.push({ argv: [ assetsReviewPath, outputFolder ], env: { ...imageEnv } });
   }
   sequenceSteps.push(genStep);
   if (uiReviewRequested) {

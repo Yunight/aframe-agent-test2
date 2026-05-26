@@ -26,9 +26,12 @@ export function logoMinTransparentRatio (): number {
   return parseEnvFloat('CREATIVE_ASSETS_LOGO_MIN_TRANSPARENT_RATIO', 0.02);
 }
 
-/** When `1`, reject JPEG/opaque PNG and enforce alpha ratio (legacy strict mode). */
+/**
+ * Logos must be SVG or raster with real alpha (transparent pixels).
+ * Set CREATIVE_ASSETS_LOGO_ALLOW_OPAQUE=1 to allow opaque JPEG/PNG (not recommended).
+ */
 export function logoRequireTransparency (): boolean {
-  return process.env['CREATIVE_ASSETS_LOGO_REQUIRE_TRANSPARENT']?.trim() === '1';
+  return process.env['CREATIVE_ASSETS_LOGO_ALLOW_OPAQUE']?.trim() !== '1';
 }
 
 /** Reject known low-quality third-party logo URLs (not JPEG — opaque official JPEG is OK). */
@@ -316,16 +319,11 @@ export function validateLogoAssetBuffer (buffer: Buffer): LogoAssetValidation {
   }
 
   if (buffer.length >= 2 && buffer[0] === 0xff && buffer[1] === 0xd8) {
-    if (strict) {
-      return {
-        ok: false,
-        issue: 'JPEG has no transparency channel; logos must be PNG or WebP with real alpha.'
-      };
-    }
     return {
-      ok: true,
-      issue: '',
-      warn: 'JPEG logo (opaque); ensure it comes from the official brand site.'
+      ok: false,
+      issue: strict
+        ? 'JPEG has no transparency; use SVG or PNG/WebP with transparent pixels.'
+        : 'JPEG has no transparency channel (set CREATIVE_ASSETS_LOGO_ALLOW_OPAQUE=1 only if required).'
     };
   }
 
@@ -342,13 +340,13 @@ export function validateLogoAssetBuffer (buffer: Buffer): LogoAssetValidation {
   if (buffer.length >= 6 && buffer.toString('ascii', 0, 6) === 'GIF89a') {
     return {
       ok: false,
-      issue: 'GIF is not accepted for logos; use PNG, JPEG, WebP, or SVG from official sources.'
+      issue: 'GIF is not accepted for logos; use SVG or PNG/WebP with transparency.'
     };
   }
 
   return {
     ok: false,
-    issue: 'Unsupported logo format; use PNG, JPEG, WebP, or SVG from the official brand site.'
+    issue: 'Unsupported logo format; use SVG or PNG/WebP with transparent pixels.'
   };
 }
 

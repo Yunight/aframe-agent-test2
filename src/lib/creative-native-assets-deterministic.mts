@@ -6,6 +6,11 @@ import { imageSizeFromFile } from 'image-size/fromFile';
 import mime from 'mime';
 import { looksLikeProductPackshotInLogosFolder } from './logo-asset-rules.mts';
 import { validateLogoAssetFile } from './logo-transparency-check.mts';
+import {
+  buildProductMatchTerms,
+  productMinRelevanceScore,
+  scoreProductContextRelevance
+} from './style-guide-context.mts';
 
 export type DeterministicFinding = {
   asset_id: string;
@@ -131,9 +136,19 @@ async function checkLogoFiles (
       asset_id: 'logos',
       severity: 'blocker',
       issue: 'No files in logos/ directory.',
-      fix_hint: 'Run style guide generation or assets refresh to download at least one logo.'
+      fix_hint:
+        'Run style guide generation or assets refresh to download one transparent logo (SVG or PNG with alpha).'
     });
     return findings;
+  }
+
+  if (files.length > 1) {
+    findings.push({
+      asset_id: 'logos',
+      severity: 'blocker',
+      issue: `Expected exactly one logo file, found ${String(files.length)}.`,
+      fix_hint: 'Keep a single transparent wordmark in logos/ (official site, then Wikipedia, then Brave).'
+    });
   }
 
   for (const fileName of files) {
@@ -148,7 +163,7 @@ async function checkLogoFiles (
         asset_id: assetId,
         severity: 'blocker',
         issue: `Unsupported or unknown MIME type: ${fileMimeType ?? 'null'}.`,
-        fix_hint: 'Replace with PNG, JPEG, WebP, or SVG from the official brand site.'
+        fix_hint: 'Use SVG or PNG/WebP with transparent pixels from the official site or Wikipedia.'
       });
       continue;
     }
@@ -180,17 +195,17 @@ async function checkLogoFiles (
         asset_id: assetId,
         severity: 'blocker',
         issue: validation.issue,
-        fix_hint: 'Source the official brand logo from companyURL/brandURL (PNG, JPEG, WebP, or SVG).'
+        fix_hint: 'Source a transparent SVG or PNG/WebP logo (official site first, then Wikipedia).'
       });
       continue;
     }
 
-    if (validation.warn !== undefined) {
+    if (validation.warn !== undefined && process.env['CREATIVE_ASSETS_LOGO_ALLOW_OPAQUE']?.trim() === '1') {
       findings.push({
         asset_id: assetId,
         severity: 'warn',
         issue: validation.warn,
-        fix_hint: 'Confirm this lockup is from the official brand website, not a third-party scraper.'
+        fix_hint: 'Prefer SVG or PNG with transparent pixels; opaque logos are discouraged.'
       });
     }
 
@@ -235,7 +250,8 @@ async function checkImageFiles (
   fileType: 'logos' | 'products',
   directoryPath: string,
   minW: number,
-  minH: number
+  minH: number,
+  productMatchTerms?: readonly string[]
 ): Promise<DeterministicFinding[]> {
   if (fileType === 'logos') {
     return checkLogoFiles(directoryPath, minW, minH);
@@ -288,6 +304,20 @@ async function checkImageFiles (
         issue: `File size ${String(sizeBytes)} bytes exceeds max ${String(MAX_FILE_BYTES())}.`,
         fix_hint: 'Use a smaller image or raise CREATIVE_ASSETS_MAX_FILE_BYTES.'
       });
+    }
+
+    if (productMatchTerms !== undefined && productMatchTerms.length > 0) {
+      const relevance = scoreProductContextRelevance(fileName, '', productMatchTerms);
+      if (relevance < productMinRelevanceScore()) {
+        findings.push({
+          asset_id: assetId,
+          severity: 'blocker',
+          issue: 'Product image file name/URL does not match the campaign context or productName.',
+          fix_hint:
+            'Refresh assets with Brave queries that name the exact hero product from STYLE_GUIDE_CONTEXT (not other models from the range).'
+        });
+        continue;
+      }
     }
 
     try {
@@ -407,8 +437,22 @@ export async function runDeterministicAssetsCheck (
   findings.push(
     ...(await checkImageFiles('logos', directoryPath, MIN_LOGO_W(), MIN_LOGO_H()))
   );
+
+  const productMatchTerms = buildProductMatchTerms({
+    campaignContext: styleGuide.campaignContext ?? null,
+    productName: styleGuide.productName,
+    brandName: styleGuide.brandName,
+    brandContext: styleGuide.brandContext,
+    brandURL: styleGuide.brandURL
+  });
   findings.push(
-    ...(await checkImageFiles('products', directoryPath, MIN_PRODUCT_W(), MIN_PRODUCT_H()))
+    ...(await checkImageFiles(
+      'products',
+      directoryPath,
+      MIN_PRODUCT_W(),
+      MIN_PRODUCT_H(),
+      productMatchTerms
+    ))
   );
 
   const blockers = findings.filter((f) => f.severity === 'blocker');

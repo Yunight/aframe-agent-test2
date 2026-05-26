@@ -1,0 +1,29 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-05-26T09:02:24.070Z",
+  "deterministic_ok": true,
+  "audit": {
+    "satisfied": true,
+    "summary": "All assets pass audit. Logo is official SVG from byd.com domain. All six product images are authentic BYD SEAL U packshots from official BYD domains (byd.com subdomains: .fr, .it, .nl, .eu), showing correct model hero shots in multiple colors and contexts (studio, promotional, lifestyle). Style guide JSON is complete with consistent primary/secondary colors, verified typography (BYD Sans, Inter, Roboto Mono), and appropriate search queries. No blockers detected.",
+    "findings": [],
+    "brave_retry_queries": {
+      "logos": [],
+      "products": []
+    }
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 9265,
+    "output_tokens": 144,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 9265,
+    "price_usd": {
+      "input": 0.009265,
+      "output": 0.00072,
+      "total": 0.009985
+    },
+    "duration_ms": 3562
+  }
+}

@@ -475,45 +475,53 @@ function extractProductCandidatesFromHtmlAllowingFallback (
   return [ ...bucket.values() ].sort((a, b) => b.score - a.score);
 }
 
-/**
- * Fetch brandURL / companyURL homepages and extract header logo image URLs.
- * Prefer SVG/PNG lockups from .primary-logo, .logo-container, img.logo-simple, etc.
- * On HTTP 403 (etc.) from the official site, tries Wikipedia (en/fr) and Wikimedia assets.
- */
-export async function extractOfficialHeaderLogoUrls (
-  context: ImageSearchContext
-): Promise<string[]> {
+/** Header logo URLs from brandURL / companyURL only (no Wikipedia). */
+export async function extractOfficialSiteLogoUrls (context: ImageSearchContext): Promise<string[]> {
   if (!parseEnvEnabled()) {
     return [];
   }
 
   const officialHosts = hostsFromContext(context);
-  const { candidates, allOfficialBlocked } = await scrapePagesForCandidates({
+  const { candidates } = await scrapePagesForCandidates({
     pageUrls: officialPageUrlsFromContext(context),
     logTag: 'official-logo',
     allowedHosts: officialHosts,
     extract: extractLogoCandidatesFromHtml
   });
 
-  let allCandidates = candidates;
-  const needFallback =
-    parseFallbackEnabled() &&
-    (allOfficialBlocked || allCandidates.length === 0);
+  return mergeCandidates(candidates);
+}
 
-  if (needFallback) {
-    console.log(
-      '[official-logo] Official site blocked or empty — trying Wikipedia / Wikimedia fallback…'
-    );
-    const fallback = await scrapePagesForCandidates({
-      pageUrls: buildFallbackPageUrls(context),
-      logTag: 'official-logo-fallback',
-      allowedHosts: officialHosts,
-      extract: (html, pageUrl) => extractFallbackLogoCandidatesFromHtml(html, pageUrl)
-    });
-    allCandidates = [ ...allCandidates, ...fallback.candidates ];
+/** Logo URLs from Wikipedia / Wikimedia (used when official site has no valid transparent asset). */
+export async function extractWikipediaLogoUrls (context: ImageSearchContext): Promise<string[]> {
+  if (!parseEnvEnabled() || !parseFallbackEnabled()) {
+    return [];
   }
 
-  return mergeCandidates(allCandidates);
+  const officialHosts = hostsFromContext(context);
+  console.log('[official-logo] Wikipedia / Wikimedia fallback…');
+  const { candidates } = await scrapePagesForCandidates({
+    pageUrls: buildFallbackPageUrls(context),
+    logTag: 'official-logo-wikipedia',
+    allowedHosts: officialHosts,
+    extract: (html, pageUrl) => extractFallbackLogoCandidatesFromHtml(html, pageUrl)
+  });
+
+  return mergeCandidates(candidates);
+}
+
+/**
+ * Official site URLs first, then Wikipedia (legacy combined list).
+ * Prefer {@link collectSingleTransparentLogo} for phased download + transparency checks.
+ */
+export async function extractOfficialHeaderLogoUrls (
+  context: ImageSearchContext
+): Promise<string[]> {
+  const official = await extractOfficialSiteLogoUrls(context);
+  if (official.length > 0) {
+    return official;
+  }
+  return extractWikipediaLogoUrls(context);
 }
 
 function scoreProductImageUrl (url: string): number {

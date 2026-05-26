@@ -208,7 +208,7 @@ export async function runCreativeNativeAssetsReview (
     '  * Accept transparent PNG, opaque PNG/JPEG on brand background, and official SVG wordmarks.',
     '  * Warn (not blocker) for low padding or baked checkerboard; suggest site:official_host queries in brave_retry_queries.',
     '  * Readable at small banner sizes (min ~120×40px for raster); SVG logos are validated separately (no vision preview).',
-    '- Product images: must match productName/brandContext; prefer official packshots from brandURL host.',
+    '- Product images: must match STYLE_GUIDE_CONTEXT / campaignContext and productName (exact hero model); reject other models from the same brand line-up.',
     '  * BLOCKER for watermarked press blogs, unrelated stock, meme images, or obvious thumbnails/wallpapers when official packshots exist.',
     '  * brave_retry_queries must prioritize site:hostname from brandURL/companyURL and concrete product names — never generic "product photo" alone.',
     '- Style guide: primary colors and typography are plausible and internally consistent; flag empty or generic placeholders.',

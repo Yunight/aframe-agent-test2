@@ -11,8 +11,15 @@ import {
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { imageSizeFromFile } from 'image-size/fromFile';
-import { extractOfficialHeaderLogoUrls } from './official-site-logo-extract.mts';
 import { isUntrustedLogoUrl, validateLogoAssetFile } from './logo-transparency-check.mts';
+import {
+  buildProductMatchTerms,
+  filterUrlsByProductRelevance,
+  productMinRelevanceScore,
+  scoreProductContextRelevance
+} from './style-guide-context.mts';
+import type { ImageSearchRow } from './image-search-types.mts';
+import { imageSearch, imageSearchLogPrefix, resolveImageSearchProvider } from './image-search.mts';
 
 export interface BraveImageResult {
   type: 'image_result';
@@ -71,6 +78,8 @@ export interface ImageSearchContext {
   companyURL?: string;
   logoImageSearchQueries?: string[];
   productImageSearchQueries?: string[];
+  campaignContext?: string;
+  productMatchTerms?: readonly string[];
 }
 
 export function imageContextFromStyleGuide (styleGuide: {
@@ -79,9 +88,19 @@ export function imageContextFromStyleGuide (styleGuide: {
   productName: string;
   brandURL: string;
   companyURL: string;
+  brandContext?: string;
+  campaignContext?: string;
   logoImageSearchQueries?: string[];
   productImageSearchQueries?: string[];
 }): ImageSearchContext {
+  const campaignContext = styleGuide.campaignContext?.trim() ?? '';
+  const productMatchTerms = buildProductMatchTerms({
+    campaignContext: campaignContext.length > 0 ? campaignContext : null,
+    productName: styleGuide.productName,
+    brandName: styleGuide.brandName,
+    brandContext: styleGuide.brandContext,
+    brandURL: styleGuide.brandURL
+  });
   return {
     brandName: styleGuide.brandName,
     companyName: styleGuide.companyName,
@@ -89,7 +108,9 @@ export function imageContextFromStyleGuide (styleGuide: {
     brandURL: styleGuide.brandURL,
     companyURL: styleGuide.companyURL,
     logoImageSearchQueries: styleGuide.logoImageSearchQueries ?? [],
-    productImageSearchQueries: styleGuide.productImageSearchQueries ?? []
+    productImageSearchQueries: styleGuide.productImageSearchQueries ?? [],
+    ...(campaignContext.length > 0 ? { campaignContext } : {}),
+    ...(productMatchTerms.length > 0 ? { productMatchTerms } : {})
   };
 }
 
@@ -305,14 +326,15 @@ function mergeSearchQueries (modelQueries: readonly string[] | undefined, builtI
   return [ ...new Set([ ...fromModel, ...builtIn ]) ];
 }
 
-function scoreBraveImageRow (
+function scoreImageSearchRow (
   url: string,
-  row: BraveImageResult,
+  row: ImageSearchRow,
   options: {
     assetKind: 'logo' | 'product';
     officialHosts: readonly string[];
     minProductW: number;
     minProductH: number;
+    productMatchTerms?: readonly string[];
   }
 ): number {
   let score = 0;
@@ -329,11 +351,20 @@ function scoreBraveImageRow (
   const h = row.properties?.height ?? row.thumbnail?.height;
 
   if (options.assetKind === 'logo') {
+    if (/wikimedia\.org|wikipedia\.org/iu.test(url)) {
+      score += 90;
+    }
+    if (/wikimedia|wikipedia/iu.test(source)) {
+      score += 40;
+    }
     if (/logo|wordmark|marque|identit|brand|sigle/iu.test(title)) {
       score += 18;
     }
     if (/\.svg($|[?#])/iu.test(url)) {
       score += 28;
+    }
+    if (/\.png($|[?#])/iu.test(url) && /transparent/iu.test(title + url)) {
+      score += 12;
     }
     if (/favicon|icon-16|sprite|emoji/iu.test(url)) {
       score -= 80;
@@ -347,6 +378,9 @@ function scoreBraveImageRow (
   } else {
     if (/packshot|produit|product|official|officiel|catalogue/iu.test(title)) {
       score += 14;
+    }
+    if (options.productMatchTerms !== undefined && options.productMatchTerms.length > 0) {
+      score += scoreProductContextRelevance(url, title, options.productMatchTerms);
     }
     if (/wallpaper|screenshot|thumb|avatar|icon/iu.test(url) || isLikelyLowResolutionImageUrl(url)) {
       score -= 90;
@@ -363,7 +397,7 @@ function scoreBraveImageRow (
   return score;
 }
 
-function pickDirectImageUrl (r: BraveImageResult): string | null {
+function pickDirectImageUrl (r: ImageSearchRow): string | null {
   const fromProps = r.properties?.url?.trim();
   if (fromProps !== undefined && fromProps.length > 0 && /^https?:\/\//iu.test(fromProps)) {
     return fromProps;
@@ -383,6 +417,7 @@ export type GatherImageUrlsOptions = {
   minContentLength?: number;
   assetKind?: 'logo' | 'product';
   officialHosts?: readonly string[];
+  productMatchTerms?: readonly string[];
 };
 
 export async function gatherValidatedImageUrls (
@@ -394,14 +429,22 @@ export async function gatherValidatedImageUrls (
   const assetKind = options.assetKind ?? 'product';
   const officialHosts = options.officialHosts ?? [];
   const ranked: { url: string; score: number }[] = [];
+  const provider = resolveImageSearchProvider();
+  const logPrefix = imageSearchLogPrefix(provider);
 
   for (const query of queries) {
-    let results: BraveImageResult[];
+    let results: ImageSearchRow[];
     try {
-      results = await braveImageSearch({ query, num: options.perQuery });
+      results = await imageSearch({
+        query,
+        num: options.perQuery,
+        assetKind,
+        officialHosts,
+        provider
+      });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      console.warn(`[Brave images] query failed "${query}": ${msg}`);
+      console.warn(`${logPrefix} query failed "${query}": ${msg}`);
       continue;
     }
     for (const row of results) {
@@ -419,13 +462,25 @@ export async function gatherValidatedImageUrls (
         continue;
       }
 
-      const score = scoreBraveImageRow(candidate, row, {
+      const score = scoreImageSearchRow(candidate, row, {
         assetKind,
         officialHosts,
         minProductW: braveProductMinReportedWidth(),
-        minProductH: braveProductMinReportedHeight()
+        minProductH: braveProductMinReportedHeight(),
+        ...(options.productMatchTerms !== undefined && options.productMatchTerms.length > 0
+          ? { productMatchTerms: options.productMatchTerms }
+          : {})
       });
       if (score < -50) {
+        continue;
+      }
+      if (
+        assetKind === 'product' &&
+        options.productMatchTerms !== undefined &&
+        options.productMatchTerms.length > 0 &&
+        scoreProductContextRelevance(candidate, row.title ?? '', options.productMatchTerms) <
+          productMinRelevanceScore()
+      ) {
         continue;
       }
 
@@ -453,7 +508,7 @@ export async function gatherValidatedImageUrls (
   const urls = ranked.slice(0, options.maxResults).map((r) => r.url);
   if (urls.length > 0 && ranked[0] !== undefined) {
     console.log(
-      `[Brave images] Top ${assetKind} candidate score=${String(ranked[0].score)} host=${(() => {
+      `${logPrefix} Top ${assetKind} candidate score=${String(ranked[0].score)} host=${(() => {
         try {
           return new URL(ranked[0].url).hostname;
         } catch {
@@ -514,9 +569,29 @@ function hostFromBrandUrl (brandURL: string | undefined): string | null {
 function buildProductSearchQueriesBuiltin (base: ImageSearchContext): string[] {
   const brand = base.brandName.trim();
   const product = base.productName.trim();
+  const campaign = base.campaignContext?.trim() ?? '';
   const queries: string[] = [];
   const host = hostFromBrandUrl(base.brandURL);
   const companyHost = hostFromBrandUrl(base.companyURL);
+
+  if (campaign.length > 0) {
+    if (host !== null) {
+      queries.push(
+        `site:${host} ${campaign} packshot`,
+        `site:${host} ${campaign} photo officielle`,
+        `site:${host} ${brand} ${campaign}`
+      );
+    }
+    queries.push(`${brand} ${campaign} packshot officiel`, `${campaign} visuel marketing`);
+  }
+
+  const terms = base.productMatchTerms ?? [];
+  for (const term of terms.slice(0, 6)) {
+    if (host !== null) {
+      queries.push(`site:${host} ${term} packshot`, `site:${host} ${term} image`);
+    }
+    queries.push(`${brand} ${term} packshot officiel`);
+  }
 
   if (host !== null) {
     if (product.length > 0) {
@@ -526,7 +601,7 @@ function buildProductSearchQueriesBuiltin (base: ImageSearchContext): string[] {
         `site:${host} ${product} image officielle`,
         `site:${host} ${brand} ${product}`
       );
-    } else {
+    } else if (campaign.length === 0) {
       queries.push(`site:${host} ${brand} produit photo`, `site:${host} catalogue produit`);
     }
   }
@@ -659,7 +734,7 @@ export function appendBraveExcludedUrls (
   return excluded;
 }
 
-function clearAssetSubdirectory (subdirectoryPath: string): void {
+export function clearAssetSubdirectory (subdirectoryPath: string): void {
   if (!existsSync(subdirectoryPath)) {
     mkdirSync(subdirectoryPath, { recursive: true });
     return;
@@ -779,6 +854,7 @@ export type CollectAndDownloadOptions = {
   prioritizeUrls?: readonly string[];
   /** When true and prioritizeUrls filled the target, skip Brave image search entirely. */
   skipBraveWhenPrioritizedFilled?: boolean;
+  productMatchTerms?: readonly string[];
 };
 
 export async function collectAndDownloadValidAssetUrls (
@@ -801,7 +877,26 @@ export async function collectAndDownloadValidAssetUrls (
   const minContentLength =
     fileType === 'products' ? braveProductMinContentLength() : undefined;
 
-  const prioritize = options.prioritizeUrls ?? [];
+  let prioritize = options.prioritizeUrls ?? [];
+  if (
+    fileType === 'products' &&
+    options.productMatchTerms !== undefined &&
+    options.productMatchTerms.length > 0 &&
+    prioritize.length > 0
+  ) {
+    const filtered = filterUrlsByProductRelevance(
+      prioritize,
+      options.productMatchTerms,
+      productMinRelevanceScore()
+    );
+    if (filtered.length < prioritize.length) {
+      console.log(
+        `[download] Filtered official product URLs by context: ${String(filtered.length)}/${String(prioritize.length)} kept`
+      );
+    }
+    prioritize = filtered;
+  }
+
   if (fileType === 'logos' && prioritize.length > 0) {
     console.log(`[download] Trying ${String(prioritize.length)} official-site logo URL(s) before Brave…`);
     for (const fileUrl of prioritize) {
@@ -846,7 +941,12 @@ export async function collectAndDownloadValidAssetUrls (
       skipLowResUrls: true,
       assetKind: fileType === 'logos' ? 'logo' : 'product',
       officialHosts,
-      ...(minContentLength !== undefined ? { minContentLength } : {})
+      ...(minContentLength !== undefined ? { minContentLength } : {}),
+      ...(fileType === 'products' &&
+      options.productMatchTerms !== undefined &&
+      options.productMatchTerms.length > 0
+        ? { productMatchTerms: options.productMatchTerms }
+        : {})
     });
 
     for (const fileUrl of candidates) {
@@ -896,7 +996,6 @@ export async function refreshAssetsFromQueries (
     excludeUrls?: Set<string>;
   }
 ): Promise<RefreshAssetsResult & { rejectedUrls: string[] }> {
-  const logoMax = options?.logoMaxResults ?? 2;
   const productMax = options?.productMaxResults ?? braveProductTargetCount();
   const excludeUrls = options?.excludeUrls ?? new Set<string>();
   const allRejected: string[] = [];
@@ -916,15 +1015,10 @@ export async function refreshAssetsFromQueries (
     rejectedUrls: [] as string[]
   };
   if (logoQueries.length > 0) {
-    const officialLogos = await extractOfficialHeaderLogoUrls(context);
-    console.log('[Brave images] Refresh — collecting logo candidates…');
-    logoDownload = await collectAndDownloadValidAssetUrls('logos', directoryPath, logoQueries, {
-      targetCount: logoMax,
-      candidatePool: Math.max(logoMax * 5, braveLogoCandidatePool()),
-      excludeUrls,
-      clearFolder: true,
-      officialHosts: officialHostsFromContext(context),
-      prioritizeUrls: officialLogos
+    console.log(`${imageSearchLogPrefix()} Refresh — single transparent logo (official → Wikipedia → image search)…`);
+    const { collectSingleTransparentLogo } = await import('./logo-pipeline.mts');
+    logoDownload = await collectSingleTransparentLogo(directoryPath, context, logoQueries, {
+      excludeUrls
     });
     allRejected.push(...logoDownload.rejectedUrls);
     for (const url of logoDownload.rejectedUrls) {
@@ -934,7 +1028,7 @@ export async function refreshAssetsFromQueries (
 
   let productDownload = { downloadedUrls: [] as string[], count: 0, rejectedUrls: [] as string[] };
   if (productQueries.length > 0) {
-    console.log('[Brave images] Refresh — collecting product candidates…');
+    console.log(`${imageSearchLogPrefix()} Refresh — collecting product candidates…`);
     productDownload = await collectAndDownloadValidAssetUrls(
       'products',
       directoryPath,
@@ -944,7 +1038,10 @@ export async function refreshAssetsFromQueries (
         candidatePool: braveProductCandidatePool(),
         excludeUrls,
         clearFolder: true,
-        officialHosts: officialHostsFromContext(context)
+        officialHosts: officialHostsFromContext(context),
+        ...(context.productMatchTerms !== undefined && context.productMatchTerms.length > 0
+          ? { productMatchTerms: context.productMatchTerms }
+          : {})
       }
     );
     allRejected.push(...productDownload.rejectedUrls);

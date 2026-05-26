@@ -25,6 +25,8 @@ interface StudioCatalog {
 
 const PREFERRED_CREATIVE_SCRIPT = 'gen-creative-code-native.mts'
 
+type ImageSearchProviderId = 'brave' | 'anthropic'
+
 /** Last segment of `Output directory path:` from gen-style-guide (UUID folder under output/). */
 function outputFolderNameFromDirectoryPath (dirPath: string): string {
   const normalized = dirPath.replace(/\\/gu, '/').replace(/\/+$/u, '')
@@ -188,6 +190,7 @@ function App () {
   const [styleGuideAssetsReview, setStyleGuideAssetsReview] = useState(true)
   const [creativeAssetsReview, setCreativeAssetsReview] = useState(true)
   const [creativeCodegenPreset, setCreativeCodegenPreset] = useState<'fast' | 'balanced' | 'quality'>('balanced')
+  const [imageSearchProvider, setImageSearchProvider] = useState<ImageSearchProviderId>('brave')
 
   const creativeSupportsNativePipeline = creativeScript === PREFERRED_CREATIVE_SCRIPT
   const creativeSupportsUiReview = creativeSupportsNativePipeline
@@ -506,7 +509,8 @@ function App () {
           context: styleContext,
           // Legacy studio API (before brand/context) only reads this field.
           contextPrompt: composeStyleGuideContextFromParts(brand, styleContext),
-          assetsReviewAfterGeneration: styleGuideAssetsReview
+          assetsReviewAfterGeneration: styleGuideAssetsReview,
+          imageSearchProvider
         })
       })
 
@@ -541,7 +545,7 @@ function App () {
       setStatus('error')
       setErrorMessage(e instanceof Error ? e.message : String(e))
     }
-  }, [brand, styleContext, styleGuideAssetsReview, subscribeToJobEvents])
+  }, [brand, styleContext, styleGuideAssetsReview, imageSearchProvider, subscribeToJobEvents])
 
   const runCreative = useCallback(async () => {
     setErrorMessage(null)
@@ -560,7 +564,8 @@ function App () {
           adFormats: creativeAdFormats,
           assetsReviewBeforeGeneration: creativeSupportsNativePipeline && creativeAssetsReview,
           uiReviewAfterGeneration: creativeSupportsUiReview && creativeUiReview,
-          creativeCodegenPreset: creativeSupportsNativePipeline ? creativeCodegenPreset : undefined
+          creativeCodegenPreset: creativeSupportsNativePipeline ? creativeCodegenPreset : undefined,
+          imageSearchProvider
         })
       })
 
@@ -604,7 +609,7 @@ function App () {
     creativeSupportsUiReview,
     creativeUiReview,
     creativeCodegenPreset,
-    creativeSupportsNativePipeline,
+    imageSearchProvider,
     subscribeToJobEvents
   ])
 
@@ -833,6 +838,48 @@ function App () {
                 Astuce : pour une marque seule, le contexte peut rester vide. Pour un film sans marque, décrivez le titre et l’usage dans le contexte.
               </p>
             </fieldset>
+            <fieldset className="fieldset rounded-2xl border border-base-300/50 bg-base-200/15 px-4 py-4">
+              <legend className="fieldset-legend text-base-content/60">Recherche d’images (logos / produits)</legend>
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-base-300/40 bg-base-100/80 px-4 py-3 has-checked:border-primary has-checked:ring-2 has-checked:ring-primary/15">
+                  <input
+                    type="radio"
+                    name="imageSearchProvider"
+                    className="radio radio-primary mt-0.5 shrink-0"
+                    value="brave"
+                    checked={imageSearchProvider === 'brave'}
+                    disabled={status === 'running'}
+                    onChange={() => { setImageSearchProvider('brave'); }}
+                    aria-label="Recherche images Brave"
+                  />
+                  <span className="text-sm leading-relaxed text-base-content/85">
+                    <span className="font-medium text-base-content">Brave</span>
+                    {' '}
+                    — API Images Brave (rapide, quota dédié).
+                  </span>
+                </label>
+                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-base-300/40 bg-base-100/80 px-4 py-3 has-checked:border-primary has-checked:ring-2 has-checked:ring-primary/15">
+                  <input
+                    type="radio"
+                    name="imageSearchProvider"
+                    className="radio radio-primary mt-0.5 shrink-0"
+                    value="anthropic"
+                    checked={imageSearchProvider === 'anthropic'}
+                    disabled={status === 'running'}
+                    onChange={() => { setImageSearchProvider('anthropic'); }}
+                    aria-label="Recherche images Anthropic"
+                  />
+                  <span className="text-sm leading-relaxed text-base-content/85">
+                    <span className="font-medium text-base-content">Anthropic</span>
+                    {' '}
+                    — Claude <code className="font-mono text-xs">web_search</code>
+                    {' '}
+                    (<code className="font-mono text-xs">ANTHROPIC_API_KEY</code>
+                    , utile si quota Brave épuisé).
+                  </span>
+                </label>
+              </div>
+            </fieldset>
             <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-base-300/50 bg-base-200/15 px-4 py-4">
               <input
                 type="checkbox"
@@ -848,7 +895,7 @@ function App () {
                 — enchaîne{' '}
                 <code className="font-mono text-xs">run-creative-native-assets-review.mts</code>
                 {' '}
-                (contrôles + Haiku + retry Brave) avant toute génération créative. Produit{' '}
+                (contrôles + Haiku + retry recherche images Brave ou Anthropic) avant toute génération créative. Produit{' '}
                 <code className="font-mono text-xs">review/assets-review-final.json</code>.
               </span>
             </label>

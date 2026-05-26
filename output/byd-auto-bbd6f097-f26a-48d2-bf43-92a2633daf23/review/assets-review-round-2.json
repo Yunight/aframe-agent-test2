@@ -1,0 +1,57 @@
+{
+  "review_round": 2,
+  "captured_at": "2026-05-26T09:00:47.580Z",
+  "deterministic_ok": true,
+  "audit": {
+    "satisfied": false,
+    "summary": "Critical issues identified: 2 product images contain promotional overlays, pricing, and legal text that violate clean asset requirements for HTML5 ad generation. Logo asset verified as official SVG from byd.com domain. 4 product images are acceptable clean packshots. Brave retry queries recommended for regional-specific promotional imagery without watermarks.",
+    "findings": [
+      {
+        "asset_id": "products/seal_u_dmi_maggio.webp",
+        "severity": "blocker",
+        "issue": "Product image contains promotional overlay with Euro NCAP badge, pricing (299€/month), financing terms, warranty info, and legal footnotes. This embedded marketing copy and third-party certification badge violates clean asset requirements for modular HTML5 ad generation.",
+        "fix_hint": "Request clean product packshot of BYD SEAL U DM-i without promotional overlays from official BYD Italy site or media kit. Use site:byd.com/it and 'BYD SEAL U DM-i packshot senza testo promozionale' in Brave."
+      },
+      {
+        "asset_id": "products/seal_u_maggio.webp",
+        "severity": "blocker",
+        "issue": "Product image contains promotional overlay with pricing (399€/month), financing details, Euro NCAP badge, and legal disclaimer text. Embedded pricing and certification marks prevent reuse in independent ad templates.",
+        "fix_hint": "Retrieve clean SEAL U packshot without promotional text overlay. Search: site:byd.com 'SEAL U packshot 2024' or 'BYD SEAL U exterior product image clean'."
+      },
+      {
+        "asset_id": "logos/logo.svg",
+        "severity": "warn",
+        "issue": "SVG logo asset not verified against actual byd.com homepage header (vision API cannot preview SVG). Confirm this matches the official wordmark from the primary logo position on https://www.byd.com/fr/voitures-electriques/seal-u or https://www.byd.com/en/about-byd.",
+        "fix_hint": "Cross-verify logo.svg rendering against live byd.com site header. If uncertain, retry with: site:byd.com 'BYD logo svg official' or site:commons.wikimedia.org 'BYD logo 2022'."
+      }
+    ],
+    "brave_retry_queries": {
+      "logos": [
+        "site:byd.com BYD logo svg official wordmark 2022",
+        "site:commons.wikimedia.org BYD logo vector",
+        "BYD Auto official logo transparent svg"
+      ],
+      "products": [
+        "site:byd.com SEAL U packshot DM-i product image clean",
+        "site:byd.com/it SEAL U DM-i senza testo promozionale",
+        "BYD SEAL U exterior packshot official 2024 no overlay",
+        "site:byd.com SEAL U product gallery model image"
+      ]
+    }
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 8924,
+    "output_tokens": 640,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 8924,
+    "price_usd": {
+      "input": 0.008924,
+      "output": 0.0032,
+      "total": 0.012124
+    },
+    "duration_ms": 8585
+  }
+}

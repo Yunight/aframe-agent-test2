@@ -2,6 +2,13 @@
  * Heuristics: logos/ should contain brand wordmarks only, not product packshots.
  */
 
+import { existsSync, readdirSync, unlinkSync } from 'node:fs';
+import { extname, join } from 'node:path';
+import { validateLogoAssetFile } from './logo-transparency-check.mts';
+
+/** Exactly one transparent logo (SVG or PNG/WebP with alpha) lives in logos/. */
+export const CANONICAL_LOGO_COUNT = 1;
+
 export function isOfficialLogoSvgUrl (url: string): boolean {
   return /\.svg($|[?#])/iu.test(url.trim());
 }
@@ -37,4 +44,54 @@ export function looksLikeProductPackshotInLogosFolder (fileName: string): boolea
   }
 
   return false;
+}
+
+function scoreCanonicalLogoFile (filePath: string): number {
+  const ext = extname(filePath).toLowerCase();
+  const validation = validateLogoAssetFile(filePath);
+  if (!validation.ok) {
+    return -10_000;
+  }
+  let score = 0;
+  if (ext === '.svg') {
+    score += 300;
+  } else if (ext === '.png') {
+    score += 200 + (validation.transparentRatio ?? 0) * 100;
+  } else if (ext === '.webp') {
+    score += 150 + (validation.transparentRatio ?? 0) * 80;
+  }
+  return score;
+}
+
+/** Keep the best valid logo file; remove any extras in logos/. */
+export async function enforceSingleCanonicalLogo (
+  directoryPath: string
+): Promise<{ kept: string | null; removed: string[] }> {
+  const logosDir = join(directoryPath, 'logos');
+  if (!existsSync(logosDir)) {
+    return { kept: null, removed: [] };
+  }
+
+  const files = readdirSync(logosDir).filter((name) => !name.startsWith('.'));
+  if (files.length <= CANONICAL_LOGO_COUNT) {
+    return { kept: files[0] ?? null, removed: [] };
+  }
+
+  const scored = files.map((fileName) => ({
+    fileName,
+    score: scoreCanonicalLogoFile(join(logosDir, fileName))
+  }));
+  scored.sort((a, b) => b.score - a.score);
+
+  const kept = scored[0]?.fileName ?? null;
+  const removed: string[] = [];
+  for (let i = 1; i < scored.length; i += 1) {
+    const entry = scored[i];
+    if (entry === undefined) {
+      continue;
+    }
+    unlinkSync(join(logosDir, entry.fileName));
+    removed.push(entry.fileName);
+  }
+  return { kept, removed };
 }

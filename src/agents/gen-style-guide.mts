@@ -1,5 +1,4 @@
 import {
-  braveLogoCandidatePool,
   braveProductCandidatePool,
   braveProductTargetCount,
   buildLogoSearchQueries,
@@ -7,12 +6,8 @@ import {
   collectAndDownloadValidAssetUrls,
   officialHostsFromContext
 } from '../lib/brave-image-assets.mts';
-import { officialUrlsIncludeSvg } from '../lib/logo-asset-rules.mts';
-import {
-  extractOfficialHeaderLogoUrls,
-  extractOfficialProductImageUrls
-} from '../lib/official-site-logo-extract.mts';
-import { pruneNonWordmarkLogos } from '../lib/creative-native-assets-deterministic.mts';
+import { collectSingleTransparentLogo } from '../lib/logo-pipeline.mts';
+import { extractOfficialProductImageUrls } from '../lib/official-site-logo-extract.mts';
 import { basename, join, extname } from 'node:path';
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
@@ -23,6 +18,15 @@ import { z } from 'zod';
 import { withAnthropicRetry } from '../lib/anthropic-retry.mts';
 import { buildOutputDirectoryName, repoRootFromModuleDir } from '../lib/repo-paths.mts';
 import { toStyleGuideHex } from '../lib/style-guide-colors.mts';
+import {
+  buildProductMatchTerms,
+  parseStyleGuideContextPrompt
+} from '../lib/style-guide-context.mts';
+import {
+  assertImageSearchProviderConfigured,
+  imageSearchLogPrefix,
+  resolveImageSearchProvider
+} from '../lib/image-search.mts';
 import {
   appendPipelineRunSummary,
   appendPipelineUsage,
@@ -325,8 +329,19 @@ const brandStyleGuideSchema = z.object({
   brandName: z.string().describe('Brand name.'),
   brandContext: z.string().describe('What does the brand do?'),
   brandURL: z.url().describe('URL of brand.'),
-  logoFileUrls: z.array(z.url()).describe('List of brand image logo URLs in different variants.'),
-  productName: z.string().describe('Name of product if one is specified'),
+  logoFileUrls: z
+    .array(z.url())
+    .max(1)
+    .describe('Single canonical logo URL (transparent SVG or PNG/WebP with alpha).'),
+  productName: z
+    .string()
+    .describe(
+      'Hero product or campaign subject from the user context (exact model/name), not the whole brand range.'
+    ),
+  campaignContext: z
+    .string()
+    .optional()
+    .describe('Copy of the user campaign context clause (filled by the pipeline from STYLE_GUIDE_CONTEXT).'),
   productPictureUrls: z.array(z.url()).describe('List of product pictures or packshots URLs in different variants.'),
   primaryColorPalette: z
     .array(styleGuideHexColor)
@@ -358,10 +373,10 @@ const brandStyleGuideSchema = z.object({
 
 const logoImageSearchQueriesModel = z
   .array(z.string().min(5))
-  .min(3)
-  .max(12)
+  .min(2)
+  .max(8)
   .describe(
-    '3-12 Brave Image Search queries as fallback. Primary logo is scraped from brandURL header (primary-logo, logo-container, img.logo-simple). Use site:hostname, inurl:logo, filetype:svg. No third-party scraper sites.'
+    '3-8 Brave Image Search queries as last resort only. Logo pipeline: official site header → Wikipedia/Wikimedia → Brave. Prefer filetype:svg or transparent PNG. No KindPNG or scraper sites.'
   );
 
 const productImageSearchQueriesModel = z
@@ -369,7 +384,7 @@ const productImageSearchQueriesModel = z
   .min(3)
   .max(15)
   .describe(
-    '3-15 Brave Image Search queries for official product/packshot images. Prefer site:official host, packshot, key art; avoid thumbnails and wallpapers unless gaming.'
+    '3-12 Brave Image Search queries for the hero product only (must match user context / productName). Prefer site:official host + exact model name; never generic catalog or other models from the line-up.'
   );
 
 export type StyleGuide = z.infer<typeof brandStyleGuideSchema>;
@@ -384,18 +399,20 @@ const brandStyleGuideModelSchema = brandStyleGuideSchema
     productImageSearchQueries: productImageSearchQueriesModel
   });
 
-loadDotenv({ path: join(repoRootFromModuleDir(import.meta.dirname), '.env') });
+loadDotenv({ path: join(repoRootFromModuleDir(import.meta.dirname), '.env'), override: false });
 const anthropicApiKey = process.env['ANTHROPIC_API_KEY'];
 if (anthropicApiKey === undefined || anthropicApiKey.trim().length === 0) {
   throw new Error('Missing ANTHROPIC_API_KEY. Set it in project root .env or export it in your shell.');
 }
 
-const braveApiKeyConfigured = process.env['BRAVE_API_KEY']?.trim();
-if (braveApiKeyConfigured === undefined || braveApiKeyConfigured.length === 0) {
-  throw new Error('Missing BRAVE_API_KEY. Set it in project root .env (Brave Search API key for image search).');
-}
+assertImageSearchProviderConfigured();
+console.log(
+  `${imageSearchLogPrefix()} Active provider=${resolveImageSearchProvider()} ` +
+    `(CREATIVE_IMAGE_SEARCH_PROVIDER=${process.env['CREATIVE_IMAGE_SEARCH_PROVIDER'] ?? '(unset)'})`
+);
 
 const contextPrompt = resolveStyleGuideContextPrompt(defaultStyleGuideContextPrompt());
+const parsedUserContext = parseStyleGuideContextPrompt(contextPrompt);
 
 const anthropicClient = new Anthropic({
   apiKey: anthropicApiKey
@@ -440,18 +457,19 @@ while (true) {
       Do not invent or guess direct image URLs for logos or product photos. Logos and product images are
       downloaded after your JSON via the Brave Images API using logoImageSearchQueries and productImageSearchQueries.
 
-      Logo (critical):
-      - The canonical logo is almost always in the site HEADER on brandURL: HTML like div.primary-logo > a.logo-container > img.logo-simple (or any img whose class contains "logo").
-      - Use web_search to confirm brandURL/companyURL and how the header lockup is structured; do NOT rely on random image search results or third-party PNG sites.
-      - After your JSON is saved, the pipeline fetches brandURL HTML and downloads that header img src first (e.g. demandware.static …/logo-*.svg). Brave queries are only a fallback.
-      - Fill logoImageSearchQueries with 3-12 site:official-host queries (inurl:logo, filetype:svg) aligned with the same host as brandURL.
-      - Never use KindPNG, PNGaaa, Pinterest, or generic "transparent logo PNG" without site:official host.
-      - Opaque PNG/JPEG on brand background and official SVG wordmarks are valid.
+      Logo (critical — exactly one file, transparent background):
+      - Pipeline keeps a single logo: SVG, or PNG/WebP with real transparent pixels (alpha). JPEG/opaque logos are rejected.
+      - Source order: (1) brandURL/companyURL header lockup (primary-logo, logo-container, img.logo-simple), (2) Wikipedia/Wikimedia if official fails, (3) Brave using logoImageSearchQueries.
+      - Use web_search to confirm brandURL and header structure; do not guess image URLs in JSON.
+      - Fill logoImageSearchQueries with 2-8 queries for Brave fallback only (site:official-host filetype:svg, site:en.wikipedia.org brand logo).
+      - Never use KindPNG, PNGaaa, Pinterest, or generic scraper "transparent PNG" sites.
 
-      Product images:
-      - Use web_search for official product pages, press kits, and catalog imagery on brandURL.
-      - Fill productImageSearchQueries with 3-15 queries: site:official host, product name, packshot, official photo, key art.
-      - Avoid wallpaper, thumbnail, screenshot aggregator URLs in your queries (do not search gaming-cdn thumbs for retail brands).
+      Product images (must match the user message context):
+      - The first user message states brand and campaign context. productName MUST be the hero product from that context (e.g. "SEAL U", "208 GTI"), not a different model from the same brand.
+      - brandURL should be the official page for that product when possible.
+      - productImageSearchQueries must include the exact product name and words from the context; do not query sibling models (e.g. no Sealion if context is SEAL U).
+      - Use web_search for official packshots of that product only.
+      - Avoid wallpaper, thumbnails, and unrelated catalog images.
 
       companyURL and brandURL must be valid canonical HTTPS URLs from web_search (not guessed).
       When specifying colors, always check that the color exists and matches the one described in the official sources.
@@ -534,6 +552,18 @@ console.log('Download assets: required');
 
 mkdirSync(directoryPath);
 
+const campaignContext = parsedUserContext.campaignContext ?? '';
+const productMatchTerms = buildProductMatchTerms({
+  campaignContext: parsedUserContext.campaignContext,
+  productName: styleGuideFromModel.productName,
+  brandName: styleGuideFromModel.brandName,
+  brandContext: styleGuideFromModel.brandContext,
+  brandURL: styleGuideFromModel.brandURL
+});
+if (productMatchTerms.length > 0) {
+  console.log(`[products] Context match terms: ${productMatchTerms.slice(0, 8).join(' | ')}`);
+}
+
 const imageContext = {
   brandName: styleGuideFromModel.brandName,
   companyName: styleGuideFromModel.companyName,
@@ -541,35 +571,25 @@ const imageContext = {
   brandURL: styleGuideFromModel.brandURL,
   companyURL: styleGuideFromModel.companyURL,
   logoImageSearchQueries: styleGuideFromModel.logoImageSearchQueries,
-  productImageSearchQueries: styleGuideFromModel.productImageSearchQueries
+  productImageSearchQueries: styleGuideFromModel.productImageSearchQueries,
+  campaignContext,
+  productMatchTerms
 };
 
-console.log('[Official site] Extracting header logo from brand homepage…');
-const officialHeaderLogoUrls = await extractOfficialHeaderLogoUrls(imageContext);
-
-const skipBraveLogos = officialUrlsIncludeSvg(officialHeaderLogoUrls);
-console.log(
-  `[Brave images] Collecting logo${skipBraveLogos ? ' (official SVG only, skip Brave)' : ''}…`
-);
-const logoDownload = await collectAndDownloadValidAssetUrls(
-  'logos',
+console.log('[logo] Single transparent logo — official site → Wikipedia → Brave…');
+const logoDownload = await collectSingleTransparentLogo(
   directoryPath,
-  buildLogoSearchQueries(imageContext),
-  {
-    targetCount: 1,
-    candidatePool: braveLogoCandidatePool(),
-    clearFolder: true,
-    officialHosts: officialHostsFromContext(imageContext),
-    prioritizeUrls: officialHeaderLogoUrls,
-    skipBraveWhenPrioritizedFilled: skipBraveLogos
-  }
+  imageContext,
+  buildLogoSearchQueries(imageContext)
 );
-await pruneNonWordmarkLogos(directoryPath);
+if (logoDownload.source !== null) {
+  console.log(`[logo] Source: ${logoDownload.source}`);
+}
 
 console.log('[Official site] Extracting product images from brand pages…');
 const officialProductUrls = await extractOfficialProductImageUrls(imageContext);
 
-console.log('[Brave images] Collecting product photo candidates…');
+console.log(`${imageSearchLogPrefix()} Collecting product photo candidates…`);
 const productDownload = await collectAndDownloadValidAssetUrls(
   'products',
   directoryPath,
@@ -579,7 +599,8 @@ const productDownload = await collectAndDownloadValidAssetUrls(
     candidatePool: braveProductCandidatePool(),
     clearFolder: true,
     officialHosts: officialHostsFromContext(imageContext),
-    prioritizeUrls: officialProductUrls
+    prioritizeUrls: officialProductUrls,
+    productMatchTerms
   }
 );
 
@@ -592,6 +613,7 @@ if (logoDownload.count < minimumAssetsPerType || productDownload.count < minimum
 
 const finalMessageContent: StyleGuide = brandStyleGuideSchema.parse({
   ...styleGuideFromModel,
+  campaignContext: parsedUserContext.campaignContext ?? undefined,
   logoFileUrls: logoDownload.downloadedUrls,
   productPictureUrls: productDownload.downloadedUrls
 });

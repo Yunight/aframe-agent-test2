@@ -1,0 +1,13 @@
+{
+  "assets_review_rounds_run": 1,
+  "max_assets_review_rounds": 3,
+  "post_audit_refresh": false,
+  "satisfied": true,
+  "summary": "All assets pass audit. Logo is official SVG from byd.com domain. All six product images are authentic BYD SEAL U packshots from official BYD domains (byd.com subdomains: .fr, .it, .nl, .eu), showing correct model hero shots in multiple colors and contexts (studio, promotional, lifestyle). Style guide JSON is complete with consistent primary/secondary colors, verified typography (BYD Sans, Inter, Roboto Mono), and appropriate search queries. No blockers detected.",
+  "findings": [],
+  "brave_retry_queries": {
+    "logos": [],
+    "products": []
+  },
+  "pipeline_usage_path": "/Users/benchi/Documents/aframe-agent-test2/output/byd-auto-bbd6f097-f26a-48d2-bf43-92a2633daf23/pipeline-usage.json"
+}

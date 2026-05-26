@@ -20,7 +20,7 @@ src/
 | Fichier | Type | Rôle |
 |---------|------|------|
 | [`agents/gen-style-guide.mts`](src/agents/gen-style-guide.mts) | Script (entrée) | **Étape 1 — Style guide.** Contexte `STYLE_GUIDE_CONTEXT` → `style-guide.json` + `logos/` + `products/`. |
-| [`agents/run-creative-native-assets-review.mts`](src/agents/run-creative-native-assets-review.mts) | Script (entrée) | **Étape 2 — Review assets.** Déterministe + Haiku ; retry Brave. |
+| [`agents/run-creative-native-assets-review.mts`](src/agents/run-creative-native-assets-review.mts) | Script (entrée) | **Étape 2 — Review assets.** Déterministe + Haiku ; retry recherche images. |
 | [`agents/creative-native-assets-review.mts`](src/agents/creative-native-assets-review.mts) | Module agent | Review assets (Haiku + vision). |
 | [`lib/creative-native-assets-deterministic.mts`](src/lib/creative-native-assets-deterministic.mts) | Module | Contrôles sans LLM. |
 | [`lib/brave-image-assets.mts`](src/lib/brave-image-assets.mts) | Module | Recherche / téléchargement / refresh Brave. |
@@ -137,7 +137,7 @@ node src/agents/gen-style-guide.mts
 node src/agents/run-creative-native-assets-review.mts <directory-uuid>
 ```
 
-Prérequis : `output/<uuid>/style-guide.json`, `logos/`, `products/`, `BRAVE_API_KEY`, `ANTHROPIC_API_KEY`.
+Prérequis : `output/<uuid>/style-guide.json`, `logos/`, `products/`, `ANTHROPIC_API_KEY`, et `BRAVE_API_KEY` si `CREATIVE_IMAGE_SEARCH_PROVIDER=brave` (défaut).
 
 ### Code créatif native (génération seule)
 
@@ -149,7 +149,7 @@ node src/agents/gen-creative-code-native.mts <directory-uuid> --asset-input url
 
 Bypass garde (déconseillé) : `set CREATIVE_ASSETS_REVIEW_SKIP=1` avant la gen.
 
-**Recherche d’images** : les logos/produits sont trouvés à l’étape style guide (`web_search` Opus + **Brave Images API**), pas pendant `gen-creative-code-native`. La gen code n’utilise plus `web_search` — uniquement les assets locaux + le JSON style guide.
+**Recherche d’images** : logos/produits à l’étape style guide (`web_search` Opus pour le JSON + **Brave Images API** ou **Anthropic `web_search`** selon `CREATIVE_IMAGE_SEARCH_PROVIDER` / sélecteur studio). Pas pendant `gen-creative-code-native` (assets locaux + JSON uniquement).
 
 #### Profils de génération code (vitesse / coût / qualité)
 
@@ -252,7 +252,7 @@ Puis lancer `style-guide-ui` (Vite).
 
 | Variable | Défaut | Rôle |
 |----------|--------|------|
-| `CREATIVE_ASSETS_REVIEW_MAX_ROUNDS` | `3` | Tours review assets + retry Brave max |
+| `CREATIVE_ASSETS_REVIEW_MAX_ROUNDS` | `3` | Tours review assets + retry recherche images max |
 | `CREATIVE_ASSETS_REVIEW_MODEL` | `claude-haiku-4-5-20251001` | Modèle review assets |
 | `CREATIVE_ASSETS_REVIEW_SKIP` | — | `1` = bypass garde dans gen-creative-code-native |
 | `CREATIVE_ASSETS_MIN_LOGO_W` | `120` | Largeur min logo (px) |
@@ -260,7 +260,9 @@ Puis lancer `style-guide-ui` (Vite).
 | `CREATIVE_ASSETS_MIN_PRODUCT_W` | `200` | Largeur min produit (px) |
 | `CREATIVE_ASSETS_MIN_PRODUCT_H` | `200` | Hauteur min produit (px) |
 | `CREATIVE_ASSETS_MAX_FILE_BYTES` | `5242880` | Taille max fichier (5 Mo) |
-| `BRAVE_API_KEY` | — | Requis pour refresh images |
+| `CREATIVE_IMAGE_SEARCH_PROVIDER` | `brave` | `brave` ou `anthropic` (studio UI ou env) pour logos/produits |
+| `CREATIVE_ANTHROPIC_IMAGE_SEARCH_MODEL` | `claude-haiku-4-5-20251001` | Modèle Claude si provider = anthropic |
+| `BRAVE_API_KEY` | — | Requis si `CREATIVE_IMAGE_SEARCH_PROVIDER=brave` |
 | `BRAVE_PRODUCT_CANDIDATE_POOL` | `20` | Candidats URL Brave avant filtre download (produits) |
 | `BRAVE_PRODUCT_TARGET_COUNT` | `6` | Nombre cible de fichiers produit valides (≥ min px) |
 | `BRAVE_PRODUCT_MIN_CONTENT_LENGTH` | `30000` | Ignore URLs produit dont le HEAD `Content-Length` est trop petit (thumbs) |

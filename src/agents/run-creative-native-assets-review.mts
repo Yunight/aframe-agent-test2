@@ -16,6 +16,11 @@ import {
   refreshAssetsFromQueries
 } from '../lib/brave-image-assets.mts';
 import {
+  assertImageSearchProviderConfigured,
+  imageSearchLogPrefix,
+  resolveImageSearchProvider
+} from '../lib/image-search.mts';
+import {
   logDeterministicFindings,
   pruneInvalidLogos,
   pruneNonWordmarkLogos,
@@ -45,7 +50,7 @@ import { join } from 'node:path';
 import { Anthropic } from '@anthropic-ai/sdk';
 
 const repoRoot = repoRootFromModuleDir(import.meta.dirname);
-loadDotenv({ path: join(repoRoot, '.env') });
+loadDotenv({ path: join(repoRoot, '.env'), override: false });
 const scriptRunStart = Date.now();
 
 const directoryUuidArg = process.argv[2];
@@ -69,10 +74,11 @@ if (anthropicApiKey === undefined || anthropicApiKey.trim().length === 0) {
   throw new Error('Missing ANTHROPIC_API_KEY.');
 }
 
-const braveApiKey = process.env['BRAVE_API_KEY']?.trim();
-if (braveApiKey === undefined || braveApiKey.length === 0) {
-  throw new Error('Missing BRAVE_API_KEY (required for asset refresh retries).');
-}
+assertImageSearchProviderConfigured();
+console.log(
+  `${imageSearchLogPrefix()} Active provider=${resolveImageSearchProvider()} ` +
+    `(CREATIVE_IMAGE_SEARCH_PROVIDER=${process.env['CREATIVE_IMAGE_SEARCH_PROVIDER'] ?? '(unset)'})`
+);
 
 let styleGuide = JSON.parse(readFileSync(styleGuidePath, 'utf8')) as StyleGuide;
 const prunedStyleGuide = JSON.parse(JSON.stringify(styleGuide)) as Omit<
