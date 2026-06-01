@@ -1,0 +1,96 @@
+{
+  "companyName": "Mercedes-Benz Group AG",
+  "companyContext": "Constructeur automobile allemand de prestige fondé en 1926, Mercedes-Benz conçoit et commercialise des voitures particulières et utilitaires haut de gamme à travers le monde, sous l'emblème de l'étoile à trois branches symbolisant la mobilité sur terre, mer et air.",
+  "companyURL": "https://www.mercedes-benz.com",
+  "brandName": "Mercedes-Benz",
+  "brandContext": "Marque automobile premium, Mercedes-Benz incarne le luxe, l'innovation technologique et le savoir-faire allemand. La filiale française (Mercedes-Benz France) commercialise l'ensemble de la gamme passagers : compactes, berlines, SUV, coupés et véhicules électriques EQ.",
+  "brandURL": "https://www.mercedes-benz.fr/passengercars/models/hatchback/a-class/overview.html",
+  "logoFileUrls": [
+    "https://upload.wikimedia.org/wikipedia/fr/thumb/c/cb/Logo_%C3%A9toile_Mercedes-Benz_%282025%29.svg/langfr-250px-Logo_%C3%A9toile_Mercedes-Benz_%282025%29.svg.png"
+  ],
+  "productName": "Classe A Compacte",
+  "campaignContext": "Promotion de la voiture Mercedez-Benz et de sa gamme Class A compacte",
+  "campaignReferenceUrl": "https://www.mercedes-benz.fr/passengercars/models/hatchback/a-class/overview.html",
+  "productPictureUrls": [
+    "https://media.oneweb.mercedes-benz.com/images/static/v1/23681/8/98/979a14b0ba9dbe7d37273f1e5c4a7a45b8dd1.jpg?im=Resize,width=3000;Crop,xPosition=614,yPosition=620,width=1772,height=3086;Resize,width=480",
+    "https://media.oneweb.mercedes-benz.com/images/static/v1/23681/8/98/979a14b0ba9dbe7d37273f1e5c4a7a45b8dd1.jpg?im=Crop,xPosition=0,yPosition=-120,width=1728,height=972,gravity=Center;Resize,width=1920",
+    "https://static.wixstatic.com/media/24c046_b8ed2749b15847248e2204af710a6a41~mv2.png/v1/fill/w_340,h_255,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/mercedes-benz-a-class-w177-exterior-hotspot-radiatorgrill-1612x1209-08-2022.png",
+    "https://www.mercedes-kroely.fr/mediasecure-getphoto?dossier=sections&photo=1000x750_phares_MULTIBEAM_LED_1936688664.webp",
+    "https://cdn-datak.motork.net/configurator-imgs/cars/fr/800/MERCEDES/A-CLASS/41348_HATCHBACK-5-DOORS/mercedes-benz-classe-a-hb.png",
+    "https://cdn-xy.drivek.com/eyJidWNrZXQiOiJkYXRhay1jZG4teHkiLCJrZXkiOiJjb25maWd1cmF0b3ItaW1ncy9jYXJzL2ttNzdfZnIvb3JpZ2luYWwvTUVSQ0VERVMvQS1DTEFTUy81MTI4Ml9CRVJMSU5FLUEtSEFZT04tNS1QT1JURVMvY2xhc3NlLWEtY29tcGFjdGUtMC5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEwMjQsImhlaWdodCI6bnVsbCwiZml0IjoiY292ZXIifX19"
+  ],
+  "primaryColorPalette": [
+    "#000000",
+    "#A4AAAE",
+    "#FFFFFF",
+    "#0B1F2A"
+  ],
+  "secondaryColorPalette": [
+    "#27343C",
+    "#333F47",
+    "#565F64",
+    "#828A8F",
+    "#CDCFD1",
+    "#00ADEF"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Corporate A Condensed",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Wordmark / nom de marque Mercedes-Benz et titres d'affichage premium"
+    },
+    {
+      "fontFamily": "Daimler CS",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Titres de section (H1, H2) sur les pages produit Classe A"
+    },
+    {
+      "fontFamily": "Daimler CS",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Corps de texte, descriptions techniques, paragraphes courants"
+    },
+    {
+      "fontFamily": "Daimler CS",
+      "fontWeight": 500,
+      "fontEffect": [
+        "underline"
+      ],
+      "fontUses": "Liens d'action, CTA secondaires, menu de navigation"
+    },
+    {
+      "fontFamily": "Daimler CS",
+      "fontWeight": 400,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Mentions légales, notes de bas de page, valeurs de consommation CO₂"
+    }
+  ],
+  "brandVision": "« First Move the World » — Mercedes-Benz aspire à façonner l'avenir de la mobilité de luxe en alliant héritage centenaire, design avant-gardiste et innovation durable, pour offrir des expériences automobiles inégalées sur tous les segments, de la compacte Classe A aux modèles AMG et EQ.",
+  "brandValues": "Luxe, excellence, performance, sécurité, innovation technologique, durabilité et raffinement intemporel. La marque incarne l'élégance allemande, la précision d'ingénierie et un savoir-vivre haut de gamme accessible — la Classe A représentant la porte d'entrée désirable vers cet univers premium.",
+  "logoImageSearchQueries": [
+    "site:mercedes-benz.com logo svg",
+    "site:mercedes-benz.fr étoile logo",
+    "Mercedes-Benz star logo filetype:svg",
+    "site:en.wikipedia.org Mercedes-Benz logo",
+    "site:commons.wikimedia.org Mercedes-Benz logo svg",
+    "Mercedes-Benz official wordmark transparent png"
+  ],
+  "productImageSearchQueries": [
+    "site:mercedes-benz.fr Classe A Compacte hatchback",
+    "Mercedes-Benz Classe A 180 Edition 140 packshot",
+    "Mercedes-Benz Classe A Star Edition France",
+    "site:mercedes-benz.fr classe-a overview",
+    "Mercedes Classe A W177 hatchback official press photo",
+    "Mercedes-Benz A-Class compact 2025 packshot blanc",
+    "Mercedes Classe A calandre étoile MULTIBEAM LED",
+    "Mercedes-Benz Classe A intérieur MBUX écran 10.25",
+    "Mercedes Classe A Compacte profil trois-quarts",
+    "site:mercedes-benz.com a-class hatchback hero image"
+  ]
+}

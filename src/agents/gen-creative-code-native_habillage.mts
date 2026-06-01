@@ -3,6 +3,7 @@ import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
 import type { StyleGuide } from './gen-style-guide.mjs';
 import type { AdFormatPreset, AdFormatSelection } from '../lib/studio-ad-formats.mts';
 import { sniffImageMimeFromBuffer } from '../lib/image-mime-sniff.mts';
+import { allocateNextCodeVersionDirectory } from '../lib/creative-code-versions.mts';
 import { loadAdFormatPresets, parseCreativeAdFormatsFromEnv } from '../lib/studio-ad-formats.mts';
 import { basename, dirname, extname, join } from 'node:path';
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -565,7 +566,11 @@ for (let i = 0; i < cliArguments.length; i += 1) {
 
 const repoRoot = repoRootFromModuleDir(import.meta.dirname);
 const directoryPath = join(repoRoot, 'output', directoryUuid);
-const codeDirectoryPath = join(directoryPath, 'code');
+const allocatedVersion = allocateNextCodeVersionDirectory(directoryPath);
+const codeDirectoryPath = allocatedVersion.directoryPath;
+console.log(
+  `[creative-native-habillage] New code version ${allocatedVersion.versionId} → ${codeDirectoryPath}`
+);
 const adFormatPresets = loadAdFormatPresets(repoRoot);
 const adFormats = parseHabillageAdFormatsFromEnv(process.env['CREATIVE_AD_FORMATS'], adFormatPresets);
 const productsDirectoryPath = join(directoryPath, 'products');

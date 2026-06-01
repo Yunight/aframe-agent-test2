@@ -1,0 +1,39 @@
+{
+  "captured_at": "2026-06-01T15:33:28.172Z",
+  "entry_html": "output\\lidl-france-fb47437e-2a73-495e-9555-7ca2fc275cda\\code\\index.html",
+  "entry_url": "file:///C:/Users/Ben/Desktop/formats_creator/aframe-agent-test2/aframe-agent-test2/output/lidl-france-fb47437e-2a73-495e-9555-7ca2fc275cda/code/V1/index.html",
+  "formats": [
+    {
+      "format_id": "320x480",
+      "width": 320,
+      "height": 480,
+      "selector": "#ad-320x480",
+      "error": null,
+      "layout_metrics": {
+        "cta_bottom_gap_px": 41,
+        "cta_selector": "cta-btn",
+        "ad_height_px": 480
+      },
+      "shots": [
+        {
+          "state": "initial",
+          "fileName": "320x480__initial.png",
+          "relativePath": "320x480__initial.png",
+          "captured_at": "2026-06-01T15:33:20.444Z"
+        },
+        {
+          "state": "animated",
+          "fileName": "320x480__animated.png",
+          "relativePath": "320x480__animated.png",
+          "captured_at": "2026-06-01T15:33:23.027Z"
+        },
+        {
+          "state": "settled",
+          "fileName": "320x480__settled.png",
+          "relativePath": "320x480__settled.png",
+          "captured_at": "2026-06-01T15:33:28.135Z"
+        }
+      ]
+    }
+  ]
+}

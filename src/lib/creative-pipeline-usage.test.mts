@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   formatDurationMinSec,
+  inferPhaseFromEntry,
+  recomputePhaseTotals,
   recomputeTotals,
   sumApiCallDurationMs,
   type PipelineUsageEntry
@@ -58,4 +60,29 @@ test('recomputeTotals wall_clock_ms from entry timestamps', () => {
   ];
   const totals = recomputeTotals(entries);
   assert.equal(totals.wall_clock_ms, 330_000);
+});
+
+test('inferPhaseFromEntry uses explicit phase or action default', () => {
+  assert.equal(inferPhaseFromEntry(baseEntry({})), 'style_guide');
+  assert.equal(
+    inferPhaseFromEntry(baseEntry({ action: 'creative_generation' })),
+    'creative'
+  );
+  assert.equal(
+    inferPhaseFromEntry(baseEntry({ action: 'assets_review', phase: 'style_guide' })),
+    'style_guide'
+  );
+});
+
+test('recomputePhaseTotals sums duration_ms by phase', () => {
+  const entries: PipelineUsageEntry[] = [
+    baseEntry({ duration_ms: 5000, phase: 'style_guide' }),
+    baseEntry({ action: 'assets_review', duration_ms: 2000, phase: 'style_guide' }),
+    baseEntry({ action: 'creative_generation', duration_ms: 8000, phase: 'creative' })
+  ];
+  const phases = recomputePhaseTotals(entries);
+  assert.equal(phases.style_guide, 7000);
+  assert.equal(phases.creative, 8000);
+  const totals = recomputeTotals(entries);
+  assert.deepEqual(totals.phase_duration_ms, phases);
 });

@@ -19,12 +19,14 @@ src/
 
 | Fichier | Type | Rôle |
 |---------|------|------|
-| [`agents/gen-style-guide.mts`](src/agents/gen-style-guide.mts) | Script (entrée) | **Étape 1 — Style guide.** Contexte `STYLE_GUIDE_CONTEXT` → `style-guide.json` + `logos/` + `products/`. |
-| [`agents/run-creative-native-assets-review.mts`](src/agents/run-creative-native-assets-review.mts) | Script (entrée) | **Étape 2 — Review assets.** Déterministe + Haiku ; retry recherche images. |
-| [`agents/creative-native-assets-review.mts`](src/agents/creative-native-assets-review.mts) | Module agent | Review assets (Haiku + vision). |
+| [`agents/gen-style-guide.mts`](src/agents/gen-style-guide.mts) | Script (entrée) | **Étape 1 — Style guide.** `STYLE_GUIDE_CONTEXT` + option `STYLE_GUIDE_REFERENCE_URL` → `style-guide.json` (`campaignReferenceUrl`) + assets. |
+| [`agents/run-style-guide-assets-review.mts`](src/agents/run-style-guide-assets-review.mts) | Script (entrée) | **Étape 2 — Review assets style guide** (léger) + `asset-descriptions.json`. |
+| [`lib/creative-asset-descriptions.mts`](src/lib/creative-asset-descriptions.mts) | Module | Descriptions vision Haiku pour la gen créative (batch). |
+| [`agents/run-creative-native-assets-review.mts`](src/agents/run-creative-native-assets-review.mts) | Script (legacy) | Review assets complète (CLI / debug ; plus dans le studio créatif). |
+| [`agents/creative-native-assets-review.mts`](src/agents/creative-native-assets-review.mts) | Module agent | Review assets Haiku + vision (utilisé par le script legacy). |
 | [`lib/creative-native-assets-deterministic.mts`](src/lib/creative-native-assets-deterministic.mts) | Module | Contrôles sans LLM. |
 | [`lib/brave-image-assets.mts`](src/lib/brave-image-assets.mts) | Module | Recherche / téléchargement / refresh Brave. |
-| [`agents/gen-creative-code-native.mts`](src/agents/gen-creative-code-native.mts) | Script (entrée) | **Étape 3 — Génération créative** (Opus). Garde `assets-review-final.json`. |
+| [`agents/gen-creative-code-native.mts`](src/agents/gen-creative-code-native.mts) | Script (entrée) | **Étape 3 — Génération créative** (Opus). Texte seul : `asset-descriptions.json` + garde `assets-review-final.json`. |
 | [`agents/run-creative-native-ui-review.mts`](src/agents/run-creative-native-ui-review.mts) | Script (entrée) | **Étape 4 — Review UI** (optionnel). |
 | [`lib/creative-native-playwright-screenshots.mts`](src/lib/creative-native-playwright-screenshots.mts) | Module | Captures Playwright. |
 | [`agents/creative-native-ui-review.mts`](src/agents/creative-native-ui-review.mts) | Module agent | Review UI (Haiku + vision). |
@@ -39,19 +41,21 @@ src/
 
 ```text
 agents/gen-style-guide.mts
-    → output/<brand-slug>-<uuid>/style-guide.json + logos/ + products/ (ex. `petit-bateau-5629c8bd-…`)
-agents/run-creative-native-assets-review.mts
-    → review/assets-review-final.json
+    → output/<brand-slug>-<uuid>/style-guide.json + logos/ + products/
+agents/run-style-guide-assets-review.mts
+    → review/assets-review-final.json + review/asset-descriptions.json
 agents/gen-creative-code-native.mts
-    → output/<uuid>/code/
+    → output/<uuid>/code/   (descriptions texte, pas de re-review assets)
 agents/run-creative-native-ui-review.mts   (optionnel)
 ```
 
 ---
 
-## Logs review assets (pre-flight)
+## Logs review assets (style guide)
 
-À chaque tour de `run-creative-native-assets-review.mts` :
+Studio : checkbox « Review assets après génération » enchaîne `run-style-guide-assets-review.mts` (pas la review créative legacy).
+
+À chaque tour de `run-style-guide-assets-review.mts` (ou legacy `run-creative-native-assets-review.mts`) :
 
 - **Console** : `[assets-review]` et `[assets-deterministic]` avec findings blocker/warn.
 - **`review/assets-review.log`** : audit texte (append par round).
@@ -241,7 +245,7 @@ Puis lancer `style-guide-ui` (Vite).
 
 **Section « Marque ou contenu »** (`POST /api/style-guide/run`) :
 
-- **`assetsReviewAfterGeneration`** (checkbox UI, défaut coché) : après `gen-style-guide.mts`, enchaîne `run-creative-native-assets-review.mts` sur le dossier créé.
+- **`assetsReviewAfterGeneration`** (checkbox UI, défaut coché) : après `gen-style-guide.mts`, enchaîne `run-style-guide-assets-review.mts` sur le dossier créé (review légère produits + lock logo).
 
 **Section « Code créatif »** (`POST /api/creative-code/run`, script `gen-creative-code-native.mts`) :
 

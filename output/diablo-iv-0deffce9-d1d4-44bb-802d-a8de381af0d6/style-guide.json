@@ -1,0 +1,107 @@
+{
+  "companyName": "Blizzard Entertainment",
+  "companyContext": "American video game developer and publisher based in Irvine, California (subsidiary of Microsoft Gaming via Activision Blizzard). Creator of franchises including Warcraft, StarCraft, Overwatch and Diablo, and operator of the Battle.net online gaming service.",
+  "companyURL": "https://diablo4.blizzard.com/",
+  "brandName": "Diablo IV",
+  "brandContext": "Diablo IV is Blizzard's dark fantasy action RPG set in the world of Sanctuary, where players battle demonic forces in an eternal war between Heaven and Hell. The franchise is renowned for gothic horror atmosphere, brutal combat, deep loot systems and ongoing seasonal and expansion content.",
+  "brandURL": "https://diablo4.blizzard.com/fr-fr/lord-of-hatred",
+  "logoFileUrls": [
+    "https://wp.logos-download.com/wp-content/uploads/2024/03/Diablo_IV_Logo-3000x1402.png"
+  ],
+  "productName": "Diablo IV: Lord of Hatred",
+  "campaignContext": "Promotion du jeu Diablo 4 Lord of hatred",
+  "campaignReferenceUrl": "https://diablo4.blizzard.com/fr-fr/lord-of-hatred",
+  "productPictureUrls": [
+    "https://gaming-cdn.com/images/products/21847/616x353/diablo-iv-lord-of-hatred-ultimate-edition-xbox-series-x-s-xbox-one-microsoft-store-cover.jpg?v=1777366644",
+    "https://cdn.dlcompare.com/game_tetiere/upload/gameimage/file/diablo-iv-lord-of-hatred-screens-08a4d4f2-file-08a4d4e1.jpg.webp",
+    "https://www.goclecd.fr/wp-content/uploads/Diablo-IV-Lord-of-Hatred-2.webp",
+    "https://www.keengamer.com/wp-content/uploads/2026/04/Best-Class-Tier-list-Diablo-IV-Lord-of-Hatred-780x439.jpg",
+    "https://www.keengamer.com/wp-content/uploads/2026/05/Diablo-IV-Lord-of-Hatred-Skovos-Region-Guide-Skartara-780x700.png",
+    "https://www.keengamer.com/wp-content/uploads/2026/04/Diablo-IV-Lord-of-Hatred-Skovos-Region-Guide-Cover-780x439.png"
+  ],
+  "primaryColorPalette": [
+    "#0D0D0D",
+    "#8B0000",
+    "#C84B11",
+    "#1A0A0A",
+    "#D9A441"
+  ],
+  "secondaryColorPalette": [
+    "#2B2B2B",
+    "#5C5C5C",
+    "#A88E5A",
+    "#3A1F1F",
+    "#E8D9B0",
+    "#6B0F0F"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Bildad",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Logo wordmark and major campaign titles (Diablo IV / Lord of Hatred) — custom gothic display with sharp spiked serifs"
+    },
+    {
+      "fontFamily": "Exocet",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Headlines, section titles, key art typography — historic Diablo franchise display face"
+    },
+    {
+      "fontFamily": "Old Fenris",
+      "fontWeight": 600,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Official Diablo IV in-game and marketing display typography — subtitles, callouts, UI titles"
+    },
+    {
+      "fontFamily": "AvQest",
+      "fontWeight": 400,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Lore text, quest descriptions, parchment-style flavor copy"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Long-form body text and web UI fallback on diablo4.blizzard.com"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 600,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Web UI buttons, navigation, edition comparison tables"
+    }
+  ],
+  "brandVision": "Forge the most epic dark-fantasy action-RPG experience ever made — a living, evolving Sanctuary where every season and expansion pushes players deeper into gothic horror, brutal combat and uncompromising storytelling, culminating in the final reckoning against the Prime Evils.",
+  "brandValues": "Gothic horror craftsmanship, uncompromising dark fantasy atmosphere, player empowerment through loot and build mastery, narrative ambition, community and shared world, 'gameplay first' design philosophy, and respect for the legacy of the Diablo franchise.",
+  "logoImageSearchQueries": [
+    "site:diablo4.blizzard.com Lord of Hatred logo",
+    "site:blizzard.gamespress.com Diablo IV Lord of Hatred logo",
+    "Diablo IV Lord of Hatred logo svg transparent",
+    "site:en.wikipedia.org Diablo IV Lord of Hatred logo",
+    "Diablo IV logo transparent png official",
+    "Blizzard Entertainment Diablo IV wordmark"
+  ],
+  "productImageSearchQueries": [
+    "site:diablo4.blizzard.com Lord of Hatred key art",
+    "Diablo IV Lord of Hatred Mephisto key art official",
+    "site:blizzard.gamespress.com Diablo IV Lord of Hatred screenshots",
+    "Diablo IV Lord of Hatred Paladin class art",
+    "Diablo IV Lord of Hatred Warlock class art",
+    "Diablo IV Lord of Hatred Skovos region art",
+    "Diablo IV Lord of Hatred Ultimate Edition cover",
+    "site:news.blizzard.com Lord of Hatred expansion art",
+    "Diablo IV Lord of Hatred Mephisto cinematic still",
+    "Diablo IV Lord of Hatred box art official"
+  ]
+}

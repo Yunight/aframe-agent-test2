@@ -1,0 +1,129 @@
+{
+  "generated_at": "2026-06-01T14:53:48.869Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/lidl-logo-shop-cdn.svg",
+      "fileName": "lidl-logo-shop-cdn.svg",
+      "fileType": "logos",
+      "description": "Lidl's official logo featuring a bold blue square with a yellow circle and red accent. Clean, compact SVG suitable for top-left placement or lockup branding. Works as footer logo or header stamp on promotional banners.",
+      "layout_hints": [
+        "logo-lockup",
+        "header-stamp",
+        "footer-mark",
+        "compact"
+      ],
+      "dominant_colors": [
+        "#0050aa",
+        "#fff000",
+        "#e60a14",
+        "#ffffff"
+      ]
+    },
+    {
+      "asset_id": "products/fonctionnalites_LidlPlus_LidlPoints-2061311.jpg",
+      "fileName": "fonctionnalites_LidlPlus_LidlPoints-2061311.jpg",
+      "fileType": "products",
+      "description": "Mobile app screenshot showing Lidl Plus loyalty program with 550 points reward display. Bright blue background with product examples (energy drink, baguette). Text-heavy interface; suitable as hero image for loyalty program promotions or can rotate within product carousel.",
+      "layout_hints": [
+        "hero-mobile",
+        "product-feature",
+        "loyalty-focus",
+        "vertical-layout"
+      ],
+      "dominant_colors": [
+        "#0050aa",
+        "#fff000",
+        "#ffffff"
+      ]
+    },
+    {
+      "asset_id": "products/LG_DESKTOP_3690x1080_V1-2152564.jpg",
+      "fileName": "LG_DESKTOP_3690x1080_V1-2152564.jpg",
+      "fileType": "products",
+      "description": "Wide leaderboard banner featuring camping tent promotion (CRIVIT brand) with 46% discount, price €21.99. Beach lifestyle scene with orange diagonal accent overlays. Clear promotional badges and date stamp. Ideal as full-width hero or can split into sections.",
+      "layout_hints": [
+        "hero-leaderboard",
+        "lifestyle-image",
+        "discount-badge",
+        "date-stamp"
+      ],
+      "dominant_colors": [
+        "#ff9500",
+        "#0050aa",
+        "#fff000",
+        "#87ceeb"
+      ]
+    },
+    {
+      "asset_id": "products/MARKETING_LG-DESKTOP-2210604.jpg",
+      "fileName": "MARKETING_LG-DESKTOP-2210604.jpg",
+      "fileType": "products",
+      "description": "Mother's Day campaign leaderboard (blonde model, hair dryer, pink background). Features 40% discount messaging with bold red diamond badge and pink heart decorations. Price €29.99 prominently displayed in yellow. Emotional, seasonal appeal; rotates well as hero banner.",
+      "layout_hints": [
+        "hero-leaderboard",
+        "seasonal-mothers-day",
+        "lifestyle-model",
+        "discount-badge"
+      ],
+      "dominant_colors": [
+        "#ffc0d0",
+        "#c41e3a",
+        "#fff000",
+        "#ffffff"
+      ]
+    },
+    {
+      "asset_id": "products/MARKETING_LG-DESKTOP-2212123.jpg",
+      "fileName": "MARKETING_LG-DESKTOP-2212123.jpg",
+      "fileType": "products",
+      "description": "Alternative Mother's Day leaderboard (brunette variant of hair dryer promotion). Identical layout and messaging with 40% off, €29.99 price in yellow. Suitable for A/B testing or rotation within carousel; same color palette and typography as 2210604.",
+      "layout_hints": [
+        "hero-leaderboard",
+        "seasonal-mothers-day",
+        "lifestyle-variant",
+        "discount-badge"
+      ],
+      "dominant_colors": [
+        "#ffc0d0",
+        "#c41e3a",
+        "#fff000",
+        "#ffffff"
+      ]
+    },
+    {
+      "asset_id": "products/WON-2224544.jpg",
+      "fileName": "WON-2224544.jpg",
+      "fileType": "products",
+      "description": "Product packshot of CRELANDO drawing set (premium art supplies kit) on bright blue background. Features 14% discount badge and price €29.99 in bold yellow. Online-only label prominent. Clean product isolation; excellent for hero display with strong visual hierarchy.",
+      "layout_hints": [
+        "hero-packshot",
+        "product-center",
+        "discount-badge",
+        "online-exclusive"
+      ],
+      "dominant_colors": [
+        "#0050aa",
+        "#fff000",
+        "#ffffff"
+      ]
+    },
+    {
+      "asset_id": "products/WON_FL-2239964.jpg",
+      "fileName": "WON_FL-2239964.jpg",
+      "fileType": "products",
+      "description": "Bicolored apples promotion (3 kg bag) on deep red background with natural product photography. Features 34% discount, price €2.97, and Lidl Plus logo badge. White and yellow text overlay. Fresh, organic appeal; can serve as hero or rotate in grocery promotion carousel.",
+      "layout_hints": [
+        "hero-product",
+        "fresh-produce",
+        "discount-badge",
+        "loyalty-logo"
+      ],
+      "dominant_colors": [
+        "#c41e3a",
+        "#fff000",
+        "#ffffff"
+      ]
+    }
+  ]
+}

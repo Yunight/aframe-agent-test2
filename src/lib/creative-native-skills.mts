@@ -1,4 +1,6 @@
 import type { StyleGuide } from '../agents/gen-style-guide.mjs';
+import { htmlContainsAdDomId, formatIdToAdDomId } from './creative-native-ad-dom.mts';
+import type { AdFormatSelection } from './studio-ad-formats.mts';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { z } from 'zod';
@@ -104,7 +106,8 @@ function extractFontFamiliesFromCss (content: string): Set<string> {
 export function validateCreativeSkillCompliance (
   files: CreativeNativeCodeFileList,
   currentStyleGuide: Omit<StyleGuide, 'logoFileUrls' | 'productPictureUrls'>,
-  assetFiles: AssetFile[]
+  assetFiles: AssetFile[],
+  adFormats?: readonly AdFormatSelection[]
 ): { ok: true } | { ok: false; issues: string[] } {
   const normalizeGeneratedPath = (fileName: string): string =>
     fileName.replace(/\\/g, '/').toLowerCase();
@@ -208,6 +211,17 @@ export function validateCreativeSkillCompliance (
   }
   if (!hasProductReference) {
     issues.push('Missing at least one local product asset reference in generated files.');
+  }
+
+  if (adFormats !== undefined && adFormats.length > 0) {
+    for (const format of adFormats) {
+      const domId = formatIdToAdDomId(format.id);
+      if (!htmlContainsAdDomId(indexFile.fileContent, domId)) {
+        issues.push(
+          `index.html must expose the ad root as id="${domId}" (${String(format.width)}×${String(format.height)} px) for capture.`
+        );
+      }
+    }
   }
 
   if (issues.length > 0) {

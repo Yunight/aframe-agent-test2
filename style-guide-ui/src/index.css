@@ -34,4 +34,62 @@ select.studio-select-solid:disabled {
     radial-gradient(ellipse 120% 80% at 50% -20%, color-mix(in oklch, var(--color-primary) 12%, transparent), transparent 55%),
     radial-gradient(ellipse 60% 40% at 100% 0%, color-mix(in oklch, var(--color-secondary) 8%, transparent), transparent 45%),
     radial-gradient(ellipse 50% 35% at 0% 100%, color-mix(in oklch, var(--color-accent) 6%, transparent), transparent 50%);
+  overflow-x: hidden;
+}
+
+.studio-app-shell .card,
+.studio-app-shell .card .card-body,
+.studio-app-shell .card .fieldset {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Champs : largeur = carte, pas de débordement ; pas de clip sur la carte */
+.studio-app-shell .card .form-control {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.studio-app-shell .card .input,
+.studio-app-shell .card .select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
+}
+
+.studio-app-shell .card .textarea,
+.studio-textarea-field {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: pre-wrap;
+  resize: vertical;
+}
+
+.studio-app-shell .card .form-control .label-text {
+  display: block;
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.studio-app-shell .card .fieldset .field-hint {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
 }

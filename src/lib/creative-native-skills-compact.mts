@@ -9,7 +9,7 @@ export const CREATIVE_DESIGN_SKILLS_COMPACT = `
 - One clear focal point per ad frame; logo visible at readable scale (not tiny, not dominant).
 - Respect exact IAB pixel dimensions per format wrapper; center single-format demos on the page.
 - Use consistent spacing scale (4/8/12/16/24 px); avoid cramped or floating elements.
-- Safe margins inside the ad frame so text and CTA are not clipped.
+- Safe margins inside the ad frame: leave visible breathing room on all sides; the primary CTA must not sit flush against the bottom edge of #ad-{formatId} (footer padding or margin on the CTA).
 
 ### Color
 - Use ONLY hex colors from the style guide primary and secondary palettes in CSS.

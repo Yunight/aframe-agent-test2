@@ -12,10 +12,23 @@ import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { imageSizeFromFile } from 'image-size/fromFile';
 import { isUntrustedLogoUrl, validateLogoAssetFile } from './logo-transparency-check.mts';
+import { AssetHostFailureTracker } from './asset-host-fail-fast.mts';
+import {
+  isLowValueOfficialProductUrl,
+  type OfficialProductCandidate
+} from './official-site-logo-extract.mts';
+import {
+  officialImageFetchHeaders,
+  shouldRetryImageMetadataWithGet
+} from './official-fetch.mts';
+import type { ProductAssetSourceProvenance } from './product-asset-sources.mts';
 import {
   buildProductMatchTerms,
-  filterUrlsByProductRelevance,
+  filterPrioritizeProductUrls,
+  isOfficialHostCampaignOrProductImageUrl,
+  normalizeForTermMatch,
   productMinRelevanceScore,
+  resolveReferenceListingUrls,
   scoreProductContextRelevance
 } from './style-guide-context.mts';
 import type { ImageSearchRow } from './image-search-types.mts';
@@ -79,6 +92,10 @@ export interface ImageSearchContext {
   logoImageSearchQueries?: string[];
   productImageSearchQueries?: string[];
   campaignContext?: string;
+  /** HTTPS URLs extracted from the user prompt (collection pages, etc.). */
+  campaignUrls?: readonly string[];
+  /** User-provided campaign/collection page — scraped before brandURL. */
+  campaignReferenceUrl?: string;
   productMatchTerms?: readonly string[];
 }
 
@@ -88,19 +105,22 @@ export function imageContextFromStyleGuide (styleGuide: {
   productName: string;
   brandURL: string;
   companyURL: string;
-  brandContext?: string;
-  campaignContext?: string;
-  logoImageSearchQueries?: string[];
-  productImageSearchQueries?: string[];
+  brandContext?: string | undefined;
+  campaignContext?: string | undefined;
+  campaignUrls?: readonly string[] | undefined;
+  campaignReferenceUrl?: string | undefined;
+  logoImageSearchQueries?: string[] | undefined;
+  productImageSearchQueries?: string[] | undefined;
 }): ImageSearchContext {
   const campaignContext = styleGuide.campaignContext?.trim() ?? '';
   const productMatchTerms = buildProductMatchTerms({
     campaignContext: campaignContext.length > 0 ? campaignContext : null,
     productName: styleGuide.productName,
     brandName: styleGuide.brandName,
-    brandContext: styleGuide.brandContext,
+    ...(styleGuide.brandContext !== undefined ? { brandContext: styleGuide.brandContext } : {}),
     brandURL: styleGuide.brandURL
   });
+  const campaignUrls = styleGuide.campaignUrls?.filter((u) => u.length > 0) ?? [];
   return {
     brandName: styleGuide.brandName,
     companyName: styleGuide.companyName,
@@ -110,6 +130,10 @@ export function imageContextFromStyleGuide (styleGuide: {
     logoImageSearchQueries: styleGuide.logoImageSearchQueries ?? [],
     productImageSearchQueries: styleGuide.productImageSearchQueries ?? [],
     ...(campaignContext.length > 0 ? { campaignContext } : {}),
+    ...(campaignUrls.length > 0 ? { campaignUrls } : {}),
+    ...(styleGuide.campaignReferenceUrl !== undefined && styleGuide.campaignReferenceUrl.length > 0
+      ? { campaignReferenceUrl: styleGuide.campaignReferenceUrl }
+      : {}),
     ...(productMatchTerms.length > 0 ? { productMatchTerms } : {})
   };
 }
@@ -185,11 +209,23 @@ export function sanitizeAssetFilename (name: string): string {
   return name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 200);
 }
 
+/** Basename from URL pathname (ignores query string — Demandware `*.jpg?sw=800`). */
+export function fileNameFromImageUrl (fileUrl: string): string {
+  try {
+    const pathBase = basename(new URL(fileUrl).pathname);
+    if (pathBase.length > 0 && pathBase !== '/') {
+      return sanitizeAssetFilename(pathBase);
+    }
+  } catch {
+    // fall through
+  }
+  const raw = basename(fileUrl.split('?')[0] ?? fileUrl);
+  return sanitizeAssetFilename(raw);
+}
+
 export async function downloadFileToFileSystem (url: string, destinationPath: string): Promise<void> {
   const response = await fetch(url, {
-    headers: {
-      Accept: '*/*'
-    }
+    headers: officialImageFetchHeaders()
   });
 
   if (!response.ok) {
@@ -207,22 +243,12 @@ export async function downloadFileToFileSystem (url: string, destinationPath: st
   await pipeline(fileFetchStream, fileWriteStream);
 }
 
-export async function resolveRemoteImageMetadata (
+function parseImageMetadataFromResponse (
   url: string,
+  response: Response,
   options?: { minContentLength?: number }
-): Promise<{ mimeType: string; extension: string; contentLength: number | null }> {
-  const headResponse = await fetch(url, {
-    method: 'HEAD',
-    headers: {
-      Accept: 'image/*'
-    }
-  });
-
-  if (!headResponse.ok) {
-    throw new Error(`Unable to validate image URL ${url}. HEAD request failed with status ${headResponse.status}`);
-  }
-
-  const contentTypeHeader = headResponse.headers.get('content-type') ?? '';
+): { mimeType: string; extension: string; contentLength: number | null } {
+  const contentTypeHeader = response.headers.get('content-type') ?? '';
   const mimeType = contentTypeHeader.split(';')[0]?.trim().toLowerCase() ?? '';
 
   if (!allowedImageMimeTypes.has(mimeType)) {
@@ -234,7 +260,7 @@ export async function resolveRemoteImageMetadata (
     throw new Error(`Unsupported MIME type "${mimeType}" for URL ${url}`);
   }
 
-  const contentLengthHeader = headResponse.headers.get('content-length');
+  const contentLengthHeader = response.headers.get('content-length');
   const contentLength =
     contentLengthHeader !== null && contentLengthHeader.length > 0
       ? Number.parseInt(contentLengthHeader, 10)
@@ -252,6 +278,44 @@ export async function resolveRemoteImageMetadata (
   }
 
   return { mimeType, extension, contentLength };
+}
+
+export async function resolveRemoteImageMetadata (
+  url: string,
+  options?: { minContentLength?: number }
+): Promise<{ mimeType: string; extension: string; contentLength: number | null }> {
+  const headers = officialImageFetchHeaders();
+  const headResponse = await fetch(url, {
+    method: 'HEAD',
+    headers
+  });
+
+  if (headResponse.ok) {
+    return parseImageMetadataFromResponse(url, headResponse, options);
+  }
+
+  if (shouldRetryImageMetadataWithGet(headResponse.status)) {
+    const getResponse = await fetch(url, {
+      method: 'GET',
+      headers: { ...headers, Range: 'bytes=0-8191' },
+      redirect: 'follow'
+    });
+    if (getResponse.ok) {
+      return parseImageMetadataFromResponse(url, getResponse, options);
+    }
+    throw new Error(
+      `Unable to validate image URL ${url}. GET request failed with status ${String(getResponse.status)}`
+    );
+  }
+
+  throw new Error(
+    `Unable to validate image URL ${url}. HEAD request failed with status ${String(headResponse.status)}`
+  );
+}
+
+export function filterOfficialProductPrioritizeUrls (urls: readonly string[]): string[] {
+  const withoutLow = urls.filter((u) => !isLowValueOfficialProductUrl(u));
+  return withoutLow.length > 0 ? withoutLow : [ ...urls ];
 }
 
 export async function braveImageSearch ({
@@ -326,6 +390,52 @@ function mergeSearchQueries (modelQueries: readonly string[] | undefined, builtI
   return [ ...new Set([ ...fromModel, ...builtIn ]) ];
 }
 
+/** Exported for unit tests (game expansion vs corporate publisher lockups). */
+export function scoreCampaignLogoAdjustment (
+  url: string,
+  title: string,
+  logoScoring: {
+    productName: string;
+    companyName: string;
+    brandName: string;
+  }
+): number {
+  const product = logoScoring.productName.trim();
+  const brand = logoScoring.brandName.trim();
+  const company = logoScoring.companyName.trim();
+  if (product.length === 0 || brand.length === 0) {
+    return 0;
+  }
+  if (product.toLowerCase() === brand.toLowerCase()) {
+    return 0;
+  }
+
+  const hay = normalizeForTermMatch(`${url} ${title}`);
+  let adjust = 0;
+
+  const productTokens = product
+    .toLowerCase()
+    .split(/[^a-z0-9]+/u)
+    .filter((t) => t.length >= 4);
+  const hasProductHint = productTokens.some((t) => hay.includes(t));
+  const companyNorm = normalizeForTermMatch(company);
+  const looksCorporate =
+    company.length > 0 &&
+    (hay.includes(companyNorm.replace(/\s+/gu, '')) ||
+      /blizzard[\s-]?entertainment/iu.test(hay));
+
+  if (looksCorporate && !hasProductHint && !/lord[-_\s]?of[-_\s]?hatred/iu.test(hay)) {
+    adjust -= 150;
+  }
+  if (/lord[-_\s]?of[-_\s]?hatred/iu.test(hay)) {
+    adjust += 80;
+  }
+  if (hasProductHint) {
+    adjust += 35;
+  }
+  return adjust;
+}
+
 function scoreImageSearchRow (
   url: string,
   row: ImageSearchRow,
@@ -335,6 +445,11 @@ function scoreImageSearchRow (
     minProductW: number;
     minProductH: number;
     productMatchTerms?: readonly string[];
+    logoScoring?: {
+      productName: string;
+      companyName: string;
+      brandName: string;
+    };
   }
 ): number {
   let score = 0;
@@ -375,12 +490,25 @@ function scoreImageSearchRow (
     if (w !== undefined && h !== undefined && w >= 120 && h >= 40) {
       score += 12;
     }
+    if (options.logoScoring !== undefined) {
+      score += scoreCampaignLogoAdjustment(url, title, options.logoScoring);
+    }
   } else {
     if (/packshot|produit|product|official|officiel|catalogue/iu.test(title)) {
       score += 14;
     }
     if (options.productMatchTerms !== undefined && options.productMatchTerms.length > 0) {
       score += scoreProductContextRelevance(url, title, options.productMatchTerms);
+    }
+    try {
+      const host = new URL(url).hostname.toLowerCase();
+      if (
+        /leparisien|lefigaro|pinterest|blogspot|wordpress|medium\.com|kindpng|pngaaa/iu.test(host)
+      ) {
+        score -= 180;
+      }
+    } catch {
+      // ignore
     }
     if (/wallpaper|screenshot|thumb|avatar|icon/iu.test(url) || isLikelyLowResolutionImageUrl(url)) {
       score -= 90;
@@ -418,6 +546,12 @@ export type GatherImageUrlsOptions = {
   assetKind?: 'logo' | 'product';
   officialHosts?: readonly string[];
   productMatchTerms?: readonly string[];
+  referenceListingUrls?: readonly string[];
+  logoScoring?: {
+    productName: string;
+    companyName: string;
+    brandName: string;
+  };
 };
 
 export async function gatherValidatedImageUrls (
@@ -469,6 +603,9 @@ export async function gatherValidatedImageUrls (
         minProductH: braveProductMinReportedHeight(),
         ...(options.productMatchTerms !== undefined && options.productMatchTerms.length > 0
           ? { productMatchTerms: options.productMatchTerms }
+          : {}),
+        ...(assetKind === 'logo' && options.logoScoring !== undefined
+          ? { logoScoring: options.logoScoring }
           : {})
       });
       if (score < -50) {
@@ -478,6 +615,9 @@ export async function gatherValidatedImageUrls (
         assetKind === 'product' &&
         options.productMatchTerms !== undefined &&
         options.productMatchTerms.length > 0 &&
+        (options.referenceListingUrls === undefined ||
+          options.referenceListingUrls.length === 0 ||
+          !isOfficialHostCampaignOrProductImageUrl(candidate, officialHosts)) &&
         scoreProductContextRelevance(candidate, row.title ?? '', options.productMatchTerms) <
           productMinRelevanceScore()
       ) {
@@ -520,10 +660,43 @@ export async function gatherValidatedImageUrls (
   return urls;
 }
 
+function expansionLogoSearchQueries (base: ImageSearchContext): string[] {
+  const brand = base.brandName.trim();
+  const product = base.productName.trim();
+  if (product.length === 0 || brand.length === 0) {
+    return [];
+  }
+  if (product.toLowerCase() === brand.toLowerCase()) {
+    return [];
+  }
+
+  const queries: string[] = [
+    `${product} logo transparent`,
+    `${product} wordmark svg`,
+    `${product} official logo`
+  ];
+  const ref = base.campaignReferenceUrl?.trim() ?? base.brandURL?.trim() ?? '';
+  if (ref.length > 0) {
+    try {
+      const parsed = new URL(ref);
+      const host = parsed.hostname;
+      const segments = parsed.pathname.split('/').filter((s) => s.length >= 3);
+      const slug = segments.at(-1);
+      if (slug !== undefined) {
+        queries.push(`site:${host} ${slug.replace(/-/gu, ' ')} logo`);
+      }
+      queries.push(`site:${host} logo filetype:svg`);
+    } catch {
+      // skip invalid URL
+    }
+  }
+  return queries;
+}
+
 function buildLogoSearchQueriesBuiltin (base: ImageSearchContext): string[] {
   const brand = base.brandName.trim();
   const company = base.companyName.trim();
-  const queries: string[] = [];
+  const queries: string[] = [ ...expansionLogoSearchQueries(base) ];
   const brandHost = hostFromBrandUrl(base.brandURL);
   const companyHost = hostFromBrandUrl(base.companyURL);
 
@@ -788,7 +961,11 @@ export async function downloadUrlsToAssetFolder (
   fileType: 'logos' | 'products',
   directoryPath: string,
   fileUrls: readonly string[],
-  options?: { validateDimensions?: boolean; rejectedUrls?: string[] }
+  options?: {
+    validateDimensions?: boolean;
+    rejectedUrls?: string[];
+    productProvenanceByUrl?: ReadonlyMap<string, ProductAssetSourceProvenance>;
+  }
 ): Promise<{ downloadedUrls: string[]; count: number }> {
   const subdirectoryPath = join(directoryPath, fileType);
   mkdirSync(subdirectoryPath, { recursive: true });
@@ -796,9 +973,10 @@ export async function downloadUrlsToAssetFolder (
 
   const downloadedUrls: string[] = [];
 
+  const { recordProductAssetSource } = await import('./product-asset-sources.mts');
+
   for (const fileUrl of fileUrls) {
-    const logoFileName = basename(fileUrl);
-    const logoFileNameSanitized = sanitizeAssetFilename(logoFileName);
+    const logoFileNameSanitized = fileNameFromImageUrl(fileUrl);
     const originalExtension = extname(logoFileNameSanitized).toLowerCase();
 
     try {
@@ -809,9 +987,9 @@ export async function downloadUrlsToAssetFolder (
           : `${logoFileNameSanitized.replace(/\.[^.]+$/, '')}${extension}`;
       const filePath = join(subdirectoryPath, resolvedFileName);
 
-      if (originalExtension !== extension) {
+      if (originalExtension !== extension && originalExtension.length > 0) {
         console.warn(
-          `[download] Extension mismatch for ${fileUrl}. Original "${originalExtension || 'none'}", remote "${mimeType}". Saving as ${resolvedFileName}.`
+          `[download] Extension mismatch for ${fileUrl}. Pathname ext "${originalExtension}", remote "${mimeType}". Saving as ${resolvedFileName}.`
         );
       }
 
@@ -834,6 +1012,14 @@ export async function downloadUrlsToAssetFolder (
       }
 
       downloadedUrls.push(fileUrl);
+      if (fileType === 'products') {
+        recordProductAssetSource(
+          directoryPath,
+          resolvedFileName,
+          fileUrl,
+          options?.productProvenanceByUrl?.get(fileUrl)
+        );
+      }
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error(`[download] ${fileType} failed ${fileUrl}: ${err.message}`);
@@ -852,9 +1038,17 @@ export type CollectAndDownloadOptions = {
   officialHosts?: readonly string[];
   /** Header lockup URLs scraped from brandURL (tried before Brave image search). */
   prioritizeUrls?: readonly string[];
+  /** Official scrape candidates with page provenance (preferred over prioritizeUrls). */
+  prioritizeCandidates?: readonly OfficialProductCandidate[];
   /** When true and prioritizeUrls filled the target, skip Brave image search entirely. */
   skipBraveWhenPrioritizedFilled?: boolean;
   productMatchTerms?: readonly string[];
+  referenceListingUrls?: readonly string[];
+  logoScoring?: {
+    productName: string;
+    companyName: string;
+    brandName: string;
+  };
 };
 
 export async function collectAndDownloadValidAssetUrls (
@@ -866,6 +1060,10 @@ export async function collectAndDownloadValidAssetUrls (
   const subdirectoryPath = join(directoryPath, fileType);
   if (options.clearFolder === true) {
     clearAssetSubdirectory(subdirectoryPath);
+    if (fileType === 'products') {
+      const { clearProductAssetSources } = await import('./product-asset-sources.mts');
+      clearProductAssetSources(directoryPath);
+    }
   } else {
     mkdirSync(subdirectoryPath, { recursive: true });
   }
@@ -877,28 +1075,58 @@ export async function collectAndDownloadValidAssetUrls (
   const minContentLength =
     fileType === 'products' ? braveProductMinContentLength() : undefined;
 
-  let prioritize = options.prioritizeUrls ?? [];
+  const listingMode =
+    options.referenceListingUrls !== undefined && options.referenceListingUrls.length > 0;
+
+  const productProvenanceByUrl = new Map<string, ProductAssetSourceProvenance>();
+  let prioritize: string[] = [];
   if (
     fileType === 'products' &&
+    options.prioritizeCandidates !== undefined &&
+    options.prioritizeCandidates.length > 0
+  ) {
+    for (const c of options.prioritizeCandidates) {
+      prioritize.push(c.url);
+      productProvenanceByUrl.set(c.url, {
+        sourcePageUrl: c.sourcePageUrl,
+        fromReferencePage: c.fromReferencePage
+      });
+    }
+  } else {
+    prioritize = [ ...(options.prioritizeUrls ?? []) ];
+  }
+
+  if (
+    fileType === 'products' &&
+    !listingMode &&
     options.productMatchTerms !== undefined &&
     options.productMatchTerms.length > 0 &&
     prioritize.length > 0
   ) {
-    const filtered = filterUrlsByProductRelevance(
+    const beforeCount = prioritize.length;
+    prioritize = filterPrioritizeProductUrls(
       prioritize,
       options.productMatchTerms,
-      productMinRelevanceScore()
+      productMinRelevanceScore(),
+      officialHosts
     );
-    if (filtered.length < prioritize.length) {
+    if (prioritize.length < beforeCount) {
       console.log(
-        `[download] Filtered official product URLs by context: ${String(filtered.length)}/${String(prioritize.length)} kept`
+        `[download] Filtered official product URLs by context: ${String(prioritize.length)}/${String(beforeCount)} kept`
       );
     }
-    prioritize = filtered;
   }
 
-  if (fileType === 'logos' && prioritize.length > 0) {
-    console.log(`[download] Trying ${String(prioritize.length)} official-site logo URL(s) before Brave…`);
+  if (fileType === 'products' && prioritize.length > 0) {
+    prioritize = filterOfficialProductPrioritizeUrls(prioritize);
+  }
+
+  if (prioritize.length > 0 && (fileType === 'logos' || fileType === 'products')) {
+    const assetLabel = fileType === 'logos' ? 'logo' : 'product';
+    console.log(
+      `[download] Trying ${String(prioritize.length)} official-site ${assetLabel} URL(s) before Brave…`
+    );
+    const hostTracker = new AssetHostFailureTracker(2);
     for (const fileUrl of prioritize) {
       if (downloadedUrls.length >= options.targetCount) {
         break;
@@ -906,26 +1134,40 @@ export async function collectAndDownloadValidAssetUrls (
       if (excludeUrls.has(fileUrl)) {
         continue;
       }
+      if (hostTracker.isBlocked(fileUrl)) {
+        continue;
+      }
       const batch = await downloadUrlsToAssetFolder(fileType, directoryPath, [ fileUrl ], {
         validateDimensions: true,
-        rejectedUrls
+        rejectedUrls,
+        ...(fileType === 'products' && productProvenanceByUrl.size > 0
+          ? { productProvenanceByUrl }
+          : {})
       });
       if (batch.count > 0) {
         downloadedUrls.push(...batch.downloadedUrls);
-        console.log(`[download] Official header logo saved: ${fileUrl}`);
+        console.log(`[download] Official ${assetLabel} saved: ${fileUrl}`);
       } else {
         excludeUrls.add(fileUrl);
         rejectedUrls.push(fileUrl);
+        if (hostTracker.recordFailure(fileUrl)) {
+          const host = hostTracker.blockedHostForLog();
+          console.log(
+            `[download] Skipping remaining official ${assetLabel} URLs on ${host ?? 'host'} (downloads blocked)`
+          );
+          break;
+        }
       }
     }
   }
 
   if (
-    fileType === 'logos' &&
     options.skipBraveWhenPrioritizedFilled === true &&
     downloadedUrls.length >= options.targetCount
   ) {
-    console.log('[download] Official logo satisfied — skipping Brave image search for logos.');
+    console.log(
+      `[download] Official ${fileType} satisfied — skipping Brave image search for ${fileType}.`
+    );
     return { downloadedUrls, count: downloadedUrls.length, rejectedUrls };
   }
 
@@ -946,6 +1188,12 @@ export async function collectAndDownloadValidAssetUrls (
       options.productMatchTerms !== undefined &&
       options.productMatchTerms.length > 0
         ? { productMatchTerms: options.productMatchTerms }
+        : {}),
+      ...(fileType === 'products' && listingMode
+        ? { referenceListingUrls: options.referenceListingUrls }
+        : {}),
+      ...(fileType === 'logos' && options.logoScoring !== undefined
+        ? { logoScoring: options.logoScoring }
         : {})
     });
 
@@ -986,6 +1234,34 @@ export type RefreshAssetsResult = {
   downloaded: { logos: number; products: number };
 };
 
+/** Resolves logo Brave queries; `logos: []` means skip logo refresh (no fallback). */
+export function resolveRefreshLogoQueries (
+  queries: { logos?: string[] },
+  context: ImageSearchContext
+): string[] {
+  const skipLogoRefresh = queries.logos !== undefined && queries.logos.length === 0;
+  if (skipLogoRefresh) {
+    return [];
+  }
+  return queries.logos !== undefined && queries.logos.length > 0
+    ? queries.logos
+    : buildLogoSearchQueries(context);
+}
+
+/** Resolves product Brave queries; `products: []` means skip product refresh (no fallback). */
+export function resolveRefreshProductQueries (
+  queries: { products?: string[] },
+  context: ImageSearchContext
+): string[] {
+  const skipProductRefresh = queries.products !== undefined && queries.products.length === 0;
+  if (skipProductRefresh) {
+    return [];
+  }
+  return queries.products !== undefined && queries.products.length > 0
+    ? queries.products
+    : buildProductSearchQueries(context);
+}
+
 export async function refreshAssetsFromQueries (
   directoryPath: string,
   context: ImageSearchContext,
@@ -1000,14 +1276,8 @@ export async function refreshAssetsFromQueries (
   const excludeUrls = options?.excludeUrls ?? new Set<string>();
   const allRejected: string[] = [];
 
-  const logoQueries =
-    queries.logos !== undefined && queries.logos.length > 0
-      ? queries.logos
-      : buildLogoSearchQueries(context);
-  const productQueries =
-    queries.products !== undefined && queries.products.length > 0
-      ? queries.products
-      : buildProductSearchQueries(context);
+  const logoQueries = resolveRefreshLogoQueries(queries, context);
+  const productQueries = resolveRefreshProductQueries(queries, context);
 
   let logoDownload = {
     downloadedUrls: [] as string[],
@@ -1029,6 +1299,16 @@ export async function refreshAssetsFromQueries (
   let productDownload = { downloadedUrls: [] as string[], count: 0, rejectedUrls: [] as string[] };
   if (productQueries.length > 0) {
     console.log(`${imageSearchLogPrefix()} Refresh — collecting product candidates…`);
+    const { extractOfficialProductImageUrls } = await import('./official-site-logo-extract.mts');
+    const officialProductCandidates = await extractOfficialProductImageUrls(context);
+    const referenceListingUrls = resolveReferenceListingUrls({
+      ...(context.campaignReferenceUrl !== undefined && context.campaignReferenceUrl.length > 0
+        ? { campaignReferenceUrl: context.campaignReferenceUrl }
+        : {}),
+      ...(context.campaignUrls !== undefined && context.campaignUrls.length > 0
+        ? { campaignUrls: context.campaignUrls }
+        : {})
+    });
     productDownload = await collectAndDownloadValidAssetUrls(
       'products',
       directoryPath,
@@ -1039,6 +1319,9 @@ export async function refreshAssetsFromQueries (
         excludeUrls,
         clearFolder: true,
         officialHosts: officialHostsFromContext(context),
+        prioritizeCandidates: officialProductCandidates,
+        skipBraveWhenPrioritizedFilled: true,
+        ...(referenceListingUrls.length > 0 ? { referenceListingUrls } : {}),
         ...(context.productMatchTerms !== undefined && context.productMatchTerms.length > 0
           ? { productMatchTerms: context.productMatchTerms }
           : {})

@@ -1,0 +1,388 @@
+/* ===========================
+   PAGE SHELL
+=========================== */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Open+Sans:ital,wght@0,400;0,600;1,600&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #D9D9D9;
+  font-family: 'Open Sans', sans-serif;
+}
+
+/* ===========================
+   AD WRAPPER & FRAME
+=========================== */
+.ad-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#ad-320x480 {
+  position: relative;
+  width: 320px;
+  height: 480px;
+  overflow: hidden;
+  background: #F5E9D7;
+  border: 1px solid #D9D9D9;
+  box-shadow: 0 8px 32px rgba(17,35,81,0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ad-frame {
+  position: relative;
+  width: 320px;
+  height: 480px;
+  overflow: hidden;
+  background: #F5E9D7;
+  border: 1px solid #D9D9D9;
+  box-shadow: 0 8px 32px rgba(17,35,81,0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ===========================
+   BACKGROUND STRIPES
+=========================== */
+.bg-stripes {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 18px,
+    rgba(169,199,232,0.18) 18px,
+    rgba(169,199,232,0.18) 20px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ===========================
+   WAVE ACCENTS
+=========================== */
+.wave-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.wave-top svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.wave-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.wave-bottom svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ===========================
+   HEADER
+=========================== */
+.ad-header {
+  position: relative;
+  z-index: 2;
+  margin-top: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.brand-logo {
+  height: 36px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* ===========================
+   HERO TEXT
+=========================== */
+.hero-text {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  margin-top: 8px;
+  padding: 0 16px;
+  animation: fadeSlideDown 0.7s ease both;
+}
+
+.season-label {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: #E30613;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.headline {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 1;
+  color: #112351;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.headline .accent {
+  color: #E30613;
+  font-size: 44px;
+}
+
+.subheadline {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 600;
+  font-style: italic;
+  font-size: 11px;
+  color: #3E8E7E;
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+}
+
+/* ===========================
+   CAROUSEL
+=========================== */
+.carousel-container {
+  position: relative;
+  z-index: 2;
+  width: 220px;
+  height: 220px;
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+
+.carousel-track {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.92) translateY(8px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+  pointer-events: none;
+}
+
+.slide.active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: auto;
+}
+
+.product-img {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  display: block;
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(17,35,81,0.13);
+  background: #FFFFFF;
+}
+
+.product-label {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #112351;
+  color: #FFFFFF;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* Carousel nav buttons */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #FFFFFF;
+  border: 2px solid #112351;
+  color: #112351;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+  line-height: 1;
+  padding: 0;
+}
+
+.carousel-btn:hover {
+  background: #112351;
+  color: #FFFFFF;
+  transform: translateY(-50%) scale(1.12);
+}
+
+.carousel-btn.prev {
+  left: -14px;
+}
+
+.carousel-btn.next {
+  right: -14px;
+}
+
+/* Dot indicators */
+.carousel-dots {
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 3;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #A9C7E8;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.dot.active {
+  background: #112351;
+  transform: scale(1.3);
+}
+
+/* ===========================
+   CTA AREA
+=========================== */
+.cta-area {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 26px;
+  padding: 0 16px;
+  width: 100%;
+}
+
+.cta-tagline {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  font-size: 10px;
+  color: #1B1B1B;
+  letter-spacing: 0.5px;
+  opacity: 0.7;
+}
+
+.cta-btn {
+  display: inline-block;
+  background: #E30613;
+  color: #FFFFFF;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 10px 24px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.22s, transform 0.18s, box-shadow 0.18s;
+  box-shadow: 0 4px 16px rgba(227,6,19,0.25);
+  white-space: nowrap;
+}
+
+.cta-btn:hover {
+  background: #112351;
+  transform: scale(1.05);
+  box-shadow: 0 6px 22px rgba(17,35,81,0.25);
+}
+
+.cta-btn:active {
+  transform: scale(0.97);
+}
+
+/* ===========================
+   KEYFRAME ANIMATIONS
+=========================== */
+@keyframes fadeSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseDot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(17,35,81,0.3); }
+  50% { box-shadow: 0 0 0 4px rgba(17,35,81,0.1); }
+}
+
+.dot.active {
+  animation: pulseDot 1.8s infinite;
+}
+
+/* ===========================
+   REDUCED MOTION
+=========================== */
+@media (prefers-reduced-motion: reduce) {
+  .slide,
+  .hero-text,
+  .cta-btn,
+  .dot {
+    transition: none;
+    animation: none;
+  }
+}

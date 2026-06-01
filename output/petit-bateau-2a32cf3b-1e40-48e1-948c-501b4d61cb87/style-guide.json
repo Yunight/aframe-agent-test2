@@ -1,0 +1,98 @@
+{
+  "companyName": "Petit Bateau",
+  "companyContext": "Maison française de prêt-à-porter fondée en 1893 à Troyes par Pierre Valton, pionnière du sous-vêtement et du vêtement enfant en coton, aujourd'hui filiale du Groupe Yves Rocher. La marque habille bébés, enfants, femmes et hommes avec des intemporels (marinière, body, ciré, tee-shirt en coton) inspirés de l'univers marin et d'une vision joyeuse de l'enfance.",
+  "companyURL": "https://www.petit-bateau.fr/",
+  "brandName": "Petit Bateau",
+  "brandContext": "Marque française iconique de mode famille, reconnaissable à son logo de petit voilier et à son univers marin. Elle revendique liberté, qualité et durabilité de ses pièces (« des vêtements qui traversent le temps »), avec une forte signature autour du coton, des rayures marinières et des imprimés enfantins.",
+  "brandURL": "https://www.petit-bateau.fr/collection/collection-ete/",
+  "logoFileUrls": [
+    "https://www.petit-bateau.fr/on/demandware.static/Sites-PB_FR-Site/-/default/dw89c30cd2/images/logo-petit-bateau.svg"
+  ],
+  "productName": "Collection Été Petit Bateau",
+  "campaignContext": "Promotion de la collection d'été",
+  "productPictureUrls": [
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Library-Sites-SharedPetitBateauLibrary/default/dwf1b4a230/1_2026/05_MAI/PLEIN_ETE/MACARON_PLEIN_ETE_tshirt.jpg?sw=200&amp;sh=200&amp;sm=fit&amp;sfrm=jpg&amp;q=100",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Library-Sites-SharedPetitBateauLibrary/default/dwb70ccaf8/1_2026/05_MAI/PLEIN_ETE/MACARON_PLEIN_ETE_robe.jpg?sw=200&amp;sh=200&amp;sm=fit&amp;sfrm=jpg&amp;q=100",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Library-Sites-SharedPetitBateauLibrary/default/dw9e7c2410/1_2026/05_MAI/PLEIN_ETE/MACARON_PLEIN_ETE_maillot.jpg?sw=200&amp;sh=200&amp;sm=fit&amp;sfrm=jpg&amp;q=100",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Library-Sites-SharedPetitBateauLibrary/default/dw12b3daf7/1_2026/05_MAI/PLEIN_ETE/MACARON_PLEIN_ETE_pyj.jpg?sw=200&amp;sh=200&amp;sm=fit&amp;sfrm=jpg&amp;q=100",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Library-Sites-SharedPetitBateauLibrary/default/dw8089cfd0/1_2026/05_MAI/PLEIN_ETE/MACARON_PLEIN_ETE_short.jpg?sw=200&amp;sh=200&amp;sm=fit&amp;sfrm=jpg&amp;q=100",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Library-Sites-SharedPetitBateauLibrary/default/dw4885fbec/1_2026/05_MAI/PLEIN_ETE/MACARON_PLEIN_ETE_ensemble.jpg?sw=200&amp;sh=200&amp;sm=fit&amp;sfrm=jpg&amp;q=100"
+  ],
+  "primaryColorPalette": [
+    "#112351",
+    "#FFFFFF",
+    "#E30613",
+    "#F4C200"
+  ],
+  "secondaryColorPalette": [
+    "#A9C7E8",
+    "#F7B6C2",
+    "#F5E9D7",
+    "#3E8E7E",
+    "#1B1B1B",
+    "#D9D9D9"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Futura",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Wordmark / logo Petit Bateau (sans-serif géométrique en arc sous le voilier)"
+    },
+    {
+      "fontFamily": "Montserrat",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Titres et accroches de campagne (H1, H2)"
+    },
+    {
+      "fontFamily": "Montserrat",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Sous-titres et boutons d'appel à l'action"
+    },
+    {
+      "fontFamily": "Open Sans",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Corps de texte, descriptions produit, paragraphes"
+    },
+    {
+      "fontFamily": "Open Sans",
+      "fontWeight": 600,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Citations, labels prix et mises en avant éditoriales"
+    }
+  ],
+  "brandVision": "Célébrer la liberté de l'enfance et la transmettre à tous les âges, en créant des vêtements intemporels, durables et confortables, inspirés du large et de l'univers marin français.",
+  "brandValues": "Liberté, qualité, durabilité, héritage français depuis 1893, savoir-faire textile, joie de l'enfance, responsabilité (coton bio, seconde main), inclusivité familiale.",
+  "logoImageSearchQueries": [
+    "site:petit-bateau.fr logo svg",
+    "site:petit-bateau.fr header logo",
+    "Petit Bateau logo filetype:svg",
+    "site:en.wikipedia.org Petit Bateau logo",
+    "site:commons.wikimedia.org Petit Bateau logo",
+    "Petit Bateau logo navy blue transparent png",
+    "Petit Bateau sailboat wordmark logo vector"
+  ],
+  "productImageSearchQueries": [
+    "site:petit-bateau.fr collection été",
+    "site:petit-bateau.fr robe été enfant",
+    "site:petit-bateau.fr short bermuda été",
+    "site:petit-bateau.fr maillot de bain enfant",
+    "site:petit-bateau.fr tee-shirt imprimé été",
+    "Petit Bateau collection été 2026 campagne",
+    "Petit Bateau summer collection lookbook kids",
+    "Petit Bateau marinière été enfant packshot",
+    "Petit Bateau body bébé été imprimé",
+    "Petit Bateau accessoires été chapeau enfant",
+    "Petit Bateau robe légère fille été",
+    "Petit Bateau combinaison bain enfant"
+  ]
+}

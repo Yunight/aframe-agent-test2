@@ -1,4 +1,8 @@
-import { readFileSync } from 'node:fs';
+/**
+ * Optional regen diff logging / revert after UI-review regen.
+ * Set CREATIVE_REGEN_DIFF_GUARD=1 to restore files that changed more than CREATIVE_REGEN_DIFF_MAX_RATIO (default 0.2).
+ */
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const REGEN_WATCH_FILES = [ 'index.html', 'styles.css', 'app.js' ] as const;
@@ -30,17 +34,18 @@ function lineChangeCount (before: string, after: string): number {
   return changed;
 }
 
-function parseMaxChangeRatio (): number {
+export function parseMaxRegenChangeRatio (): number {
   const raw = process.env['CREATIVE_REGEN_DIFF_MAX_RATIO']?.trim();
   if (raw === undefined || raw.length === 0) {
-    return 0.5;
+    return 0.2;
   }
   const n = Number.parseFloat(raw);
-  return Number.isFinite(n) && n > 0 && n <= 1 ? n : 0.5;
+  return Number.isFinite(n) && n > 0 && n <= 1 ? n : 0.2;
 }
 
+/** Off by default; set CREATIVE_REGEN_DIFF_GUARD=1 to revert oversized regen files. */
 export function isRegenDiffGuardEnabled (): boolean {
-  return process.env['CREATIVE_REGEN_DIFF_GUARD']?.trim() !== '0';
+  return process.env['CREATIVE_REGEN_DIFF_GUARD']?.trim() === '1';
 }
 
 /** Compare code/ files before vs after regen (snapshots must exist under review/). */
@@ -76,12 +81,60 @@ export function summarizeRegenDiff (
   }
 
   const maxChangeRatio = reports.reduce((m, r) => Math.max(m, r.changeRatio), 0);
-  const threshold = parseMaxChangeRatio();
+  const threshold = parseMaxRegenChangeRatio();
   return {
     reports,
     maxChangeRatio,
     likelyFullRewrite: reports.length > 0 && maxChangeRatio > threshold
   };
+}
+
+export type RegenReconcileResult = RegenDiffSummary & {
+  restoredFiles: string[];
+};
+
+/** Revert files that changed too much vs baseline (keeps surgical patches only). */
+export function reconcileRegenWithBaseline (
+  codeDirectoryPath: string,
+  beforeSnapshots: Readonly<Record<string, string>>
+): RegenReconcileResult {
+  const summary = summarizeRegenDiff(codeDirectoryPath, beforeSnapshots);
+  const threshold = parseMaxRegenChangeRatio();
+  const restoredFiles: string[] = [];
+
+  for (const report of summary.reports) {
+    if (report.changeRatio <= threshold) {
+      continue;
+    }
+    const before = beforeSnapshots[report.fileName];
+    if (before === undefined) {
+      continue;
+    }
+    const targetPath = join(codeDirectoryPath, report.fileName);
+    if (!existsSync(targetPath)) {
+      continue;
+    }
+    writeFileSync(targetPath, before, { encoding: 'utf8' });
+    restoredFiles.push(report.fileName);
+  }
+
+  const afterRestore = summarizeRegenDiff(codeDirectoryPath, beforeSnapshots);
+  return {
+    ...afterRestore,
+    restoredFiles
+  };
+}
+
+export function writeRegenBaselineSnapshot (
+  codeDirectoryPath: string,
+  baselineDirectoryPath: string
+): void {
+  mkdirSync(baselineDirectoryPath, { recursive: true });
+  const snapshot = snapshotCodeBundleForDiff(codeDirectoryPath);
+  for (const [ fileName, content ] of Object.entries(snapshot)) {
+    const target = join(baselineDirectoryPath, fileName);
+    writeFileSync(target, content, { encoding: 'utf8' });
+  }
 }
 
 export function snapshotCodeBundleForDiff (codeDirectoryPath: string): Record<string, string> {

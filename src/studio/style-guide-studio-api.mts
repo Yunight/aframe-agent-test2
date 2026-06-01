@@ -1,15 +1,25 @@
 import { randomUUID } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
-import { basename, join } from 'node:path';
+import { basename, join, relative } from 'node:path';
 import { config as loadDotenv } from 'dotenv';
 import Express from 'express';
 import {
   envForCreativeCodegenPreset,
   isCreativeCodegenPresetId,
 } from '../lib/creative-native-codegen-presets.mts';
-import { appendPipelineRunSummary, pipelineUsagePath } from '../lib/creative-pipeline-usage.mts';
+import {
+  appendPipelineRunSummary,
+  formatDurationMinSec,
+  pipelineUsagePath
+} from '../lib/creative-pipeline-usage.mts';
 import { loadAdFormatPresets, normalizeApiAdFormats } from '../lib/studio-ad-formats.mts';
+import { preflightReferenceUrlForStudio } from '../lib/reference-url-preflight.mts';
+import {
+  codeVersionCount,
+  listCodeVersions,
+  resolveCodeDirectory
+} from '../lib/creative-code-versions.mts';
 import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
 
 const repoRoot = repoRootFromModuleDir(import.meta.dirname);
@@ -35,6 +45,48 @@ function composeStyleGuideContextFromParts (brand: string, context: string): str
       + '. Infer visuals, tone, typography, and color direction from official trailers, key art, and distributor or studio materials only; do not invent a corporate brand beyond this title or IP.';
   }
   return '';
+}
+
+function parseReferenceUrlFromBody (body: {
+  referenceUrl?: unknown;
+  campaignReferenceUrl?: unknown;
+}): { ok: true; url: string } | { ok: false; error: string } {
+  const raw =
+    typeof body.referenceUrl === 'string'
+      ? body.referenceUrl
+      : typeof body.campaignReferenceUrl === 'string'
+        ? body.campaignReferenceUrl
+        : '';
+  const trimmed = raw.trim();
+  if (trimmed.length === 0) {
+    return { ok: true, url: '' };
+  }
+  if (trimmed.length > 2048) {
+    return { ok: false, error: 'referenceUrl exceeds 2048 characters.' };
+  }
+  try {
+    const u = new URL(trimmed);
+    if (u.protocol !== 'https:') {
+      return { ok: false, error: 'referenceUrl must use HTTPS.' };
+    }
+    return { ok: true, url: u.href };
+  } catch {
+    return { ok: false, error: 'referenceUrl is not a valid URL.' };
+  }
+}
+
+function composeStyleGuideContextWithReference (
+  brand: string,
+  context: string,
+  referenceUrl: string
+): string {
+  const base = composeStyleGuideContextFromParts(brand, context);
+  if (referenceUrl.length === 0) {
+    return base;
+  }
+  return (
+    `Campaign reference URL (must use for brandURL and product scrape): ${referenceUrl}\n\n${base}`
+  );
 }
 
 type ImageSearchProviderId = 'brave' | 'anthropic';
@@ -88,10 +140,14 @@ function sseWrite (res: Express.Response, event: string, data: unknown): void {
 
 type JobStatus = 'running' | 'done' | 'error';
 
+type StudioJobKind = 'style_guide' | 'creative';
+
 interface Job {
   id: string;
   status: JobStatus;
   startedAt: number;
+  jobKind: StudioJobKind;
+  stepTimings: Array<{ label: string; duration_ms: number }>;
   lines: Array<{ source: 'stdout' | 'stderr'; text: string }>;
   exitCode: number | null;
   outputDirectoryPath: string | null;
@@ -103,12 +159,14 @@ interface Job {
 const jobs = new Map<string, Job>();
 let activeJobId: string | null = null;
 
-function createJob (imageSearchProvider: ImageSearchProviderId): Job {
+function createJob (imageSearchProvider: ImageSearchProviderId, jobKind: StudioJobKind): Job {
   const id = randomUUID();
   const job: Job = {
     id,
     status: 'running',
     startedAt: Date.now(),
+    jobKind,
+    stepTimings: [],
     lines: [],
     exitCode: null,
     outputDirectoryPath: null,
@@ -117,6 +175,10 @@ function createJob (imageSearchProvider: ImageSearchProviderId): Job {
   };
   jobs.set(id, job);
   return job;
+}
+
+function studioJobKindLabel (kind: StudioJobKind): string {
+  return kind === 'style_guide' ? 'style guide' : 'format de pub';
 }
 
 function broadcast (job: Job, event: string, data: unknown): void {
@@ -145,6 +207,7 @@ function attachSubscriber (job: Job, res: Express.Response): void {
     } else {
       sseWrite(res, 'failed', {
         exitCode: job.exitCode,
+        outputDirectoryPath: job.outputDirectoryPath,
         message: job.exitCode !== 0 ? `Process exited with code ${String(job.exitCode)}` : 'Unknown error'
       });
     }
@@ -175,9 +238,17 @@ function pushLine (job: Job, source: 'stdout' | 'stderr', text: string): void {
 function finishJob (job: Job, exitCode: number | null): void {
   job.exitCode = exitCode;
   job.status = exitCode === 0 ? 'done' : 'error';
+  const jobWallMs = Date.now() - job.startedAt;
+  if (exitCode === 0) {
+    pushLine(
+      job,
+      'stdout',
+      `[studio] Job ${studioJobKindLabel(job.jobKind)} total : ${formatDurationMinSec(jobWallMs)}`
+    );
+  }
   if (job.outputDirectoryPath !== null && job.outputDirectoryPath.length > 0) {
     appendPipelineRunSummary(job.outputDirectoryPath, {
-      wall_clock_ms: Date.now() - job.startedAt,
+      wall_clock_ms: jobWallMs,
       studio_job_id: job.id
     });
   }
@@ -237,9 +308,11 @@ function listCreativeCodeScripts (): string[] {
 interface OutputStyleFolder {
   folderName: string;
   mtimeMs: number;
+  /** Number of creative bundles (code/Vn or legacy flat layout). */
+  codeVersionCount: number;
 }
 
-/** Runs that have style-guide.json but no creative `code/` yet (for gen-creative-code target). */
+/** Runs that have style-guide.json (creative generation allowed even if code/ exists). */
 function listOutputFoldersWithStyleGuide (): OutputStyleFolder[] {
   const entries: OutputStyleFolder[] = [];
   if (!existsSync(outputDir)) {
@@ -254,13 +327,10 @@ function listOutputFoldersWithStyleGuide (): OutputStyleFolder[] {
     if (!existsSync(sg)) {
       continue;
     }
-    const codeDir = join(folderPath, 'code');
-    if (existsSync(codeDir) && statSync(codeDir).isDirectory()) {
-      continue;
-    }
     entries.push({
       folderName: dirent.name,
-      mtimeMs: statSync(sg).mtimeMs
+      mtimeMs: statSync(sg).mtimeMs,
+      codeVersionCount: codeVersionCount(folderPath)
     });
   }
   entries.sort((a, b) => b.mtimeMs - a.mtimeMs);
@@ -320,20 +390,34 @@ function attachSpawnedNodeProcessSequence (
       return;
     }
 
-    pushLine(job, 'stdout', `[studio] Step ${String(stepIndex)}/${String(steps.length)}: ${resolvedArgv.join(' ')}`);
+    const stepScriptLabel = basename(resolvedArgv[0] ?? 'script');
+    const stepLabel =
+      stepScriptLabel === 'run-style-guide-assets-review.mts'
+        ? `[studio] Step ${String(stepIndex)}/${String(steps.length)} — review assets style guide (produits): ${resolvedArgv.join(' ')}`
+        : stepScriptLabel === 'run-creative-native-ui-review.mts'
+          ? `[studio] Step ${String(stepIndex)}/${String(steps.length)} — review UI créative: ${resolvedArgv.join(' ')}`
+          : `[studio] Step ${String(stepIndex)}/${String(steps.length)}: ${resolvedArgv.join(' ')}`;
+    pushLine(job, 'stdout', stepLabel);
     if (stepIndex === 1) {
       pushLine(
         job,
         'stdout',
         `[studio] Image search provider for this job: ${job.imageSearchProvider} (CREATIVE_IMAGE_SEARCH_PROVIDER)`
       );
+      pushLine(
+        job,
+        'stdout',
+        `[studio] Phase pipeline : ${job.jobKind} (PIPELINE_PHASE)`
+      );
     }
 
+    const stepStartedAt = Date.now();
     const child = spawn(process.execPath, resolvedArgv, {
       cwd: repoRoot,
       env: {
         ...process.env,
         CREATIVE_IMAGE_SEARCH_PROVIDER: job.imageSearchProvider,
+        PIPELINE_PHASE: job.jobKind,
         ...step.env
       },
       stdio: [ 'ignore', 'pipe', 'pipe' ]
@@ -356,11 +440,23 @@ function attachSpawnedNodeProcessSequence (
     child.on('close', (code, signal) => {
       stdoutReader.end();
       stderrReader.end();
+      const stepDurationMs = Date.now() - stepStartedAt;
+      job.stepTimings.push({ label: stepScriptLabel, duration_ms: stepDurationMs });
       const exitCode = signal !== null ? 1 : (code ?? 1);
       if (exitCode !== 0) {
+        pushLine(
+          job,
+          'stderr',
+          `[studio] Step ${String(stepIndex)}/${String(steps.length)} échoué après ${formatDurationMinSec(stepDurationMs)} (${stepScriptLabel})`
+        );
         finishJob(job, exitCode);
         return;
       }
+      pushLine(
+        job,
+        'stdout',
+        `[studio] Step ${String(stepIndex)}/${String(steps.length)} terminé en ${formatDurationMinSec(stepDurationMs)} (${stepScriptLabel})`
+      );
       runNextStep();
     });
 
@@ -373,15 +469,22 @@ function attachSpawnedNodeProcessSequence (
   runNextStep();
 }
 
-interface OutputIndexPreview {
-  folderName: string;
-  /** Path relative to `output/` (e.g. `<uuid>/code/index.html`). */
+interface OutputPreviewVersion {
+  versionId: string;
+  versionLabel: string;
+  /** Path relative to `output/` (e.g. `<uuid>/code/V2/index.html`). */
   relativePath: string;
-  /** Same-origin path when UI is proxied (e.g. `/output/...`). */
   previewUrl: string;
   mtimeMs: number;
-  /** Text of the first `<title>` in the HTML file (for display). */
   pageTitle: string;
+}
+
+interface OutputFolderPreview {
+  folderName: string;
+  pageTitle: string;
+  versionCount: number;
+  versions: OutputPreviewVersion[];
+  mtimeMs: number;
 }
 
 const TITLE_SNIFF_MAX_BYTES = 65_536;
@@ -402,8 +505,8 @@ function readPageTitleFromIndexHtml (absPath: string): string | null {
   }
 }
 
-function listOutputIndexHtmlPreviews (): OutputIndexPreview[] {
-  const entries: OutputIndexPreview[] = [];
+function listOutputIndexHtmlPreviews (): OutputFolderPreview[] {
+  const entries: OutputFolderPreview[] = [];
   if (!existsSync(outputDir)) {
     return entries;
   }
@@ -412,28 +515,45 @@ function listOutputIndexHtmlPreviews (): OutputIndexPreview[] {
       continue;
     }
     const base = join(outputDir, dirent.name);
-    const codeHtml = join(base, 'code', 'index.html');
-    const rootHtml = join(base, 'index.html');
-    let relativePath: string | null = null;
-    let abs: string | null = null;
-    if (existsSync(codeHtml)) {
-      relativePath = `${dirent.name}/code/index.html`;
-      abs = codeHtml;
-    } else if (existsSync(rootHtml)) {
-      relativePath = `${dirent.name}/index.html`;
-      abs = rootHtml;
-    }
-    if (relativePath !== null && abs !== null) {
-      const fromFile = readPageTitleFromIndexHtml(abs);
-      const pageTitle = fromFile ?? dirent.name;
-      entries.push({
-        folderName: dirent.name,
+    const codeVersions = listCodeVersions(base);
+    const versions: OutputPreviewVersion[] = codeVersions.map((v) => {
+      const relativePath = relative(outputDir, v.indexHtmlPath).replace(/\\/gu, '/');
+      const fromFile = readPageTitleFromIndexHtml(v.indexHtmlPath);
+      return {
+        versionId: v.versionId,
+        versionLabel: v.versionLabel,
         relativePath,
         previewUrl: `/output/${relativePath}`,
-        mtimeMs: statSync(abs).mtimeMs,
-        pageTitle
-      });
+        mtimeMs: v.mtimeMs,
+        pageTitle: fromFile ?? dirent.name
+      };
+    });
+    if (versions.length === 0) {
+      const rootHtml = join(base, 'index.html');
+      if (existsSync(rootHtml)) {
+        const relativePath = `${dirent.name}/index.html`;
+        const fromFile = readPageTitleFromIndexHtml(rootHtml);
+        versions.push({
+          versionId: 'V1',
+          versionLabel: 'Version 1',
+          relativePath,
+          previewUrl: `/output/${relativePath}`,
+          mtimeMs: statSync(rootHtml).mtimeMs,
+          pageTitle: fromFile ?? dirent.name
+        });
+      }
     }
+    if (versions.length === 0) {
+      continue;
+    }
+    const latest = versions[versions.length - 1]!;
+    entries.push({
+      folderName: dirent.name,
+      pageTitle: latest.pageTitle,
+      versionCount: versions.length,
+      versions,
+      mtimeMs: latest.mtimeMs
+    });
   }
   entries.sort((a, b) => b.mtimeMs - a.mtimeMs);
   return entries;
@@ -443,7 +563,29 @@ const app = Express();
 app.use(corsMiddleware);
 app.use(Express.json({ limit: `${MAX_CONTEXT_CHARS + 10_000}` }));
 
-app.post('/api/style-guide/run', (req, res) => {
+app.post('/api/style-guide/preflight-reference-url', async (req, res) => {
+  const referenceParsed = parseReferenceUrlFromBody(req.body as {
+    referenceUrl?: unknown;
+    campaignReferenceUrl?: unknown;
+  });
+  if (!referenceParsed.ok) {
+    res.status(400).json({ error: referenceParsed.error });
+    return;
+  }
+  if (referenceParsed.url.length === 0) {
+    res.status(400).json({ error: 'referenceUrl is required.' });
+    return;
+  }
+  try {
+    const result = await preflightReferenceUrlForStudio(referenceParsed.url);
+    res.json(result);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ error: message });
+  }
+});
+
+app.post('/api/style-guide/run', async (req, res) => {
   if (activeJobId !== null) {
     res.status(429).json({ error: 'Un job studio est déjà en cours.' });
     return;
@@ -452,6 +594,8 @@ app.post('/api/style-guide/run', (req, res) => {
     contextPrompt?: unknown;
     brand?: unknown;
     context?: unknown;
+    referenceUrl?: unknown;
+    campaignReferenceUrl?: unknown;
     assetsReviewAfterGeneration?: unknown;
     imageSearchProvider?: unknown;
   };
@@ -461,13 +605,21 @@ app.post('/api/style-guide/run', (req, res) => {
     return;
   }
   const imageEnv = imageSearchProviderEnv(imageProviderParsed.provider);
+  const referenceParsed = parseReferenceUrlFromBody(body);
+  if (!referenceParsed.ok) {
+    res.status(400).json({ error: referenceParsed.error });
+    return;
+  }
+  const referenceUrl = referenceParsed.url;
+
   const brandField = typeof body.brand === 'string' ? body.brand : '';
   const contextField = typeof body.context === 'string' ? body.context : '';
-  const hasBrandOrContext = brandField.trim().length > 0 || contextField.trim().length > 0;
+  const hasBrandOrContext =
+    brandField.trim().length > 0 || contextField.trim().length > 0 || referenceUrl.length > 0;
 
   let contextPrompt: string;
   if (hasBrandOrContext) {
-    contextPrompt = composeStyleGuideContextFromParts(brandField, contextField);
+    contextPrompt = composeStyleGuideContextWithReference(brandField, contextField, referenceUrl);
   } else if (typeof body.contextPrompt === 'string') {
     contextPrompt = body.contextPrompt.trim();
     if (contextPrompt.length === 0) {
@@ -492,6 +644,20 @@ app.post('/api/style-guide/run', (req, res) => {
     return;
   }
 
+  if (referenceUrl.length > 0) {
+    try {
+      const preflight = await preflightReferenceUrlForStudio(referenceUrl);
+      if (preflight.status === 'blocked' || preflight.status === 'unreachable') {
+        res.status(422).json({ error: preflight.message, preflight });
+        return;
+      }
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      res.status(500).json({ error: `Preflight reference URL failed: ${message}` });
+      return;
+    }
+  }
+
   const styleScriptPath = join(agentsDir, DEFAULT_STYLE_SCRIPT);
   if (!existsSync(styleScriptPath)) {
     res.status(500).json({ error: `${DEFAULT_STYLE_SCRIPT} is missing from src/agents/.` });
@@ -499,25 +665,29 @@ app.post('/api/style-guide/run', (req, res) => {
   }
 
   const assetsReviewAfterGeneration = body.assetsReviewAfterGeneration === true;
-  const assetsReviewPath = join(agentsDir, 'run-creative-native-assets-review.mts');
+  const styleGuideAssetsReviewPath = join(agentsDir, 'run-style-guide-assets-review.mts');
 
-  const job = createJob(imageProviderParsed.provider);
+  const job = createJob(imageProviderParsed.provider, 'style_guide');
   activeJobId = job.id;
 
   if (assetsReviewAfterGeneration) {
-    if (!existsSync(assetsReviewPath)) {
-      res.status(500).json({ error: 'run-creative-native-assets-review.mts is missing from src/agents/.' });
+    if (!existsSync(styleGuideAssetsReviewPath)) {
+      res.status(500).json({ error: 'run-style-guide-assets-review.mts is missing from src/agents/.' });
       return;
     }
     attachSpawnedNodeProcessSequence(job, [
       {
         argv: [ styleScriptPath ],
-        env: { STYLE_GUIDE_CONTEXT: contextPrompt, ...imageEnv }
+        env: {
+          STYLE_GUIDE_CONTEXT: contextPrompt,
+          ...(referenceUrl.length > 0 ? { STYLE_GUIDE_REFERENCE_URL: referenceUrl } : {}),
+          ...imageEnv
+        }
       },
       {
         argv: (activeJob) => {
           const folder = outputFolderNameFromDirectoryPath(activeJob.outputDirectoryPath);
-          return folder !== null ? [ assetsReviewPath, folder ] : null;
+          return folder !== null ? [ styleGuideAssetsReviewPath, folder ] : null;
         },
         env: { ...imageEnv }
       }
@@ -525,6 +695,7 @@ app.post('/api/style-guide/run', (req, res) => {
   } else {
     attachSpawnedNodeProcess(job, [ styleScriptPath ], {
       STYLE_GUIDE_CONTEXT: contextPrompt,
+      ...(referenceUrl.length > 0 ? { STYLE_GUIDE_REFERENCE_URL: referenceUrl } : {}),
       ...imageEnv
     });
   }
@@ -551,7 +722,6 @@ app.post('/api/creative-code/run', (req, res) => {
     res.status(400).json({ error: imageProviderParsed.error });
     return;
   }
-  const imageEnv = imageSearchProviderEnv(imageProviderParsed.provider);
   if (typeof body.creativeScript !== 'string' || body.creativeScript.trim().length === 0) {
     res.status(400).json({
       error:
@@ -579,9 +749,22 @@ app.post('/api/creative-code/run', (req, res) => {
     res.status(400).json({ error: 'outputFolder must exist under output/ and contain style-guide.json.' });
     return;
   }
-  const codeDir = join(outputDir, outputFolder, 'code');
-  if (existsSync(codeDir) && statSync(codeDir).isDirectory()) {
-    res.status(400).json({ error: 'outputFolder already has a code/ directory; creative output already exists.' });
+  const assetsReviewFinalPath = join(outputDir, outputFolder, 'review', 'assets-review-final.json');
+  let assetsReviewSatisfied = false;
+  if (existsSync(assetsReviewFinalPath)) {
+    try {
+      const finalRaw = JSON.parse(readFileSync(assetsReviewFinalPath, 'utf8')) as { satisfied?: boolean };
+      assetsReviewSatisfied = finalRaw.satisfied === true;
+    } catch {
+      assetsReviewSatisfied = false;
+    }
+  }
+  if (!assetsReviewSatisfied) {
+    res.status(400).json({
+      error:
+        'Assets must be reviewed before creative generation. Run the style guide job with "Review assets après génération" ' +
+        `(produces ${assetsReviewFinalPath}), or run node src/agents/run-style-guide-assets-review.mts ${outputFolder}.`
+    });
     return;
   }
 
@@ -603,7 +786,7 @@ app.post('/api/creative-code/run', (req, res) => {
     adFormatsJson = JSON.stringify(normalized.formats);
   }
 
-  const assetsReviewRequested =
+  const assetsReviewLegacyRequested =
     body.assetsReviewBeforeGeneration === true && creativeScript === 'gen-creative-code-native.mts';
   const uiReviewRequested =
     body.uiReviewAfterGeneration === true && creativeScript === 'gen-creative-code-native.mts';
@@ -618,17 +801,17 @@ app.post('/api/creative-code/run', (req, res) => {
     codegenPresetEnv = envForCreativeCodegenPreset(presetRaw);
   }
 
-  const job = createJob(imageProviderParsed.provider);
+  const job = createJob(imageProviderParsed.provider, 'creative');
   activeJobId = job.id;
   job.outputDirectoryPath = join(outputDir, outputFolder);
   const creativePath = join(agentsDir, creativeScript);
-  const assetsReviewPath = join(agentsDir, 'run-creative-native-assets-review.mts');
   const uiReviewPath = join(agentsDir, 'run-creative-native-ui-review.mts');
 
   const genStep = {
     argv: [ creativePath, outputFolder ],
     env: {
       ...codegenPresetEnv,
+      PIPELINE_PHASE: 'creative',
       CREATIVE_AD_FORMATS: adFormatsJson,
       CREATIVE_UI_REVIEW_MAX_ROUNDS: '0'
     }
@@ -636,8 +819,10 @@ app.post('/api/creative-code/run', (req, res) => {
 
   const sequenceSteps: Array<{ argv: string[]; env?: Record<string, string> }> = [];
 
-  if (assetsReviewRequested) {
-    sequenceSteps.push({ argv: [ assetsReviewPath, outputFolder ], env: { ...imageEnv } });
+  if (assetsReviewLegacyRequested) {
+    console.warn(
+      '[studio] assetsReviewBeforeGeneration is deprecated: assets are reviewed during the style guide job. Skipping run-creative-native-assets-review.'
+    );
   }
   sequenceSteps.push(genStep);
   if (uiReviewRequested) {
@@ -659,12 +844,155 @@ app.post('/api/creative-code/run', (req, res) => {
   res.status(202).json({ jobId: job.id });
 });
 
+function parseOutputFolderBody (body: { outputFolder?: unknown }): { ok: true; folder: string } | { ok: false; error: string } {
+  if (typeof body.outputFolder !== 'string' || body.outputFolder.trim().length === 0) {
+    return { ok: false, error: 'outputFolder must be a non-empty string.' };
+  }
+  const folder = body.outputFolder.trim();
+  if (!isSafeOutputFolderSegment(folder)) {
+    return { ok: false, error: 'Invalid outputFolder name.' };
+  }
+  const folderPath = join(outputDir, folder);
+  if (!existsSync(folderPath)) {
+    return { ok: false, error: `output/${folder} does not exist.` };
+  }
+  return { ok: true, folder };
+}
+
+app.post('/api/style-guide/review-assets', (req, res) => {
+  if (activeJobId !== null) {
+    res.status(429).json({ error: 'Un job studio est déjà en cours.' });
+    return;
+  }
+  const imageProviderParsed = parseImageSearchProviderFromBody(
+    (req.body as { imageSearchProvider?: unknown }).imageSearchProvider
+  );
+  if (!imageProviderParsed.ok) {
+    res.status(400).json({ error: imageProviderParsed.error });
+    return;
+  }
+  const folderParsed = parseOutputFolderBody(req.body as { outputFolder?: unknown });
+  if (!folderParsed.ok) {
+    res.status(400).json({ error: folderParsed.error });
+    return;
+  }
+  const styleGuideJson = join(outputDir, folderParsed.folder, 'style-guide.json');
+  if (!existsSync(styleGuideJson)) {
+    res.status(400).json({ error: 'outputFolder must contain style-guide.json.' });
+    return;
+  }
+  const assetsReviewPath = join(agentsDir, 'run-style-guide-assets-review.mts');
+  if (!existsSync(assetsReviewPath)) {
+    res.status(500).json({ error: 'run-style-guide-assets-review.mts is missing from src/agents/.' });
+    return;
+  }
+
+  const job = createJob(imageProviderParsed.provider, 'style_guide');
+  activeJobId = job.id;
+  job.outputDirectoryPath = join(outputDir, folderParsed.folder);
+  attachSpawnedNodeProcess(job, [ assetsReviewPath, folderParsed.folder ], {
+    ...imageSearchProviderEnv(imageProviderParsed.provider),
+    PIPELINE_PHASE: 'style_guide'
+  });
+  res.status(202).json({ jobId: job.id });
+});
+
+app.post('/api/creative-code/review-ui', (req, res) => {
+  if (activeJobId !== null) {
+    res.status(429).json({ error: 'Un job studio est déjà en cours.' });
+    return;
+  }
+  const body = req.body as {
+    outputFolder?: unknown;
+    adFormats?: unknown;
+    imageSearchProvider?: unknown;
+  };
+  const imageProviderParsed = parseImageSearchProviderFromBody(body.imageSearchProvider);
+  if (!imageProviderParsed.ok) {
+    res.status(400).json({ error: imageProviderParsed.error });
+    return;
+  }
+  const folderParsed = parseOutputFolderBody(body);
+  if (!folderParsed.ok) {
+    res.status(400).json({ error: folderParsed.error });
+    return;
+  }
+  const styleGuideJson = join(outputDir, folderParsed.folder, 'style-guide.json');
+  if (!existsSync(styleGuideJson)) {
+    res.status(400).json({ error: 'outputFolder must contain style-guide.json.' });
+    return;
+  }
+  const codeDir = resolveCodeDirectory(join(outputDir, folderParsed.folder));
+  if (codeDir === null || !existsSync(join(codeDir, 'index.html'))) {
+    res.status(400).json({
+      error: 'outputFolder must contain at least one creative code version (run creative generation first).'
+    });
+    return;
+  }
+
+  const presetList = loadAdFormatPresets(repoRoot);
+  const adFormatsPath = join(outputDir, folderParsed.folder, 'creative-native-ad-formats.json');
+  let adFormatsJson: string;
+  if (body.adFormats !== undefined) {
+    const normalized = normalizeApiAdFormats(body.adFormats, presetList);
+    if (!normalized.ok) {
+      res.status(400).json({ error: normalized.error });
+      return;
+    }
+    adFormatsJson = JSON.stringify(normalized.formats);
+  } else if (existsSync(adFormatsPath)) {
+    try {
+      const parsed = JSON.parse(readFileSync(adFormatsPath, 'utf8')) as { adFormats?: unknown };
+      if (!Array.isArray(parsed.adFormats)) {
+        res.status(400).json({ error: 'creative-native-ad-formats.json is invalid.' });
+        return;
+      }
+      const normalized = normalizeApiAdFormats(parsed.adFormats, presetList);
+      if (!normalized.ok) {
+        res.status(400).json({ error: normalized.error });
+        return;
+      }
+      adFormatsJson = JSON.stringify(normalized.formats);
+    } catch {
+      res.status(400).json({ error: 'creative-native-ad-formats.json is not valid JSON.' });
+      return;
+    }
+  } else {
+    const first = presetList[0];
+    if (first === undefined) {
+      res.status(500).json({ error: 'No ad format presets configured.' });
+      return;
+    }
+    adFormatsJson = JSON.stringify([ { id: first.id, width: first.width, height: first.height } ]);
+  }
+
+  const uiReviewPath = join(agentsDir, 'run-creative-native-ui-review.mts');
+  if (!existsSync(uiReviewPath)) {
+    res.status(500).json({ error: 'run-creative-native-ui-review.mts is missing from src/agents/.' });
+    return;
+  }
+
+  const job = createJob(imageProviderParsed.provider, 'creative');
+  activeJobId = job.id;
+  job.outputDirectoryPath = join(outputDir, folderParsed.folder);
+  attachSpawnedNodeProcess(job, [ uiReviewPath, folderParsed.folder ], {
+    ...imageSearchProviderEnv(imageProviderParsed.provider),
+    PIPELINE_PHASE: 'creative',
+    CREATIVE_AD_FORMATS: adFormatsJson,
+    CREATIVE_UI_REVIEW_MAX_ROUNDS: '3'
+  });
+  res.status(202).json({ jobId: job.id });
+});
+
 app.get('/api/studio/catalog', (_req, res) => {
   try {
     res.json({
       styleGuideScripts: listStyleGuideScripts(),
       creativeCodeScripts: listCreativeCodeScripts(),
-      outputFoldersWithStyleGuide: listOutputFoldersWithStyleGuide()
+      outputFoldersWithStyleGuide: listOutputFoldersWithStyleGuide(),
+      capabilities: {
+        preflightReferenceUrl: true
+      }
     });
   } catch (e) {
     res.status(500).json({ error: e instanceof Error ? e.message : String(e) });

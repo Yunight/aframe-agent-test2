@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lidl — Promotions de la semaine</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="ad-320x480">
+
+    <!-- HEADER -->
+    <header class="ad-header">
+      <img src="./lidl-logo-shop-cdn.svg" alt="logo" class="ad-logo">
+      <div class="header-text">
+        <span class="h-title">PROMOTIONS</span>
+        <span class="h-sub">de la semaine</span>
+      </div>
+    </header>
+
+    <!-- CAROUSEL -->
+    <div class="carousel" id="carousel">
+
+      <!-- Slide 1: Tente de camping -->
+      <article class="slide active" aria-label="Tente de camping CRIVIT">
+        <div class="img-wrap">
+          <img src="./LG_DESKTOP_3690x1080_V1-2152564.jpg"
+               alt="Tente de camping CRIVIT"
+               class="slide-img wide-img tent-pos">
+          <span class="badge" aria-label="46 pourcent de réduction">-46%</span>
+        </div>
+        <div class="slide-body">
+          <span class="cat-label">Plein air · CRIVIT</span>
+          <h2 class="prod-title">Tente de camping</h2>
+          <div class="prices">
+            <del class="p-old">40,99&nbsp;€</del>
+            <strong class="p-new">21,99&nbsp;€</strong>
+          </div>
+        </div>
+      </article>
+
+      <!-- Slide 2: Sèche-cheveux Fête des Mères -->
+      <article class="slide" aria-label="Sèche-cheveux Fête des Mères">
+        <div class="img-wrap img-wrap-red">
+          <img src="./MARKETING_LG-DESKTOP-2210604.jpg"
+               alt="Sèche-cheveux Fête des Mères"
+               class="slide-img wide-img hair-pos">
+          <span class="badge" aria-label="40 pourcent de réduction">-40%</span>
+          <span class="event-label">&#10084; Fête des Mères</span>
+        </div>
+        <div class="slide-body body-red">
+          <span class="cat-label">Beauté · SILVERCREST</span>
+          <h2 class="prod-title">Sèche-cheveux</h2>
+          <div class="prices">
+            <del class="p-old">49,99&nbsp;€</del>
+            <strong class="p-new">29,99&nbsp;€</strong>
+          </div>
+        </div>
+      </article>
+
+      <!-- Slide 3: Kit de dessin CRELANDO -->
+      <article class="slide" aria-label="Kit de dessin CRELANDO">
+        <div class="img-wrap img-wrap-blue">
+          <img src="./WON-2224544.jpg"
+               alt="Kit de dessin CRELANDO"
+               class="slide-img pack-img">
+          <span class="badge" aria-label="14 pourcent de réduction">-14%</span>
+          <span class="tag-label">En ligne seulement</span>
+        </div>
+        <div class="slide-body">
+          <span class="cat-label">Loisirs créatifs · CRELANDO</span>
+          <h2 class="prod-title">Kit dessin<br>premium</h2>
+          <div class="prices">
+            <del class="p-old">34,99&nbsp;€</del>
+            <strong class="p-new">29,99&nbsp;€</strong>
+          </div>
+        </div>
+      </article>
+
+      <!-- Slide 4: Pommes bicolores -->
+      <article class="slide" aria-label="Pommes bicolores 3 kg">
+        <div class="img-wrap img-wrap-crimson">
+          <img src="./WON_FL-2239964.jpg"
+               alt="Pommes bicolores 3 kg"
+               class="slide-img pack-img">
+          <span class="badge" aria-label="34 pourcent de réduction">-34%</span>
+          <span class="tag-label tag-yellow">Lidl Plus</span>
+        </div>
+        <div class="slide-body body-red">
+          <span class="cat-label">Fruits &amp; Légumes</span>
+          <h2 class="prod-title">Pommes bicolores<br>3&nbsp;kg</h2>
+          <div class="prices">
+            <del class="p-old">4,49&nbsp;€</del>
+            <strong class="p-new">2,97&nbsp;€</strong>
+          </div>
+        </div>
+      </article>
+
+      <!-- Progress bar -->
+      <div class="prog-track" aria-hidden="true">
+        <div class="prog-fill" id="progFill"></div>
+      </div>
+
+    </div><!-- /carousel -->
+
+    <!-- FOOTER -->
+    <footer class="ad-footer">
+      <a href="https://www.lidl.fr/q/query/promotions"
+         class="cta-btn"
+         id="ctaLink"
+         target="_blank"
+         rel="noopener noreferrer">
+        Voir toutes les offres
+        <svg width="14" height="12" viewBox="0 0 14 12" fill="none" aria-hidden="true">
+          <path d="M1 6h12M8 1l5 5-5 5"
+                stroke="#0050AA" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <nav class="dots" id="dotsNav" aria-label="Navigation slides" role="tablist">
+        <button class="dot dot-on" data-i="0" role="tab" aria-selected="true"  aria-label="Slide 1 sur 4"></button>
+        <button class="dot"        data-i="1" role="tab" aria-selected="false" aria-label="Slide 2 sur 4"></button>
+        <button class="dot"        data-i="2" role="tab" aria-selected="false" aria-label="Slide 3 sur 4"></button>
+        <button class="dot"        data-i="3" role="tab" aria-selected="false" aria-label="Slide 4 sur 4"></button>
+      </nav>
+    </footer>
+
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

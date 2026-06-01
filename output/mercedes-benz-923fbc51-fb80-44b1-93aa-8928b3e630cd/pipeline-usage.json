@@ -1,0 +1,107 @@
+{
+  "directoryUuid": "mercedes-benz-923fbc51-fb80-44b1-93aa-8928b3e630cd",
+  "updated_at": "2026-06-01T16:40:19.716Z",
+  "entries": [
+    {
+      "action": "style_guide",
+      "agent": "agents/gen-style-guide.mts",
+      "model": "claude-opus-4-7",
+      "review_round": null,
+      "api_calls": 1,
+      "input_tokens": 39925,
+      "output_tokens": 2133,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 39925,
+      "price_usd": {
+        "input": 0.199625,
+        "output": 0.053325,
+        "total": 0.25295
+      },
+      "duration_ms": 1964882,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 33600,
+          "stop_reason": "end_turn",
+          "label": "style-guide turn 1"
+        }
+      ],
+      "phase": "style_guide",
+      "sub_step_timings": [
+        {
+          "label": "claude_style_guide",
+          "duration_ms": 33600
+        },
+        {
+          "label": "logo_download",
+          "duration_ms": 211421
+        },
+        {
+          "label": "official_product_extract",
+          "duration_ms": 723
+        },
+        {
+          "label": "product_images_brave",
+          "duration_ms": 1297748
+        },
+        {
+          "label": "write_style_guide_json",
+          "duration_ms": 0
+        }
+      ],
+      "timestamp": "2026-06-01T16:40:08.541Z"
+    },
+    {
+      "action": "asset_descriptions",
+      "agent": "lib/creative-asset-descriptions.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": null,
+      "api_calls": 1,
+      "input_tokens": 3473,
+      "output_tokens": 681,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 3473,
+      "price_usd": {
+        "input": 0.003473,
+        "output": 0.003405,
+        "total": 0.006878
+      },
+      "duration_ms": 10885,
+      "phase": "style_guide",
+      "timestamp": "2026-06-01T16:40:19.669Z"
+    }
+  ],
+  "totals": {
+    "api_calls": 2,
+    "input_tokens": 43398,
+    "output_tokens": 2814,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "billed_input_tokens": 43398,
+    "price_usd": {
+      "input": 0.203098,
+      "output": 0.05673,
+      "total": 0.259828
+    },
+    "duration_ms": 1975767,
+    "claude_api_duration_ms": 33600,
+    "wall_clock_ms": 11128,
+    "phase_duration_ms": {
+      "style_guide": 1975767,
+      "creative": 0
+    }
+  },
+  "run_summary": {
+    "wall_clock_ms": 2116791,
+    "ended_at": "2026-06-01T16:40:19.716Z",
+    "claude_api_calls": 2,
+    "claude_api_duration_ms": 33600,
+    "phase_duration_ms": {
+      "style_guide": 1975767,
+      "creative": 0
+    },
+    "studio_job_id": "9e62048f-810d-4af9-bc1e-3db3216c205d"
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "generated_at": "2026-06-01T14:20:51.084Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/Diablo_IV_Logo-3000x1402.png",
+      "fileName": "Diablo_IV_Logo-3000x1402.png",
+      "fileType": "logos",
+      "description": "Logotype officiel Diablo IV avec lettres argentées texturées et épée centrale en dégradé rouge-orange flamboyant. Idéal pour header ou branding dans les bannières HTML5, adaptable à tous les formats. Lisible sur fond clair ou sombre, excellent contraste et reconnaissance visuelle.",
+      "layout_hints": [
+        "logo-lockup",
+        "header",
+        "branding"
+      ],
+      "dominant_colors": [
+        "#C41E3A",
+        "#FF6B35",
+        "#A9A9A9",
+        "#F5F5F5"
+      ]
+    },
+    {
+      "asset_id": "products/Best-Class-Tier-list-Diablo-IV-Lord-of-Hatred-780x439.jpg",
+      "fileName": "Best-Class-Tier-list-Diablo-IV-Lord-of-Hatred-780x439.jpg",
+      "fileType": "products",
+      "description": "Personnage démoniaque flamboyant au centre d'une explosion énergétique rouge et or, entouré de créatures infernales. Texte blanc lisible en bas sur bandeau sombre. Peut servir de héros alternant pour promouvoir les classes de personnages et guides de tier list.",
+      "layout_hints": [
+        "hero",
+        "packshot-centre",
+        "content-hub"
+      ],
+      "dominant_colors": [
+        "#DC143C",
+        "#FF4500",
+        "#2F2F2F",
+        "#FFFFFF"
+      ]
+    },
+    {
+      "asset_id": "products/Diablo-IV-Lord-of-Hatred-2.webp",
+      "fileName": "Diablo-IV-Lord-of-Hatred-2.webp",
+      "fileType": "products",
+      "description": "Portrait héroïque du Seigneur de la Haine avec cornes massives, yeux lumineux dorés et aura rouge éclatant, fond dégradé rouge intense. Image dramatique à fort impact visuel, parfaite comme hero image rotative mettant en avant l'antagoniste principal.",
+      "layout_hints": [
+        "hero",
+        "villain-hero",
+        "focal-point"
+      ],
+      "dominant_colors": [
+        "#8B0000",
+        "#FF6347",
+        "#1C1C1C",
+        "#FFD700"
+      ]
+    },
+    {
+      "asset_id": "products/diablo-iv-lord-of-hatred-screens-08a4d4f2-file-08a4d4e1.jpg.webp",
+      "fileName": "diablo-iv-lord-of-hatred-screens-08a4d4f2-file-08a4d4e1.jpg.webp",
+      "fileType": "products",
+      "description": "Vue de gameplay isométrique montrant des aventuriers combattant dans un environnement désertique rocailleux avec effets magiques lumineux. Capture l'action et l'exploration du jeu, idéale pour démontrer le gameplay en bannière.",
+      "layout_hints": [
+        "gameplay-scene",
+        "hero-rotative",
+        "action-focus"
+      ],
+      "dominant_colors": [
+        "#8B7355",
+        "#87CEEB",
+        "#FFD700",
+        "#4A4A4A"
+      ]
+    },
+    {
+      "asset_id": "products/Diablo-IV-Lord-of-Hatred-Skovos-Region-Guide-Cover-780x439.png",
+      "fileName": "Diablo-IV-Lord-of-Hatred-Skovos-Region-Guide-Cover-780x439.png",
+      "fileType": "products",
+      "description": "Architecture monumentale en pierre blanche de la région Skovos avec statues gardiens et ciel bleu. Texte blanc centré lisible. Représente l'exploration de monde et peut alterner comme hero image pour les guides régionaux.",
+      "layout_hints": [
+        "hero",
+        "world-guide",
+        "location-feature"
+      ],
+      "dominant_colors": [
+        "#FFFFFF",
+        "#87CEEB",
+        "#D3D3D3",
+        "#708090"
+      ]
+    },
+    {
+      "asset_id": "products/Diablo-IV-Lord-of-Hatred-Skovos-Region-Guide-Skartara-780x700.png",
+      "fileName": "Diablo-IV-Lord-of-Hatred-Skovos-Region-Guide-Skartara-780x700.png",
+      "fileType": "products",
+      "description": "Carte stylisée de la région Skartara en beiges et rouges de lave avec étiquette de zone visible. Design cartographique texturé, utile pour contenu informatif sur les zones du jeu et guides d'exploration.",
+      "layout_hints": [
+        "map-feature",
+        "content-block",
+        "infographic"
+      ],
+      "dominant_colors": [
+        "#D4A574",
+        "#CC3300",
+        "#5A4A3A",
+        "#B8A080"
+      ]
+    },
+    {
+      "asset_id": "products/diablo-iv-lord-of-hatred-ultimate-edition-xbox-series-x-s-xbox-one-microsoft-store-cover.jpg",
+      "fileName": "diablo-iv-lord-of-hatred-ultimate-edition-xbox-series-x-s-xbox-one-microsoft-store-cover.jpg",
+      "fileType": "products",
+      "description": "Couverture Ultimate Edition mettant en avant le Seigneur de la Haine sur fond ambré doré avec éclairs, logo jeu et mention édition en blanc texturisé. Format packshot adapté pour héros tournant promouvant les éditions premium du titre.",
+      "layout_hints": [
+        "hero",
+        "product-packaging",
+        "edition-feature"
+      ],
+      "dominant_colors": [
+        "#B8860B",
+        "#8B4513",
+        "#2F2F2F",
+        "#FFFFFF"
+      ]
+    }
+  ]
+}

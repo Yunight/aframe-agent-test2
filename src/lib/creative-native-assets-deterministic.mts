@@ -1,6 +1,16 @@
 import type { StyleGuide } from '../agents/gen-style-guide.mjs';
-import { allowedImageMimeTypes } from './brave-image-assets.mts';
-import { existsSync, readdirSync, readFileSync, statSync, unlinkSync } from 'node:fs';
+import {
+  allowedImageMimeTypes,
+  imageContextFromStyleGuide,
+  officialHostsFromContext,
+  type ImageSearchContext
+} from './brave-image-assets.mts';
+import { listAssetImageFiles } from './asset-sidecar-files.mts';
+import {
+  loadProductAssetSources,
+  removeProductAssetSource
+} from './product-asset-sources.mts';
+import { existsSync, readFileSync, statSync, unlinkSync } from 'node:fs';
 import { join, extname } from 'node:path';
 import { imageSizeFromFile } from 'image-size/fromFile';
 import mime from 'mime';
@@ -8,8 +18,11 @@ import { looksLikeProductPackshotInLogosFolder } from './logo-asset-rules.mts';
 import { validateLogoAssetFile } from './logo-transparency-check.mts';
 import {
   buildProductMatchTerms,
+  isListingPageCampaign,
   productMinRelevanceScore,
-  scoreProductContextRelevance
+  resolveReferenceListingUrls,
+  scoreProductContextRelevance,
+  wouldPassListingProductAsset
 } from './style-guide-context.mts';
 
 export type DeterministicFinding = {
@@ -53,7 +66,7 @@ export async function pruneUndersizedAssets (directoryPath: string): Promise<{ r
   for (const fileType of [ 'logos', 'products' ] as const) {
     const { minW, minH } = getAssetMinDimensions(fileType);
     const subdirectoryPath = join(directoryPath, fileType);
-    for (const fileName of listImageFiles(subdirectoryPath)) {
+    for (const fileName of listImageFiles(directoryPath, fileType)) {
       if (fileType === 'logos' && extname(fileName).toLowerCase() === '.svg') {
         continue;
       }
@@ -86,7 +99,7 @@ export async function pruneNonWordmarkLogos (directoryPath: string): Promise<{ r
   if (!existsSync(subdirectoryPath)) {
     return { removed };
   }
-  for (const fileName of listImageFiles(subdirectoryPath)) {
+  for (const fileName of listImageFiles(directoryPath, 'logos')) {
     if (!looksLikeProductPackshotInLogosFolder(fileName)) {
       continue;
     }
@@ -101,7 +114,7 @@ export async function pruneNonWordmarkLogos (directoryPath: string): Promise<{ r
 export async function pruneInvalidLogos (directoryPath: string): Promise<{ removed: string[] }> {
   const removed: string[] = [];
   const subdirectoryPath = join(directoryPath, 'logos');
-  for (const fileName of listImageFiles(subdirectoryPath)) {
+  for (const fileName of listImageFiles(directoryPath, 'logos')) {
     const filePath = join(subdirectoryPath, fileName);
     const check = validateLogoAssetFile(filePath);
     if (!check.ok) {
@@ -115,11 +128,8 @@ export async function pruneInvalidLogos (directoryPath: string): Promise<{ remov
 
 const MAX_FILE_BYTES = () => parseEnvInt('CREATIVE_ASSETS_MAX_FILE_BYTES', 5 * 1024 * 1024);
 
-function listImageFiles (subdirectoryPath: string): string[] {
-  if (!existsSync(subdirectoryPath)) {
-    return [];
-  }
-  return readdirSync(subdirectoryPath).filter((name) => !name.startsWith('.'));
+function listImageFiles (directoryPath: string, fileType: 'logos' | 'products'): string[] {
+  return listAssetImageFiles(directoryPath, fileType);
 }
 
 async function checkLogoFiles (
@@ -129,7 +139,7 @@ async function checkLogoFiles (
 ): Promise<DeterministicFinding[]> {
   const findings: DeterministicFinding[] = [];
   const subdirectoryPath = join(directoryPath, 'logos');
-  const files = listImageFiles(subdirectoryPath);
+  const files = listImageFiles(directoryPath, 'logos');
 
   if (files.length === 0) {
     findings.push({
@@ -251,14 +261,19 @@ async function checkImageFiles (
   directoryPath: string,
   minW: number,
   minH: number,
-  productMatchTerms?: readonly string[]
+  productMatch?: {
+    terms: readonly string[];
+    listing: boolean;
+    referenceListingUrls: readonly string[];
+    officialHosts: readonly string[];
+  }
 ): Promise<DeterministicFinding[]> {
   if (fileType === 'logos') {
     return checkLogoFiles(directoryPath, minW, minH);
   }
   const findings: DeterministicFinding[] = [];
   const subdirectoryPath = join(directoryPath, fileType);
-  const files = listImageFiles(subdirectoryPath);
+  const files = listImageFiles(directoryPath, fileType);
 
   if (files.length === 0) {
     findings.push({
@@ -306,17 +321,54 @@ async function checkImageFiles (
       });
     }
 
-    if (productMatchTerms !== undefined && productMatchTerms.length > 0) {
-      const relevance = scoreProductContextRelevance(fileName, '', productMatchTerms);
-      if (relevance < productMinRelevanceScore()) {
-        findings.push({
-          asset_id: assetId,
-          severity: 'blocker',
-          issue: 'Product image file name/URL does not match the campaign context or productName.',
-          fix_hint:
-            'Refresh assets with Brave queries that name the exact hero product from STYLE_GUIDE_CONTEXT (not other models from the range).'
-        });
-        continue;
+    if (productMatch !== undefined && productMatch.terms.length > 0) {
+      const sourceMap = loadProductAssetSources(directoryPath);
+      const entry = sourceMap.get(fileName);
+      const sourceUrl = entry?.sourceUrl ?? '';
+      const minScore = productMinRelevanceScore();
+
+      if (productMatch.listing) {
+        if (
+          !wouldPassListingProductAsset({
+            entry,
+            sourceUrl,
+            referenceListingUrls: productMatch.referenceListingUrls,
+            officialHosts: productMatch.officialHosts,
+            terms: productMatch.terms,
+            minScore
+          })
+        ) {
+          findings.push({
+            asset_id: assetId,
+            severity: 'blocker',
+            issue:
+              'Product image is not from the campaign reference page or an official brand visual host.',
+            fix_hint:
+              'Re-scrape the campaign reference URL or use official product/promo images from the brand domain.'
+          });
+          continue;
+        }
+      } else {
+        if (sourceUrl.length > 0) {
+          const relevance = scoreProductContextRelevance(sourceUrl, '', productMatch.terms);
+          if (relevance < minScore) {
+            findings.push({
+              asset_id: assetId,
+              severity: 'blocker',
+              issue: 'Product image source URL does not match the campaign context or productName.',
+              fix_hint:
+                'Refresh assets with Brave queries that name the exact hero product from STYLE_GUIDE_CONTEXT (not other models from the range).'
+            });
+            continue;
+          }
+        } else {
+          findings.push({
+            asset_id: assetId,
+            severity: 'warn',
+            issue: 'Product image has no recorded source URL; context match could not be verified.',
+            fix_hint: 'Re-download assets so product-asset-sources.json records the image URL.'
+          });
+        }
       }
     }
 
@@ -401,6 +453,80 @@ function checkStyleGuideFields (styleGuide: StyleGuide): DeterministicFinding[] 
   return findings;
 }
 
+/** Remove listing-mode product files that would fail deterministic review (legacy folders). */
+export function pruneListingIneligibleProducts (
+  directoryPath: string,
+  styleGuide: StyleGuide
+): string[] {
+  const referenceListingUrls = resolveReferenceListingUrls({
+    ...(styleGuide.campaignReferenceUrl !== undefined && styleGuide.campaignReferenceUrl.length > 0
+      ? { campaignReferenceUrl: styleGuide.campaignReferenceUrl }
+      : {})
+  });
+  if (referenceListingUrls.length === 0) {
+    return [];
+  }
+
+  const listing = isListingPageCampaign({
+    campaignContext: styleGuide.campaignContext ?? null,
+    productName: styleGuide.productName,
+    brandName: styleGuide.brandName,
+    brandContext: styleGuide.brandContext,
+    brandURL: styleGuide.brandURL,
+    ...(styleGuide.campaignReferenceUrl !== undefined && styleGuide.campaignReferenceUrl.length > 0
+      ? { campaignReferenceUrl: styleGuide.campaignReferenceUrl }
+      : {})
+  });
+  if (!listing) {
+    return [];
+  }
+
+  const imageCtx = imageContextFromStyleGuide(styleGuide);
+  const officialHosts = officialHostsFromContext(imageCtx);
+  const terms = buildProductMatchTerms({
+    campaignContext: styleGuide.campaignContext ?? null,
+    productName: styleGuide.productName,
+    brandName: styleGuide.brandName,
+    brandContext: styleGuide.brandContext,
+    brandURL: styleGuide.brandURL
+  });
+  if (terms.length === 0) {
+    return [];
+  }
+
+  const sourceMap = loadProductAssetSources(directoryPath);
+  const removed: string[] = [];
+
+  for (const fileName of listAssetImageFiles(directoryPath, 'products')) {
+    const entry = sourceMap.get(fileName);
+    const sourceUrl = entry?.sourceUrl ?? '';
+    if (
+      wouldPassListingProductAsset({
+        entry,
+        sourceUrl,
+        referenceListingUrls,
+        officialHosts,
+        terms
+      })
+    ) {
+      continue;
+    }
+    const filePath = join(directoryPath, 'products', fileName);
+    if (existsSync(filePath)) {
+      unlinkSync(filePath);
+    }
+    removeProductAssetSource(directoryPath, fileName);
+    removed.push(fileName);
+  }
+
+  if (removed.length > 0) {
+    console.log(
+      `[assets-deterministic] Pruned ${String(removed.length)} listing-ineligible product file(s): ${removed.join(', ')}`
+    );
+  }
+  return removed;
+}
+
 export async function runDeterministicAssetsCheck (
   directoryPath: string,
   styleGuide: StyleGuide
@@ -445,13 +571,41 @@ export async function runDeterministicAssetsCheck (
     brandContext: styleGuide.brandContext,
     brandURL: styleGuide.brandURL
   });
+  const referenceListingUrls = resolveReferenceListingUrls({
+    ...(styleGuide.campaignReferenceUrl !== undefined && styleGuide.campaignReferenceUrl.length > 0
+      ? { campaignReferenceUrl: styleGuide.campaignReferenceUrl }
+      : {})
+  });
+  const listing = isListingPageCampaign({
+    campaignContext: styleGuide.campaignContext ?? null,
+    productName: styleGuide.productName,
+    brandName: styleGuide.brandName,
+    brandContext: styleGuide.brandContext,
+    brandURL: styleGuide.brandURL,
+    ...(styleGuide.campaignReferenceUrl !== undefined && styleGuide.campaignReferenceUrl.length > 0
+      ? { campaignReferenceUrl: styleGuide.campaignReferenceUrl }
+      : {})
+  });
+  const imageCtx: ImageSearchContext = {
+    brandName: styleGuide.brandName,
+    companyName: styleGuide.companyName,
+    productName: styleGuide.productName,
+    brandURL: styleGuide.brandURL,
+    companyURL: styleGuide.companyURL,
+    ...(styleGuide.campaignReferenceUrl !== undefined && styleGuide.campaignReferenceUrl.length > 0
+      ? { campaignReferenceUrl: styleGuide.campaignReferenceUrl }
+      : {})
+  };
+  const officialHosts = officialHostsFromContext(imageCtx);
   findings.push(
     ...(await checkImageFiles(
       'products',
       directoryPath,
       MIN_PRODUCT_W(),
       MIN_PRODUCT_H(),
-      productMatchTerms
+      productMatchTerms.length > 0
+        ? { terms: productMatchTerms, listing, referenceListingUrls, officialHosts }
+        : undefined
     ))
   );
 

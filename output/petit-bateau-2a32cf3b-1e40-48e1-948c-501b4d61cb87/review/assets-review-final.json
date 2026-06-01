@@ -1,0 +1,13 @@
+{
+  "assets_review_rounds_run": 1,
+  "max_assets_review_rounds": 3,
+  "post_audit_refresh": false,
+  "satisfied": true,
+  "summary": "All assets pass audit. Logo is official SVG from petit-bateau.fr domain; product images are authentic packshots from the official Petit Bateau summer collection (MACARON_PLEIN_ETE series), matching the campaign context and style guide. All images are suitable for HTML5 banner layouts at minimum 120×40px or larger.",
+  "findings": [],
+  "brave_retry_queries": {
+    "logos": [],
+    "products": []
+  },
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\petit-bateau-2a32cf3b-1e40-48e1-948c-501b4d61cb87\\pipeline-usage.json"
+}

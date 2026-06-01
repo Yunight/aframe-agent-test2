@@ -48,6 +48,8 @@ export type CodegenTurnTiming = {
   turn: number;
   duration_ms: number;
   stop_reason: string | null;
+  /** Set when formats are generated in parallel (e.g. `banner 300x250`). */
+  format_label?: string;
 };
 
 export type CodegenLoopResult = {
@@ -132,7 +134,8 @@ async function runSingleCodegenLoop (params: {
         const complianceCheck = validateCreativeSkillCompliance(
           parsedFiles,
           params.prunedStyleGuide,
-          params.assetFiles
+          params.assetFiles,
+          params.adFormats
         );
         if (complianceCheck.ok) {
           codeFileList = parsedFiles;
@@ -144,11 +147,14 @@ async function runSingleCodegenLoop (params: {
           throw new Error(`AI output failed skill compliance checks: ${complianceCheck.issues.join(' | ')}`);
         }
 
+        const regenHint = params.isRegen
+          ? 'Apply a minimal patch to the existing bundle; do not rewrite unrelated CSS/HTML.'
+          : 'Regenerate all files and fix every issue.';
         messages.push({
           role: 'user',
           content:
             `Your previous output is not compliant with mandatory skills/style-guide constraints: ${complianceCheck.issues.join(' ; ')}. `
-            + `Regenerate all files and fix every issue. Required ad sizes (px): ${params.adFormats.map((f) => `${String(f.width)}×${String(f.height)}`).join(', ')}.`
+            + `${regenHint} Required ad sizes (px): ${params.adFormats.map((f) => `${String(f.width)}×${String(f.height)}`).join(', ')}.`
         });
         continue;
       }
@@ -285,12 +291,20 @@ export async function runCreativeCodegen (params: {
 
     for (const { format, result } of results) {
       mergeUsageAccumulators(totalUsage, result.usage);
-      allTimings.push(...result.timings);
+      const formatLabel = `${format.id} ${String(format.width)}x${String(format.height)}`;
+      for (const t of result.timings) {
+        allTimings.push({ ...t, format_label: formatLabel });
+      }
       bundles.push({ format, files: result.files });
     }
 
     const merged = mergeParallelFormatBundles(bundles);
-    const compliance = validateCreativeSkillCompliance(merged, params.prunedStyleGuide, params.assetFiles);
+    const compliance = validateCreativeSkillCompliance(
+      merged,
+      params.prunedStyleGuide,
+      params.assetFiles,
+      params.adFormats
+    );
     if (!compliance.ok) {
       console.warn('[creative-native] Merged parallel bundle failed compliance; running single-pass fallback.');
     } else {

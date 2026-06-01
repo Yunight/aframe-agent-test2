@@ -1,3 +1,4 @@
+import { AssetHostFailureTracker } from './asset-host-fail-fast.mts';
 import type { ImageSearchContext } from './brave-image-assets.mts';
 import {
   clearAssetSubdirectory,
@@ -10,7 +11,8 @@ import { extractOfficialSiteLogoUrls, extractWikipediaLogoUrls } from './officia
 import { resolveImageSearchProvider } from './image-search.mts';
 import { enforceSingleCanonicalLogo, CANONICAL_LOGO_COUNT } from './logo-asset-rules.mts';
 import { pruneInvalidLogos, pruneNonWordmarkLogos } from './creative-native-assets-deterministic.mts';
-import { existsSync, readdirSync } from 'node:fs';
+import { listAssetImageFiles } from './asset-sidecar-files.mts';
+import { existsSync } from 'node:fs';
 import { basename, join } from 'node:path';
 
 export type CollectSingleLogoResult = {
@@ -25,7 +27,7 @@ function countLogoFiles (directoryPath: string): number {
   if (!existsSync(logosDir)) {
     return 0;
   }
-  return readdirSync(logosDir).filter((name) => !name.startsWith('.')).length;
+  return listAssetImageFiles(directoryPath, 'logos').length;
 }
 
 async function tryLogoUrl (
@@ -41,11 +43,7 @@ async function tryLogoUrl (
   if (batch.count === 0) {
     return false;
   }
-  const logosDir = join(directoryPath, 'logos');
-  for (const name of readdirSync(logosDir)) {
-    if (name.startsWith('.')) {
-      continue;
-    }
+  for (const name of listAssetImageFiles(directoryPath, 'logos')) {
     if (!urlBySavedFile.has(name)) {
       urlBySavedFile.set(name, fileUrl);
     }
@@ -75,11 +73,15 @@ export async function collectSingleTransparentLogo (
   console.log(
     `[logo] Phase 1 — official site (${String(officialUrls.length)} candidate URL(s))…`
   );
+  const officialHostTracker = new AssetHostFailureTracker(2);
   for (const fileUrl of officialUrls) {
     if (countLogoFiles(directoryPath) >= CANONICAL_LOGO_COUNT) {
       break;
     }
     if (excludeUrls.has(fileUrl)) {
+      continue;
+    }
+    if (officialHostTracker.isBlocked(fileUrl)) {
       continue;
     }
     const ok = await tryLogoUrl(directoryPath, fileUrl, urlBySavedFile, rejectedUrls);
@@ -90,6 +92,13 @@ export async function collectSingleTransparentLogo (
     }
     excludeUrls.add(fileUrl);
     rejectedUrls.push(fileUrl);
+    if (officialHostTracker.recordFailure(fileUrl)) {
+      const host = officialHostTracker.blockedHostForLog();
+      console.log(
+        `[logo] Skipping remaining official URLs on ${host ?? 'host'} (downloads blocked)`
+      );
+      break;
+    }
   }
 
   if (countLogoFiles(directoryPath) < CANONICAL_LOGO_COUNT) {
@@ -97,11 +106,15 @@ export async function collectSingleTransparentLogo (
     console.log(
       `[logo] Phase 2 — Wikipedia / Wikimedia (${String(wikiUrls.length)} candidate URL(s))…`
     );
+    const wikiHostTracker = new AssetHostFailureTracker(2);
     for (const fileUrl of wikiUrls) {
       if (countLogoFiles(directoryPath) >= CANONICAL_LOGO_COUNT) {
         break;
       }
       if (excludeUrls.has(fileUrl)) {
+        continue;
+      }
+      if (wikiHostTracker.isBlocked(fileUrl)) {
         continue;
       }
       const ok = await tryLogoUrl(directoryPath, fileUrl, urlBySavedFile, rejectedUrls);
@@ -112,6 +125,9 @@ export async function collectSingleTransparentLogo (
       }
       excludeUrls.add(fileUrl);
       rejectedUrls.push(fileUrl);
+      if (wikiHostTracker.recordFailure(fileUrl)) {
+        break;
+      }
     }
   }
 
@@ -123,15 +139,19 @@ export async function collectSingleTransparentLogo (
       excludeUrls,
       clearFolder: false,
       officialHosts,
-      prioritizeUrls: []
+      prioritizeUrls: [],
+      logoScoring: {
+        productName: context.productName,
+        companyName: context.companyName,
+        brandName: context.brandName
+      }
     });
     rejectedUrls.push(...brave.rejectedUrls);
     if (brave.count > 0) {
       source = 'brave';
       for (const fileUrl of brave.downloadedUrls) {
-        const logosDir = join(directoryPath, 'logos');
-        for (const name of readdirSync(logosDir)) {
-          if (!name.startsWith('.') && !urlBySavedFile.has(name)) {
+        for (const name of listAssetImageFiles(directoryPath, 'logos')) {
+          if (!urlBySavedFile.has(name)) {
             urlBySavedFile.set(name, fileUrl);
           }
         }

@@ -276,11 +276,14 @@ export function buildCreativeAdFormatInstructions (formats: readonly AdFormatSel
   }
 
   if (formats.length === 1 && first !== undefined && first.arche === undefined) {
+    const domId = `ad-${first.id.replace(/×/g, 'x')}`;
     return (
       `      Required ad frame (exact pixel size of the visible creative):\n${list}\n` +
-      `      - styles.css — center this single ${String(first.width)}×${String(first.height)} px ad on the page ` +
+      `      - The visible ad root MUST use id="${domId}" on the outermost ${String(first.width)}×${String(first.height)} px container (required for capture and QA).\n` +
+      `      - styles.css — #${domId} { width: ${String(first.width)}px; height: ${String(first.height)}px; } and center the ad on the page ` +
       `(e.g. body min-height 100vh, flex, align and justify center).\n` +
-      `      Creative viewport: exactly ${String(first.width)}×${String(first.height)} px for the main ad container.`
+      `      Creative viewport: exactly ${String(first.width)}×${String(first.height)} px for #${domId}.\n` +
+      `      - Safe zone: keep primary CTA and footer text at least 20px inside the bottom edge of #${domId} (padding-bottom or CTA margin).`
     );
   }
 

@@ -1,5 +1,7 @@
 import type { ImageSearchContext } from './brave-image-assets.mts';
 import { isUntrustedLogoUrl } from './logo-transparency-check.mts';
+import { officialPageFetchHeaders } from './official-fetch.mts';
+import { pageUrlsMatchForBoost, resolveReferenceListingUrls } from './reference-listing-urls.mts';
 
 const FETCH_TIMEOUT_MS = 20_000;
 const MAX_HTML_BYTES = 2_500_000;
@@ -42,6 +44,79 @@ export function isCrawlBlockedHttpStatus (status: number): boolean {
   return CRAWL_BLOCKED_HTTP_STATUSES.has(status);
 }
 
+export function shouldSkipPageForBlockedHost (
+  hostname: string,
+  blockedHosts: ReadonlySet<string>
+): boolean {
+  const h = normalizeHost(hostname);
+  return blockedHosts.has(h);
+}
+
+/** Registrable label before TLD (e.g. mercedes-benz.fr → mercedes-benz). */
+export function brandDomainTokenFromHost (hostname: string): string | null {
+  const h = normalizeHost(hostname);
+  const parts = h.split('.').filter((p) => p.length > 0);
+  if (parts.length < 2) {
+    return parts[0] ?? null;
+  }
+  return parts[parts.length - 2] ?? null;
+}
+
+/** True when company site is the same host (or subdomain) as a primary reference/brand page. */
+function companyUrlMatchesPrimaryHosts (
+  companyUrl: string,
+  primaryRefs: readonly string[]
+): boolean {
+  try {
+    const companyHost = normalizeHost(new URL(companyUrl).hostname);
+    for (const ref of primaryRefs) {
+      const refHost = normalizeHost(new URL(ref).hostname);
+      if (companyHost === refHost) {
+        return true;
+      }
+      if (companyHost.endsWith(`.${refHost}`) || refHost.endsWith(`.${companyHost}`)) {
+        return true;
+      }
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+export function officialLogoFallbackMax (): number {
+  const raw = process.env['OFFICIAL_LOGO_FALLBACK_MAX']?.trim();
+  if (raw === undefined || raw.length === 0) {
+    return 15;
+  }
+  const n = Number.parseInt(raw, 10);
+  return Number.isFinite(n) && n > 0 ? n : 15;
+}
+
+/** Stable key for deduping product URLs that differ only by resize query params. */
+export function dedupeProductUrlKey (url: string): string {
+  try {
+    const u = new URL(url);
+    const staticMatch =
+      /\/images\/static\/v1\/[^/]+\/[^/]+\/[^/]+\/([^/?#]+)\.(jpe?g|png|webp)/iu.exec(u.pathname);
+    if (staticMatch !== null && staticMatch[1] !== undefined) {
+      return staticMatch[1].toLowerCase();
+    }
+    const base = u.pathname.split('/').filter((p) => p.length > 0).pop();
+    if (base !== undefined && base.length > 0) {
+      return base.toLowerCase();
+    }
+    return u.pathname;
+  } catch {
+    return url;
+  }
+}
+
+export function isLowValueOfficialProductUrl (url: string): boolean {
+  const lower = url.toLowerCase();
+  return /\/iris\.png(\?|$)/iu.test(lower) || /resize,width=48/iu.test(lower);
+}
+
 /** Wikipedia article slug from brand or company name (spaces → underscores). */
 export function wikipediaSlugFromBrandName (name: string): string {
   const trimmed = name.trim();
@@ -82,7 +157,11 @@ function normalizeHost (hostname: string): string {
 
 function hostsFromContext (ctx: ImageSearchContext): string[] {
   const hosts: string[] = [];
-  for (const raw of [ ctx.brandURL, ctx.companyURL ]) {
+  for (const raw of [
+    ctx.campaignReferenceUrl,
+    ctx.brandURL,
+    ctx.companyURL
+  ]) {
     if (raw === undefined || raw.trim().length === 0) {
       continue;
     }
@@ -96,6 +175,11 @@ function hostsFromContext (ctx: ImageSearchContext): string[] {
     }
   }
   return hosts;
+}
+
+/** Host allowlist for scrape / preflight (includes reference URL host). */
+export function hostsFromImageContext (ctx: ImageSearchContext): string[] {
+  return hostsFromContext(ctx);
 }
 
 function resolveAbsoluteUrl (basePageUrl: string, raw: string): string | null {
@@ -113,13 +197,26 @@ function resolveAbsoluteUrl (basePageUrl: string, raw: string): string | null {
   }
 }
 
-function urlHostAllowed (url: string, officialHosts: readonly string[]): boolean {
+function urlHostAllowed (
+  url: string,
+  officialHosts: readonly string[],
+  pageUrl?: string
+): boolean {
   if (officialHosts.length === 0) {
     return true;
   }
   try {
     const h = normalizeHost(new URL(url).hostname);
-    return officialHosts.some((oh) => h === oh || h.endsWith(`.${oh}`) || oh.endsWith(`.${h}`));
+    if (officialHosts.some((oh) => h === oh || h.endsWith(`.${oh}`) || oh.endsWith(`.${h}`))) {
+      return true;
+    }
+    if (pageUrl !== undefined) {
+      const token = brandDomainTokenFromHost(new URL(pageUrl).hostname);
+      if (token !== null && token.length >= 4 && h.includes(token)) {
+        return true;
+      }
+    }
+    return false;
   } catch {
     return false;
   }
@@ -148,6 +245,14 @@ function scoreLogoUrl (url: string, hints: { classHint?: string; inHeader?: bool
     score += 18;
   }
 
+  if (/\/assets\/logos\/(?:brand\/)?/iu.test(lower) || /\/global\/assets\/logos\//iu.test(lower)) {
+    score += 75;
+  }
+
+  if (/kungscissus|\/images\/kung|plant[-_]|decorative|campaign[-_]asset|startpage|thumbnail/iu.test(lower)) {
+    score -= 90;
+  }
+
   if (/favicon|apple-touch|sprite|icon-16|icon-32|emoji|avatar|1x1/iu.test(lower)) {
     score -= 120;
   }
@@ -157,6 +262,31 @@ function scoreLogoUrl (url: string, hints: { classHint?: string; inHeader?: bool
   }
 
   return score;
+}
+
+function extractLogoAssetPathsFromHeaderHtml (
+  html: string,
+  pageUrl: string,
+  officialHosts: readonly string[],
+  bucket: Map<string, ScoredLogoUrl>
+): void {
+  const headerSlice = html.slice(0, Math.min(html.length, 160_000));
+  const attrRe = /(?:href|src|content)\s*=\s*["']([^"']+)["']/giu;
+  let match: RegExpExecArray | null;
+  while ((match = attrRe.exec(headerSlice)) !== null) {
+    const raw = match[1];
+    if (raw === undefined) {
+      continue;
+    }
+    const lower = raw.toLowerCase();
+    const isBrandSvg =
+      /\.svg($|[?#])/iu.test(lower) &&
+      (/\/assets\/logos\//iu.test(lower) || /\/logo|wordmark|brand-logo/iu.test(lower));
+    if (!isBrandSvg) {
+      continue;
+    }
+    pushCandidate(bucket, pageUrl, raw, officialHosts, { inHeader: true, classHint: 'brand-logo-path' });
+  }
 }
 
 function extractSrcFromImgTag (tag: string): string | null {
@@ -196,7 +326,7 @@ function pushCandidate (
   if (absolute === null || !/^https?:\/\//iu.test(absolute)) {
     return;
   }
-  if (!urlHostAllowed(absolute, officialHosts)) {
+  if (!urlHostAllowed(absolute, officialHosts, pageUrl)) {
     return;
   }
   const score = scoreLogoUrl(absolute, hints);
@@ -220,6 +350,8 @@ export function extractLogoCandidatesFromHtml (
   officialHosts: readonly string[]
 ): ScoredLogoUrl[] {
   const bucket = new Map<string, ScoredLogoUrl>();
+
+  extractLogoAssetPathsFromHeaderHtml(html, pageUrl, officialHosts, bucket);
 
   for (const hint of LOGO_CLASS_HINTS) {
     const containerRe = new RegExp(
@@ -276,14 +408,17 @@ export function extractLogoCandidatesFromHtml (
   return [ ...bucket.values() ].sort((a, b) => b.score - a.score);
 }
 
+export async function fetchOfficialPageHtml (
+  url: string,
+  logTag: string
+): Promise<PageFetchResult> {
+  return fetchPageHtmlDetailed(url, logTag);
+}
+
 async function fetchPageHtmlDetailed (url: string, logTag: string): Promise<PageFetchResult> {
   try {
     const res = await fetch(url, {
-      headers: {
-        Accept: 'text/html,application/xhtml+xml',
-        'User-Agent':
-          'Mozilla/5.0 (compatible; AframeCreativeAssetBot/1.0; +https://github.com/)'
-      },
+      headers: officialPageFetchHeaders(),
       redirect: 'follow',
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS)
     });
@@ -306,22 +441,76 @@ async function fetchPageHtmlDetailed (url: string, logTag: string): Promise<Page
   }
 }
 
-function officialPageUrlsFromContext (context: ImageSearchContext): string[] {
+function pushOfficialScrapeUrls (pageUrls: string[], raw: string): void {
+  const u = new URL(raw.trim());
+  const href = u.href;
+  const originRoot = `${u.origin}/`;
+  const path = u.pathname.replace(/\/+$/u, '') || '/';
+  const isDeepPage = path !== '/' && path.length > 1;
+  if (isDeepPage) {
+    pageUrls.push(href);
+    if (!pageUrls.includes(originRoot)) {
+      pageUrls.push(originRoot);
+    }
+  } else {
+    pageUrls.push(originRoot);
+    pageUrls.push(href);
+  }
+}
+
+export function officialPageUrlsFromContext (context: ImageSearchContext): string[] {
   const pageUrls: string[] = [];
-  for (const raw of [ context.brandURL, context.companyURL ]) {
+  const primaryRefs = [
+    context.campaignReferenceUrl,
+    context.brandURL,
+    ...(context.campaignUrls ?? [])
+  ].filter((u): u is string => u !== undefined && u.trim().length > 0);
+
+  const rawUrls: (string | undefined)[] = [
+    context.campaignReferenceUrl,
+    ...(context.campaignUrls ?? []),
+    context.brandURL
+  ];
+  const companyUrl = context.companyURL?.trim() ?? '';
+  if (companyUrl.length > 0) {
+    const skipCompany =
+      primaryRefs.length > 0 && !companyUrlMatchesPrimaryHosts(companyUrl, primaryRefs);
+    if (!skipCompany) {
+      rawUrls.push(context.companyURL);
+    }
+  }
+  for (const raw of rawUrls) {
     if (raw === undefined || raw.trim().length === 0) {
       continue;
     }
     try {
-      const u = new URL(raw.trim());
-      pageUrls.push(u.origin + '/');
-      pageUrls.push(u.href);
+      pushOfficialScrapeUrls(pageUrls, raw);
     } catch {
       // skip
     }
   }
   return [ ...new Set(pageUrls) ];
 }
+
+export function officialProductMaxCandidates (): number {
+  const raw = process.env['OFFICIAL_PRODUCT_MAX_CANDIDATES']?.trim();
+  if (raw === undefined || raw.length === 0) {
+    return 8;
+  }
+  const n = Number.parseInt(raw, 10);
+  return Number.isFinite(n) && n > 0 ? n : 8;
+}
+
+export type OfficialProductCandidate = {
+  url: string;
+  sourcePageUrl: string;
+  fromReferencePage: boolean;
+};
+
+type ScoredProductCandidate = ScoredLogoUrl & {
+  sourcePageUrl: string;
+  fromReferencePage: boolean;
+};
 
 function mergeCandidates (allCandidates: ScoredLogoUrl[]): string[] {
   const byUrl = new Map<string, ScoredLogoUrl>();
@@ -336,26 +525,102 @@ function mergeCandidates (allCandidates: ScoredLogoUrl[]): string[] {
     .map((c) => c.url);
 }
 
+function mergeOfficialProductCandidates (
+  allCandidates: ScoredProductCandidate[]
+): OfficialProductCandidate[] {
+  const byKey = new Map<string, ScoredProductCandidate>();
+  for (const c of allCandidates) {
+    const key = dedupeProductUrlKey(c.url);
+    const prev = byKey.get(key);
+    if (
+      prev === undefined ||
+      c.score > prev.score ||
+      (c.fromReferencePage && !prev.fromReferencePage)
+    ) {
+      byKey.set(key, c);
+    }
+  }
+  const byUrl = byKey;
+  return [ ...byUrl.values() ]
+    .sort((a, b) => {
+      if (a.fromReferencePage !== b.fromReferencePage) {
+        return a.fromReferencePage ? -1 : 1;
+      }
+      return b.score - a.score;
+    })
+    .map((c) => ({
+      url: c.url,
+      sourcePageUrl: c.sourcePageUrl,
+      fromReferencePage: c.fromReferencePage
+    }));
+}
+
 async function scrapePagesForCandidates (params: {
   pageUrls: readonly string[];
   logTag: string;
   allowedHosts: readonly string[];
   extract: (html: string, pageUrl: string, hosts: readonly string[]) => ScoredLogoUrl[];
-}): Promise<{ candidates: ScoredLogoUrl[]; allOfficialBlocked: boolean }> {
+  /** Extra score for images found on these pages (campaign reference / collection URL). */
+  boostPageUrls?: readonly string[];
+}): Promise<{ candidates: ScoredLogoUrl[]; allOfficialBlocked: boolean }>;
+async function scrapePagesForCandidates (params: {
+  pageUrls: readonly string[];
+  logTag: string;
+  allowedHosts: readonly string[];
+  extract: (html: string, pageUrl: string, hosts: readonly string[]) => ScoredLogoUrl[];
+  boostPageUrls?: readonly string[];
+  withProvenance?: true;
+}): Promise<{
+  candidates: ScoredProductCandidate[];
+  allOfficialBlocked: boolean;
+}>;
+async function scrapePagesForCandidates (params: {
+  pageUrls: readonly string[];
+  logTag: string;
+  allowedHosts: readonly string[];
+  extract: (html: string, pageUrl: string, hosts: readonly string[]) => ScoredLogoUrl[];
+  boostPageUrls?: readonly string[];
+  withProvenance?: boolean;
+}): Promise<{
+  candidates: ScoredLogoUrl[] | ScoredProductCandidate[];
+  allOfficialBlocked: boolean;
+}> {
   const seenPages = new Set<string>();
-  const allCandidates: ScoredLogoUrl[] = [];
+  const blockedHosts = new Set<string>();
+  const skippedBlockedHosts = new Set<string>();
+  const allCandidates: ScoredProductCandidate[] = [];
   let hadFetch = false;
   let allBlocked = true;
   let gotHtml = false;
+  const quietLog = /wikipedia/iu.test(params.logTag);
+  const logScoreMin = quietLog ? 70 : 0;
+  let loggedOnPage = 0;
 
   for (const pageUrl of params.pageUrls) {
     if (seenPages.has(pageUrl)) {
       continue;
     }
     seenPages.add(pageUrl);
+    let pageHost: string;
+    try {
+      pageHost = normalizeHost(new URL(pageUrl).hostname);
+    } catch {
+      continue;
+    }
+    if (shouldSkipPageForBlockedHost(pageHost, blockedHosts)) {
+      if (!skippedBlockedHosts.has(pageHost)) {
+        skippedBlockedHosts.add(pageHost);
+        console.log(`[${params.logTag}] Skipping ${pageHost} (crawler blocked earlier)`);
+      }
+      continue;
+    }
     hadFetch = true;
+    loggedOnPage = 0;
     console.log(`[${params.logTag}] Fetching: ${pageUrl}`);
     const { html, blocked } = await fetchPageHtmlDetailed(pageUrl, params.logTag);
+    if (blocked) {
+      blockedHosts.add(pageHost);
+    }
     if (!blocked) {
       allBlocked = false;
     }
@@ -364,14 +629,33 @@ async function scrapePagesForCandidates (params: {
     }
     gotHtml = true;
     const found = params.extract(html, pageUrl, params.allowedHosts);
+    const boosted =
+      params.boostPageUrls?.some((ref) => pageUrlsMatchForBoost(ref, pageUrl)) === true;
     for (const c of found) {
-      console.log(`[${params.logTag}]   score=${String(c.score)} ${c.reason} → ${c.url}`);
-      allCandidates.push(c);
+      const score = boosted ? c.score + 50 : c.score;
+      const reason = boosted ? `${c.reason}+reference-page` : c.reason;
+      if (score >= logScoreMin || loggedOnPage < 5) {
+        console.log(`[${params.logTag}]   score=${String(score)} ${reason} → ${c.url}`);
+        loggedOnPage += 1;
+      }
+      allCandidates.push({
+        url: c.url,
+        score,
+        reason,
+        sourcePageUrl: pageUrl,
+        fromReferencePage: boosted
+      });
     }
   }
 
   const allOfficialBlocked = hadFetch && allBlocked && !gotHtml;
-  return { candidates: allCandidates, allOfficialBlocked };
+  if (params.withProvenance === true) {
+    return { candidates: allCandidates, allOfficialBlocked };
+  }
+  return {
+    candidates: allCandidates.map(({ url, score, reason }) => ({ url, score, reason })),
+    allOfficialBlocked
+  };
 }
 
 /** Wikipedia / Wikimedia: infobox image, og:image, logo filenames on upload.wikimedia.org. */
@@ -492,6 +776,10 @@ export async function extractOfficialSiteLogoUrls (context: ImageSearchContext):
   return mergeCandidates(candidates);
 }
 
+function mergeCandidatesCapped (allCandidates: ScoredLogoUrl[], max: number): string[] {
+  return mergeCandidates(allCandidates).slice(0, max);
+}
+
 /** Logo URLs from Wikipedia / Wikimedia (used when official site has no valid transparent asset). */
 export async function extractWikipediaLogoUrls (context: ImageSearchContext): Promise<string[]> {
   if (!parseEnvEnabled() || !parseFallbackEnabled()) {
@@ -507,7 +795,7 @@ export async function extractWikipediaLogoUrls (context: ImageSearchContext): Pr
     extract: (html, pageUrl) => extractFallbackLogoCandidatesFromHtml(html, pageUrl)
   });
 
-  return mergeCandidates(candidates);
+  return mergeCandidatesCapped(candidates, officialLogoFallbackMax());
 }
 
 /**
@@ -527,11 +815,20 @@ export async function extractOfficialHeaderLogoUrls (
 function scoreProductImageUrl (url: string): number {
   const lower = url.toLowerCase();
   let score = 20;
+  if (isLowValueOfficialProductUrl(url)) {
+    score -= 50;
+  }
   if (/\.(jpe?g|png|webp)(\?|$)/iu.test(lower)) {
     score += 30;
   }
+  if (/\/dw\/image\//iu.test(lower)) {
+    score += 40;
+  }
   if (/product|packshot|hero|catalogue|media|cdn/iu.test(lower)) {
     score += 15;
+  }
+  if (/logo-petit|\/logo[./_-]|logo\.svg/iu.test(lower)) {
+    score -= 120;
   }
   if (isUntrustedLogoUrl(url)) {
     score -= 400;
@@ -539,7 +836,7 @@ function scoreProductImageUrl (url: string): number {
   return score;
 }
 
-function extractProductCandidatesFromHtml (
+export function extractProductCandidatesFromHtml (
   html: string,
   pageUrl: string,
   officialHosts: readonly string[]
@@ -555,12 +852,36 @@ function extractProductCandidatesFromHtml (
       continue;
     }
     const absolute = resolveAbsoluteUrl(pageUrl, src);
-    if (absolute === null || !urlHostAllowed(absolute, officialHosts)) {
+    if (absolute === null || !urlHostAllowed(absolute, officialHosts, pageUrl)) {
       continue;
     }
     const score = scoreProductImageUrl(absolute);
     if (score >= 10) {
       bucket.set(absolute, { url: absolute, score, reason: 'og:image' });
+    }
+  }
+
+  const imgAttrRe =
+    /<img[^>]+(?:src|data-src|data-lazy)\s*=\s*["']([^"']+)["'][^>]*>/giu;
+  let imgMatch: RegExpExecArray | null;
+  while ((imgMatch = imgAttrRe.exec(html)) !== null) {
+    const src = imgMatch[1];
+    if (src === undefined) {
+      continue;
+    }
+    const absolute = resolveAbsoluteUrl(pageUrl, src);
+    if (absolute === null || !urlHostAllowed(absolute, officialHosts, pageUrl)) {
+      continue;
+    }
+    let score = scoreProductImageUrl(absolute);
+    if (/\/dw\/image\//iu.test(absolute)) {
+      score += 35;
+    }
+    if (score >= 15) {
+      const prev = bucket.get(absolute);
+      if (prev === undefined || score > prev.score) {
+        bucket.set(absolute, { url: absolute, score, reason: 'grid-img' });
+      }
     }
   }
 
@@ -600,7 +921,7 @@ function extractProductCandidatesFromHtml (
         }
         for (const src of urls) {
           const absolute = resolveAbsoluteUrl(pageUrl, src);
-          if (absolute === null || !urlHostAllowed(absolute, officialHosts)) {
+          if (absolute === null || !urlHostAllowed(absolute, officialHosts, pageUrl)) {
             continue;
           }
           const score = scoreProductImageUrl(absolute) + 25;
@@ -621,23 +942,52 @@ function extractProductCandidatesFromHtml (
  */
 export async function extractOfficialProductImageUrls (
   context: ImageSearchContext
-): Promise<string[]> {
+): Promise<OfficialProductCandidate[]> {
   if (!parseEnvEnabled()) {
     return [];
   }
 
+  if (context.campaignReferenceUrl !== undefined && context.campaignReferenceUrl.trim().length > 0) {
+    console.log(`[official-product] Trying reference URL first: ${context.campaignReferenceUrl}`);
+  }
+
   const officialHosts = hostsFromContext(context);
+  const boostPageUrls = [
+    context.campaignReferenceUrl,
+    ...(context.campaignUrls ?? []),
+    context.brandURL
+  ].filter((u): u is string => u !== undefined && u.trim().length > 0);
+
   const { candidates, allOfficialBlocked } = await scrapePagesForCandidates({
     pageUrls: officialPageUrlsFromContext(context),
     logTag: 'official-product',
     allowedHosts: officialHosts,
-    extract: extractProductCandidatesFromHtml
+    extract: extractProductCandidatesFromHtml,
+    boostPageUrls,
+    withProvenance: true
   });
 
   let allCandidates = candidates;
-  const needFallback =
-    parseFallbackEnabled() &&
-    (allOfficialBlocked || allCandidates.length === 0);
+  const listingWithReference =
+    resolveReferenceListingUrls({
+      ...(context.campaignReferenceUrl !== undefined && context.campaignReferenceUrl.trim().length > 0
+        ? { campaignReferenceUrl: context.campaignReferenceUrl }
+        : {}),
+      ...(context.campaignUrls !== undefined && context.campaignUrls.length > 0
+        ? { campaignUrls: context.campaignUrls }
+        : {})
+    }).length > 0;
+
+  if (listingWithReference && (allOfficialBlocked || allCandidates.length === 0)) {
+    console.log(
+      '[official-product] Listing reference URL set — skipping Wikipedia product fallback.'
+    );
+  }
+
+  const needFallback = shouldUseWikipediaProductFallback(context, {
+    allOfficialBlocked,
+    candidateCount: allCandidates.length
+  });
 
   if (needFallback) {
     console.log(
@@ -647,10 +997,32 @@ export async function extractOfficialProductImageUrls (
       pageUrls: buildFallbackPageUrls(context),
       logTag: 'official-product-fallback',
       allowedHosts: officialHosts,
-      extract: extractProductCandidatesFromHtmlAllowingFallback
+      extract: extractProductCandidatesFromHtmlAllowingFallback,
+      withProvenance: true
     });
     allCandidates = [ ...allCandidates, ...fallback.candidates ];
   }
 
-  return mergeCandidates(allCandidates).slice(0, 3);
+  return mergeOfficialProductCandidates(allCandidates).slice(0, officialProductMaxCandidates());
+}
+
+/** Whether Wikipedia og:image fallback may run for product heroes. */
+export function shouldUseWikipediaProductFallback (
+  context: ImageSearchContext,
+  state: { allOfficialBlocked: boolean; candidateCount: number }
+): boolean {
+  const listingWithReference =
+    resolveReferenceListingUrls({
+      ...(context.campaignReferenceUrl !== undefined && context.campaignReferenceUrl.trim().length > 0
+        ? { campaignReferenceUrl: context.campaignReferenceUrl }
+        : {}),
+      ...(context.campaignUrls !== undefined && context.campaignUrls.length > 0
+        ? { campaignUrls: context.campaignUrls }
+        : {})
+    }).length > 0;
+  return (
+    parseFallbackEnabled() &&
+    !listingWithReference &&
+    (state.allOfficialBlocked || state.candidateCount === 0)
+  );
 }

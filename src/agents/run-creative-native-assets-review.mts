@@ -31,8 +31,13 @@ import {
   appendPipelineRunSummary,
   appendPipelineUsage,
   entryZeroCost,
+  formatDurationMinSec,
+  logPhaseTotalsToConsole,
+  logPipelineUsageToConsole,
   logPipelineTotalsToConsole,
-  pipelineUsagePath
+  pipelineUsagePath,
+  recomputePhaseTotals,
+  type PipelineUsageFile
 } from '../lib/creative-pipeline-usage.mts';
 import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
 import {
@@ -134,9 +139,11 @@ async function runBraveRefresh (
   }
 
   console.log('[assets-review-agent] Brave asset refresh…');
+  const refreshStartedAt = Date.now();
   const refresh = await refreshAssetsFromQueries(directoryPath, imageContext, queries, {
     excludeUrls: excludedUrls
   });
+  const refreshDurationMs = Date.now() - refreshStartedAt;
 
   if (refresh.rejectedUrls.length > 0) {
     excludedUrls = appendBraveExcludedUrls(
@@ -156,15 +163,12 @@ async function runBraveRefresh (
       action: 'assets_refresh',
       agent: 'lib/brave-image-assets.mts',
       review_round: round,
-      notes
+      phase: 'creative',
+      notes,
+      duration_ms: refreshDurationMs
     })
   );
-  console.log(`--- pipeline: assets_refresh (brave-image-assets.mts) ---`);
-  console.log(`notes : ${notes}`);
-  console.log(
-    `tokens : in=0 out=0 billed_in=0 | cost (USD): in=$${file.entries[file.entries.length - 1]!.price_usd.input.toFixed(6)} out=$${file.entries[file.entries.length - 1]!.price_usd.output.toFixed(6)} total=$${file.entries[file.entries.length - 1]!.price_usd.total.toFixed(6)}`
-  );
-  console.log('');
+  logPipelineUsageToConsole(file.entries[file.entries.length - 1]!);
 
   if (hasLogoQueries && hasProductQueries) {
     return refresh.downloaded.logos >= 1 && refresh.downloaded.products >= 1;
@@ -337,8 +341,14 @@ writeFileSync(
   { encoding: 'utf8' }
 );
 
-appendPipelineRunSummary(directoryPath, { wall_clock_ms: Date.now() - scriptRunStart });
+const scriptTotalMs = Date.now() - scriptRunStart;
+console.log(`[assets-review-agent] Script total : ${formatDurationMinSec(scriptTotalMs)}`);
+appendPipelineRunSummary(directoryPath, { wall_clock_ms: scriptTotalMs });
 logPipelineTotalsToConsole(directoryPath);
+if (existsSync(pipelineUsagePath(directoryPath))) {
+  const phaseFile = JSON.parse(readFileSync(pipelineUsagePath(directoryPath), 'utf8')) as PipelineUsageFile;
+  logPhaseTotalsToConsole(recomputePhaseTotals(phaseFile.entries));
+}
 console.log(`Output directory path: ${directoryPath}`);
 
 if (!satisfied) {

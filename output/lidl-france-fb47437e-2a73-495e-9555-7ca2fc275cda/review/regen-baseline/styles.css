@@ -1,0 +1,474 @@
+/* ======================================================
+   Lidl 320×480 Promotional Ad Creative
+   Brand palette only · French copy · Arial fallback
+   ====================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1A1A1A;
+  font-family: 'Lidl Font Pro', Arial, sans-serif;
+}
+
+/* ──────────────────────────────────────
+   AD ROOT  320 × 480
+   ────────────────────────────────────── */
+#ad-320x480 {
+  width: 320px;
+  height: 480px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #0050AA;
+  box-shadow: 0 10px 44px rgba(0,0,0,0.65);
+}
+
+/* ──────────────────────────────────────
+   HEADER  52px
+   ────────────────────────────────────── */
+.ad-header {
+  flex: 0 0 52px;
+  background: #0050AA;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 10px;
+  border-bottom: 3px solid #FFF000;
+  position: relative;
+  z-index: 20;
+}
+
+.ad-logo {
+  height: 34px;
+  width: auto;
+  display: block;
+  flex-shrink: 0;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+}
+
+.h-title {
+  color: #FFF000;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 1.8px;
+  line-height: 1;
+  display: block;
+}
+
+.h-sub {
+  color: rgba(255,255,255,0.78);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  display: block;
+}
+
+/* ──────────────────────────────────────
+   CAROUSEL  332px  (480 − 52 − 96)
+   ────────────────────────────────────── */
+.carousel {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ──────────────────────────────────────
+   SLIDES
+   ────────────────────────────────────── */
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transition: opacity 0.44s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.slide.active {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 2;
+}
+
+/* ──────────────────────────────────────
+   IMAGE WRAP  192px
+   ────────────────────────────────────── */
+.img-wrap {
+  flex: 0 0 192px;
+  position: relative;
+  overflow: hidden;
+  background: #015AA2;
+}
+
+/* gradient fade into slide body below */
+.img-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 50%,
+    rgba(0,80,170,0.52) 100%
+  );
+  pointer-events: none;
+  z-index: 4;
+}
+
+.img-wrap-red {
+  background: #E60A14;
+}
+.img-wrap-red::after {
+  background: linear-gradient(
+    to bottom,
+    transparent 50%,
+    rgba(230,10,20,0.52) 100%
+  );
+}
+
+.img-wrap-blue {
+  background: #0050AA;
+}
+/* img-wrap-blue inherits default blue gradient ::after */
+
+.img-wrap-crimson {
+  background: #D8232A;
+}
+.img-wrap-crimson::after {
+  background: linear-gradient(
+    to bottom,
+    transparent 50%,
+    rgba(216,35,42,0.52) 100%
+  );
+}
+
+/* ──────────────────────────────────────
+   PRODUCT IMAGES
+   ────────────────────────────────────── */
+.slide-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.wide-img {
+  object-fit: cover;
+  object-position: center center;
+}
+
+.tent-pos { object-position: 42% center; }
+.hair-pos { object-position: 20% center; }
+
+.pack-img {
+  object-fit: contain;
+  object-position: center center;
+}
+
+/* ──────────────────────────────────────
+   DISCOUNT BADGE
+   ────────────────────────────────────── */
+.badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 52px;
+  height: 52px;
+  background: #E60A14;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 900;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.38);
+  letter-spacing: -0.3px;
+  z-index: 6;
+  /* default: hidden until slide is active */
+  transform: scale(0.1) rotate(-20deg);
+  opacity: 0;
+}
+
+.slide.active .badge {
+  animation: badgePop 0.34s 0.1s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+@keyframes badgePop {
+  from { transform: scale(0.1) rotate(-20deg); opacity: 0; }
+  to   { transform: scale(1)   rotate(0deg);   opacity: 1; }
+}
+
+/* ──────────────────────────────────────
+   EXTRA LABELS
+   ────────────────────────────────────── */
+.event-label {
+  position: absolute;
+  bottom: 9px;
+  left: 10px;
+  background: #FFFFFF;
+  color: #D8232A;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 3px;
+  z-index: 6;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+}
+
+.tag-label {
+  position: absolute;
+  bottom: 9px;
+  left: 10px;
+  background: #0050AA;
+  color: #FFF000;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 3px;
+  z-index: 6;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+.tag-yellow {
+  background: #FFF000;
+  color: #0050AA;
+}
+
+/* ──────────────────────────────────────
+   SLIDE BODY  140px  (332 − 192)
+   ────────────────────────────────────── */
+.slide-body {
+  flex: 1;
+  background: #0050AA;
+  padding: 10px 16px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+}
+
+.body-red {
+  background: #D8232A;
+}
+
+/* ──────────────────────────────────────
+   CATEGORY LABEL
+   ────────────────────────────────────── */
+.cat-label {
+  display: block;
+  color: rgba(255,255,255,0.72);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ──────────────────────────────────────
+   PRODUCT TITLE
+   ────────────────────────────────────── */
+.prod-title {
+  color: #FFFFFF;
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.3px;
+  margin-top: 2px;
+}
+
+/* ──────────────────────────────────────
+   PRICES
+   ────────────────────────────────────── */
+.prices {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.p-old {
+  color: rgba(255,255,255,0.52);
+  font-size: 12px;
+  font-weight: 400;
+  text-decoration: line-through;
+}
+
+.p-new {
+  color: #FFF000;
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+/* ──────────────────────────────────────
+   SLIDE BODY ENTRANCE ANIMATIONS
+   ────────────────────────────────────── */
+.slide.active .cat-label  { animation: fadeUp 0.3s 0.09s ease both; }
+.slide.active .prod-title { animation: fadeUp 0.3s 0.17s ease both; }
+.slide.active .prices     { animation: fadeUp 0.3s 0.25s ease both; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* ──────────────────────────────────────
+   PROGRESS BAR
+   ────────────────────────────────────── */
+.prog-track {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255,255,255,0.12);
+  z-index: 8;
+}
+
+.prog-fill {
+  height: 100%;
+  width: 0%;
+  background: #FFF000;
+}
+
+/* ──────────────────────────────────────
+   FOOTER  96px
+   ────────────────────────────────────── */
+.ad-footer {
+  flex: 0 0 96px;
+  background: #0050AA;
+  padding: 12px 16px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255,240,0,0.14);
+  position: relative;
+  z-index: 20;
+}
+
+/* ──────────────────────────────────────
+   CTA BUTTON
+   42px height · bottom edge ≈ 42px from ad bottom (safe ✓)
+   ────────────────────────────────────── */
+.cta-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 42px;
+  background: #FFF000;
+  color: #0050AA;
+  font-family: 'Lidl Font Pro', Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 900;
+  text-decoration: none;
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: background 0.18s, box-shadow 0.18s, transform 0.1s;
+  box-shadow: 0 3px 14px rgba(255,240,0,0.35);
+  animation: ctaPulse 3s 2s ease-in-out infinite;
+}
+
+@keyframes ctaPulse {
+  0%, 100% { box-shadow: 0 3px 14px rgba(255,240,0,0.35); }
+  50%      { box-shadow: 0 5px 26px rgba(255,240,0,0.68); }
+}
+
+.cta-btn:hover {
+  background: #FFF200;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 22px rgba(255,240,0,0.62);
+  animation: none;
+}
+
+.cta-btn:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.cta-btn svg {
+  flex-shrink: 0;
+  transition: transform 0.18s ease;
+}
+
+.cta-btn:hover svg {
+  transform: translateX(3px);
+}
+
+/* ──────────────────────────────────────
+   NAVIGATION DOTS
+   dots bottom edge ≈ 24px from ad bottom (safe ✓)
+   ────────────────────────────────────── */
+.dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.42);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background 0.25s, border-color 0.25s, transform 0.25s;
+}
+
+.dot-on {
+  background: #FFF000;
+  border-color: #FFF000;
+  transform: scale(1.45);
+}
+
+.dot:hover:not(.dot-on) {
+  background: rgba(255,255,255,0.28);
+  border-color: rgba(255,255,255,0.82);
+}
+
+/* ──────────────────────────────────────
+   REDUCED MOTION
+   ────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .slide {
+    transition: opacity 0.15s ease;
+  }
+  .slide.active .badge,
+  .slide.active .cat-label,
+  .slide.active .prod-title,
+  .slide.active .prices {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+  .badge {
+    transform: none;
+    opacity: 1;
+  }
+  .cta-btn {
+    animation: none !important;
+  }
+}

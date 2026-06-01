@@ -1,0 +1,92 @@
+{
+  "companyName": "Petit Bateau SAS (Regent L.P.)",
+  "companyContext": "French heritage clothing and underwear manufacturer founded in 1893 in Troyes by Pierre Valton, famous for inventing the modern children's cotton brief in 1918. Owned by Groupe Rocher from 1988 to 2025, the company was acquired in September 2025 by the U.S. investment fund Regent. It employs ~2,400 people, operates around 370 stores in 55 countries, and produces ~28 million garments per year.",
+  "companyURL": "https://www.petit-bateau.fr",
+  "brandName": "Petit Bateau",
+  "brandContext": "Iconic French children's clothing label rooted in 'Liberté, Qualité, Durabilité'. Known for its marinière stripes, soft cotton bodies, t-shirts and cirés, the brand dresses babies, kids and the whole family with timeless, durable, sea-inspired wardrobe staples designed in Paris.",
+  "brandURL": "https://www.petit-bateau.fr/collection/collection-ete/",
+  "logoFileUrls": [
+    "https://www.petit-bateau.fr/on/demandware.static/Sites-PB_FR-Site/-/default/dw89c30cd2/images/logo-petit-bateau.svg"
+  ],
+  "productName": ":Collection Été Enfants",
+  "campaignContext": "Promotion de la collection d'été pour enfants",
+  "productPictureUrls": [
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Library-Sites-SharedPetitBateauLibrary/default/dwf1b4a230/1_2026/05_MAI/PLEIN_ETE/MACARON_PLEIN_ETE_tshirt.jpg?sw=200&amp;sh=200&amp;sm=fit&amp;sfrm=jpg&amp;q=100",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Library-Sites-SharedPetitBateauLibrary/default/dwb70ccaf8/1_2026/05_MAI/PLEIN_ETE/MACARON_PLEIN_ETE_robe.jpg?sw=200&amp;sh=200&amp;sm=fit&amp;sfrm=jpg&amp;q=100",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Library-Sites-SharedPetitBateauLibrary/default/dw9e7c2410/1_2026/05_MAI/PLEIN_ETE/MACARON_PLEIN_ETE_maillot.jpg?sw=200&amp;sh=200&amp;sm=fit&amp;sfrm=jpg&amp;q=100",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Library-Sites-SharedPetitBateauLibrary/default/dw12b3daf7/1_2026/05_MAI/PLEIN_ETE/MACARON_PLEIN_ETE_pyj.jpg?sw=200&amp;sh=200&amp;sm=fit&amp;sfrm=jpg&amp;q=100",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Library-Sites-SharedPetitBateauLibrary/default/dw8089cfd0/1_2026/05_MAI/PLEIN_ETE/MACARON_PLEIN_ETE_short.jpg?sw=200&amp;sh=200&amp;sm=fit&amp;sfrm=jpg&amp;q=100",
+    "https://www.petit-bateau.fr/dw/image/v2/BCKL_PRD/on/demandware.static/-/Library-Sites-SharedPetitBateauLibrary/default/dw4885fbec/1_2026/05_MAI/PLEIN_ETE/MACARON_PLEIN_ETE_ensemble.jpg?sw=200&amp;sh=200&amp;sm=fit&amp;sfrm=jpg&amp;q=100"
+  ],
+  "primaryColorPalette": [
+    "#112351",
+    "#FFFFFF",
+    "#E2001A"
+  ],
+  "secondaryColorPalette": [
+    "#7FB3D5",
+    "#F4D35E",
+    "#F8C8C2",
+    "#F1E9D2",
+    "#9CC2A4",
+    "#1F3A5F"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Caslon",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Brand wordmark and elegant editorial headlines, evoking the heritage French serif feel of Petit Bateau"
+    },
+    {
+      "fontFamily": "Playfair Display",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Campaign hero headlines and section titles for the summer collection"
+    },
+    {
+      "fontFamily": "Montserrat",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Subheadings, navigation links and product category labels"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions and UI text"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 600,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Call-to-action buttons, price tags and promotional badges"
+    }
+  ],
+  "brandVision": "Offrir à chaque enfant la liberté de bouger, grandir et explorer le monde dans des vêtements doux, durables et intemporels, transmissibles de génération en génération. Petit Bateau veut habiller l'enfance avec optimisme, créativité et un engagement sincère en faveur d'une mode plus responsable et circulaire.",
+  "brandValues": "Liberté, Qualité, Durabilité, Engagement. Savoir-faire français depuis 1893, ancrage à Troyes, coton ultra-doux certifié Oeko-Tex, économie circulaire et seconde main, esprit marin et joyeux de l'enfance, transmission entre générations.",
+  "logoImageSearchQueries": [
+    "site:petit-bateau.fr logo svg",
+    "Petit Bateau logo svg transparent",
+    "site:en.wikipedia.org Petit Bateau logo",
+    "site:commons.wikimedia.org Petit Bateau logo",
+    "Petit Bateau logo navy sailboat official",
+    "Petit Bateau marque logo png transparent"
+  ],
+  "productImageSearchQueries": [
+    "site:petit-bateau.fr collection ete enfant",
+    "Petit Bateau collection été enfant 2026 packshot",
+    "Petit Bateau short bermuda enfant été",
+    "Petit Bateau robe été fille marinière",
+    "Petit Bateau maillot de bain enfant",
+    "Petit Bateau t-shirt rayé enfant été",
+    "Petit Bateau pyjama été enfant coton",
+    "Petit Bateau ensemble été bébé garçon",
+    "Petit Bateau collection été campagne enfants",
+    "site:petit-bateau.fr vetement enfant ete"
+  ]
+}

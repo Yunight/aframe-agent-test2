@@ -1,3 +1,4 @@
+import { formatIdToAdDomId } from './creative-native-ad-dom.mts';
 import type { AdFormatSelection } from './studio-ad-formats.mts';
 import {
   appendPipelineUsage,
@@ -67,16 +68,12 @@ function parsePositiveIntEnv (name: string, fallback: number, max: number): numb
   return Math.min(n, max);
 }
 
-function formatIdToDomId (formatId: string): string {
-  return `ad-${formatId.replace(/×/g, 'x')}`;
-}
-
 function sanitizeFileSegment (value: string): string {
   return value.replace(/[^a-zA-Z0-9._-]+/g, '_').slice(0, 120);
 }
 
 function buildSelectorCandidates (format: AdFormatSelection): string[] {
-  const domId = formatIdToDomId(format.id);
+  const domId = formatIdToAdDomId(format.id);
   return [
     `#${domId}`,
     `#${domId.replace(/:/g, '\\:')}`,
@@ -161,7 +158,6 @@ async function captureFormatScreenshots (
   const shots: ScreenshotManifestEntry['shots'] = [];
   let resolvedSelector: string | null = null;
   let resolveError: string | null = null;
-
   try {
     const context = await browser.newContext({
       viewport: {

@@ -1,0 +1,14 @@
+{
+  "ui_review_rounds_run": 1,
+  "max_ui_review_rounds": 3,
+  "satisfied": true,
+  "summary": "300x600 ad unit meets all critical QA requirements: correct pixel dimensions (300×600 px), proper id=\"ad-300x600\" container, readable typography hierarchy, style-guide compliant colors (#112351 navy header, #E2001A red CTA, #F1E9D2 cream background), visible Petit Bateau logo in header, product images displayed correctly across carousel states (ENSEMBLE → MAILLOT → PYJAMA), French copy legible and accurate, CTA button properly spaced with safe margin from bottom edge. Carousel transitions smoothly between product variants with matching dot indicators. No blockers detected.",
+  "findings": [],
+  "screenshots_dir": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\petit-bateau-eaf9ca57-dc36-4c7d-8c73-2458f9a10d63\\review\\screenshots",
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\petit-bateau-eaf9ca57-dc36-4c7d-8c73-2458f9a10d63\\pipeline-usage.json",
+  "pipeline_totals_usd": {
+    "input": 0.460585,
+    "output": 0.238965,
+    "total": 0.69955
+  }
+}

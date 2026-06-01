@@ -67,12 +67,12 @@ export async function anthropicImageSearch (params: {
   const maxUses = Math.min(8, Math.max(2, Math.ceil(params.num / 2)));
   const client = new Anthropic({ apiKey });
 
-  const webSearchTool: Anthropic.Messages.Tool = {
+  const webSearchTool = {
     type: 'web_search_20250305',
     name: 'web_search',
     max_uses: maxUses,
     ...(params.officialHosts.length > 0 ? { allowed_domains: [ ...params.officialHosts ] } : {})
-  };
+  } as unknown as Anthropic.Messages.Tool;
 
   const messages: Anthropic.Messages.MessageParam[] = [
     {

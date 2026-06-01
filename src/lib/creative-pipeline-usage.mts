@@ -5,6 +5,7 @@ export type PipelineAction =
   | 'style_guide'
   | 'assets_review'
   | 'assets_refresh'
+  | 'asset_descriptions'
   | 'creative_generation'
   | 'creative_regeneration'
   | 'screenshots'
@@ -38,6 +39,18 @@ export type ApiCallTiming = {
   label?: string;
 };
 
+export type PipelinePhase = 'style_guide' | 'creative';
+
+export type PhaseDurationMs = {
+  style_guide: number;
+  creative: number;
+};
+
+export type SubStepTiming = {
+  label: string;
+  duration_ms: number;
+};
+
 export type PipelineUsageEntry = {
   action: PipelineAction;
   agent: string;
@@ -52,10 +65,14 @@ export type PipelineUsageEntry = {
   billed_input_tokens: number;
   price_usd: PriceUsd;
   notes?: string;
+  /** Studio job phase when the entry was recorded. */
+  phase?: PipelinePhase;
   /** Wall-clock for the whole step (script), including non-API work. */
   duration_ms?: number;
   /** One row per Claude API response in this step. */
   api_call_timings?: ApiCallTiming[];
+  /** Non-API sub-steps within a single ledger entry (e.g. asset downloads). */
+  sub_step_timings?: SubStepTiming[];
 };
 
 export type PipelineUsageTotals = {
@@ -69,6 +86,7 @@ export type PipelineUsageTotals = {
   duration_ms: number;
   claude_api_duration_ms: number;
   wall_clock_ms: number;
+  phase_duration_ms: PhaseDurationMs;
 };
 
 export type PipelineRunSummary = {
@@ -76,6 +94,7 @@ export type PipelineRunSummary = {
   ended_at: string;
   claude_api_calls: number;
   claude_api_duration_ms: number;
+  phase_duration_ms?: PhaseDurationMs;
   studio_job_id?: string;
 };
 
@@ -107,6 +126,61 @@ export async function timedAnthropicCall<T> (
   return { result, duration_ms: Date.now() - start };
 }
 
+export async function timedStep<T> (
+  _label: string,
+  fn: () => Promise<T>
+): Promise<{ result: T; duration_ms: number }> {
+  const start = Date.now();
+  const result = await fn();
+  return { result, duration_ms: Date.now() - start };
+}
+
+/** `PIPELINE_PHASE` set by style-guide studio jobs (`style_guide` | `creative`). */
+export function resolvePipelinePhaseFromEnv (): PipelinePhase | undefined {
+  const raw = process.env['PIPELINE_PHASE']?.trim();
+  if (raw === 'style_guide' || raw === 'creative') {
+    return raw;
+  }
+  return undefined;
+}
+
+export function inferPhaseFromEntry (entry: PipelineUsageEntry): PipelinePhase {
+  if (entry.phase !== undefined) {
+    return entry.phase;
+  }
+  if (entry.action === 'style_guide') {
+    return 'style_guide';
+  }
+  return 'creative';
+}
+
+export function recomputePhaseTotals (entries: readonly PipelineUsageEntry[]): PhaseDurationMs {
+  const totals: PhaseDurationMs = { style_guide: 0, creative: 0 };
+  for (const e of entries) {
+    const phase = inferPhaseFromEntry(e);
+    totals[phase] += e.duration_ms ?? 0;
+  }
+  return totals;
+}
+
+export function logPhaseTotalsToConsole (phaseTotals: PhaseDurationMs): void {
+  console.log(`=== phase style guide : ${formatDurationMinSec(phaseTotals.style_guide)} ===`);
+  console.log(`=== phase format de pub : ${formatDurationMinSec(phaseTotals.creative)} ===`);
+  console.log('');
+}
+
+function mergePhaseFields (
+  params: { phase?: PipelinePhase; sub_step_timings?: SubStepTiming[] }
+): Pick<PipelineUsageEntry, 'phase' | 'sub_step_timings'> {
+  const phase = params.phase ?? resolvePipelinePhaseFromEnv();
+  return {
+    ...(phase !== undefined ? { phase } : {}),
+    ...(params.sub_step_timings !== undefined && params.sub_step_timings.length > 0
+      ? { sub_step_timings: params.sub_step_timings }
+      : {})
+  };
+}
+
 export function sumApiCallDurationMs (timings: readonly ApiCallTiming[] | undefined): number {
   if (timings === undefined || timings.length === 0) {
     return 0;
@@ -115,13 +189,21 @@ export function sumApiCallDurationMs (timings: readonly ApiCallTiming[] | undefi
 }
 
 export function codegenTurnTimingsToApiCallTimings (
-  turns: ReadonlyArray<{ turn: number; duration_ms: number; stop_reason: string | null }>
+  turns: ReadonlyArray<{
+    turn: number;
+    duration_ms: number;
+    stop_reason: string | null;
+    format_label?: string;
+  }>
 ): ApiCallTiming[] {
   return turns.map((t) => ({
     call_index: t.turn,
     duration_ms: t.duration_ms,
     stop_reason: t.stop_reason,
-    label: `codegen turn ${String(t.turn)}`
+    label:
+      t.format_label !== undefined && t.format_label.length > 0
+        ? `codegen ${t.format_label} turn ${String(t.turn)}`
+        : `codegen turn ${String(t.turn)}`
   }));
 }
 
@@ -266,7 +348,8 @@ export function recomputeTotals (entries: readonly PipelineUsageEntry[]): Pipeli
     price_usd: { input: 0, output: 0, total: 0 },
     duration_ms: 0,
     claude_api_duration_ms: 0,
-    wall_clock_ms: 0
+    wall_clock_ms: 0,
+    phase_duration_ms: { style_guide: 0, creative: 0 }
   };
   for (const e of entries) {
     totals.api_calls += e.api_calls;
@@ -285,6 +368,7 @@ export function recomputeTotals (entries: readonly PipelineUsageEntry[]): Pipeli
   totals.price_usd.output = roundUsd6(totals.price_usd.output);
   totals.price_usd.total = roundUsd6(totals.price_usd.total);
   totals.wall_clock_ms = wallClockMsFromEntryTimestamps(entries);
+  totals.phase_duration_ms = recomputePhaseTotals(entries);
   return totals;
 }
 
@@ -337,8 +421,10 @@ export function entryFromAccumulator (
     acc: UsageAccumulator;
     review_round?: number | null;
     notes?: string;
+    phase?: PipelinePhase;
     duration_ms?: number;
     api_call_timings?: ApiCallTiming[];
+    sub_step_timings?: SubStepTiming[];
   }
 ): Omit<PipelineUsageEntry, 'timestamp'> {
   const billed = billedInputTokensFromAccumulator(params.acc);
@@ -358,7 +444,8 @@ export function entryFromAccumulator (
     ...(params.duration_ms !== undefined ? { duration_ms: params.duration_ms } : {}),
     ...(params.api_call_timings !== undefined && params.api_call_timings.length > 0
       ? { api_call_timings: params.api_call_timings }
-      : {})
+      : {}),
+    ...mergePhaseFields(params)
   };
 }
 
@@ -370,8 +457,10 @@ export function entryFromSingleUsage (
     usage: UsageLike;
     review_round?: number | null;
     notes?: string;
+    phase?: PipelinePhase;
     duration_ms?: number;
     api_call_timings?: ApiCallTiming[];
+    sub_step_timings?: SubStepTiming[];
   }
 ): Omit<PipelineUsageEntry, 'timestamp'> {
   const billed = billedInputFromUsage(params.usage);
@@ -391,7 +480,8 @@ export function entryFromSingleUsage (
     ...(params.duration_ms !== undefined ? { duration_ms: params.duration_ms } : {}),
     ...(params.api_call_timings !== undefined && params.api_call_timings.length > 0
       ? { api_call_timings: params.api_call_timings }
-      : {})
+      : {}),
+    ...mergePhaseFields(params)
   };
 }
 
@@ -401,7 +491,9 @@ export function entryZeroCost (
     agent: string;
     review_round?: number | null;
     notes?: string;
+    phase?: PipelinePhase;
     duration_ms?: number;
+    sub_step_timings?: SubStepTiming[];
   }
 ): Omit<PipelineUsageEntry, 'timestamp'> {
   return {
@@ -417,7 +509,8 @@ export function entryZeroCost (
     billed_input_tokens: 0,
     price_usd: { input: 0, output: 0, total: 0 },
     ...(params.notes !== undefined ? { notes: params.notes } : {}),
-    ...(params.duration_ms !== undefined ? { duration_ms: params.duration_ms } : {})
+    ...(params.duration_ms !== undefined ? { duration_ms: params.duration_ms } : {}),
+    ...mergePhaseFields(params)
   };
 }
 
@@ -432,6 +525,11 @@ export function logPipelineUsageToConsole (entry: PipelineUsageEntry): void {
   if (entry.duration_ms !== undefined) {
     console.log(`step duration : ${formatDurationMinSec(entry.duration_ms)}`);
   }
+  if (entry.sub_step_timings !== undefined && entry.sub_step_timings.length > 0) {
+    for (const s of entry.sub_step_timings) {
+      console.log(`  sub-step : ${s.label} — ${formatDurationMinSec(s.duration_ms)}`);
+    }
+  }
   if (entry.api_call_timings !== undefined && entry.api_call_timings.length > 0) {
     for (const t of entry.api_call_timings) {
       const label = t.label ?? `call ${String(t.call_index)}`;
@@ -439,6 +537,9 @@ export function logPipelineUsageToConsole (entry: PipelineUsageEntry): void {
       console.log(`  claude api : ${label} — ${formatDurationMinSec(t.duration_ms)}${stop}`);
     }
     console.log(`  claude api sum : ${formatDurationMinSec(sumApiCallDurationMs(entry.api_call_timings))}`);
+  }
+  if (entry.phase !== undefined) {
+    console.log(`phase : ${entry.phase}`);
   }
   if (entry.notes !== undefined && entry.notes.length > 0) {
     console.log(`notes : ${entry.notes}`);
@@ -469,6 +570,9 @@ export function logPipelineTotalsToConsole (directoryPath: string): void {
     console.log(`run wall clock : ${formatDurationMinSec(file.run_summary.wall_clock_ms)}`);
     console.log(`run claude api calls : ${String(file.run_summary.claude_api_calls)}`);
   }
+  if (file.totals.phase_duration_ms.style_guide > 0 || file.totals.phase_duration_ms.creative > 0) {
+    logPhaseTotalsToConsole(file.totals.phase_duration_ms);
+  }
   console.log(`billed input tokens : ${String(file.totals.billed_input_tokens)}`);
   console.log(`output tokens : ${String(file.totals.output_tokens)}`);
   console.log(`total price (USD) : ${String(file.totals.price_usd.total)}`);
@@ -489,6 +593,7 @@ export function appendPipelineRunSummary (
     ended_at: new Date().toISOString(),
     claude_api_calls: countClaudeApiCalls(file.entries),
     claude_api_duration_ms: file.totals.claude_api_duration_ms,
+    phase_duration_ms: file.totals.phase_duration_ms,
     ...(params.studio_job_id !== undefined ? { studio_job_id: params.studio_job_id } : {})
   };
   file.updated_at = new Date().toISOString();
@@ -569,6 +674,7 @@ export function appendFromCreativeNativeTokenFile (
     agent: 'agents/gen-creative-code-native.mts',
     model,
     acc,
+    phase: 'creative',
     review_round: reviewRound,
     ...(raw.duration_ms_total !== undefined ? { duration_ms: raw.duration_ms_total } : {}),
     ...(apiCallTimings !== undefined ? { api_call_timings: apiCallTimings } : {})

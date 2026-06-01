@@ -1,0 +1,124 @@
+{
+  "generated_at": "2026-06-01T17:23:40.966Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/120px-Logo_de_Peugeot_depuis_2010.svg.png",
+      "fileName": "120px-Logo_de_Peugeot_depuis_2010.svg.png",
+      "fileType": "logos",
+      "description": "Iconic Peugeot lion head logo with wordmark in dark gray/black. Compact 120px format ideal for banner header placement, corner lockups, or small logo-mark applications. Clean, recognizable brand identifier for all ad sizes.",
+      "layout_hints": [
+        "logo-lockup",
+        "header-placement",
+        "compact"
+      ],
+      "dominant_colors": [
+        "#333333",
+        "#000000"
+      ]
+    },
+    {
+      "asset_id": "products/27ekw1yp-hybride2.jpg",
+      "fileName": "27ekw1yp-hybride2.jpg",
+      "fileType": "products",
+      "description": "Peugeot 208 Hybrid rear three-quarter view against clean white background. Deep red metallic finish with black roof and modern wheel design. Readable '208' badging on license plate area. Perfect hero or rotating packshot for hybrid variant showcase.",
+      "layout_hints": [
+        "hero",
+        "packshot-centre",
+        "three-quarter-view",
+        "hybride"
+      ],
+      "dominant_colors": [
+        "#C41E3A",
+        "#000000",
+        "#FFFFFF"
+      ]
+    },
+    {
+      "asset_id": "products/G10Pm3D98r8XHaowa9F9fV7v5tYuzmMmQ6WHb0ME-cms_desktop.webp",
+      "fileName": "G10Pm3D98r8XHaowa9F9fV7v5tYuzmMmQ6WHb0ME-cms_desktop.webp",
+      "fileType": "products",
+      "description": "Peugeot NEW E-208 electric in vibrant lime-yellow positioned against modern turquoise and green geometric background with coastal landscape. Contemporary, energetic composition emphasizing eco-friendly positioning. 'NEW E-208' text visible on side panel.",
+      "layout_hints": [
+        "hero",
+        "modern-background",
+        "electric-variant",
+        "landscape-integration"
+      ],
+      "dominant_colors": [
+        "#B4E02C",
+        "#00BCD4",
+        "#008B7F",
+        "#FFFFFF"
+      ]
+    },
+    {
+      "asset_id": "products/m_208-arg.jpg",
+      "fileName": "m_208-arg.jpg",
+      "fileType": "products",
+      "description": "Peugeot 208 in striking red metallic, dramatically lit at dusk on rocky coastal terrain with moody blue-purple sky. Nighttime atmospheric composition ideal for lifestyle-focused campaigns. Vehicle positioned to reveal profile detail with natural shadow ambiance.",
+      "layout_hints": [
+        "hero",
+        "lifestyle",
+        "atmospheric",
+        "dusk-lighting"
+      ],
+      "dominant_colors": [
+        "#E63946",
+        "#1A3A52",
+        "#8B7355"
+      ]
+    },
+    {
+      "asset_id": "products/nwn74sjd-puretech_1.jpg",
+      "fileName": "nwn74sjd-puretech_1.jpg",
+      "fileType": "products",
+      "description": "Peugeot 208 PureTech front three-quarter view in fresh lime-green with dynamic LED headlight design and prominent grille. Clean white background with soft shadow. Readable '208' badging front-center. Ideal rotating hero for PureTech petrol variant.",
+      "layout_hints": [
+        "hero",
+        "packshot-centre",
+        "puretech-variant",
+        "front-three-quarter"
+      ],
+      "dominant_colors": [
+        "#B4E02C",
+        "#FFFFFF",
+        "#333333"
+      ]
+    },
+    {
+      "asset_id": "products/qpjp97fi-puretech_2.jpg",
+      "fileName": "qpjp97fi-puretech_2.jpg",
+      "fileType": "products",
+      "description": "Peugeot 208 PureTech rear three-quarter on white background, lime-green with modern LED tail-light signature and refined wheel styling. Readable '208' badging on rear bumper. Complements front variant for 360-degree product rotation showcase.",
+      "layout_hints": [
+        "hero",
+        "packshot-centre",
+        "puretech-variant",
+        "rear-three-quarter"
+      ],
+      "dominant_colors": [
+        "#B4E02C",
+        "#FFFFFF",
+        "#000000"
+      ]
+    },
+    {
+      "asset_id": "products/S7-peugeot-208-nouvelle-gamme-et-une-serie-speciale-style-186143.jpg",
+      "fileName": "S7-peugeot-208-nouvelle-gamme-et-une-serie-speciale-style-186143.jpg",
+      "fileType": "products",
+      "description": "Peugeot 208 dynamic driving shot in brilliant electric blue on highway with motion blur trees. Front three-quarter angle showcasing LED signature lights and modern grille design. Readable license plate format. Action-oriented composition emphasizing performance and new generation appeal.",
+      "layout_hints": [
+        "hero",
+        "dynamic-driving",
+        "action-lifestyle",
+        "nouvelle-gamme"
+      ],
+      "dominant_colors": [
+        "#0066CC",
+        "#000000",
+        "#7D8B8F"
+      ]
+    }
+  ]
+}

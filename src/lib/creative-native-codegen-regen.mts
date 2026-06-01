@@ -55,9 +55,13 @@ export function loadExistingCodeBundle (codeDirectoryPath: string): ExistingCode
 /** Format bundle for injection into the regen user message. */
 export function formatExistingBundleForPrompt (bundle: ExistingCodeBundle): string {
   const anyTruncated = bundle.files.some((f) => f.truncated);
+  const lineCounts = bundle.files
+    .map((f) => `${f.fileName}: ${String(f.fileContent.split('\n').length)} lines`)
+    .join(', ');
   const header =
     '--- EXISTING CODE BUNDLE (patch this; do NOT replace with a new design or layout) ---' +
-    (anyTruncated ? '\n(Some files were truncated for context limits; preserve structure and fix blockers.)' : '');
+    `\nLine counts: ${lineCounts}. Your output must stay within ~5% line changes per file unless a blocker explicitly requires more.` +
+    (anyTruncated ? '\n(Some files were truncated for context limits; preserve structure and fix blockers only.)' : '');
 
   const sections = bundle.files.map(
     (f) => `### ${f.fileName}\n\`\`\`\n${f.fileContent}\n\`\`\``

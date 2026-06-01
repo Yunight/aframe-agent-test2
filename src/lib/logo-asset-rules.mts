@@ -2,7 +2,8 @@
  * Heuristics: logos/ should contain brand wordmarks only, not product packshots.
  */
 
-import { existsSync, readdirSync, unlinkSync } from 'node:fs';
+import { listAssetImageFiles } from './asset-sidecar-files.mts';
+import { existsSync, unlinkSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { validateLogoAssetFile } from './logo-transparency-check.mts';
 
@@ -72,7 +73,7 @@ export async function enforceSingleCanonicalLogo (
     return { kept: null, removed: [] };
   }
 
-  const files = readdirSync(logosDir).filter((name) => !name.startsWith('.'));
+  const files = listAssetImageFiles(directoryPath, 'logos');
   if (files.length <= CANONICAL_LOGO_COUNT) {
     return { kept: files[0] ?? null, removed: [] };
   }

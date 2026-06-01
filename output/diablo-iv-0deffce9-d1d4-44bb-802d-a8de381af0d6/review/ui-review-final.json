@@ -1,0 +1,14 @@
+{
+  "ui_review_rounds_run": 1,
+  "max_ui_review_rounds": 3,
+  "satisfied": true,
+  "summary": "The 320×480 mobile display ad for Diablo IV: Lord of Hatred meets all mandatory requirements. The ad frame is correctly sized, the Diablo logo is clearly visible and well-scaled, typography hierarchy is strong with proper French copy, the primary CTA button maintains safe inset spacing (>20px from bottom), and the design adheres to the brand's dark gothic aesthetic with appropriate color palette usage. The animated sequence (initial → demon/mage magical effect → settled architectural scene) is visually coherent and reinforces the campaign theme. No structural or critical accessibility issues detected.",
+  "findings": [],
+  "screenshots_dir": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\diablo-iv-0deffce9-d1d4-44bb-802d-a8de381af0d6\\review\\screenshots",
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\diablo-iv-0deffce9-d1d4-44bb-802d-a8de381af0d6\\pipeline-usage.json",
+  "pipeline_totals_usd": {
+    "input": 0.419456,
+    "output": 0.14869,
+    "total": 0.568146
+  }
+}

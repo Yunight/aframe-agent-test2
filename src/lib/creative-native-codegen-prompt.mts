@@ -6,7 +6,7 @@ import { loadDesignSkillGuidance } from './creative-native-skills.mts';
 import type { Anthropic } from '@anthropic-ai/sdk';
 
 export const DEFAULT_CREATIVE_MODEL = 'claude-opus-4-6';
-export const DEFAULT_CREATIVE_REGEN_MODEL = 'claude-haiku-4-5-20251001';
+export const DEFAULT_CREATIVE_REGEN_MODEL = 'claude-sonnet-4-6';
 
 export function resolveCreativeModel (isRegen: boolean): string {
   if (isRegen) {
@@ -79,11 +79,14 @@ The user message includes the CURRENT index.html, styles.css, and app.js. Your j
 
 Rules (strict):
 - Fix ONLY issues described in the UI review feedback (blockers required; warns if easy).
-- Preserve the existing creative concept, layout structure, DOM hierarchy, class names, and JS behavior unless a blocker requires structural change.
+- **Surgical patch only**: change the minimum lines needed (typically &lt; 5% of each file). Do NOT rewrite styles.css or index.html from scratch.
+- If a fix is one CSS rule or one HTML attribute, change only that — leave all unrelated rules, selectors, animations, and copy unchanged.
+- Preserve the existing creative concept, layout structure, DOM hierarchy, class names, and JS behavior unless a blocker requires a one-line structural fix.
 - Do NOT invent a new format, new variant, or different visual concept.
 - Do NOT add or remove IAB ad formats; keep the same format wrappers and ids (e.g. id="ad-{formatId}").
 - Keep the same local asset paths (./logo.svg, product images) unless a blocker is about a wrong path.
-- Return the complete updated index.html, styles.css, and app.js (structured output schema) — but content should be the existing code with surgical edits.
+- Return the complete updated index.html, styles.css, and app.js (structured output schema) — file bodies must be the existing code plus tiny edits, not a new design.
+- When fixing capture/DOM issues: add or fix id="ad-{formatId}" and dimensions only — do not restyle the creative.
 
 Stack: plain HTML5, CSS, JavaScript only. No React, bundlers, Tailwind, or npm. file:// compatible.
 
@@ -115,7 +118,8 @@ Required stack: plain HTML5, CSS, and JavaScript only. No React, Vue, Svelte, no
 no Tailwind/DaisyUI/npm dependencies, no JSX/TSX, no build step. The result must open from disk
 (file://) in a browser when index.html is loaded.
 
-Assets: use ONLY the local logo and product files described in the user message (already downloaded).
+Assets: use ONLY the local logo and product files described in the user message (already downloaded and pre-described).
+The "Visual description (authoritative)" lines in the user message are the ground truth for each asset — do NOT re-scan, re-describe, or infer new pixels; use only those descriptions and the local paths (e.g. ./product.jpg).
 Do NOT search the web for new images, fonts, or brand facts — everything needed is in the style guide JSON and local assets.
 
 ${buildCreativeVersionsInstruction(params.adFormats)}

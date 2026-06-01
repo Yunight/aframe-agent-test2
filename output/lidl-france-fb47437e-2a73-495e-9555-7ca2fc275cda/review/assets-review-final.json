@@ -1,0 +1,11 @@
+{
+  "review_phase": "style_guide",
+  "assets_review_rounds_run": 1,
+  "max_assets_review_rounds": 2,
+  "satisfied": true,
+  "logo_locked": true,
+  "summary": "Deterministic OK",
+  "findings": [],
+  "asset_descriptions_path": "review/asset-descriptions.json",
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\lidl-france-fb47437e-2a73-495e-9555-7ca2fc275cda\\pipeline-usage.json"
+}

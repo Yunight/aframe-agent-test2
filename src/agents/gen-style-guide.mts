@@ -8,6 +8,7 @@ import {
 } from '../lib/brave-image-assets.mts';
 import { collectSingleTransparentLogo } from '../lib/logo-pipeline.mts';
 import { extractOfficialProductImageUrls } from '../lib/official-site-logo-extract.mts';
+import { resolveReferenceListingUrls } from '../lib/style-guide-context.mts';
 import { basename, join, extname } from 'node:path';
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
@@ -23,6 +24,12 @@ import {
   parseStyleGuideContextPrompt
 } from '../lib/style-guide-context.mts';
 import {
+  extractHttpsUrlsFromText,
+  normalizeBrandAndCompanyUrls,
+  preflightCampaignReferenceUrl,
+  resolveCampaignReferenceUrl
+} from '../lib/style-guide-urls.mts';
+import {
   assertImageSearchProviderConfigured,
   imageSearchLogPrefix,
   resolveImageSearchProvider
@@ -31,10 +38,16 @@ import {
   appendPipelineRunSummary,
   appendPipelineUsage,
   entryFromAccumulator,
+  formatDurationMinSec,
+  logPhaseTotalsToConsole,
   logPipelineUsageToConsole,
   logReadableAnthropicCall,
+  recomputePhaseTotals,
+  sumApiCallDurationMs,
   timedAnthropicCall,
-  type ApiCallTiming
+  timedStep,
+  type ApiCallTiming,
+  type SubStepTiming
 } from '../lib/creative-pipeline-usage.mts';
 
 const STYLE_GUIDE_MODEL = 'claude-opus-4-7';
@@ -342,6 +355,11 @@ const brandStyleGuideSchema = z.object({
     .string()
     .optional()
     .describe('Copy of the user campaign context clause (filled by the pipeline from STYLE_GUIDE_CONTEXT).'),
+  campaignReferenceUrl: z
+    .string()
+    .url()
+    .optional()
+    .describe('User-provided campaign/collection URL (filled by the pipeline, not the model).'),
   productPictureUrls: z.array(z.url()).describe('List of product pictures or packshots URLs in different variants.'),
   primaryColorPalette: z
     .array(styleGuideHexColor)
@@ -392,7 +410,8 @@ export type StyleGuide = z.infer<typeof brandStyleGuideSchema>;
 const brandStyleGuideModelSchema = brandStyleGuideSchema
   .omit({
     logoFileUrls: true,
-    productPictureUrls: true
+    productPictureUrls: true,
+    campaignReferenceUrl: true
   })
   .extend({
     logoImageSearchQueries: logoImageSearchQueriesModel,
@@ -412,7 +431,27 @@ console.log(
 );
 
 const contextPrompt = resolveStyleGuideContextPrompt(defaultStyleGuideContextPrompt());
-const parsedUserContext = parseStyleGuideContextPrompt(contextPrompt);
+const parsedUserContext = parseStyleGuideContextPrompt(contextPrompt, extractHttpsUrlsFromText);
+
+let campaignReferenceUrl = resolveCampaignReferenceUrl({
+  explicit: process.env['STYLE_GUIDE_REFERENCE_URL']?.trim() ?? null,
+  fromPromptUrls: parsedUserContext.campaignUrls
+});
+if (campaignReferenceUrl !== null) {
+  const preflight = await preflightCampaignReferenceUrl(campaignReferenceUrl);
+  console.log(preflight.logLine);
+  campaignReferenceUrl = preflight.normalizedUrl;
+}
+
+const referenceUrlBlock =
+  campaignReferenceUrl !== null
+    ? `Campaign reference URL (must use as brandURL — do not append invented filter segments): ${campaignReferenceUrl}\n\n`
+    : '';
+const userPromptContent = `${referenceUrlBlock}${contextPrompt}`;
+const referenceUrlSystemNote =
+  campaignReferenceUrl !== null
+    ? `\n      When a campaign reference URL is provided in the user message, set brandURL to that exact URL (no invented path segments).`
+    : '';
 
 const anthropicClient = new Anthropic({
   apiKey: anthropicApiKey
@@ -424,7 +463,7 @@ if (cliArguments.length > 0) {
 
 const messages: Anthropic.Messages.MessageParam[] = [{
   role: 'user',
-  content: contextPrompt
+  content: userPromptContent
 }];
 let styleGuideFromModel: z.infer<typeof brandStyleGuideModelSchema> | null = null;
 const localSkillGuidance = loadSkillGuidance();
@@ -466,7 +505,8 @@ while (true) {
 
       Product images (must match the user message context):
       - The first user message states brand and campaign context. productName MUST be the hero product from that context (e.g. "SEAL U", "208 GTI"), not a different model from the same brand.
-      - brandURL should be the official page for that product when possible.
+      - brandURL should be the official page for that product or collection when possible.
+      - Use the exact HTTPS URL from the user message when provided (collection/listing page). Do not append invented filter segments (color codes, /Bleu200, etc.) — only paths that exist on the live site.
       - productImageSearchQueries must include the exact product name and words from the context; do not query sibling models (e.g. no Sealion if context is SEAL U).
       - Use web_search for official packshots of that product only.
       - Avoid wallpaper, thumbnails, and unrelated catalog images.
@@ -480,6 +520,7 @@ while (true) {
       The local design skills below are mandatory constraints.
       Before returning final JSON, internally run a compliance check against these skills.
       If any skill rule is not satisfied, keep searching and refining, and do not finalize yet.
+      ${referenceUrlSystemNote}
       ${localSkillGuidance}
     `.trim(),
       messages,
@@ -541,6 +582,21 @@ if (styleGuideFromModel === null) {
   throw new Error('Empty style guide response');
 }
 
+const normalizedUrls = await normalizeBrandAndCompanyUrls({
+  brandURL: styleGuideFromModel.brandURL,
+  companyURL: styleGuideFromModel.companyURL,
+  campaignReferenceUrl,
+  campaignUrlsFromPrompt: parsedUserContext.campaignUrls
+});
+if (normalizedUrls.logLine !== null) {
+  console.log(normalizedUrls.logLine);
+}
+styleGuideFromModel = {
+  ...styleGuideFromModel,
+  brandURL: normalizedUrls.brandURL,
+  companyURL: normalizedUrls.companyURL
+};
+
 const directoryUuid = randomUUID();
 const brandForFolder =
   styleGuideFromModel.brandName.trim() || styleGuideFromModel.companyName.trim() || 'brand';
@@ -573,36 +629,70 @@ const imageContext = {
   logoImageSearchQueries: styleGuideFromModel.logoImageSearchQueries,
   productImageSearchQueries: styleGuideFromModel.productImageSearchQueries,
   campaignContext,
+  campaignUrls: parsedUserContext.campaignUrls,
+  ...(campaignReferenceUrl !== null ? { campaignReferenceUrl } : {}),
   productMatchTerms
 };
 
+const subStepTimings: SubStepTiming[] = [
+  {
+    label: 'claude_style_guide',
+    duration_ms: sumApiCallDurationMs(apiCallTimings)
+  }
+];
+
 console.log('[logo] Single transparent logo — official site → Wikipedia → Brave…');
-const logoDownload = await collectSingleTransparentLogo(
-  directoryPath,
-  imageContext,
-  buildLogoSearchQueries(imageContext)
+const { result: logoDownload, duration_ms: logoDurationMs } = await timedStep('logo_download', async () =>
+  await collectSingleTransparentLogo(directoryPath, imageContext, buildLogoSearchQueries(imageContext))
 );
+subStepTimings.push({ label: 'logo_download', duration_ms: logoDurationMs });
 if (logoDownload.source !== null) {
   console.log(`[logo] Source: ${logoDownload.source}`);
 }
+if (logoDownload.count >= 1) {
+  const { writeLogoLock } = await import('../lib/logo-lock.mts');
+  writeLogoLock(directoryPath, {
+    approved_at: new Date().toISOString(),
+    source: logoDownload.source ?? 'gen-style-guide'
+  });
+}
 
 console.log('[Official site] Extracting product images from brand pages…');
-const officialProductUrls = await extractOfficialProductImageUrls(imageContext);
+const referenceListingUrls = resolveReferenceListingUrls({
+  campaignReferenceUrl,
+  campaignUrls: parsedUserContext.campaignUrls
+});
+if (referenceListingUrls.length > 0) {
+  console.log(`[products] Reference listing mode: ${referenceListingUrls[0] ?? ''}`);
+}
+
+const { result: officialProductCandidates, duration_ms: officialExtractMs } = await timedStep(
+  'official_product_extract',
+  async () => await extractOfficialProductImageUrls(imageContext)
+);
+subStepTimings.push({ label: 'official_product_extract', duration_ms: officialExtractMs });
 
 console.log(`${imageSearchLogPrefix()} Collecting product photo candidates…`);
-const productDownload = await collectAndDownloadValidAssetUrls(
-  'products',
-  directoryPath,
-  buildProductSearchQueries(imageContext),
-  {
-    targetCount: braveProductTargetCount(),
-    candidatePool: braveProductCandidatePool(),
-    clearFolder: true,
-    officialHosts: officialHostsFromContext(imageContext),
-    prioritizeUrls: officialProductUrls,
-    productMatchTerms
-  }
+const { result: productDownload, duration_ms: productBraveMs } = await timedStep(
+  'product_images_brave',
+  async () =>
+    await collectAndDownloadValidAssetUrls(
+      'products',
+      directoryPath,
+      buildProductSearchQueries(imageContext),
+      {
+        targetCount: braveProductTargetCount(),
+        candidatePool: braveProductCandidatePool(),
+        clearFolder: true,
+        officialHosts: officialHostsFromContext(imageContext),
+        prioritizeCandidates: officialProductCandidates,
+        skipBraveWhenPrioritizedFilled: true,
+        productMatchTerms,
+        ...(referenceListingUrls.length > 0 ? { referenceListingUrls } : {})
+      }
+    )
 );
+subStepTimings.push({ label: 'product_images_brave', duration_ms: productBraveMs });
 
 const minimumAssetsPerType = 1;
 if (logoDownload.count < minimumAssetsPerType || productDownload.count < minimumAssetsPerType) {
@@ -614,16 +704,27 @@ if (logoDownload.count < minimumAssetsPerType || productDownload.count < minimum
 const finalMessageContent: StyleGuide = brandStyleGuideSchema.parse({
   ...styleGuideFromModel,
   campaignContext: parsedUserContext.campaignContext ?? undefined,
+  ...(campaignReferenceUrl !== null ? { campaignReferenceUrl } : {}),
   logoFileUrls: logoDownload.downloadedUrls,
   productPictureUrls: productDownload.downloadedUrls
 });
 
 const styleGuideFilePath = join(directoryPath, 'style-guide.json');
-writeFileSync(
-  styleGuideFilePath,
-  `${JSON.stringify(finalMessageContent, null, 2)}\n`,
-  { encoding: 'utf8' }
-);
+const { duration_ms: writeJsonMs } = await timedStep('write_style_guide_json', async () => {
+  writeFileSync(
+    styleGuideFilePath,
+    `${JSON.stringify(finalMessageContent, null, 2)}\n`,
+    { encoding: 'utf8' }
+  );
+});
+subStepTimings.push({ label: 'write_style_guide_json', duration_ms: writeJsonMs });
+
+const styleGuideTotalMs = Date.now() - styleGuideStepStart;
+console.log('[style-guide] --- sous-étapes ---');
+for (const s of subStepTimings) {
+  console.log(`[style-guide] ${s.label} : ${formatDurationMinSec(s.duration_ms)}`);
+}
+console.log(`[style-guide] Total style guide : ${formatDurationMinSec(styleGuideTotalMs)}`);
 
 logAnthropicUsageAndCost(basename(import.meta.filename, extname(import.meta.filename)), apiUsageTotals);
 
@@ -632,11 +733,14 @@ const styleGuidePipelineEntry = entryFromAccumulator({
   agent: 'agents/gen-style-guide.mts',
   model: STYLE_GUIDE_MODEL,
   acc: apiUsageTotals,
-  duration_ms: Date.now() - styleGuideStepStart,
-  api_call_timings: apiCallTimings
+  phase: 'style_guide',
+  duration_ms: styleGuideTotalMs,
+  api_call_timings: apiCallTimings,
+  sub_step_timings: subStepTimings
 });
 const styleGuidePipelineFile = appendPipelineUsage(directoryPath, styleGuidePipelineEntry);
 logPipelineUsageToConsole(styleGuidePipelineFile.entries[styleGuidePipelineFile.entries.length - 1]!);
-appendPipelineRunSummary(directoryPath, { wall_clock_ms: Date.now() - styleGuideStepStart });
+logPhaseTotalsToConsole(recomputePhaseTotals(styleGuidePipelineFile.entries));
+appendPipelineRunSummary(directoryPath, { wall_clock_ms: styleGuideTotalMs });
 
 console.log('End.');

@@ -1,0 +1,74 @@
+{
+  "generated_at": "2026-06-01T16:40:19.667Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/langfr-250px-Logo__C3_A9toile_Mercedes-Benz__282025_29.svg.png",
+      "fileName": "Logo__C3_A9toile_Mercedes-Benz__282025_29.svg.png",
+      "fileType": "logos",
+      "description": "Iconic Mercedes-Benz three-pointed star logo in classic black and white. Clean circular badge design ideal for brand lockup placement in banner corners or footer areas. Maintains strong brand recognition at small scales.",
+      "layout_hints": [
+        "logo-lockup",
+        "corner-placement",
+        "footer",
+        "brand-mark"
+      ],
+      "dominant_colors": [
+        "#000000",
+        "#FFFFFF"
+      ]
+    },
+    {
+      "asset_id": "products/979a14b0ba9dbe7d37273f1e5c4a7a45b8dd1.jpg",
+      "fileName": "979a14b0ba9dbe7d37273f1e5c4a7a45b8dd1.jpg",
+      "fileType": "products",
+      "description": "Minimalist studio backdrop with soft grey-to-white gradient showcasing the Classe A silhouette. Clean, contemporary aesthetic with ample negative space for text overlay. Works effectively as hero background for premium positioning without distracting details.",
+      "layout_hints": [
+        "hero-background",
+        "minimalist",
+        "packshot-right",
+        "fond-clair"
+      ],
+      "dominant_colors": [
+        "#D3D8DC",
+        "#E8EAED",
+        "#A8B5C4"
+      ]
+    },
+    {
+      "asset_id": "products/mercedes-benz-a-class-w177-exterior-hotspot-radiatorgrill-1612x1209-08-2022.png",
+      "fileName": "mercedes-benz-a-class-w177-exterior-hotspot-radiatorgrill-1612x1209-08-2022.png",
+      "fileType": "products",
+      "description": "Classe A three-quarter view profile on white background, showcasing modern LED headlights and distinctive Mercedes grille. Premium finish with professional lighting emphasizes design details. Ideal for product-focused hero or rotatable SKU display in promotional banners.",
+      "layout_hints": [
+        "hero-product",
+        "packshot-centre",
+        "three-quarter-view",
+        "sku-rotation"
+      ],
+      "dominant_colors": [
+        "#5A7A8C",
+        "#FFFFFF",
+        "#2A3F4F"
+      ]
+    },
+    {
+      "asset_id": "products/mercedes-benz-classe-a-hb.png",
+      "fileName": "mercedes-benz-classe-a-hb.png",
+      "fileType": "products",
+      "description": "Full frontal view of Classe A hatchback in premium silver finish against white background with subtle shadow. Sharp detail of signature grille and modern LED lighting displays vehicle's compact elegance. Perfect for primary hero position or rotating product carousel in responsive layouts.",
+      "layout_hints": [
+        "hero-primary",
+        "packshot-centre",
+        "front-view",
+        "fond-blanc",
+        "sku-rotation"
+      ],
+      "dominant_colors": [
+        "#9BA8B3",
+        "#FFFFFF",
+        "#4A5A66"
+      ]
+    }
+  ]
+}

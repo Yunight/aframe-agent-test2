@@ -1,0 +1,33 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-06-01T11:07:05.057Z",
+  "manifest_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\petit-bateau-2a32cf3b-1e40-48e1-948c-501b4d61cb87\\review\\screenshots\\manifest.json",
+  "audit": {
+    "satisfied": false,
+    "summary": "Screenshot capture failed for 320x480 format. No DOM node was found matching any expected selector patterns. The HTML entry point exists but the ad container is either missing, incorrectly identified, or not rendering. This is a critical structural blocker preventing visual audit.",
+    "findings": [
+      {
+        "format_id": "320x480",
+        "severity": "blocker",
+        "issue": "DOM node not found for 320x480 ad unit. Screenshot capture attempted multiple selectors (#ad-320x480, data attributes, style-based selectors) but none matched. The ad container is either missing from the HTML, using an unexpected ID/class, or failed to render in the preview context.",
+        "fix_hint": "Ensure the main ad container has id=\"ad-320x480\" and is visible in the DOM. Verify that the HTML structure includes a div with id=\"ad-320x480\" at the page root level with dimensions 320px × 480px. Check that styles.css centers this ad unit on the page (body flex center, min-height 100vh, etc.). Confirm entry_html file exists and renders without JavaScript errors in the preview context."
+      }
+    ],
+    "regeneration_prompt": "1. Add id=\"ad-320x480\" to the main ad container div.\n2. Set width: 320px; height: 480px; on #ad-320x480 in styles.css.\n3. Ensure body uses display: flex; align-items: center; justify-content: center; min-height: 100vh; to center the ad.\n4. Verify no console errors in the HTML file and that all asset paths (logo, product images) are correct."
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 7861,
+    "output_tokens": 375,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 7861,
+    "price_usd": {
+      "input": 0.007861,
+      "output": 0.001875,
+      "total": 0.009736
+    },
+    "duration_ms": 9188
+  }
+}

@@ -2,7 +2,8 @@
   "module": true,
   "scripts": {
     "build": "tsc",
-    "test": "npm run build && node --test build/src/lib/logo-asset-rules.test.mjs build/src/lib/official-site-logo-extract.test.mjs build/src/lib/creative-native-skills-compliance.test.mjs build/src/lib/repo-paths.test.mjs build/src/lib/creative-pipeline-usage.test.mjs"
+    "migrate-output-code": "npm run build && node build/src/scripts/migrate-output-code-to-v1.mjs",
+    "test": "npm run build && node --test build/src/lib/logo-asset-rules.test.mjs build/src/lib/official-site-logo-extract.test.mjs build/src/lib/official-fetch.test.mjs build/src/lib/asset-host-fail-fast.test.mjs build/src/lib/creative-code-versions.test.mjs build/src/lib/creative-native-skills-compliance.test.mjs build/src/lib/repo-paths.test.mjs build/src/lib/creative-pipeline-usage.test.mjs build/src/lib/style-guide-urls.test.mjs build/src/lib/style-guide-context.test.mjs build/src/lib/asset-sidecar-files.test.mjs build/src/lib/brave-image-assets-filename.test.mjs build/src/lib/brave-image-assets-logo.test.mjs build/src/lib/brave-image-assets-refresh.test.mjs build/src/lib/creative-native-assets-deterministic.test.mjs build/src/lib/creative-asset-descriptions.test.mjs build/src/lib/creative-native-regen-deterministic.test.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.89.0",

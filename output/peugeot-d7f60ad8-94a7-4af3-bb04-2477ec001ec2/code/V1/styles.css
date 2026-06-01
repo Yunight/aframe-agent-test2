@@ -1,0 +1,342 @@
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #9FA0A4;
+  font-family: 'Peugeot New', Arial, sans-serif;
+}
+
+/* ===== Ad Container ===== */
+#ad-320x480 {
+  width: 320px;
+  height: 480px;
+  position: relative;
+  overflow: hidden;
+  background: #FFFFFF;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.32);
+  border-radius: 4px;
+}
+
+/* ===== Background gradient ===== */
+.ad-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, #1A1A1A 0%, #000000 55%, #0174E9 100%);
+  z-index: 0;
+}
+
+.ad-accent-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: #A8E83E;
+  z-index: 2;
+  animation: accentPulse 3s ease-in-out infinite;
+}
+
+@keyframes accentPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* ===== Header ===== */
+.ad-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px 8px 14px;
+  z-index: 10;
+  background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, transparent 100%);
+}
+
+.ad-logo {
+  width: 52px;
+  height: auto;
+  display: block;
+  flex-shrink: 0;
+  filter: brightness(0) invert(1);
+}
+
+.ad-tagline {
+  font-family: Arial, sans-serif;
+  font-size: 6.5px;
+  font-weight: 400;
+  color: #C7C9CB;
+  letter-spacing: 0.08em;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+/* ===== Variant Tabs ===== */
+.variant-tabs {
+  position: absolute;
+  top: 54px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  gap: 6px;
+  z-index: 10;
+}
+
+.tab-btn {
+  flex: 1;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  color: #C7C9CB;
+  font-family: Arial, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 2px;
+  cursor: pointer;
+  transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.15s;
+  outline: none;
+}
+
+.tab-btn:hover {
+  background: rgba(168,232,62,0.18);
+  border-color: #A8E83E;
+  color: #FFFFFF;
+  transform: scale(1.04);
+}
+
+.tab-btn.active {
+  background: #A8E83E;
+  border-color: #A8E83E;
+  color: #000000;
+}
+
+/* ===== Hero Area ===== */
+.hero-wrap {
+  position: absolute;
+  top: 84px;
+  left: 0;
+  right: 0;
+  height: 210px;
+  z-index: 5;
+  overflow: hidden;
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(18px) scale(0.97);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
+}
+
+.hero-slide.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+  animation: heroFloat 6s ease-in-out infinite 0.5s;
+}
+
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-5px) scale(1.015); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide.active { animation: none; }
+  .ad-accent-bar { animation: none; }
+}
+
+.hero-img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+}
+
+.hero-img--hybrid {
+  object-position: center 40%;
+}
+
+.hero-img--puretech {
+  object-position: center 60%;
+}
+
+/* Hero badge */
+.hero-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-family: Arial, sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 12px;
+  z-index: 6;
+}
+
+.electric-badge {
+  background: #0174E9;
+  color: #FFFFFF;
+}
+
+.hybrid-badge {
+  background: #E30613;
+  color: #FFFFFF;
+}
+
+.puretech-badge {
+  background: #A8E83E;
+  color: #000000;
+}
+
+/* ===== Copy Block ===== */
+.ad-copy {
+  position: absolute;
+  top: 302px;
+  left: 0;
+  right: 0;
+  padding: 0 16px;
+  z-index: 8;
+  text-align: left;
+}
+
+.ad-headline {
+  font-family: Arial, sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  animation: slideUp 0.6s ease both;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hl {
+  color: #A8E83E;
+}
+
+.ad-sub {
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: #C7C9CB;
+  line-height: 1.4;
+  margin-bottom: 8px;
+  transition: opacity 0.35s;
+}
+
+.ad-price {
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #FFFFFF;
+  transition: opacity 0.35s;
+}
+
+.ad-price strong {
+  font-size: 16px;
+  font-weight: 700;
+  color: #A8E83E;
+}
+
+.ad-price sup {
+  font-size: 9px;
+  color: #9FA0A4;
+}
+
+/* ===== Footer / CTA ===== */
+.ad-footer {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  padding: 0 16px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.cta-btn {
+  display: inline-block;
+  background: #0174E9;
+  color: #FFFFFF;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 10px 22px;
+  border-radius: 2px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.22s, transform 0.18s, box-shadow 0.22s;
+  box-shadow: 0 4px 16px rgba(1,116,233,0.35);
+}
+
+.cta-btn:hover,
+.cta-btn:focus {
+  background: #A8E83E;
+  color: #000000;
+  transform: scale(1.04);
+  box-shadow: 0 6px 20px rgba(168,232,62,0.4);
+  outline: 2px solid #A8E83E;
+}
+
+.ad-legal {
+  font-family: Arial, sans-serif;
+  font-size: 6.5px;
+  font-weight: 400;
+  color: #9FA0A4;
+  line-height: 1.4;
+  max-width: 280px;
+}
+
+/* ===== Lion Watermark ===== */
+.lion-watermark {
+  position: absolute;
+  bottom: 55px;
+  right: -10px;
+  z-index: 3;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.wm-logo {
+  width: 100px;
+  height: auto;
+  filter: invert(1);
+}
+
+/* ===== Divider line ===== */
+.ad-copy::before {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 2px;
+  background: #A8E83E;
+  margin-bottom: 8px;
+}

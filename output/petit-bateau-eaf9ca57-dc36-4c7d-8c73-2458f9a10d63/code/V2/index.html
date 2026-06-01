@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Petit Bateau – Collection Été Enfants</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Montserrat:wght@500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="ad-300x600">
+
+    <!-- Background decorative stripes -->
+    <div class="stripe-bg"></div>
+
+    <!-- Header -->
+    <header class="ad-header">
+      <img src="./logo-petit-bateau.svg" alt="logo" class="brand-logo">
+    </header>
+
+    <!-- Hero badge / headline -->
+    <div class="hero-section">
+      <div class="summer-badge">
+        <span class="badge-text">PLEIN</span>
+        <span class="badge-text accent">ÉTÉ</span>
+      </div>
+      <p class="hero-sub">Collection Enfants 2026</p>
+    </div>
+
+    <!-- Product carousel -->
+    <div class="carousel-wrapper">
+      <div class="carousel-track" id="carouselTrack">
+        <div class="carousel-slide active" data-label="Ensemble">
+          <img src="./MACARON_PLEIN_ETE_ensemble.jpg" alt="Ensemble été" class="product-img">
+        </div>
+        <div class="carousel-slide" data-label="Maillot">
+          <img src="./MACARON_PLEIN_ETE_maillot.jpg" alt="Maillot été" class="product-img">
+        </div>
+        <div class="carousel-slide" data-label="Pyjama">
+          <img src="./MACARON_PLEIN_ETE_pyj.jpg" alt="Pyjama été" class="product-img">
+        </div>
+        <div class="carousel-slide" data-label="Robe">
+          <img src="./MACARON_PLEIN_ETE_robe.jpg" alt="Robe été" class="product-img">
+        </div>
+        <div class="carousel-slide" data-label="Short">
+          <img src="./MACARON_PLEIN_ETE_short.jpg" alt="Short été" class="product-img">
+        </div>
+      </div>
+
+      <!-- Product label -->
+      <div class="product-label" id="productLabel">Ensemble</div>
+
+      <!-- Navigation dots -->
+      <div class="carousel-dots" id="carouselDots">
+        <button class="dot active" data-index="0" aria-label="Ensemble"></button>
+        <button class="dot" data-index="1" aria-label="Maillot"></button>
+        <button class="dot" data-index="2" aria-label="Pyjama"></button>
+        <button class="dot" data-index="3" aria-label="Robe"></button>
+        <button class="dot" data-index="4" aria-label="Short"></button>
+      </div>
+
+      <!-- Arrows -->
+      <button class="carousel-arrow arrow-prev" id="prevBtn" aria-label="Précédent">&#8592;</button>
+      <button class="carousel-arrow arrow-next" id="nextBtn" aria-label="Suivant">&#8594;</button>
+    </div>
+
+    <!-- Copy section -->
+    <div class="copy-section">
+      <p class="copy-headline">Liberté de bouger,<br>légèreté de vivre</p>
+      <p class="copy-sub">Coton doux certifié Oeko-Tex®</p>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-section">
+      <a href="https://www.petit-bateau.fr/collection/collection-ete/" class="cta-btn" target="_blank" rel="noopener">
+        Découvrir la collection
+      </a>
+      <p class="legal">Nouvelle collection disponible en boutique et sur petit-bateau.fr</p>
+    </div>
+
+    <!-- Floating wave decoration -->
+    <div class="wave-deco" aria-hidden="true">
+      <svg viewBox="0 0 300 30" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,15 C50,30 100,0 150,15 C200,30 250,0 300,15 L300,30 L0,30 Z" fill="#7FB3D5" opacity="0.25"/>
+      </svg>
+    </div>
+
+  </div>
+  <script src="app.js" defer></script>
+</body>
+</html>

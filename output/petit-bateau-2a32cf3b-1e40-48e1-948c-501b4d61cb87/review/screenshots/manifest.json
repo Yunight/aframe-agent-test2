@@ -1,0 +1,34 @@
+{
+  "captured_at": "2026-06-01T11:07:43.537Z",
+  "entry_html": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\petit-bateau-2a32cf3b-1e40-48e1-948c-501b4d61cb87\\code\\index.html",
+  "entry_url": "file:///C:/Users/Ben/Desktop/formats_creator/aframe-agent-test2/aframe-agent-test2/output/petit-bateau-2a32cf3b-1e40-48e1-948c-501b4d61cb87/code/V1/index.html",
+  "formats": [
+    {
+      "format_id": "320x480",
+      "width": 320,
+      "height": 480,
+      "selector": "#ad-320x480",
+      "error": null,
+      "shots": [
+        {
+          "state": "initial",
+          "fileName": "320x480__initial.png",
+          "relativePath": "320x480__initial.png",
+          "captured_at": "2026-06-01T11:07:35.828Z"
+        },
+        {
+          "state": "animated",
+          "fileName": "320x480__animated.png",
+          "relativePath": "320x480__animated.png",
+          "captured_at": "2026-06-01T11:07:38.409Z"
+        },
+        {
+          "state": "settled",
+          "fileName": "320x480__settled.png",
+          "relativePath": "320x480__settled.png",
+          "captured_at": "2026-06-01T11:07:43.509Z"
+        }
+      ]
+    }
+  ]
+}

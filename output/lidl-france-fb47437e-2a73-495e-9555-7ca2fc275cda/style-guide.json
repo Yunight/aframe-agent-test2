@@ -1,0 +1,95 @@
+{
+  "companyName": "Lidl Stiftung & Co. KG",
+  "companyContext": "Lidl est une chaîne internationale de supermarchés discount d'origine allemande (fondée en 1973, groupe Schwarz), spécialisée dans la distribution alimentaire et non-alimentaire à prix bas, présente dans plus de 30 pays.",
+  "companyURL": "https://www.lidl.fr/",
+  "brandName": "Lidl France",
+  "brandContext": "Lidl France est la filiale française de l'enseigne Lidl, qui exploite un large réseau de supermarchés en France et propose chaque semaine des promotions, offres spéciales et bons plans sur l'alimentaire, le non-alimentaire et les produits saisonniers via son site lidl.fr et ses prospectus.",
+  "brandURL": "https://www.lidl.fr/q/query/promotions",
+  "logoFileUrls": [
+    "https://www.lidl.fr/cdn/assets/logos/1.0.1/lidl-logo-shop-cdn.svg"
+  ],
+  "productName": "Promotions Lidl",
+  "campaignContext": "mise en avant des produits en promotion",
+  "campaignReferenceUrl": "https://www.lidl.fr/q/query/promotions",
+  "productPictureUrls": [
+    "https://www.lidl.fr/static/assets/MARKETING_LG-DESKTOP-2210604.jpg",
+    "https://www.lidl.fr/static/assets/MARKETING_LG-DESKTOP-2212123.jpg",
+    "https://www.lidl.fr/static/assets/fonctionnalites_LidlPlus_LidlPoints-2061311.jpg",
+    "https://www.lidl.fr/static/assets/WON_FL-2239964.jpg",
+    "https://www.lidl.fr/static/assets/WON-2224544.jpg",
+    "https://www.lidl.fr/static/assets/LG_DESKTOP_3690x1080_V1-2152564.jpg"
+  ],
+  "primaryColorPalette": [
+    "#0050AA",
+    "#FFF000",
+    "#E60A14",
+    "#FFFFFF",
+    "#000000"
+  ],
+  "secondaryColorPalette": [
+    "#015AA2",
+    "#FFF200",
+    "#EE1C25",
+    "#F5F5F5",
+    "#1A1A1A",
+    "#D8232A"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Lidl Font Pro",
+      "fontWeight": 900,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Logotype et grands titres promo (prix, %, mots-clés 'PROMO', 'NOUVEAU')"
+    },
+    {
+      "fontFamily": "Lidl Font Pro",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Titres de rayons, noms de produits mis en avant, accroches commerciales"
+    },
+    {
+      "fontFamily": "Lidl Font Pro",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Sous-titres, descriptions produits, mentions de gamme"
+    },
+    {
+      "fontFamily": "Lidl Font Pro",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Corps de texte, descriptifs, conditions de l'offre"
+    },
+    {
+      "fontFamily": "Arial",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Police de secours web/system si Lidl Font Pro indisponible (mentions légales, prix unitaires, petits caractères)"
+    }
+  ],
+  "brandVision": "Rendre la qualité accessible à tous chaque jour : 'La qualité au meilleur prix'. Lidl veut être l'enseigne discount préférée des Français en alliant prix bas permanents, qualité contrôlée et offres promotionnelles régulières mises en scène avec clarté et énergie.",
+  "brandValues": "Prix bas, qualité, simplicité, accessibilité, transparence, efficacité, proximité, fraîcheur, optimisme commercial. La promesse repose sur un rapport qualité-prix imbattable et une communication promotionnelle directe et lisible.",
+  "logoImageSearchQueries": [
+    "site:lidl.fr logo svg",
+    "site:corporate.lidl.com logo",
+    "site:commons.wikimedia.org Lidl logo svg",
+    "site:en.wikipedia.org Lidl logo",
+    "Lidl logo official filetype:svg",
+    "Lidl logo transparent png 2024"
+  ],
+  "productImageSearchQueries": [
+    "site:lidl.fr promotions semaine",
+    "site:lidl.fr offre de la semaine",
+    "Lidl France prospectus promo produits",
+    "Lidl bons plans semaine packshot",
+    "Lidl super weekend promotion produits",
+    "site:lidl.fr catalogue promotions",
+    "Lidl France étiquette promo prix barré",
+    "Lidl offres alimentaires semaine",
+    "Lidl France promotions non alimentaire",
+    "Lidl prospectus semaine en cours"
+  ]
+}

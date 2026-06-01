@@ -1,0 +1,92 @@
+{
+  "companyName": "Stellantis",
+  "companyContext": "Stellantis is the multinational automotive manufacturer that owns Peugeot among 14 other brands; headquartered in the Netherlands, it designs, builds and sells passenger cars, SUVs and commercial vehicles worldwide.",
+  "companyURL": "https://www.stellantis.com",
+  "brandName": "Peugeot",
+  "brandContext": "French automaker founded in 1810, signature brand of Stellantis. Known for its lion emblem and the 'Power of Choice' line-up offering thermal, hybrid and electric powertrains across models such as 208, 2008, 308, 3008 and 5008. Brand signature 'Allure Power Excellence'.",
+  "brandURL": "https://www.peugeot.fr/offres/208.html",
+  "logoFileUrls": [
+    "https://upload.wikimedia.org/wikipedia/fr/thumb/6/60/Logo_de_Peugeot_depuis_2010.svg/120px-Logo_de_Peugeot_depuis_2010.svg.png"
+  ],
+  "productName": "Peugeot 208",
+  "campaignContext": "Promotion des nouvelles gamme peugeot 208",
+  "campaignReferenceUrl": "https://www.peugeot.fr/offres/208.html",
+  "productPictureUrls": [
+    "https://images-dev.largus.fr/images/images/m_208-arg.jpg",
+    "https://www.peugeot-arles.fr/imgcommun/photogamme/1000/800/non/qpjp97fi-puretech_2.PNG",
+    "https://www.peugeot-arles.fr/imgcommun/photogamme/1000/800/non/27ekw1yp-hybride2.PNG",
+    "https://www.peugeot-arles.fr/imgcommun/photogamme/1000/800/non/nwn74sjd-puretech_1.PNG",
+    "https://images.caradisiac.com/logos/3/1/2/4/263124/S7-peugeot-208-nouvelle-gamme-et-une-serie-speciale-style-186143.jpg",
+    "https://back.prod.groupechopard.com/storage/media/2/8/1/2/1/7/conversions/G10Pm3D98r8XHaowa9F9fV7v5tYuzmMmQ6WHb0ME-cms_desktop.webp"
+  ],
+  "primaryColorPalette": [
+    "#000000",
+    "#FFFFFF",
+    "#1A1A1A"
+  ],
+  "secondaryColorPalette": [
+    "#0174E9",
+    "#9FA0A4",
+    "#C7C9CB",
+    "#A8E83E",
+    "#E30613"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Peugeot New",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Brand wordmark & display headlines (logo lockup, hero titles)"
+    },
+    {
+      "fontFamily": "Peugeot New",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Section headings and subheadings"
+    },
+    {
+      "fontFamily": "Peugeot New",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, descriptive text and offer legal mentions"
+    },
+    {
+      "fontFamily": "Arial",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Web fallback for body copy when Peugeot New is unavailable"
+    },
+    {
+      "fontFamily": "Peugeot New",
+      "fontWeight": 600,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "CTA buttons and prices (e.g. 'À partir de 150 €/mois')"
+    }
+  ],
+  "brandVision": "Allure, Émotion, Excellence — devenir une marque automobile haut de gamme généraliste, audacieuse et désirable, qui redéfinit le plaisir de conduire avec une Power of Choice (thermique, hybride et 100% électrique) et une expérience i-Cockpit® unique.",
+  "brandValues": "Audace, élégance française, qualité, innovation technologique, durabilité (électrification de toute la gamme), accessibilité et fierté du Lion. Engagement client via PEUGEOT CARE garantie jusqu'à 8 ans / 160 000 km.",
+  "logoImageSearchQueries": [
+    "site:peugeot.fr logo lion svg",
+    "site:peugeot.com brand logo 2021 svg",
+    "site:en.wikipedia.org Peugeot logo 2021 svg",
+    "site:commons.wikimedia.org Peugeot 2021 logo svg",
+    "Peugeot 2021 lion logo filetype:svg",
+    "Peugeot new logo black transparent png"
+  ],
+  "productImageSearchQueries": [
+    "site:peugeot.fr nouvelle 208 packshot",
+    "site:peugeot.fr e-208 GT bleu eclipse",
+    "site:media.stellantis.com Peugeot 208 2024",
+    "Peugeot 208 GT hybrid 110 official press photo",
+    "Peugeot e-208 électrique 136ch packshot studio",
+    "Peugeot 208 Style essence 100 ch trois quarts avant",
+    "Peugeot 208 Allure 2024 press kit",
+    "nouvelle Peugeot 208 facelift 2024 official",
+    "Peugeot 208 ENVY série spéciale press photo",
+    "Peugeot 208 i-Cockpit interior official"
+  ]
+}

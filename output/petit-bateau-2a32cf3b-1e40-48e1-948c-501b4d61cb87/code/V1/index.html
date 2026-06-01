@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Petit Bateau – Collection Été</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Open+Sans:ital,wght@0,400;0,600;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ad-wrapper">
+    <!-- AD FRAME 320x480 -->
+    <div class="ad-frame" id="ad-320x480">
+
+      <!-- Background decorative stripes -->
+      <div class="bg-stripes"></div>
+
+      <!-- Wave SVG accent -->
+      <div class="wave-top">
+        <svg viewBox="0 0 320 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <path d="M0,20 Q40,0 80,20 T160,20 T240,20 T320,20 L320,0 L0,0 Z" fill="#112351"/>
+        </svg>
+      </div>
+
+      <!-- HEADER -->
+      <header class="ad-header">
+        <img src="./logo-petit-bateau.svg" alt="Petit Bateau" class="brand-logo">
+      </header>
+
+      <!-- HERO HEADLINE -->
+      <div class="hero-text">
+        <p class="season-label">NOUVEAUTÉ</p>
+        <h1 class="headline">Plein<br><span class="accent">Été</span></h1>
+        <p class="subheadline">La collection ensoleillée est arrivée</p>
+      </div>
+
+      <!-- PRODUCT CAROUSEL -->
+      <div class="carousel-container">
+        <div class="carousel-track" id="carouselTrack">
+          <div class="slide active" data-index="0">
+            <img src="./MACARON_PLEIN_ETE_ensemble.jpg" alt="Ensemble Plein Été" class="product-img">
+            <span class="product-label">Ensemble</span>
+          </div>
+          <div class="slide" data-index="1">
+            <img src="./MACARON_PLEIN_ETE_maillot.jpg" alt="Maillot Plein Été" class="product-img">
+            <span class="product-label">Maillot</span>
+          </div>
+          <div class="slide" data-index="2">
+            <img src="./MACARON_PLEIN_ETE_robe.jpg" alt="Robe Plein Été" class="product-img">
+            <span class="product-label">Robe</span>
+          </div>
+          <div class="slide" data-index="3">
+            <img src="./MACARON_PLEIN_ETE_short.jpg" alt="Short Plein Été" class="product-img">
+            <span class="product-label">Short</span>
+          </div>
+          <div class="slide" data-index="4">
+            <img src="./MACARON_PLEIN_ETE_pyj.jpg" alt="Pyjama Plein Été" class="product-img">
+            <span class="product-label">Pyjama</span>
+          </div>
+        </div>
+
+        <!-- Carousel nav arrows -->
+        <button class="carousel-btn prev" id="prevBtn" aria-label="Précédent">&#8592;</button>
+        <button class="carousel-btn next" id="nextBtn" aria-label="Suivant">&#8594;</button>
+
+        <!-- Dot indicators -->
+        <div class="carousel-dots" id="carouselDots">
+          <span class="dot active" data-dot="0"></span>
+          <span class="dot" data-dot="1"></span>
+          <span class="dot" data-dot="2"></span>
+          <span class="dot" data-dot="3"></span>
+          <span class="dot" data-dot="4"></span>
+        </div>
+      </div>
+
+      <!-- BOTTOM CTA AREA -->
+      <div class="cta-area">
+        <p class="cta-tagline">Qualité & liberté depuis 1893</p>
+        <a class="cta-btn" href="https://www.petit-bateau.fr/collection/collection-ete/" target="_blank" rel="noopener">
+          Découvrir la collection
+        </a>
+      </div>
+
+      <!-- Wave bottom -->
+      <div class="wave-bottom">
+        <svg viewBox="0 0 320 30" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <path d="M0,10 Q40,28 80,12 T160,14 T240,10 T320,14 L320,30 L0,30 Z" fill="#112351"/>
+        </svg>
+      </div>
+
+    </div>
+  </div>
+  <script src="app.js" defer></script>
+</body>
+</html>

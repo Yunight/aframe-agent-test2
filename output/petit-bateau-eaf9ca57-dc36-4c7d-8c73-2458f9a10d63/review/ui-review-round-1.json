@@ -1,0 +1,26 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-06-01T17:44:08.715Z",
+  "manifest_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\petit-bateau-eaf9ca57-dc36-4c7d-8c73-2458f9a10d63\\review\\screenshots\\manifest.json",
+  "audit": {
+    "satisfied": true,
+    "summary": "300x600 ad unit meets all critical QA requirements: correct pixel dimensions (300×600 px), proper id=\"ad-300x600\" container, readable typography hierarchy, style-guide compliant colors (#112351 navy header, #E2001A red CTA, #F1E9D2 cream background), visible Petit Bateau logo in header, product images displayed correctly across carousel states (ENSEMBLE → MAILLOT → PYJAMA), French copy legible and accurate, CTA button properly spaced with safe margin from bottom edge. Carousel transitions smoothly between product variants with matching dot indicators. No blockers detected.",
+    "findings": [],
+    "regeneration_prompt": ""
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 8825,
+    "output_tokens": 161,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 8825,
+    "price_usd": {
+      "input": 0.008825,
+      "output": 0.000805,
+      "total": 0.00963
+    },
+    "duration_ms": 4371
+  }
+}

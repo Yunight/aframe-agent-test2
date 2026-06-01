@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peugeot 208 — Publicité</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="ad-320x480">
+    <!-- Background layers -->
+    <div class="ad-bg"></div>
+    <div class="ad-accent-bar"></div>
+
+    <!-- Header -->
+    <header class="ad-header">
+      <img src="./120px-Logo_de_Peugeot_depuis_2010.svg.png" alt="Peugeot" class="ad-logo">
+      <span class="ad-tagline">ALLURE · POWER · EXCELLENCE</span>
+    </header>
+
+    <!-- Variant toggle -->
+    <div class="variant-tabs">
+      <button class="tab-btn active" data-variant="electric" aria-pressed="true">E-208</button>
+      <button class="tab-btn" data-variant="hybrid" aria-pressed="false">Hybride</button>
+      <button class="tab-btn" data-variant="puretech" aria-pressed="false">PureTech</button>
+    </div>
+
+    <!-- Hero image area -->
+    <div class="hero-wrap">
+      <!-- Electric variant -->
+      <div class="hero-slide active" data-slide="electric">
+        <img src="./G10Pm3D98r8XHaowa9F9fV7v5tYuzmMmQ6WHb0ME-cms_desktop.webp" alt="Peugeot NEW E-208 électrique" class="hero-img">
+        <div class="hero-badge electric-badge">100% Électrique</div>
+      </div>
+      <!-- Hybrid variant -->
+      <div class="hero-slide" data-slide="hybrid">
+        <img src="./27ekw1yp-hybride2.jpg" alt="Peugeot 208 Hybride" class="hero-img hero-img--hybrid">
+        <div class="hero-badge hybrid-badge">Hybride</div>
+      </div>
+      <!-- PureTech variant -->
+      <div class="hero-slide" data-slide="puretech">
+        <img src="./nwn74sjd-puretech_1.jpg" alt="Peugeot 208 PureTech" class="hero-img hero-img--puretech">
+        <div class="hero-badge puretech-badge">PureTech</div>
+      </div>
+    </div>
+
+    <!-- Copy block -->
+    <div class="ad-copy">
+      <h1 class="ad-headline" id="ad-headline">NOUVELLE <span class="hl">208</span></h1>
+      <p class="ad-sub" id="ad-sub">Le choix de la puissance,<br>100% électrique.</p>
+      <p class="ad-price" id="ad-price">À partir de <strong>179 €/mois</strong><sup>*</sup></p>
+    </div>
+
+    <!-- CTA -->
+    <div class="ad-footer">
+      <a href="https://www.peugeot.fr/offres/208.html" class="cta-btn" target="_blank" rel="noopener">Découvrir l'offre</a>
+      <p class="ad-legal">*Offre sous conditions. LLD 36 mois / 30 000 km. Sous réserve d'acceptation.</p>
+    </div>
+
+    <!-- Decorative lion watermark -->
+    <div class="lion-watermark" aria-hidden="true">
+      <img src="./120px-Logo_de_Peugeot_depuis_2010.svg.png" alt="" class="wm-logo">
+    </div>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
