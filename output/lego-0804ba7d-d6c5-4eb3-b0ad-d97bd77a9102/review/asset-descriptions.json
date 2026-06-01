@@ -1,0 +1,131 @@
+{
+  "generated_at": "2026-06-01T18:10:35.537Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/brand-lego.svgSVG",
+      "fileName": "brand-lego.svg",
+      "fileType": "logos",
+      "description": "Official LEGO wordmark in iconic bright yellow and red, enclosed within a clean white square border. Rendered as SVG for crisp scaling at any size. Use as masthead or top-right corner badge in HTML5 banners; pairs well with Insiders branding.",
+      "layout_hints": [
+        "logo-lockup",
+        "header",
+        "masthead",
+        "top-placement"
+      ],
+      "dominant_colors": [
+        "#FFED00",
+        "#E3000B",
+        "#FFFFFF"
+      ]
+    },
+    {
+      "asset_id": "products/40606.jpg",
+      "fileName": "40606.jpg",
+      "fileType": "products",
+      "description": "Vibrant assortment of garden & park accessory elements showcasing colorful bricks, tools, flowers, hats, bicycles, and decorative pieces against neutral white background. Features bright greens, magentas, yellows, and oranges. Ideal for rotating as hero image to highlight creative building sets.",
+      "layout_hints": [
+        "hero",
+        "packshot-centre",
+        "product-carousel",
+        "fond-clair"
+      ],
+      "dominant_colors": [
+        "#FF1493",
+        "#FFD700",
+        "#00AA44",
+        "#FFFFFF"
+      ]
+    },
+    {
+      "asset_id": "products/40607.jpg",
+      "fileName": "40607.jpg",
+      "fileType": "products",
+      "description": "Playful mix of food, nature, and recreational LEGO elements—pizza slices, flowers, bunny minifigure, utensils, grass pieces, and party accessories in vibrant pink, orange, yellow, and teal tones on white. Perfect for lifestyle-themed hero or lifestyle-rotation hero placement.",
+      "layout_hints": [
+        "hero",
+        "packshot-centre",
+        "lifestyle",
+        "fond-clair"
+      ],
+      "dominant_colors": [
+        "#FF69B4",
+        "#FFB347",
+        "#00CED1",
+        "#00AA44"
+      ]
+    },
+    {
+      "asset_id": "products/5006215.jpg",
+      "fileName": "5006215.jpg",
+      "fileType": "products",
+      "description": "Black LEGO brick-shaped picture frame with white matting and color photo inset showing children building together indoors. Clean, minimal aesthetic emphasizing LEGO's family-building value. Use as secondary product shot or testimonial-style hero for community-focused messaging.",
+      "layout_hints": [
+        "hero",
+        "secondary-product",
+        "lifestyle-frame",
+        "fond-clair"
+      ],
+      "dominant_colors": [
+        "#000000",
+        "#FFFFFF",
+        "#4A90E2",
+        "#FFD700"
+      ]
+    },
+    {
+      "asset_id": "products/LEGO-Insiders-Test_Offers-_-Sale_202407_XL-Sidekick.jpg",
+      "fileName": "LEGO-Insiders-Test_Offers-_-Sale_202407_XL-Sidekick.jpg",
+      "fileType": "products",
+      "description": "Male protagonist holding stack of LEGO set boxes with green brick-pattern background and purple banner base. LEGO Insiders logo top-right. Dynamic composition emphasizing product abundance and membership perks. Rotate as hero image for Insiders program promotion and exclusive offer campaigns.",
+      "layout_hints": [
+        "hero",
+        "insiders-promotion",
+        "lifestyle-hero",
+        "product-stack"
+      ],
+      "dominant_colors": [
+        "#00AA44",
+        "#5B21B6",
+        "#FFFFFF",
+        "#FFB347"
+      ]
+    },
+    {
+      "asset_id": "products/LI-Weekend-Reveal-202508-Insiders-Sidekick-Standard.jpg",
+      "fileName": "LI-Weekend-Reveal-202508-Insiders-Sidekick-Standard.jpg",
+      "fileType": "products",
+      "description": "Woman with LEGO botanical flowers set, holding colorful floral creation against white-to-beige gradient background. LEGO Insiders wordmark top-left. Orange and purple geometric accents frame the image. Showcases creative building and member exclusivity.",
+      "layout_hints": [
+        "hero",
+        "insiders-feature",
+        "lifestyle-hero",
+        "product-showcase"
+      ],
+      "dominant_colors": [
+        "#FF9800",
+        "#5B21B6",
+        "#FFDD00",
+        "#FFFFFF"
+      ]
+    },
+    {
+      "asset_id": "products/LI-Weekend-Reveal-202508-WHY-Sidekick-Standard.jpg",
+      "fileName": "LI-Weekend-Reveal-202508-WHY-Sidekick-Standard.jpg",
+      "fileType": "products",
+      "description": "Four smiling LEGO minifigures in contemporary poses arranged on purple background, representing diverse builders. Colorful geometric shapes (yellow, blue, teal) scattered around. Emphasizes LEGO City theme, inclusion, and fun building community. Strong for community-driven hero rotation.",
+      "layout_hints": [
+        "hero",
+        "minifigure-showcase",
+        "community-hero",
+        "lifestyle"
+      ],
+      "dominant_colors": [
+        "#5B21B6",
+        "#FFD700",
+        "#0066CC",
+        "#00CED1"
+      ]
+    }
+  ]
+}

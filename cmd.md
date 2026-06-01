@@ -163,7 +163,7 @@ Bypass garde (déconseillé) : `set CREATIVE_ASSETS_REVIEW_SKIP=1` avant la gen.
 | **balanced** | `CREATIVE_MODEL=claude-sonnet-4-6` (gen) + regen Haiku par défaut | Bon compromis |
 | **quality** | défauts (`CREATIVE_MODEL=claude-opus-4-6`, thinking adaptive) | Livraison finale |
 
-Dans le **studio UI**, le sélecteur « Profil génération code » envoie `creativeCodegenPreset` (`fast` \| `balanced` \| `quality`) à `POST /api/creative-code/run` (même mapping que le tableau ci-dessus).
+Dans le **studio UI**, le sélecteur « Profil génération code » envoie `creativeCodegenPreset` (`fast` \| `balanced` \| `quality`) à `POST /api/creative-code/run` (même mapping que le tableau ci-dessus). Si non renseigné, le studio applique désormais `fast` par défaut.
 
 Exemple profil balanced (1 format) :
 
@@ -182,7 +182,7 @@ node src/agents/gen-creative-code-native.mts <directory-uuid> --asset-input url
 | `CREATIVE_REGEN_MAX_FILE_CHARS` | `80000` | Taille max par fichier injecté en regen (index.html, styles.css, app.js) |
 | `CREATIVE_REGEN_DIFF_GUARD` | activé | `0` = pas de comparaison avant/après regen |
 | `CREATIVE_REGEN_DIFF_MAX_RATIO` | `0.5` | Alerte si &gt;50 % des lignes changées (signal refonte) |
-| `CREATIVE_SCREENSHOT_PROFILE` | — | `dev` ou `fast` = 1 capture `settled` / format + délais réduits |
+| `CREATIVE_SCREENSHOT_PROFILE` | `fast` | `dev` ou `fast` = 1 capture `settled` / format + délais réduits ; `full` = `initial` + `animated` + `settled` |
 | `CREATIVE_THINKING_MODE` | `adaptive` | `adaptive` \| `budget` \| `off` — extended thinking en gen initiale |
 | `CREATIVE_THINKING_BUDGET_TOKENS` | `32000` | Si `CREATIVE_THINKING_MODE=budget` |
 | `CREATIVE_PROMPT_CACHE` | activé | `0` = désactive le prompt caching sur le bloc skills statique |
@@ -220,7 +220,7 @@ node src/agents/gen-creative-code-native_habillage.mts <directory-uuid> --asset-
 Après un dossier `code/` existant :
 
 ```bash
-set CREATIVE_UI_REVIEW_MAX_ROUNDS=3
+set CREATIVE_UI_REVIEW_MAX_ROUNDS=2
 node src/agents/run-creative-native-ui-review.mts <directory-uuid>
 ```
 
@@ -231,7 +231,7 @@ node src/agents/gen-style-guide.mts
 node src/agents/run-creative-native-assets-review.mts <directory-uuid>
 set CREATIVE_UI_REVIEW_MAX_ROUNDS=0
 node src/agents/gen-creative-code-native.mts <directory-uuid> --asset-input url
-set CREATIVE_UI_REVIEW_MAX_ROUNDS=3
+set CREATIVE_UI_REVIEW_MAX_ROUNDS=2
 node src/agents/run-creative-native-ui-review.mts <directory-uuid>
 ```
 
@@ -282,7 +282,7 @@ Puis lancer `style-guide-ui` (Vite).
 
 | Variable | Défaut | Rôle |
 |----------|--------|------|
-| `CREATIVE_UI_REVIEW_MAX_ROUNDS` | `3` | Tours screenshot + review + regen max |
+| `CREATIVE_UI_REVIEW_MAX_ROUNDS` | `2` | Tours screenshot + review + regen max |
 | `CREATIVE_UI_REVIEW_MODEL` | `claude-haiku-4-5-20251001` | Modèle review visuelle |
 | `CREATIVE_SCREENSHOT_INITIAL_WAIT_MS` | `600` | Délai capture `initial` |
 | `CREATIVE_SCREENSHOT_ANIMATED_WAIT_MS` | `2500` | Délai capture `animated` |

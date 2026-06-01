@@ -1,0 +1,14 @@
+{
+  "ui_review_rounds_run": 1,
+  "max_ui_review_rounds": 3,
+  "satisfied": true,
+  "summary": "All three states (initial, animated, settled) of the 300×250 ad meet structural and visual requirements. The ad correctly uses id=\"ad-300x250\", maintains proper pixel dimensions, displays the E.Leclerc logo clearly, uses on-brand typography and colors (Montserrat bold for \"BONNES AFFAIRES\", Open Sans for body text), includes product imagery, and provides a clear CTA. French copy is accurate and contextually appropriate. No blockers detected.",
+  "findings": [],
+  "screenshots_dir": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\e-leclerc-ba8087de-eb93-40b3-9832-ff7753a64a47\\review\\screenshots",
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\e-leclerc-ba8087de-eb93-40b3-9832-ff7753a64a47\\pipeline-usage.json",
+  "pipeline_totals_usd": {
+    "input": 0.493524,
+    "output": 0.15225,
+    "total": 0.645774
+  }
+}

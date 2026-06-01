@@ -1,0 +1,34 @@
+{
+  "captured_at": "2026-06-01T20:02:05.899Z",
+  "entry_html": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\byd-a2712cba-5494-4dab-a02f-453c10e99101\\code\\V4\\index.html",
+  "entry_url": "file:///C:/Users/Ben/Desktop/formats_creator/aframe-agent-test2/aframe-agent-test2/output/byd-a2712cba-5494-4dab-a02f-453c10e99101/code/V4/index.html",
+  "formats": [
+    {
+      "format_id": "arche-1600x960",
+      "width": 1600,
+      "height": 960,
+      "selector": "#ad-arche-1600x960",
+      "error": null,
+      "shots": [
+        {
+          "state": "initial",
+          "fileName": "arche-1600x960__initial.png",
+          "relativePath": "arche-1600x960__initial.png",
+          "captured_at": "2026-06-01T20:01:58.082Z"
+        },
+        {
+          "state": "animated",
+          "fileName": "arche-1600x960__animated.png",
+          "relativePath": "arche-1600x960__animated.png",
+          "captured_at": "2026-06-01T20:02:00.724Z"
+        },
+        {
+          "state": "settled",
+          "fileName": "arche-1600x960__settled.png",
+          "relativePath": "arche-1600x960__settled.png",
+          "captured_at": "2026-06-01T20:02:05.869Z"
+        }
+      ]
+    }
+  ]
+}

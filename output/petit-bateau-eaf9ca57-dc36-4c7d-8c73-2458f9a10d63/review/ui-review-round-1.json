@@ -1,26 +1,26 @@
 {
   "review_round": 1,
-  "captured_at": "2026-06-01T17:44:08.715Z",
+  "captured_at": "2026-06-01T20:13:51.344Z",
   "manifest_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\petit-bateau-eaf9ca57-dc36-4c7d-8c73-2458f9a10d63\\review\\screenshots\\manifest.json",
   "audit": {
     "satisfied": true,
-    "summary": "300x600 ad unit meets all critical QA requirements: correct pixel dimensions (300×600 px), proper id=\"ad-300x600\" container, readable typography hierarchy, style-guide compliant colors (#112351 navy header, #E2001A red CTA, #F1E9D2 cream background), visible Petit Bateau logo in header, product images displayed correctly across carousel states (ENSEMBLE → MAILLOT → PYJAMA), French copy legible and accurate, CTA button properly spaced with safe margin from bottom edge. Carousel transitions smoothly between product variants with matching dot indicators. No blockers detected.",
+    "summary": "The 300x250 ad unit meets all mandatory requirements: correct IAB pixel dimensions (300×250), visible logo with appropriate scale, clear headline hierarchy with 'Plein Été' and 'COLLECTION ENFANTS' in proper typography, product carousel displaying three summer collection items, brand-compliant color palette (navy header, red CTA, light background), French copy accuracy, and proper CTA spacing with visible gap above the bottom frame edge. The animated carousel transitions smoothly between product variants without visual artifacts.",
     "findings": [],
-    "regeneration_prompt": ""
+    "regeneration_prompt": "No patches required. The creative passes all audits: correct dimensions, logo visibility, typography hierarchy, color compliance, French copy, carousel animation, and CTA spacing. Ready for production deployment."
   },
   "usage": {
     "api_calls": 1,
-    "input_tokens": 8825,
-    "output_tokens": 161,
+    "input_tokens": 8396,
+    "output_tokens": 174,
     "cache_creation_input_tokens": 0,
     "cache_read_input_tokens": 0,
     "model": "claude-haiku-4-5-20251001",
-    "billed_input_tokens": 8825,
+    "billed_input_tokens": 8396,
     "price_usd": {
-      "input": 0.008825,
-      "output": 0.000805,
-      "total": 0.00963
+      "input": 0.008396,
+      "output": 0.00087,
+      "total": 0.009266
     },
-    "duration_ms": 4371
+    "duration_ms": 4686
   }
 }

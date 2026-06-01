@@ -1,0 +1,94 @@
+{
+  "companyName": "The LEGO Group",
+  "companyContext": "The LEGO Group is a Danish family-owned company founded in 1932 in Billund, Denmark. It designs, manufactures and sells interlocking plastic construction toys (LEGO bricks), licensed sets, video games, theme parks (LEGOLAND) and retail experiences, with the mission of inspiring and developing the builders of tomorrow through the power of play.",
+  "companyURL": "https://www.lego.com/",
+  "brandName": "LEGO",
+  "brandContext": "LEGO is the global toy and entertainment brand behind the iconic LEGO brick system. The brand spans original themes (City, Friends, Creator, Technic, Icons, DUPLO) and licensed lines (Star Wars, Harry Potter, Disney, Marvel, Botanicals), sold through lego.com, official LEGO Stores and retail partners.",
+  "brandURL": "https://www.lego.com/fr-fr/categories/new-sets-and-products",
+  "logoFileUrls": [
+    "https://assets.lego.com/logos/v8.6.0/brand-lego.svg"
+  ],
+  "productName": "Nouveautés LEGO – New Sets & Products",
+  "campaignContext": "Promotions des nouveautés lego",
+  "campaignReferenceUrl": "https://www.lego.com/fr-fr/categories/new-sets-and-products",
+  "productPictureUrls": [
+    "https://www.lego.com/cdn/cs/set/assets/bltd44263c2ed18c01d/LI-Weekend-Reveal-202508-Insiders-Sidekick-Standard.jpg?fit=crop&format=jpg&quality=80&width=800&height=426&dpr=1",
+    "https://www.lego.com/cdn/cs/set/assets/bltf6b261ced1f00eb5/LI-Weekend-Reveal-202508-WHY-Sidekick-Standard.jpg?fit=crop&format=jpg&quality=80&width=800&height=426&dpr=1",
+    "https://www.lego.com/cdn/cs/set/assets/blt3ffd8c6549c4e49c/LEGO-Insiders-Test_Offers-&-Sale_202407_XL-Sidekick.jpg?fit=crop&format=jpg&quality=80&width=800&height=800&dpr=1",
+    "https://www.lego.com/cdn/cs/set/assets/bltc8337ec2bc58a415/40606.png?fit=bounds&format=jpg&quality=80&width=1500&height=1500&dpr=1",
+    "https://www.lego.com/cdn/cs/set/assets/bltbb943bcedcc94e84/40607.png?fit=bounds&format=jpg&quality=80&width=1500&height=1500&dpr=1",
+    "https://www.lego.com/cdn/cs/set/assets/blt1d8829635ae86d46/5006215.png?fit=bounds&format=jpg&quality=80&width=1500&height=1500&dpr=1"
+  ],
+  "primaryColorPalette": [
+    "#E3000B",
+    "#FFED00",
+    "#000000",
+    "#FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "#006DB7",
+    "#00A84F",
+    "#F57F29",
+    "#A5A5A5",
+    "#F8F8F8"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Headlines and primary brand statements across digital experiences and packaging (current LEGO house font)"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Subheadings, product names and section titles"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions and UI text on lego.com"
+    },
+    {
+      "fontFamily": "Open Sans",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Fallback digital body font (officially licensed by The LEGO Group for digital experiences)"
+    },
+    {
+      "fontFamily": "Open Sans",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Fallback emphasis and UI buttons when Cera Pro is unavailable"
+    },
+    {
+      "fontFamily": "LEGO Thick",
+      "fontWeight": 900,
+      "fontEffect": [],
+      "fontUses": "Logo wordmark only – the proprietary rounded bubble lettering used inside the iconic red square (not for body or headings)"
+    }
+  ],
+  "brandVision": "Inspire and develop the builders of tomorrow. LEGO aims to leave a lasting positive impact on the planet by helping children learn through play, fueling creativity, imagination and lifelong curiosity in builders of every age.",
+  "brandValues": "Imagination, creativity, fun, learning, caring and quality. The brand stands for playful, hands-on exploration, family togetherness, inclusivity, safety and sustainability – encapsulated in its founding motto 'leg godt' (play well).",
+  "logoImageSearchQueries": [
+    "site:lego.com LEGO logo svg",
+    "site:en.wikipedia.org LEGO logo",
+    "site:commons.wikimedia.org LEGO logo svg",
+    "LEGO official logo transparent png",
+    "LEGO red square logo 1998 svg"
+  ],
+  "productImageSearchQueries": [
+    "site:lego.com fr-fr nouveautés sets",
+    "site:lego.com new sets and products 2026",
+    "LEGO nouveautés 2026 packaging officiel",
+    "LEGO new arrivals set box art lego.com",
+    "LEGO Icons nouveautés boîte officielle",
+    "LEGO Star Wars nouveautés 2026 boîte",
+    "LEGO Technic nouveautés 2026 boîte",
+    "LEGO Botanicals nouveautés boîte officielle",
+    "LEGO City nouveautés 2026 packaging",
+    "LEGO Creator nouveautés 2026 boîte officielle"
+  ]
+}

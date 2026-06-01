@@ -259,7 +259,18 @@ export function buildCreativeAdFormatInstructions (formats: readonly AdFormatSel
     const a = first.arche;
     const innerW = f.width - 2 * a.gutterPx;
     const innerH = f.height - a.headerPx;
-    const companions = a.companionPresetIds.join(' ou ');
+    const selectedIds = new Set(formats.map((fmt) => fmt.id));
+    const selectedCompanions = a.companionPresetIds.filter((id) => selectedIds.has(id));
+    const companionNote =
+      selectedCompanions.length > 0
+        ? (
+          `      - **Compagnons demandés** avec cet habillage : **${selectedCompanions.join(', ')}** — les produire comme unités distinctes sous ou à côté de l'arche sur la même page de preview.\n`
+        )
+        : (
+          '      - **Ne pas générer de compagnons** (pavés '
+          + `${a.companionPresetIds.join(', ')}, etc.) : cette livraison ne contient **que** l\'habillage Arche **${f.id}**. `
+          + 'Aucun bloc banner séparé (300×250, 300×600, …) sur la page.\n'
+        );
     return (
       `      Format **ARCHE / habillage** (cadre livré exactement ${String(f.width)}×${String(f.height)} px) :\n` +
       `      - Enveloppe en « U » : bandeau **header** public **${String(a.headerPx)} px** de haut sur toute la largeur ${String(f.width)} px ; **gouttières** gauche et droite **${String(a.gutterPx)} px** de large chacune sur la hauteur sous le header (**${String(innerH)} px**).\n` +
@@ -268,10 +279,10 @@ export function buildCreativeAdFormatInstructions (formats: readonly AdFormatSel
       `      - **Poids** : viser **≤ ${String(a.maxTotalWeightKB)} Ko** pour l’ensemble des images raster utilisées dans l’habillage (optimisation forte, pas d’assets superflus).\n` +
       `      - **Formats raster** pour bitmaps d’habillage : ${a.allowedRasterMime.join(', ')} uniquement.\n` +
       `      - **Tracking** : ${a.trackingNote}\n` +
-      `      - **Compagnons** possibles avec ce habillage : **${companions}** (pavés). Si d’autres tailles sont aussi demandées dans cette génération, les produire comme unités distinctes sous ou à côté de l’arche sur la même page de preview.\n` +
+      companionNote +
       '      - styles.css + app.js : le bloc racine livré pour l’arche doit faire exactement ' +
       `${String(f.width)}×${String(f.height)} px ; positionner header et gouttières au pixel près ; le centre est le « trou ».\n` +
-      '      - index.html : viewport meta width=device-width ; centrer la démo comme pour les autres formats.'
+      `      - index.html : racine id="ad-${f.id.replace(/×/g, 'x')}" ; viewport meta width=device-width ; centrer la démo. **Une seule** unité publicitaire sur la page.\n`
     );
   }
 
@@ -288,16 +299,22 @@ export function buildCreativeAdFormatInstructions (formats: readonly AdFormatSel
   }
 
   if (hasArche) {
+    const selectedIds = new Set(formats.map((f) => f.id));
     const archeBlocks = formats
       .filter((f): f is AdFormatSelection & { arche: NonNullable<AdFormatSelection['arche']> } => f.arche !== undefined)
       .map((f) => {
         const a = f.arche;
         const innerW = f.width - 2 * a.gutterPx;
         const innerH = f.height - a.headerPx;
+        const selectedCompanions = a.companionPresetIds.filter((id) => selectedIds.has(id));
+        const companionPart =
+          selectedCompanions.length > 0
+            ? `compagnons demandés : ${selectedCompanions.join(', ')}`
+            : 'sans pavés compagnons dans cette livraison';
         return (
           `      * ${f.id} (${String(f.width)}×${String(f.height)} px) — ARCHE : header ${String(a.headerPx)} px, gouttières ${String(a.gutterPx)} px, ` +
           `trou central ${String(innerW)}×${String(innerH)} px, focus créatif ~${String(a.mainFocusWidthPx)} px, ` +
-          `poids cible ≤${String(a.maxTotalWeightKB)} Ko, rasters ${a.allowedRasterMime.join('/')}, tracking : ${a.trackingNote} ; compagnons : ${a.companionPresetIds.join(', ')}.`
+          `poids cible ≤${String(a.maxTotalWeightKB)} Ko, rasters ${a.allowedRasterMime.join('/')}, tracking : ${a.trackingNote} ; ${companionPart}.`
         );
       })
       .join('\n');

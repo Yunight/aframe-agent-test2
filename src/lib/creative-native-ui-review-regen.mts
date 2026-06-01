@@ -16,7 +16,6 @@ export function buildStrictMinimalRegenSuffix (): string {
   );
 }
 
-/** Prefer Sonnet for regen; Haiku only when explicitly requested. */
 export function resolveRegenModelFromUiAudit (
   audit: UiReviewOutput,
   options?: { strictMinimalRetry?: boolean }
@@ -53,5 +52,5 @@ export function resolveRegenModelFromUiAudit (
     return 'claude-sonnet-4-6';
   }
 
-  return 'claude-sonnet-4-6';
+  return 'claude-haiku-4-5-20251001';
 }

@@ -9,7 +9,8 @@
 
 import type { StyleGuide } from './gen-style-guide.mjs';
 import { captureCreativeNativeScreenshots } from '../lib/creative-native-playwright-screenshots.mts';
-import { loadDesignSkillGuidance } from '../lib/creative-native-skills.mts';
+import { loadSkillsForCodegenPrompt } from '../lib/creative-native-codegen-prompt.mts';
+import { runCreativeNativeGeneration } from '../lib/creative-native-generate.mts';
 import {
   appendPipelineRunSummary,
   formatDurationMinSec,
@@ -46,7 +47,6 @@ import {
   writeRegenBaselineSnapshot
 } from '../lib/creative-native-regen-diff.mts';
 import { latestCodeVersion } from '../lib/creative-code-versions.mts';
-import { spawnSync } from 'node:child_process';
 import { config as loadDotenv } from 'dotenv';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -115,29 +115,27 @@ if (maxUiReviewRounds <= 0) {
 }
 
 const anthropicClient = new Anthropic({ apiKey: anthropicApiKey });
-const skillGuidance = loadDesignSkillGuidance(repoRoot);
-const genScriptPath = join(repoRoot, 'src', 'agents', 'gen-creative-code-native.mts');
+const skillGuidance = loadSkillsForCodegenPrompt(repoRoot);
 const assetInputMode = process.env['CREATIVE_ASSET_INPUT']?.trim() === 'base64' ? 'base64' : 'url';
 
-function runNativeRegeneration (params: {
+async function runNativeRegeneration (params: {
   feedback: string;
   reviewRound: number;
   regenModel: string;
   beforeSnapshots: Record<string, string> | null;
   strictMinimal: boolean;
-}): { exitCode: number; likelyFullRewrite: boolean } {
+}): Promise<{ exitCode: number; likelyFullRewrite: boolean }> {
   const baselineDir = join(reviewDirectoryPath, 'regen-baseline');
   if (params.beforeSnapshots !== null) {
     writeRegenBaselineSnapshot(codeDirectoryPath, baselineDir);
   }
 
-  const result = spawnSync(
-    process.execPath,
-    [ genScriptPath, directoryUuid, '--asset-input', assetInputMode ],
-    {
-      cwd: repoRoot,
-      env: {
-        ...process.env,
+  let exitCode = 0;
+  try {
+    await runCreativeNativeGeneration({
+      directoryUuid,
+      repoRoot,
+      envOverrides: {
         CREATIVE_REGEN_FEEDBACK: params.feedback,
         CREATIVE_REGEN_MODEL: params.regenModel,
         CREATIVE_REGEN_REVIEW_ROUND: String(params.reviewRound),
@@ -145,12 +143,15 @@ function runNativeRegeneration (params: {
         CREATIVE_ASSETS_REVIEW_SKIP: '1',
         CREATIVE_UI_REVIEW_MAX_ROUNDS: '0',
         CREATIVE_AD_FORMATS: JSON.stringify(adFormats),
-        CREATIVE_CODE_VERSION: regenCodeVersionId
-      },
-      stdio: 'inherit'
-    }
-  );
-  const exitCode = result.status ?? 1;
+        CREATIVE_CODE_VERSION: regenCodeVersionId,
+        CREATIVE_ASSET_INPUT: assetInputMode
+      }
+    });
+  } catch (error: unknown) {
+    exitCode = 1;
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`[ui-review-agent] Regeneration failed: ${message}`);
+  }
   if (exitCode !== 0 || params.beforeSnapshots === null || !isRegenDiffGuardEnabled()) {
     return { exitCode, likelyFullRewrite: false };
   }
@@ -231,7 +232,7 @@ while (uiReviewRound < maxUiReviewRounds) {
   let regenModel = resolveRegenModelFromUiAudit(audit);
   console.log(`[ui-review-agent] Regenerating (model ${regenModel})…`);
 
-  let { exitCode: regenExit, likelyFullRewrite } = runNativeRegeneration({
+  let { exitCode: regenExit, likelyFullRewrite } = await runNativeRegeneration({
     feedback,
     reviewRound: uiReviewRound,
     regenModel,
@@ -243,7 +244,7 @@ while (uiReviewRound < maxUiReviewRounds) {
     console.warn('[ui-review-agent] Regen changed too much — retrying with strict minimal patch (Sonnet).');
     feedback = `${feedback}${buildStrictMinimalRegenSuffix()}`;
     regenModel = resolveRegenModelFromUiAudit(audit, { strictMinimalRetry: true });
-    const retry = runNativeRegeneration({
+    const retry = await runNativeRegeneration({
       feedback,
       reviewRound: uiReviewRound,
       regenModel,

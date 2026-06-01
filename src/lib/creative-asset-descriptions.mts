@@ -235,7 +235,7 @@ export async function buildCodegenAssetPromptBlocks (params: {
           : '';
       const colors =
         entry !== undefined && entry.dominant_colors.length > 0
-          ? `\n  - Dominant colors: ${entry.dominant_colors.join(', ')}`
+          ? `\n  - Dominant colors (reference only — do NOT use in CSS; style-guide palette is mandatory): ${entry.dominant_colors.join(', ')}`
           : '';
       const sourceUrl = sourceMap.get(fileName)?.sourceUrl ?? '';
       const sourceLine =

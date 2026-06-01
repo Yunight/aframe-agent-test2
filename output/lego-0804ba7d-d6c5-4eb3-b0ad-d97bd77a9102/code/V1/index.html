@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LEGO Nouveautés – 320×480</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="ad-320x480">
+
+    <!-- Decorative floating bricks -->
+    <div class="bg-bricks" aria-hidden="true">
+      <span class="brick b1"></span>
+      <span class="brick b2"></span>
+      <span class="brick b3"></span>
+      <span class="brick b4"></span>
+      <span class="brick b5"></span>
+    </div>
+
+    <!-- Header -->
+    <header class="ad-header">
+      <img src="./brand-lego.svg" alt="logo" class="lego-logo" />
+      <span class="header-badge">Nouveautés</span>
+    </header>
+
+    <!-- Product hero carousel -->
+    <div class="carousel-wrap" id="carouselWrap" aria-label="Produits en vedette, diapositive 1 sur 4" aria-roledescription="carousel">
+      <div class="carousel" id="carousel">
+        <div class="slide active" data-index="0">
+          <img src="./40606.jpg" alt="LEGO Accessoires jardin" class="product-img" />
+          <div class="slide-label">Accessoires Jardin</div>
+        </div>
+        <div class="slide" data-index="1">
+          <img src="./40607.jpg" alt="LEGO Éléments lifestyle" class="product-img" />
+          <div class="slide-label">Éléments Lifestyle</div>
+        </div>
+        <div class="slide" data-index="2">
+          <img src="./5006215.jpg" alt="LEGO Cadre photo" class="product-img" />
+          <div class="slide-label">Cadre Photo LEGO</div>
+        </div>
+        <div class="slide" data-index="3">
+          <img src="./LEGO-Insiders-Test_Offers-_-Sale_202407_XL-Sidekick.jpg" alt="LEGO Insiders" class="product-img insiders-img" />
+          <div class="slide-label">Programme Insiders</div>
+        </div>
+      </div>
+      <button class="carousel-btn prev" id="prevBtn" aria-label="Précédent">&#8249;</button>
+      <button class="carousel-btn next" id="nextBtn" aria-label="Suivant">&#8250;</button>
+      <div class="dots" id="dots">
+        <button class="dot active" data-dot="0" aria-label="Diapositive 1 sur 4"></button>
+        <button class="dot" data-dot="1" aria-label="Diapositive 2 sur 4"></button>
+        <button class="dot" data-dot="2" aria-label="Diapositive 3 sur 4"></button>
+        <button class="dot" data-dot="3" aria-label="Diapositive 4 sur 4"></button>
+      </div>
+      <div class="slide-counter" id="slideCounter" aria-live="polite" aria-atomic="true">1 / 4</div>
+    </div>
+
+    <!-- Copy block -->
+    <div class="copy-block">
+      <h1 class="headline" id="headline">Découvrez les<br><span class="accent">Nouveautés LEGO</span></h1>
+      <p class="subhead" id="subhead">Sets exclusifs &amp; collections fraîches</p>
+    </div>
+
+    <!-- CTA footer -->
+    <div class="cta-footer">
+      <a href="https://www.lego.com/fr-fr/categories/new-sets-and-products" class="cta-btn" target="_blank" rel="noopener">Explorer maintenant</a>
+      <p class="legal">© 2025 The LEGO Group. Tous droits réservés.</p>
+    </div>
+
+  </div>
+  <script src="app.js" defer></script>
+</body>
+</html>

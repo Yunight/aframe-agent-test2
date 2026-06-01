@@ -12,6 +12,7 @@ import {
   buildInitialThinkingConfig,
   type CodegenSystemParts
 } from './creative-native-codegen-prompt.mts';
+import { buildComplianceRetryHint } from './style-guide-colors.mts';
 import {
   buildCodePhaseUserMessage,
   buildPlanPhaseUserMessage,
@@ -155,6 +156,7 @@ async function runSingleCodegenLoop (params: {
           content:
             `Your previous output is not compliant with mandatory skills/style-guide constraints: ${complianceCheck.issues.join(' ; ')}. `
             + `${regenHint} Required ad sizes (px): ${params.adFormats.map((f) => `${String(f.width)}×${String(f.height)}`).join(', ')}.`
+            + buildComplianceRetryHint(complianceCheck.issues, params.prunedStyleGuide)
         });
         continue;
       }
@@ -241,7 +243,8 @@ export async function runCreativeCodegen (params: {
   const systemParts = buildCodegenSystemParts({
     isRegen: params.isRegen,
     adFormats: params.adFormats,
-    skillsText: params.skillsText
+    skillsText: params.skillsText,
+    styleGuide: params.prunedStyleGuide
   });
 
   if (params.isRegen) {
@@ -270,7 +273,8 @@ export async function runCreativeCodegen (params: {
         const parts = buildCodegenSystemParts({
           isRegen: false,
           adFormats: singleFormat,
-          skillsText: params.skillsText
+          skillsText: params.skillsText,
+          styleGuide: params.prunedStyleGuide
         });
         const formatInstructions = buildCreativeAdFormatInstructions(singleFormat);
         const extraDynamic = `Generate ONLY for this single format. ${formatInstructions}`;

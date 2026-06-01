@@ -3,6 +3,7 @@ import type { AdFormatSelection } from './studio-ad-formats.mts';
 import { buildCreativeAdFormatInstructions } from './studio-ad-formats.mts';
 import { CREATIVE_DESIGN_SKILLS_COMPACT, isFullSkillsModeEnabled } from './creative-native-skills-compact.mts';
 import { loadDesignSkillGuidance } from './creative-native-skills.mts';
+import { buildStyleGuideColorConstraintText, type StyleGuidePalettes } from './style-guide-colors.mts';
 import type { Anthropic } from '@anthropic-ai/sdk';
 
 export const DEFAULT_CREATIVE_MODEL = 'claude-opus-4-6';
@@ -72,6 +73,7 @@ export type CodegenSystemParts = {
 export function buildRegenPatchSystemPrompt (params: {
   adFormats: readonly AdFormatSelection[];
   skillsText: string;
+  styleGuide: StyleGuidePalettes;
 }): string {
   return `You are patching an existing HTML5/CSS/JS advertisement bundle after a visual UI review.
 
@@ -92,7 +94,9 @@ Stack: plain HTML5, CSS, JavaScript only. No React, bundlers, Tailwind, or npm. 
 
 ${buildCreativeAdFormatInstructions(params.adFormats)}
 
-Fonts and colors: only those in the style guide. Ad copy in French.
+${buildStyleGuideColorConstraintText(params.styleGuide)}
+
+Fonts: only typography families listed in the style guide. Ad copy in French.
 Follow design skills for compliance on what you touch:
 ${params.skillsText}`.trim();
 }
@@ -101,12 +105,14 @@ export function buildCodegenSystemParts (params: {
   isRegen: boolean;
   adFormats: readonly AdFormatSelection[];
   skillsText: string;
+  styleGuide: StyleGuidePalettes;
 }): CodegenSystemParts {
   if (params.isRegen) {
     return {
       staticBlock: buildRegenPatchSystemPrompt({
         adFormats: params.adFormats,
-        skillsText: params.skillsText
+        skillsText: params.skillsText,
+        styleGuide: params.styleGuide
       }),
       dynamicBlock: ''
     };
@@ -143,7 +149,9 @@ ${buildCreativeAdFormatInstructions(params.adFormats)}
 
 Optional: additional static assets only if needed (e.g. extra .svg), still no package.json or bundlers.
 
-Fonts and colors: only those defined in the style guide. Ad copy in French.
+Fonts and colors: use ONLY hex colors from the closed allowlist in the user message and below.
+For gradients/shadows use opacity or rgba() derived from a palette hex — never invent new hex codes.
+Ad copy in French.
 Include at least one logo and one product image from the provided assets in the HTML/CSS/JS.
 Product hero requirement is detailed in the user message (campaign product instruction).
 Do not add browser chrome: no zoom, fullscreen, or VR toggles in the creative UI.
@@ -152,11 +160,10 @@ The design skills below are mandatory constraints.
 Before returning final files, internally run a compliance check against these skills.
 If any skill rule is not satisfied, keep refining and do not finalize.
 Use only typography families listed in the style guide.
-Use only hex colors listed in the style guide primary/secondary palettes.
 Follow the design skills below for layout, color, typography, hierarchy, animation, and interaction:
 ${params.skillsText}`.trim();
 
-  const dynamicBlock = '';
+  const dynamicBlock = buildStyleGuideColorConstraintText(params.styleGuide);
 
   return { staticBlock, dynamicBlock };
 }

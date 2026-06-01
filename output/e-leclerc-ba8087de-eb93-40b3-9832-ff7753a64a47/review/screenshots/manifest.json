@@ -1,0 +1,34 @@
+{
+  "captured_at": "2026-06-01T19:49:16.168Z",
+  "entry_html": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\e-leclerc-ba8087de-eb93-40b3-9832-ff7753a64a47\\code\\V2\\index.html",
+  "entry_url": "file:///C:/Users/Ben/Desktop/formats_creator/aframe-agent-test2/aframe-agent-test2/output/e-leclerc-ba8087de-eb93-40b3-9832-ff7753a64a47/code/V2/index.html",
+  "formats": [
+    {
+      "format_id": "300x250",
+      "width": 300,
+      "height": 250,
+      "selector": "#ad-300x250",
+      "error": null,
+      "shots": [
+        {
+          "state": "initial",
+          "fileName": "300x250__initial.png",
+          "relativePath": "300x250__initial.png",
+          "captured_at": "2026-06-01T19:49:08.466Z"
+        },
+        {
+          "state": "animated",
+          "fileName": "300x250__animated.png",
+          "relativePath": "300x250__animated.png",
+          "captured_at": "2026-06-01T19:49:11.050Z"
+        },
+        {
+          "state": "settled",
+          "fileName": "300x250__settled.png",
+          "relativePath": "300x250__settled.png",
+          "captured_at": "2026-06-01T19:49:16.136Z"
+        }
+      ]
+    }
+  ]
+}

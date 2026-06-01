@@ -1,0 +1,59 @@
+{
+  "generatedAt": "2026-06-01T21:02:03.569Z",
+  "sampleSize": 5,
+  "latestN": 5,
+  "averages": {
+    "totalDurationMs": 594687,
+    "totalPriceUsd": 1.064784,
+    "uiReviewInputTokens": 26763,
+    "uiReviewOutputTokens": 1307,
+    "creativeDurationMs": 450197
+  },
+  "runs": [
+    {
+      "folder": "petit-bateau-eaf9ca57-dc36-4c7d-8c73-2458f9a10d63",
+      "mtimeMs": 1780344831389.7527,
+      "totalDurationMs": 278683,
+      "totalPriceUsd": 0.781494,
+      "uiReviewInputTokens": 25833,
+      "uiReviewOutputTokens": 512,
+      "creativeDurationMs": 173338
+    },
+    {
+      "folder": "byd-a2712cba-5494-4dab-a02f-453c10e99101",
+      "mtimeMs": 1780344132068.8438,
+      "totalDurationMs": 1828325,
+      "totalPriceUsd": 2.743532,
+      "uiReviewInputTokens": 66071,
+      "uiReviewOutputTokens": 2689,
+      "creativeDurationMs": 1656403
+    },
+    {
+      "folder": "e-leclerc-ba8087de-eb93-40b3-9832-ff7753a64a47",
+      "mtimeMs": 1780343359579.2473,
+      "totalDurationMs": 209798,
+      "totalPriceUsd": 0.645774,
+      "uiReviewInputTokens": 8458,
+      "uiReviewOutputTokens": 144,
+      "creativeDurationMs": 57594
+    },
+    {
+      "folder": "lego-0804ba7d-d6c5-4eb3-b0ad-d97bd77a9102",
+      "mtimeMs": 1780337864436.4946,
+      "totalDurationMs": 463093,
+      "totalPriceUsd": 0.775799,
+      "uiReviewInputTokens": 25164,
+      "uiReviewOutputTokens": 2369,
+      "creativeDurationMs": 298898
+    },
+    {
+      "folder": "peugeot-d7f60ad8-94a7-4af3-bb04-2477ec001ec2",
+      "mtimeMs": 1780334758368.8203,
+      "totalDurationMs": 193535,
+      "totalPriceUsd": 0.37732,
+      "uiReviewInputTokens": 8291,
+      "uiReviewOutputTokens": 819,
+      "creativeDurationMs": 64754
+    }
+  ]
+}

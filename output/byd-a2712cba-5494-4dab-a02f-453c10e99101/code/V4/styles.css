@@ -1,0 +1,908 @@
+/* =============================================================
+   BYD Sealion 5 DM-i — Habillage Arche 1600×960 + Companions
+   Palette : #EC1C24 #000000 #FFFFFF #1F3A5F #2E2E2E #B0B3B8 #F2F2F2 #0A66C2
+   ============================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #2E2E2E;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 32px 0 64px;
+}
+
+.demo-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+/* =============================================================
+   ARCHE ROOT — exactly 1600 × 960 px
+   ============================================================= */
+#ad-arche-1600x960 {
+  position: relative;
+  width: 1600px;
+  height: 960px;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  background: #000000;
+}
+
+/* =============================================================
+   HEADER — 1600 × 200 px
+   ============================================================= */
+.arche-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1600px;
+  height: 200px;
+  z-index: 20;
+  overflow: hidden;
+}
+
+/* Full-width dark background */
+.header-bar {
+  position: absolute;
+  inset: 0;
+  background: #1F3A5F;
+}
+
+/* Hero image decoration inside header */
+.header-hero-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.header-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  opacity: 0.18;
+  display: block;
+}
+
+.header-hero-veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(31,58,95,0.92) 0%,
+    rgba(31,58,95,0.5) 30%,
+    rgba(31,58,95,0.5) 70%,
+    rgba(31,58,95,0.92) 100%
+  );
+}
+
+/* Header left zone — logo + taglines */
+.header-zone-left {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 230px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0 20px 0 24px;
+  gap: 8px;
+  z-index: 30;
+  animation: slideInLeft 0.65s ease 0.05s both;
+}
+
+.byd-logo {
+  width: 160px;
+  height: auto;
+  display: block;
+  flex-shrink: 0;
+}
+
+.header-taglines {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tagline-eyebrow {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 2.5px;
+  color: rgba(255,255,255,0.55);
+  text-transform: uppercase;
+}
+
+.tagline-main {
+  font-size: 18px;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+/* Header center zone — model name (sits above the hole) */
+.header-zone-center {
+  position: absolute;
+  top: 0;
+  left: 230px;
+  width: 1140px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 30;
+  animation: fadeInUp 0.7s ease 0.1s both;
+  pointer-events: none;
+}
+
+.header-model-name {
+  font-size: 52px;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.header-model-suffix {
+  font-size: 28px;
+  font-weight: 600;
+  color: #EC1C24;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  line-height: 1;
+  align-self: flex-end;
+  padding-bottom: 6px;
+}
+
+/* Header right zone */
+.header-zone-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 230px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 0 24px 0 16px;
+  gap: 10px;
+  z-index: 30;
+  animation: slideInRight 0.65s ease 0.1s both;
+}
+
+.header-badge {
+  background: #EC1C24;
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.header-range {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.8);
+  text-align: right;
+  line-height: 1.4;
+}
+
+.header-range strong {
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+/* Red accent line at bottom of header — crisp 3px solid, no blur */
+.arche-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #EC1C24;
+  box-shadow: none;
+  z-index: 40;
+}
+
+/* =============================================================
+   BODY ROW — 1600 × 760 px (top: 200px)
+   ============================================================= */
+.arche-body {
+  position: absolute;
+  top: 200px;
+  left: 0;
+  width: 1600px;
+  height: 760px;
+  display: flex;
+  align-items: stretch;
+  z-index: 10;
+}
+
+/* =============================================================
+   GUTTERS — 230 × 760 px each
+   ============================================================= */
+.arche-gutter {
+  width: 230px;
+  height: 760px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.arche-gutter-left {
+  background: linear-gradient(
+    180deg,
+    #1F3A5F 0%,
+    rgba(31,58,95,0.97) 55%,
+    #000000 100%
+  );
+}
+
+.arche-gutter-right {
+  background: linear-gradient(
+    180deg,
+    #000000 0%,
+    rgba(31,58,95,0.95) 45%,
+    #1F3A5F 100%
+  );
+}
+
+.gutter-inner {
+  position: relative;
+  z-index: 5;
+  padding: 28px 16px 24px 22px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gutter-inner-right {
+  padding: 28px 22px 24px 16px;
+  align-items: flex-start;
+}
+
+/* Model name in gutter */
+.g-model {
+  font-size: 24px;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  line-height: 1;
+  animation: fadeInUp 0.6s ease 0.15s both;
+}
+
+.g-suffix {
+  font-size: 14px;
+  font-weight: 600;
+  color: #EC1C24;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  margin-top: -4px;
+  animation: fadeInUp 0.6s ease 0.25s both;
+}
+
+.g-rule {
+  width: 36px;
+  height: 2px;
+  background: #EC1C24;
+  border-radius: 1px;
+  margin: 6px 0;
+  animation: expandWidth 0.6s ease 0.4s both;
+}
+
+@keyframes expandWidth {
+  from { width: 0; opacity: 0; }
+  to   { width: 36px; opacity: 1; }
+}
+
+/* Specs list */
+.g-specs {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: fadeInUp 0.6s ease 0.35s both;
+}
+
+.g-specs li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.sv {
+  font-size: 28px;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+.su {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.65);
+}
+
+.sl {
+  width: 100%;
+  font-size: 9px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+
+/* Product image inside gutter */
+.g-img-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  margin-top: auto;
+}
+
+.g-img-wrap-rear {
+  align-items: center;
+}
+
+.g-car-img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  opacity: 0.85;
+  transition: opacity 0.5s ease, transform 0.45s ease;
+}
+
+.arche-gutter:hover .g-car-img {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/* Right gutter text elements */
+.g-headline {
+  font-size: 19px;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  animation: fadeInUp 0.6s ease 0.15s both;
+}
+
+.g-price-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: fadeInUp 0.6s ease 0.3s both;
+}
+
+.gp-from {
+  font-size: 9px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.55);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.gp-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1.1;
+}
+
+.gp-cur {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.gp-legal {
+  font-size: 8px;
+  font-weight: 500;
+  font-style: italic;
+  color: rgba(255,255,255,0.38);
+  margin-top: 2px;
+}
+
+/* CTA button in gutter */
+.g-cta {
+  display: inline-block;
+  background: #EC1C24;
+  color: #FFFFFF;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 2px;
+  border: 2px solid #EC1C24;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease;
+  animation: fadeInUp 0.6s ease 0.45s both, pulseCta 2.8s ease-in-out 1.5s infinite;
+}
+
+.g-cta:hover {
+  background: transparent;
+  color: #EC1C24;
+  transform: translateY(-2px);
+  animation-play-state: paused;
+}
+
+/* Animated side accent bar */
+.g-bar {
+  position: absolute;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    #EC1C24 40%,
+    rgba(236,28,36,0.15) 100%
+  );
+  animation: barPulse 3s ease-in-out infinite alternate;
+}
+
+.g-bar-right { right: 0; }
+.g-bar-left  { left: 0; animation-delay: 1.5s; }
+
+@keyframes barPulse {
+  from { opacity: 0.35; transform: scaleY(0.55); transform-origin: top; }
+  to   { opacity: 1;    transform: scaleY(1);    transform-origin: top; }
+}
+
+/* =============================================================
+   CENTER HOLE — 1140 × 760 px (non-pub)
+   ============================================================= */
+.arche-center-hole {
+  width: 1140px;
+  height: 760px;
+  flex-shrink: 0;
+  background: #F2F2F2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hole-label {
+  font-size: 12px;
+  font-weight: 400;
+  color: #B0B3B8;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+/* =============================================================
+   TRACKING PIXEL
+   ============================================================= */
+.tracking-pixel {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  display: block;
+}
+
+/* =============================================================
+   COMPANIONS ROW
+   ============================================================= */
+.companions-row {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.companion {
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* =============================================================
+   COMPANION 300 × 250
+   ============================================================= */
+.c300x250 {
+  width: 300px;
+  height: 250px;
+}
+
+.c-bg {
+  position: absolute;
+  inset: 0;
+  background: #1F3A5F;
+}
+
+.c-car-img {
+  position: absolute;
+  bottom: -8px;
+  right: -16px;
+  width: 220px;
+  height: auto;
+  object-fit: contain;
+  opacity: 0.65;
+  transition: transform 0.4s ease, opacity 0.3s ease;
+}
+
+.c300x250:hover .c-car-img {
+  transform: translateX(-8px) scale(1.06);
+  opacity: 0.9;
+}
+
+.c-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    140deg,
+    rgba(31,58,95,1) 28%,
+    rgba(31,58,95,0.25) 100%
+  );
+}
+
+.c-content {
+  position: relative;
+  z-index: 10;
+  padding: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.c-logo {
+  width: 80px;
+  height: auto;
+  display: block;
+  flex-shrink: 0;
+}
+
+.c-model {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.65);
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+
+.c-model span {
+  color: #EC1C24;
+}
+
+.c-headline {
+  font-size: 18px;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.c-spec {
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.5px;
+}
+
+.c-cta {
+  display: inline-block;
+  margin-top: auto;
+  align-self: flex-start;
+  background: #EC1C24;
+  color: #FFFFFF;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 2px;
+  border: 2px solid #EC1C24;
+  transition: background 0.22s ease, color 0.22s ease, transform 0.2s ease;
+  margin-bottom: 4px;
+}
+
+.c-cta:hover {
+  background: transparent;
+  color: #EC1C24;
+  transform: translateY(-1px);
+}
+
+/* =============================================================
+   COMPANION 300 × 600
+   ============================================================= */
+.c300x600 {
+  width: 300px;
+  height: 600px;
+}
+
+.c6-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 16px 14px;
+  gap: 10px;
+  overflow: hidden;
+}
+
+/* background texture */
+.c6-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    160deg,
+    rgba(31,58,95,0.55) 0%,
+    rgba(0,0,0,0) 60%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.c6-top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #EC1C24;
+  z-index: 10;
+}
+
+.c6-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 5;
+}
+
+.c6-logo {
+  width: 90px;
+  height: auto;
+  display: block;
+}
+
+.c6-badge {
+  background: rgba(236,28,36,0.15);
+  border: 1px solid rgba(236,28,36,0.5);
+  color: #EC1C24;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 2px;
+}
+
+.c6-model {
+  font-size: 30px;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 5;
+}
+
+.c6-model span {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #EC1C24;
+  letter-spacing: 3.5px;
+  margin-top: 2px;
+}
+
+.c6-headline {
+  font-size: 20px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.2;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 5;
+}
+
+.c6-car-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  z-index: 5;
+  margin: 0 -16px;
+}
+
+.c6-car-img {
+  width: 120%;
+  height: auto;
+  object-fit: cover;
+  object-position: center 40%;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.c300x600:hover .c6-car-img {
+  transform: scale(1.06);
+}
+
+.c6-specs {
+  display: flex;
+  justify-content: space-between;
+  flex-shrink: 0;
+  padding: 10px 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  position: relative;
+  z-index: 5;
+}
+
+.c6-spec {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+}
+
+.csv {
+  font-size: 20px;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+.csu {
+  font-size: 10px;
+  font-weight: 600;
+  color: #EC1C24;
+  line-height: 1;
+}
+
+.csl {
+  font-size: 7px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.45);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+.c6-price {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.65);
+  text-align: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 5;
+}
+
+.c6-price strong {
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.c6-cta {
+  display: block;
+  background: #EC1C24;
+  color: #FFFFFF;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 12px 16px;
+  border-radius: 2px;
+  text-align: center;
+  flex-shrink: 0;
+  border: 2px solid #EC1C24;
+  position: relative;
+  z-index: 5;
+  transition: background 0.22s ease, color 0.22s ease, transform 0.2s ease;
+}
+
+.c6-cta:hover {
+  background: transparent;
+  color: #EC1C24;
+  transform: translateY(-2px);
+}
+
+.c6-legal {
+  font-size: 7px;
+  font-weight: 500;
+  font-style: italic;
+  color: rgba(255,255,255,0.28);
+  text-align: center;
+  flex-shrink: 0;
+  line-height: 1.5;
+  position: relative;
+  z-index: 5;
+  margin-bottom: 2px;
+}
+
+/* =============================================================
+   KEYFRAME ANIMATIONS
+   ============================================================= */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-22px); }
+  to   { opacity: 1; transform: translateX(0);     }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(22px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+
+@keyframes pulseCta {
+  0%, 100% { box-shadow: 0 0 0 0   rgba(236,28,36,0.45); }
+  50%       { box-shadow: 0 0 0 7px rgba(236,28,36,0);    }
+}
+
+/* =============================================================
+   REDUCED MOTION
+   ============================================================= */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

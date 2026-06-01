@@ -30,6 +30,11 @@ import {
   resolveCampaignReferenceUrl
 } from '../lib/style-guide-urls.mts';
 import {
+  fontEffectSchema,
+  isStructuredOutputParseError,
+  sanitizeStyleGuideTypography
+} from '../lib/style-guide-schema.mts';
+import {
   assertImageSearchProviderConfigured,
   imageSearchLogPrefix,
   resolveImageSearchProvider
@@ -371,7 +376,7 @@ const brandStyleGuideSchema = z.object({
     z.object({
       fontFamily: z.string().describe('Font family name'),
       fontWeight: z.number().describe('Font weight as used in CSS'),
-      fontEffect: z.array(z.enum([ 'bold', 'italic', 'underline', 'strikethrough' ])).describe('Font effects'),
+      fontEffect: fontEffectSchema,
       fontUses: z.string().describe('Context in which to use said font setting. i.e: brand name, heading, text body, etc.')
     })
   ),
@@ -474,18 +479,7 @@ const apiUsageTotals = createEmptyUsageAccumulator();
 const apiCallTimings: ApiCallTiming[] = [];
 const styleGuideStepStart = Date.now();
 
-while (true) {
-  i += 1;
-
-  console.log(`Generating style guide ... (i=${i})`);
-
-  const { result: styleGuideResponse, duration_ms: turnDurationMs } = await timedAnthropicCall(
-    `style-guide turn ${String(i)}`,
-    async () =>
-      await withAnthropicRetry(`style-guide turn ${String(i)}`, async () => {
-    const styleGuideStream = await anthropicClient.messages.stream({
-      max_tokens: 128000,
-      system: `
+const STYLE_GUIDE_SYSTEM_PROMPT = (referenceNote: string, skillGuidance: string): string => `
       You are an agent that assembles brand style guides based on external information.
       The information should ideally be sourced from the brand or company's official websites.
       No information should come from the model memory. It should always be fetched remotely to ensure freshness.
@@ -515,40 +509,89 @@ while (true) {
       When specifying colors, always check that the color exists and matches the one described in the official sources.
       Every entry in primaryColorPalette and secondaryColorPalette must be a CSS hex with the # prefix (e.g. #1F4E8C, not 1F4E8C).
 
+      typography[].fontEffect: use [] when no effect; otherwise only bold, italic, underline, strikethrough (lowercase).
+      Do not put fontWeight, uppercase, capitalize, semibold, medium, normal, or none in fontEffect — use fontWeight as a number instead.
+
       Use web_search for company/brand facts, official pages, typography and color references only.
       keep it simple and clean for visual direction in text (no image URLs in your output schema for assets).
       The local design skills below are mandatory constraints.
       Before returning final JSON, internally run a compliance check against these skills.
       If any skill rule is not satisfied, keep searching and refining, and do not finalize yet.
-      ${referenceUrlSystemNote}
-      ${localSkillGuidance}
-    `.trim(),
-      messages,
-      model: 'claude-opus-4-7',
-      thinking: {
-        type: 'adaptive',
-        display: 'omitted'
-      },
-      output_config: {
-        format: zodOutputFormat(brandStyleGuideModelSchema),
-        effort: 'xhigh' as 'low' | 'medium' | 'high' | 'max' | null
-      },
-      tools: [
-        {
-          type: 'web_search_20250305',
-          name: 'web_search',
-          max_uses: 25
-        }
-      ]
-    });
-        return await styleGuideStream.finalMessage();
-      })
-  );
+      ${referenceNote}
+      ${skillGuidance}
+    `.trim();
+
+async function streamStyleGuideMessage () {
+  const styleGuideStream = await anthropicClient.messages.stream({
+    max_tokens: 128000,
+    system: STYLE_GUIDE_SYSTEM_PROMPT(referenceUrlSystemNote, localSkillGuidance),
+    messages,
+    model: 'claude-opus-4-7',
+    thinking: {
+      type: 'adaptive',
+      display: 'omitted'
+    },
+    output_config: {
+      format: zodOutputFormat(brandStyleGuideModelSchema),
+      effort: 'xhigh' as 'low' | 'medium' | 'high' | 'max' | null
+    },
+    tools: [
+      {
+        type: 'web_search_20250305',
+        name: 'web_search',
+        max_uses: 25
+      }
+    ]
+  });
+  return await styleGuideStream.finalMessage();
+}
+
+let structuredOutputParseRetried = false;
+
+while (true) {
+  i += 1;
+
+  console.log(`Generating style guide ... (i=${i})`);
+
+  let styleGuideResponse: Awaited<ReturnType<typeof streamStyleGuideMessage>>;
+  let turnDurationMs: number;
+  try {
+    const timed = await timedAnthropicCall(`style-guide turn ${String(i)}`, async () =>
+      await withAnthropicRetry(`style-guide turn ${String(i)}`, async () => streamStyleGuideMessage())
+    );
+    styleGuideResponse = timed.result;
+    turnDurationMs = timed.duration_ms;
+  } catch (err: unknown) {
+    if (isStructuredOutputParseError(err) && !structuredOutputParseRetried) {
+      structuredOutputParseRetried = true;
+      console.warn(
+        '[style-guide] Structured output parse failed (often typography[].fontEffect). Retrying once with schema reminder.'
+      );
+      messages.push({
+        role: 'user',
+        content:
+          'Your previous response failed structured-output validation (typography[].fontEffect). '
+          + 'Use only bold, italic, underline, strikethrough in lowercase, or [] when there is no effect. '
+          + 'Do not use uppercase, capitalize, semibold, medium, normal, or fontWeight values in fontEffect. '
+          + 'Return the complete style guide JSON again.'
+      });
+      const retryTimed = await timedAnthropicCall(`style-guide turn ${String(i)}-parse-retry`, async () =>
+        await withAnthropicRetry(`style-guide turn ${String(i)}-parse-retry`, async () =>
+          streamStyleGuideMessage()
+        )
+      );
+      styleGuideResponse = retryTimed.result;
+      turnDurationMs = retryTimed.duration_ms;
+    } else {
+      throw err;
+    }
+  }
+
   apiCallTimings.push({
     call_index: i,
     duration_ms: turnDurationMs,
     stop_reason: styleGuideResponse.stop_reason,
-    label: `style-guide turn ${String(i)}`
+    label: structuredOutputParseRetried && i === 1 ? `style-guide turn ${String(i)} (after parse retry)` : `style-guide turn ${String(i)}`
   });
   addUsageToAccumulator(apiUsageTotals, styleGuideResponse.usage);
   logReadableAnthropicCall(
@@ -565,7 +608,10 @@ while (true) {
     console.log('Stop reason:', styleGuideResponse.stop_reason);
     console.log('Stop details:', styleGuideResponse.stop_details);
     console.log(styleGuideResponse.parsed_output);
-    styleGuideFromModel = styleGuideResponse.parsed_output;
+    if (styleGuideResponse.parsed_output === null) {
+      throw new Error('Style guide structured output was empty.');
+    }
+    styleGuideFromModel = sanitizeStyleGuideTypography(styleGuideResponse.parsed_output);
     break;
   }
 

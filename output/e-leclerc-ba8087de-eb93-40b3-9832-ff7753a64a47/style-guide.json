@@ -1,0 +1,93 @@
+{
+  "companyName": "E.Leclerc (Mouvement E.Leclerc / GALEC)",
+  "companyContext": "E.Leclerc est une coopérative française de commerçants indépendants et la première enseigne de grande distribution en France. Fondée en 1949 à Landerneau par Édouard Leclerc, elle exploite plus de 720 hypermarchés et supermarchés ainsi qu'environ 690 Drive, avec pour mission historique de démocratiser la consommation en vendant au meilleur prix (alimentation, électroménager, high-tech, parapharmacie, culture, carburant, voyages, etc.).",
+  "companyURL": "https://www.e.leclerc/",
+  "brandName": "E.Leclerc",
+  "brandContext": "E.Leclerc est l'enseigne grand public de la coopérative : un distributeur omnicanal (magasins, Drive, e-commerce sur e.leclerc) qui défend le pouvoir d'achat des Français à travers les Tickets E.Leclerc, les bons plans, les opérations 'Bonnes Affaires' et la signature 'Défendre tout ce qui compte pour vous'.",
+  "brandURL": "https://www.e.leclerc/cat/bonnes-affaires",
+  "logoFileUrls": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Logo_E.Leclerc_Sans_le_texte.svg/120px-Logo_E.Leclerc_Sans_le_texte.svg.png"
+  ],
+  "productName": "Bonnes Affaires",
+  "campaignContext": "promotion des produits bonnes affaires",
+  "campaignReferenceUrl": "https://www.e.leclerc/cat/bonnes-affaires",
+  "productPictureUrls": [
+    "https://media.e.leclerc/LEN/banner/4db819b2-709a-4a1f-b343-85c888e04d00?vh=12e92a&op_sharpen=1&resmode=bilin&fmt=pjpeg&qlt=85&fit=fit,1&wid=1900",
+    "https://media.ouest-france.fr/v1/pictures/MjAyNjAxNmJlY2I4NDUxNjAwNGVhY2FhOGJjNjBiMDk5ZWY4YzI?width=1260&height=708&focuspoint=50,25&cropresize=1&client_id=bpeditorial&sign=d954e923354081c9958cfa443fe520d8384c773696c1efdd1442054122838a07",
+    "https://media.gettyimages.com/id/155443388/fr/photo/r%C3%A9duction-sur-les-produits-laitiers-%C3%A0-une-%C3%A9picerie.jpg?s=612x612&w=0&k=20&c=LqmBRGnIZXrHryebBzolphQBgViwmNJ0eEa5RCNiN-A=",
+    "https://media.ouest-france.fr/v1/pictures/MjAyNTExY2Y2MGExN2QzOTkxMjk1ZDRjZDMyODY4M2YwYzkyMTA?width=1260&height=708&focuspoint=50,25&cropresize=1&client_id=bpeditorial&sign=92db242c2bc56bbb4f05b7db416bd2e57f4815a81ef71eb2b36fb81be6096254",
+    "https://media.e.leclerc/LEN/banner/f07cb70c-4725-4d74-9195-29126c115f35?vh=68b4a7&op_sharpen=1&resmode=bilin&fmt=pjpeg&qlt=85&fit=fit,1&wid=1900",
+    "https://media.e.leclerc/LEN/banner/e472c256-74ee-4610-8431-6291fb821c70?vh=4f34a8"
+  ],
+  "primaryColorPalette": [
+    "#0072BC",
+    "#F28F00",
+    "#FFFFFF",
+    "#1A1A1A"
+  ],
+  "secondaryColorPalette": [
+    "#E30613",
+    "#FFD500",
+    "#005CA9",
+    "#F5F5F5",
+    "#7A7A7A"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Montserrat",
+      "fontWeight": 800,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Accroches promotionnelles type 'BONNES AFFAIRES', pourcentages de remise, prix barrés et étiquettes promo"
+    },
+    {
+      "fontFamily": "Montserrat",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Titres de rayons et headlines de catégorie (Électroménager, High-Tech, Jouets…)"
+    },
+    {
+      "fontFamily": "Open Sans",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Sous-titres, libellés de boutons CTA ('Voir l'offre', 'Ajouter au panier')"
+    },
+    {
+      "fontFamily": "Open Sans",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Texte courant, descriptions produits, mentions légales et conditions de l'offre"
+    },
+    {
+      "fontFamily": "Open Sans",
+      "fontWeight": 400,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Mentions complémentaires, astérisques et petits caractères sous les prix"
+    }
+  ],
+  "brandVision": "Démocratiser la consommation et défendre durablement le pouvoir d'achat des Français en rendant accessibles, au prix le plus juste, les produits et services du quotidien — du frais à l'électroménager — via un réseau coopératif d'entrepreneurs indépendants.",
+  "brandValues": "Accessibilité prix, indépendance des adhérents, engagement consumériste et anti-monopole, proximité et soutien aux producteurs locaux (Alliances Locales), transparence des prix, responsabilité environnementale (suppression des sacs plastiques dès 1996, Nettoyons la Nature), solidarité (Ligue contre le Cancer, Fondation Alzheimer).",
+  "logoImageSearchQueries": [
+    "site:commons.wikimedia.org E.Leclerc logo svg",
+    "site:en.wikipedia.org E.Leclerc logo",
+    "E.Leclerc logo svg transparent 2012",
+    "E.Leclerc logo officiel soleil bleu orange",
+    "site:fr.wikipedia.org Fichier E.Leclerc logo svg",
+    "E.Leclerc logo png transparent background"
+  ],
+  "productImageSearchQueries": [
+    "site:e.leclerc bonnes affaires bandeau promotion",
+    "E.Leclerc \"la semaine des bonnes affaires\" visuel",
+    "E.Leclerc bonnes affaires catalogue promo",
+    "E.Leclerc bons plans électroménager high-tech promotion",
+    "E.Leclerc bandeau bonnes affaires site officiel",
+    "E.Leclerc promotion avantage immédiat carte fidélité visuel",
+    "E.Leclerc Tickets E.Leclerc bons plans hero",
+    "E.Leclerc soldes jusqu'à -70% campagne visuelle",
+    "E.Leclerc bonnes affaires high-tech jouets sélection",
+    "E.Leclerc cat bonnes-affaires page promotion"
+  ]
+}

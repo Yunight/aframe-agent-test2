@@ -1,0 +1,123 @@
+{
+  "generated_at": "2026-06-01T18:20:07.713Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/langfr-250px-BYD_Auto_2022_logo.svg.png",
+      "fileName": "langfr-250px-BYD_Auto_2022_logo.svg.png",
+      "fileType": "logos",
+      "description": "BYD marque rouge horizontale avec caractères stylisés. Logo épuré idéal pour placement en en-tête ou coin de banneau. Lisible sur fond clair ou foncé.",
+      "layout_hints": [
+        "logo-lockup",
+        "header-placement",
+        "corner-anchor"
+      ],
+      "dominant_colors": [
+        "#E31937",
+        "#FFFFFF"
+      ]
+    },
+    {
+      "asset_id": "products/byd-sealion5-dmi-1stBanner-l.webp",
+      "fileName": "byd-sealion5-dmi-1stBanner-l.webp",
+      "fileType": "products",
+      "description": "Sealion 5 DM-i bleu métallisé en vue 3/4 face, positionné sur parking urbain surplombant Venise. Ciel dégradé clair et surface grise. Idéal comme hero principal pour banneau large avec espace texte au-dessus. Peut alterner dans rotation SKU.",
+      "layout_hints": [
+        "hero",
+        "packshot-landscape",
+        "foreground-right"
+      ],
+      "dominant_colors": [
+        "#5B8DC9",
+        "#D0D0D0",
+        "#87CEEB",
+        "#F5F5F5"
+      ]
+    },
+    {
+      "asset_id": "products/byd-sealion5-dmi-1stBanner-xl.webp",
+      "fileName": "byd-sealion5-dmi-1stBanner-xl.webp",
+      "fileType": "products",
+      "description": "Sealion 5 DM-i bleu métallisé vue 3/4 face avec fond urbain vénitien. Layout panoramique avec véhicule centré-droit et ciel dégradé bleu pâle. Excellent pour banneau hero XL avec overlay texte supérieur. Rotation produit possible.",
+      "layout_hints": [
+        "hero",
+        "packshot-panorama",
+        "fond-clair"
+      ],
+      "dominant_colors": [
+        "#5B8DC9",
+        "#E8E8E8",
+        "#87CEEB",
+        "#B8B8B8"
+      ]
+    },
+    {
+      "asset_id": "products/byd-sealion5-dmi-exterior-01-xl.webp",
+      "fileName": "byd-sealion5-dmi-exterior-01-xl.webp",
+      "fileType": "products",
+      "description": "Sealion 5 DM-i bleu métallisé profil latéral complet sur fond blanc et gris clair avec ombre subtile. Cadrage packshot studio clean pour focus produit. Idéal pour mise en avant détails de design. Rotation SKU disponible.",
+      "layout_hints": [
+        "packshot-centre",
+        "studio-product",
+        "profile-view"
+      ],
+      "dominant_colors": [
+        "#5B8DC9",
+        "#F0F0F0",
+        "#D5D5D5",
+        "#FFFFFF"
+      ]
+    },
+    {
+      "asset_id": "products/byd-sealion5-dmi-exterior-02-xl.webp",
+      "fileName": "byd-sealion5-dmi-exterior-02-xl.webp",
+      "fileType": "products",
+      "description": "Sealion 5 DM-i bleu métallisé vue de face sur fond gris clair avec ombre. Grille avant distinctive avec logo BYD visible et coffre avec texte modèle lisible. Idéal pour accent frontal ou banner central. Peut rotation comme variante SKU.",
+      "layout_hints": [
+        "packshot-centre",
+        "front-view",
+        "hero-variant"
+      ],
+      "dominant_colors": [
+        "#5B8DC9",
+        "#E8E8E8",
+        "#2A2A2A",
+        "#CCCCCC"
+      ]
+    },
+    {
+      "asset_id": "products/byd-sealion5-dmi-exterior-03-xl.webp",
+      "fileName": "byd-sealion5-dmi-exterior-03-xl.webp",
+      "fileType": "products",
+      "description": "Sealion 5 DM-i bleu vue arrière avec feux LED rouges allumés et texte modèle visible. Fond blanc-gris neutre. Excellente pour showcaser technologie rétro-éclairage. Rotation produit envisageable.",
+      "layout_hints": [
+        "packshot-centre",
+        "rear-view",
+        "tech-highlight"
+      ],
+      "dominant_colors": [
+        "#5B8DC9",
+        "#F5F5F5",
+        "#FF3333",
+        "#B0B0B0"
+      ]
+    },
+    {
+      "asset_id": "products/SEALION_5_DM-i__C3_A9tiquette__C3_A9nerg_C3_A9tique.png",
+      "fileName": "SEALION_5_DM-i__C3_A9tiquette__C3_A9nerg_C3_A9tique.png",
+      "fileType": "products",
+      "description": "Étiquette efficacité énergétique EU officielle pour Sealion 5 DM-i : classe A (48–62 gCO₂/km). Flèches dégradées codes couleur vert-rouge. Texte blanc lisible sur fond coloré. À placer bas/coin légal banneaux pour conformité réglementaire.",
+      "layout_hints": [
+        "legal-badge",
+        "footer-placement",
+        "regulatory"
+      ],
+      "dominant_colors": [
+        "#5FB543",
+        "#F4CC42",
+        "#D3A62D",
+        "#E84C3B"
+      ]
+    }
+  ]
+}

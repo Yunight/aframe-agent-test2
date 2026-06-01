@@ -13,6 +13,7 @@ export const CREATIVE_DESIGN_SKILLS_COMPACT = `
 
 ### Color
 - Use ONLY hex colors from the style guide primary and secondary palettes in CSS.
+- Gradients/shadows: only palette hex + opacity or rgba(); never darken/lighten into a new hex.
 - Sufficient contrast for text on backgrounds (WCAG-minded: avoid light-on-light).
 - One accent color for CTA; do not invent new brand colors.
 

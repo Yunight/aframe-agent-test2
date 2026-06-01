@@ -14,6 +14,57 @@ export function htmlContainsAdDomId (html: string, domId: string): boolean {
   return re.test(html);
 }
 
+/** Ad units present in HTML but not in the selected format list (e.g. unrequested arche companions). */
+export function findUnselectedAdUnitsInHtml (
+  html: string,
+  formats: readonly AdFormatSelection[]
+): string[] {
+  const allowedIds = new Set(formats.map((f) => f.id));
+  const allowedDomIds = new Set(formats.map((f) => formatIdToAdDomId(f.id)));
+  const extras: string[] = [];
+  const seen = new Set<string>();
+
+  const addExtra = (label: string): void => {
+    if (!seen.has(label)) {
+      seen.add(label);
+      extras.push(label);
+    }
+  };
+
+  for (const m of html.matchAll(/\bdata-format=["']([^"']+)["']/giu)) {
+    const fmt = m[1] ?? '';
+    if (fmt === 'arche') {
+      if (!formats.some((f) => f.arche !== undefined)) {
+        addExtra('arche');
+      }
+      continue;
+    }
+    if (!allowedIds.has(fmt)) {
+      addExtra(fmt);
+    }
+  }
+
+  for (const m of html.matchAll(/\bid=["']ad-companion-([^"']+)["']/giu)) {
+    const fmt = m[1] ?? '';
+    if (!allowedIds.has(fmt)) {
+      addExtra(fmt);
+    }
+  }
+
+  for (const m of html.matchAll(/\bid=["'](ad-[^"']+)["']/giu)) {
+    const fullId = m[1] ?? '';
+    if (fullId.startsWith('ad-companion-')) {
+      continue;
+    }
+    if (allowedDomIds.has(fullId)) {
+      continue;
+    }
+    addExtra(fullId.slice(3));
+  }
+
+  return extras;
+}
+
 /**
  * Ensures each format has a visible root with id="ad-{formatId}" for Playwright.
  * Adds id to the first `.ad-frame` or dimension-matching wrapper when missing.

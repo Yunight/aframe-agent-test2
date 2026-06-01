@@ -8,7 +8,7 @@ import {
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { chromium, type Page } from 'playwright';
+import { chromium, type Browser, type Page } from 'playwright';
 
 export type ScreenshotState = 'initial' | 'animated' | 'settled';
 
@@ -48,8 +48,12 @@ export type CaptureScreenshotsOptions = {
 
 const SCREENSHOT_STATES: readonly ScreenshotState[] = [ 'initial', 'animated', 'settled' ];
 
+function screenshotProfile (): string {
+  return process.env['CREATIVE_SCREENSHOT_PROFILE']?.trim().toLowerCase() ?? 'fast';
+}
+
 function screenshotStatesForProfile (): readonly ScreenshotState[] {
-  const profile = process.env['CREATIVE_SCREENSHOT_PROFILE']?.trim().toLowerCase();
+  const profile = screenshotProfile();
   if (profile === 'dev' || profile === 'fast') {
     return [ 'settled' ];
   }
@@ -144,30 +148,26 @@ async function scrollAdUnitIntoView (page: Page, selector: string): Promise<void
 }
 
 async function captureFormatScreenshots (
+  browser: Browser,
   format: AdFormatSelection,
   entryUrl: string,
   outputScreensDir: string,
   waits: { initial: number; animated: number; settled: number },
   viewportMarginPx: number
 ): Promise<ScreenshotManifestEntry> {
-  const browser = await chromium.launch({
-    headless: true,
-    args: [ '--allow-file-access-from-files', '--disable-web-security' ]
-  });
-
   const shots: ScreenshotManifestEntry['shots'] = [];
   let resolvedSelector: string | null = null;
   let resolveError: string | null = null;
-  try {
-    const context = await browser.newContext({
+  const context = await browser.newContext({
       viewport: {
         width: Math.min(format.width + viewportMarginPx * 2, 4096),
         height: Math.min(format.height + viewportMarginPx * 2, 4096)
       },
       deviceScaleFactor: 1
-    });
+  });
+  try {
     const page = await context.newPage();
-    await page.goto(entryUrl, { waitUntil: 'networkidle', timeout: 60_000 });
+    await page.goto(entryUrl, { waitUntil: 'domcontentloaded', timeout: 60_000 });
 
     const resolved = await resolveAdUnitLocator(page, format);
     if ('error' in resolved) {
@@ -212,10 +212,8 @@ async function captureFormatScreenshots (
         captured_at: new Date().toISOString()
       });
     }
-
-    await context.close();
   } finally {
-    await browser.close();
+    await context.close();
   }
 
   return {
@@ -244,8 +242,8 @@ export async function captureCreativeNativeScreenshots (
 
   mkdirSync(outputScreensDir, { recursive: true });
 
-  const devProfile = process.env['CREATIVE_SCREENSHOT_PROFILE']?.trim().toLowerCase() === 'dev'
-    || process.env['CREATIVE_SCREENSHOT_PROFILE']?.trim().toLowerCase() === 'fast';
+  const profile = screenshotProfile();
+  const devProfile = profile === 'dev' || profile === 'fast';
   const initialWaitMs =
     options.initialWaitMs
     ?? parsePositiveIntEnv('CREATIVE_SCREENSHOT_INITIAL_WAIT_MS', devProfile ? 200 : 600, 30_000);
@@ -263,11 +261,20 @@ export async function captureCreativeNativeScreenshots (
   console.log(`[screenshots] Capturing ${String(adFormats.length)} format(s) → ${outputScreensDir}`);
   const startedAt = Date.now();
 
-  const formatEntries = await Promise.all(
-    adFormats.map((format) =>
-      captureFormatScreenshots(format, entryUrl, outputScreensDir, waits, viewportMarginPx)
-    )
-  );
+  const browser = await chromium.launch({
+    headless: true,
+    args: [ '--allow-file-access-from-files', '--disable-web-security' ]
+  });
+  let formatEntries: ScreenshotManifestEntry[];
+  try {
+    formatEntries = await Promise.all(
+      adFormats.map((format) =>
+        captureFormatScreenshots(browser, format, entryUrl, outputScreensDir, waits, viewportMarginPx)
+      )
+    );
+  } finally {
+    await browser.close();
+  }
 
   const manifest: ScreenshotManifest = {
     captured_at: new Date().toISOString(),

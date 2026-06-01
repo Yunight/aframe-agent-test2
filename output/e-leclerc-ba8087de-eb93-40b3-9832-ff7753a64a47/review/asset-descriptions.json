@@ -1,0 +1,99 @@
+{
+  "generated_at": "2026-06-01T19:29:26.429Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/120px-Logo_E.Leclerc_Sans_le_texte.svg.png",
+      "fileName": "120px-Logo_E.Leclerc_Sans_le_texte.svg.png",
+      "fileType": "logos",
+      "description": "Iconic E.Leclerc circular logo featuring blue ring and split blue-orange 'L' mark. Clean, minimal design suitable for corner placement or lockup integration in banner headers. Works as top-left logo anchor or supplementary branding element.",
+      "layout_hints": [
+        "logo-lockup",
+        "top-left",
+        "header-anchor",
+        "minimal-footprint"
+      ],
+      "dominant_colors": [
+        "#0052CC",
+        "#FF9900",
+        "#FFFFFF"
+      ]
+    },
+    {
+      "asset_id": "products/4db819b2-709a-4a1f-b343-85c888e04d00.jpg",
+      "fileName": "4db819b2-709a-4a1f-b343-85c888e04d00.jpg",
+      "fileType": "products",
+      "description": "Garden furniture promotion banner featuring two woven chairs with cushions, umbrella, and hanging planter on warm gradient background (orange to coral-pink). Bold '25%' discount badge and 'Voir la sélection' CTA in blue button. Clean product staging ideal for hero placement with promotional urgency.",
+      "layout_hints": [
+        "hero",
+        "product-hero",
+        "garden-lifestyle",
+        "packshot-centre",
+        "warm-gradient-bg"
+      ],
+      "dominant_colors": [
+        "#FFA500",
+        "#FF69B4",
+        "#DC143C",
+        "#0052CC"
+      ]
+    },
+    {
+      "asset_id": "products/e472c256-74ee-4610-8431-6291fb821c70.png",
+      "fileName": "e472c256-74ee-4610-8431-6291fb821c70.png",
+      "fileType": "products",
+      "description": "LEGO Bonnes Affaires campaign on turquoise radial-burst background showcasing Harry Potter castle set, motorcycle build, and Creator animal set. Features 'COUP DE POÏNG' label, LEGO logo, discount badge '-40%', and 'En profiter' button. Dynamic layout perfect for product rotation as feature hero.",
+      "layout_hints": [
+        "hero",
+        "multi-product-showcase",
+        "toy-category",
+        "bold-discount-badge",
+        "turquoise-bg"
+      ],
+      "dominant_colors": [
+        "#00B4A0",
+        "#DC143C",
+        "#FFFF00",
+        "#000000"
+      ]
+    },
+    {
+      "asset_id": "products/f07cb70c-4725-4d74-9195-29126c115f35.jpg",
+      "fileName": "f07cb70c-4725-4d74-9195-29126c115f35.jpg",
+      "fileType": "products",
+      "description": "DIY/Bricolage charcoal barbecue product shot on warm beige background showing packaged product and key product details (€11.99 unit price). Includes '-50% SUR LE 2ÈME PRODUIT ACHETÉ' badge and 'Acheter' blue button. Text-heavy layout with strong pricing anchor ideal for Click & Collect promotion.",
+      "layout_hints": [
+        "hero",
+        "product-details",
+        "pricing-emphasis",
+        "diy-category",
+        "warm-bg"
+      ],
+      "dominant_colors": [
+        "#FFB84D",
+        "#DC143C",
+        "#000000",
+        "#0052CC"
+      ]
+    },
+    {
+      "asset_id": "products/r_C3_A9duction-sur-les-produits-laitiers-_C3_A0-une-_C3_A9picerie.jpg",
+      "fileName": "r_C3_A9duction-sur-les-produits-laitiers-_C3_A0-une-_C3_A9picerie.jpg",
+      "fileType": "products",
+      "description": "Grocery shelf scenario with dairy products and discount tag '-15%' in sharp focus on blurred supermarket aisle background. Conveys in-store promotional urgency and real-world shopping context. Versatile hero for grocery/food category campaigns with authentic retail atmosphere.",
+      "layout_hints": [
+        "hero",
+        "grocery-shelf",
+        "in-store-scenario",
+        "blurred-background",
+        "discount-tag-focus"
+      ],
+      "dominant_colors": [
+        "#DC143C",
+        "#FFFFFF",
+        "#FFD700",
+        "#333333"
+      ]
+    }
+  ]
+}

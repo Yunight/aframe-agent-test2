@@ -1,5 +1,6 @@
 import type { StyleGuide } from '../agents/gen-style-guide.mjs';
-import { htmlContainsAdDomId, formatIdToAdDomId } from './creative-native-ad-dom.mts';
+import { htmlContainsAdDomId, formatIdToAdDomId, findUnselectedAdUnitsInHtml } from './creative-native-ad-dom.mts';
+import { normalizeHexColorBare, styleGuideAllowedHexBareSet } from './style-guide-colors.mts';
 import type { AdFormatSelection } from './studio-ad-formats.mts';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -66,18 +67,11 @@ export const creativeNativeStructuredOutputFilesSchema = z
 
 export type CreativeNativeCodeFileList = z.infer<typeof creativeNativeStructuredOutputFilesSchema>;
 
-function normalizeHexColor (value: string): string {
-  const normalized = value.trim().replace(/^#/, '').toUpperCase();
-  return normalized.length === 3
-    ? normalized.split('').map((char) => `${char}${char}`).join('')
-    : normalized;
-}
-
 function extractHexColorsFromCss (content: string): Set<string> {
   const matches = content.match(/#[0-9a-fA-F]{3,8}\b/g) ?? [];
   return new Set(
     matches
-      .map((hexValue) => normalizeHexColor(hexValue))
+      .map((hexValue) => normalizeHexColorBare(hexValue))
       .filter((hexValue) => hexValue.length === 6)
   );
 }
@@ -192,10 +186,7 @@ export function validateCreativeSkillCompliance (
     issues.push(`Contains font families outside style guide: ${disallowedFonts.join(', ')}`);
   }
 
-  const allowedColors = new Set([
-    ...currentStyleGuide.primaryColorPalette.map(normalizeHexColor),
-    ...currentStyleGuide.secondaryColorPalette.map(normalizeHexColor)
-  ]);
+  const allowedColors = styleGuideAllowedHexBareSet(currentStyleGuide);
   const usedHexColors = extractHexColorsFromCss(allContent);
   const unknownHexColors = Array.from(usedHexColors).filter((hexColor) => !allowedColors.has(hexColor));
   if (unknownHexColors.length > 0) {
@@ -221,6 +212,13 @@ export function validateCreativeSkillCompliance (
           `index.html must expose the ad root as id="${domId}" (${String(format.width)}×${String(format.height)} px) for capture.`
         );
       }
+    }
+    const unselectedUnits = findUnselectedAdUnitsInHtml(indexFile.fileContent, adFormats);
+    if (unselectedUnits.length > 0) {
+      issues.push(
+        `index.html contains ad unit(s) for format(s) not requested: ${unselectedUnits.join(', ')}. `
+        + `Generate only: ${adFormats.map((f) => f.id).join(', ')}.`
+      );
     }
   }
 

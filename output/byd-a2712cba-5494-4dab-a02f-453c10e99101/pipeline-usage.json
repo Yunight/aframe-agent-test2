@@ -1,0 +1,664 @@
+{
+  "directoryUuid": "byd-a2712cba-5494-4dab-a02f-453c10e99101",
+  "updated_at": "2026-06-01T20:02:12.068Z",
+  "entries": [
+    {
+      "action": "style_guide",
+      "agent": "agents/gen-style-guide.mts",
+      "model": "claude-opus-4-7",
+      "review_round": null,
+      "api_calls": 1,
+      "input_tokens": 43383,
+      "output_tokens": 2053,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 43383,
+      "price_usd": {
+        "input": 0.216915,
+        "output": 0.051325,
+        "total": 0.26824
+      },
+      "duration_ms": 40213,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 34141,
+          "stop_reason": "end_turn",
+          "label": "style-guide turn 1"
+        }
+      ],
+      "phase": "style_guide",
+      "sub_step_timings": [
+        {
+          "label": "claude_style_guide",
+          "duration_ms": 34141
+        },
+        {
+          "label": "logo_download",
+          "duration_ms": 409
+        },
+        {
+          "label": "official_product_extract",
+          "duration_ms": 40
+        },
+        {
+          "label": "product_images_brave",
+          "duration_ms": 5508
+        },
+        {
+          "label": "write_style_guide_json",
+          "duration_ms": 0
+        }
+      ],
+      "timestamp": "2026-06-01T18:19:53.976Z"
+    },
+    {
+      "action": "asset_descriptions",
+      "agent": "lib/creative-asset-descriptions.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": null,
+      "api_calls": 1,
+      "input_tokens": 8826,
+      "output_tokens": 1314,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 8826,
+      "price_usd": {
+        "input": 0.008826,
+        "output": 0.00657,
+        "total": 0.015396
+      },
+      "duration_ms": 13467,
+      "phase": "style_guide",
+      "timestamp": "2026-06-01T18:20:07.716Z"
+    },
+    {
+      "action": "creative_generation",
+      "agent": "agents/gen-creative-code-native.mts",
+      "model": "claude-sonnet-4-6",
+      "review_round": null,
+      "api_calls": 2,
+      "input_tokens": 15368,
+      "output_tokens": 12983,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 15368,
+      "price_usd": {
+        "input": 0.046104,
+        "output": 0.194745,
+        "total": 0.240849
+      },
+      "duration_ms": 155807,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 77330,
+          "stop_reason": "end_turn",
+          "label": "codegen turn 1"
+        },
+        {
+          "call_index": 2,
+          "duration_ms": 78475,
+          "stop_reason": "end_turn",
+          "label": "codegen turn 2"
+        }
+      ],
+      "phase": "creative",
+      "timestamp": "2026-06-01T18:23:13.787Z"
+    },
+    {
+      "action": "screenshots",
+      "agent": "lib/creative-native-playwright-screenshots.mts",
+      "model": null,
+      "review_round": 1,
+      "api_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 0,
+      "price_usd": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "notes": "3 PNG, 1 format(s), 0 capture error(s), 10017 ms",
+      "duration_ms": 10017,
+      "phase": "creative",
+      "timestamp": "2026-06-01T18:23:24.207Z"
+    },
+    {
+      "action": "ui_review",
+      "agent": "agents/creative-native-ui-review.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 1,
+      "api_calls": 1,
+      "input_tokens": 8374,
+      "output_tokens": 249,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 8374,
+      "price_usd": {
+        "input": 0.008374,
+        "output": 0.001245,
+        "total": 0.009619
+      },
+      "duration_ms": 5730,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 5730,
+          "stop_reason": "end_turn",
+          "label": "ui-review round 1"
+        }
+      ],
+      "phase": "creative",
+      "timestamp": "2026-06-01T18:23:29.941Z"
+    },
+    {
+      "action": "creative_generation",
+      "agent": "agents/gen-creative-code-native.mts",
+      "model": "claude-sonnet-4-6",
+      "review_round": null,
+      "api_calls": 2,
+      "input_tokens": 67369,
+      "output_tokens": 68243,
+      "cache_creation_input_tokens": 3286,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 70655,
+      "price_usd": {
+        "input": 0.211965,
+        "output": 1.023645,
+        "total": 1.23561
+      },
+      "duration_ms": 948133,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 861182,
+          "stop_reason": "end_turn",
+          "label": "codegen turn 1"
+        },
+        {
+          "call_index": 2,
+          "duration_ms": 86947,
+          "stop_reason": "end_turn",
+          "label": "codegen turn 2"
+        }
+      ],
+      "phase": "creative",
+      "timestamp": "2026-06-01T18:40:48.262Z"
+    },
+    {
+      "action": "screenshots",
+      "agent": "lib/creative-native-playwright-screenshots.mts",
+      "model": null,
+      "review_round": 1,
+      "api_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 0,
+      "price_usd": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "notes": "3 PNG, 1 format(s), 0 capture error(s), 9104 ms",
+      "duration_ms": 9104,
+      "phase": "creative",
+      "timestamp": "2026-06-01T18:40:57.757Z"
+    },
+    {
+      "action": "ui_review",
+      "agent": "agents/creative-native-ui-review.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 1,
+      "api_calls": 1,
+      "input_tokens": 8374,
+      "output_tokens": 141,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 8374,
+      "price_usd": {
+        "input": 0.008374,
+        "output": 0.000705,
+        "total": 0.009079
+      },
+      "duration_ms": 3943,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 3943,
+          "stop_reason": "end_turn",
+          "label": "ui-review round 1"
+        }
+      ],
+      "phase": "creative",
+      "timestamp": "2026-06-01T18:41:01.704Z"
+    },
+    {
+      "action": "creative_generation",
+      "agent": "agents/gen-creative-code-native.mts",
+      "model": "claude-sonnet-4-6",
+      "review_round": null,
+      "api_calls": 1,
+      "input_tokens": 4775,
+      "output_tokens": 4049,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 4775,
+      "price_usd": {
+        "input": 0.014325,
+        "output": 0.060735,
+        "total": 0.07506
+      },
+      "duration_ms": 50532,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 50529,
+          "stop_reason": "end_turn",
+          "label": "codegen turn 1"
+        }
+      ],
+      "phase": "creative",
+      "timestamp": "2026-06-01T19:51:00.521Z"
+    },
+    {
+      "action": "screenshots",
+      "agent": "lib/creative-native-playwright-screenshots.mts",
+      "model": null,
+      "review_round": 1,
+      "api_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 0,
+      "price_usd": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "notes": "3 PNG, 1 format(s), 0 capture error(s), 9620 ms",
+      "duration_ms": 9620,
+      "phase": "creative",
+      "timestamp": "2026-06-01T19:51:10.548Z"
+    },
+    {
+      "action": "ui_review",
+      "agent": "agents/creative-native-ui-review.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 1,
+      "api_calls": 1,
+      "input_tokens": 8023,
+      "output_tokens": 723,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 8023,
+      "price_usd": {
+        "input": 0.008023,
+        "output": 0.003615,
+        "total": 0.011638
+      },
+      "duration_ms": 9473,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 9473,
+          "stop_reason": "end_turn",
+          "label": "ui-review round 1"
+        }
+      ],
+      "phase": "creative",
+      "timestamp": "2026-06-01T19:51:20.025Z"
+    },
+    {
+      "action": "creative_regeneration",
+      "agent": "agents/gen-creative-code-native.mts",
+      "model": "claude-sonnet-4-6",
+      "review_round": 1,
+      "api_calls": 1,
+      "input_tokens": 7595,
+      "output_tokens": 4021,
+      "cache_creation_input_tokens": 1478,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 9073,
+      "price_usd": {
+        "input": 0.027219,
+        "output": 0.060315,
+        "total": 0.087534
+      },
+      "duration_ms": 43140,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 43139,
+          "stop_reason": "end_turn",
+          "label": "codegen turn 1"
+        }
+      ],
+      "phase": "creative",
+      "timestamp": "2026-06-01T19:52:03.374Z"
+    },
+    {
+      "action": "screenshots",
+      "agent": "lib/creative-native-playwright-screenshots.mts",
+      "model": null,
+      "review_round": 2,
+      "api_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 0,
+      "price_usd": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "notes": "3 PNG, 1 format(s), 0 capture error(s), 9588 ms",
+      "duration_ms": 9588,
+      "phase": "creative",
+      "timestamp": "2026-06-01T19:52:12.975Z"
+    },
+    {
+      "action": "ui_review",
+      "agent": "agents/creative-native-ui-review.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 2,
+      "api_calls": 1,
+      "input_tokens": 8023,
+      "output_tokens": 542,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 8023,
+      "price_usd": {
+        "input": 0.008023,
+        "output": 0.00271,
+        "total": 0.010733
+      },
+      "duration_ms": 8181,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 8181,
+          "stop_reason": "end_turn",
+          "label": "ui-review round 2"
+        }
+      ],
+      "phase": "creative",
+      "timestamp": "2026-06-01T19:52:21.159Z"
+    },
+    {
+      "action": "creative_regeneration",
+      "agent": "agents/gen-creative-code-native.mts",
+      "model": "claude-sonnet-4-6",
+      "review_round": 2,
+      "api_calls": 1,
+      "input_tokens": 612,
+      "output_tokens": 4027,
+      "cache_creation_input_tokens": 6780,
+      "cache_read_input_tokens": 1478,
+      "billed_input_tokens": 8870,
+      "price_usd": {
+        "input": 0.02661,
+        "output": 0.060405,
+        "total": 0.087015
+      },
+      "duration_ms": 42506,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 42504,
+          "stop_reason": "end_turn",
+          "label": "codegen turn 1"
+        }
+      ],
+      "phase": "creative",
+      "timestamp": "2026-06-01T19:53:03.874Z"
+    },
+    {
+      "action": "screenshots",
+      "agent": "lib/creative-native-playwright-screenshots.mts",
+      "model": null,
+      "review_round": 3,
+      "api_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 0,
+      "price_usd": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "notes": "3 PNG, 1 format(s), 0 capture error(s), 9548 ms",
+      "duration_ms": 9548,
+      "phase": "creative",
+      "timestamp": "2026-06-01T19:53:13.438Z"
+    },
+    {
+      "action": "ui_review",
+      "agent": "agents/creative-native-ui-review.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 3,
+      "api_calls": 1,
+      "input_tokens": 8023,
+      "output_tokens": 243,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 8023,
+      "price_usd": {
+        "input": 0.008023,
+        "output": 0.001215,
+        "total": 0.009238
+      },
+      "duration_ms": 4587,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 4587,
+          "stop_reason": "end_turn",
+          "label": "ui-review round 3"
+        }
+      ],
+      "phase": "creative",
+      "timestamp": "2026-06-01T19:53:18.028Z"
+    },
+    {
+      "action": "creative_generation",
+      "agent": "agents/gen-creative-code-native.mts",
+      "model": "claude-sonnet-4-6",
+      "review_round": null,
+      "api_calls": 2,
+      "input_tokens": 21816,
+      "output_tokens": 23645,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 21816,
+      "price_usd": {
+        "input": 0.065448,
+        "output": 0.354675,
+        "total": 0.420123
+      },
+      "duration_ms": 276379,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 134083,
+          "stop_reason": "end_turn",
+          "label": "codegen turn 1"
+        },
+        {
+          "call_index": 2,
+          "duration_ms": 142293,
+          "stop_reason": "end_turn",
+          "label": "codegen turn 2"
+        }
+      ],
+      "phase": "creative",
+      "timestamp": "2026-06-01T19:59:13.041Z"
+    },
+    {
+      "action": "screenshots",
+      "agent": "lib/creative-native-playwright-screenshots.mts",
+      "model": null,
+      "review_round": 1,
+      "api_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 0,
+      "price_usd": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "notes": "3 PNG, 1 format(s), 0 capture error(s), 9805 ms",
+      "duration_ms": 9805,
+      "phase": "creative",
+      "timestamp": "2026-06-01T19:59:23.260Z"
+    },
+    {
+      "action": "ui_review",
+      "agent": "agents/creative-native-ui-review.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 1,
+      "api_calls": 1,
+      "input_tokens": 12627,
+      "output_tokens": 585,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 12627,
+      "price_usd": {
+        "input": 0.012627,
+        "output": 0.002925,
+        "total": 0.015552
+      },
+      "duration_ms": 12810,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 12810,
+          "stop_reason": "end_turn",
+          "label": "ui-review round 1"
+        }
+      ],
+      "phase": "creative",
+      "timestamp": "2026-06-01T19:59:36.075Z"
+    },
+    {
+      "action": "creative_regeneration",
+      "agent": "agents/gen-creative-code-native.mts",
+      "model": "claude-sonnet-4-6",
+      "review_round": 1,
+      "api_calls": 1,
+      "input_tokens": 15098,
+      "output_tokens": 12228,
+      "cache_creation_input_tokens": 1825,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 16923,
+      "price_usd": {
+        "input": 0.050769,
+        "output": 0.18342,
+        "total": 0.234189
+      },
+      "duration_ms": 139906,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 139904,
+          "stop_reason": "end_turn",
+          "label": "codegen turn 1"
+        }
+      ],
+      "phase": "creative",
+      "timestamp": "2026-06-01T20:01:56.192Z"
+    },
+    {
+      "action": "screenshots",
+      "agent": "lib/creative-native-playwright-screenshots.mts",
+      "model": null,
+      "review_round": 2,
+      "api_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 0,
+      "price_usd": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "notes": "3 PNG, 1 format(s), 0 capture error(s), 9693 ms",
+      "duration_ms": 9693,
+      "phase": "creative",
+      "timestamp": "2026-06-01T20:02:05.900Z"
+    },
+    {
+      "action": "ui_review",
+      "agent": "agents/creative-native-ui-review.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 2,
+      "api_calls": 1,
+      "input_tokens": 12627,
+      "output_tokens": 206,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 12627,
+      "price_usd": {
+        "input": 0.012627,
+        "output": 0.00103,
+        "total": 0.013657
+      },
+      "duration_ms": 6143,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 6143,
+          "stop_reason": "end_turn",
+          "label": "ui-review round 2"
+        }
+      ],
+      "phase": "creative",
+      "timestamp": "2026-06-01T20:02:12.046Z"
+    }
+  ],
+  "totals": {
+    "api_calls": 19,
+    "input_tokens": 250913,
+    "output_tokens": 135252,
+    "cache_creation_input_tokens": 13369,
+    "cache_read_input_tokens": 1478,
+    "billed_input_tokens": 265760,
+    "price_usd": {
+      "input": 0.734252,
+      "output": 2.00928,
+      "total": 2.743532
+    },
+    "duration_ms": 1828325,
+    "claude_api_duration_ms": 1741394,
+    "wall_clock_ms": 6138070,
+    "phase_duration_ms": {
+      "style_guide": 53680,
+      "creative": 1774645
+    }
+  },
+  "run_summary": {
+    "wall_clock_ms": 455625,
+    "ended_at": "2026-06-01T20:02:12.068Z",
+    "claude_api_calls": 19,
+    "claude_api_duration_ms": 1741394,
+    "phase_duration_ms": {
+      "style_guide": 53680,
+      "creative": 1774645
+    },
+    "studio_job_id": "a3e9832f-8804-4828-8f17-a1cc7ec28f27"
+  }
+}

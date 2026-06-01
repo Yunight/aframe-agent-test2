@@ -1,0 +1,90 @@
+{
+  "companyName": "BYD Company Limited",
+  "companyContext": "BYD (Build Your Dreams) is a Chinese multinational manufacturer founded in 1995, now the world's leading producer of new-energy vehicles (battery electric and plug-in hybrids), surpassing Tesla in global EV sales since 2024. It also makes batteries, buses, trucks and electronics.",
+  "companyURL": "https://www.byd.com",
+  "brandName": "BYD",
+  "brandContext": "BYD Auto is the automotive arm of BYD, selling a line-up of fully electric and Super Hybrid (DM-i) vehicles in France, including ATTO 2/3, Dolphin, Seal, Seal U, Sealion 5, Sealion 7 and Tang.",
+  "brandURL": "https://www.byd.com/fr/vehicules-hybrides/sealion-5-dm-i",
+  "logoFileUrls": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/BYD_Auto_2022_logo.svg/langfr-250px-BYD_Auto_2022_logo.svg.png"
+  ],
+  "productName": "SEALION 5 DM-i",
+  "campaignContext": "promotion de la voiture Sealion 5 DM-I",
+  "campaignReferenceUrl": "https://www.byd.com/fr/vehicules-hybrides/sealion-5-dm-i",
+  "productPictureUrls": [
+    "https://www.byd.com/material/byd-site/fr/product/energy-label/SEALION_5_DM-i_%C3%A9tiquette_%C3%A9nerg%C3%A9tique.png",
+    "https://www.byd.com/material/byd-site/eu/hybrid-cars/sealion5-dmi/l/byd-sealion5-dmi-1stBanner-l.webp",
+    "https://www.byd.com/material/byd-site/eu/hybrid-cars/sealion5-dmi/xl/byd-sealion5-dmi-1stBanner-xl.webp",
+    "https://www.byd.com/material/byd-site/eu/hybrid-cars/sealion5-dmi/xl/byd-sealion5-dmi-exterior-01-xl.webp",
+    "https://www.byd.com/material/byd-site/eu/hybrid-cars/sealion5-dmi/xl/byd-sealion5-dmi-exterior-02-xl.webp",
+    "https://www.byd.com/material/byd-site/eu/hybrid-cars/sealion5-dmi/xl/byd-sealion5-dmi-exterior-03-xl.webp"
+  ],
+  "primaryColorPalette": [
+    "#EC1C24",
+    "#000000",
+    "#FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "#1F3A5F",
+    "#2E2E2E",
+    "#B0B3B8",
+    "#F2F2F2",
+    "#0A66C2"
+  ],
+  "typography": [
+    {
+      "fontFamily": "BYD Sans (custom geometric sans-serif)",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Brand wordmark / logo lettering (custom letterforms with internal gaps, not available in standard libraries)"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Headlines and hero statements (e.g. 'SEALION 5 DM-i', 'SUV Super Hybride')"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Subheadings, navigation labels, CTA buttons"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, descriptive paragraphs, specifications text"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 500,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Legal disclaimers, financing footnotes and small print"
+    }
+  ],
+  "brandVision": "Build Your Dreams — BYD's vision is to 'cool the Earth by 1°C' by leading the global shift to electrified, new-energy mobility, combining proprietary Blade Battery safety, DM-i Super Hybrid efficiency and e-Platform 3.0 to make sustainable driving accessible to families worldwide.",
+  "brandValues": "Innovation, sustainability, safety, accessibility and engineering excellence. BYD stands for technological self-reliance (vertical integration of batteries, motors and electronics), passionate progress (symbolised by the red wordmark), and a customer-focused mission of 'Innovating for a Better Life' through reliable, efficient new-energy vehicles.",
+  "logoImageSearchQueries": [
+    "site:byd.com BYD logo svg",
+    "BYD logo 2022 official red wordmark svg",
+    "site:en.wikipedia.org BYD Auto logo",
+    "BYD Auto logo transparent png official",
+    "BYD France logo svg site:byd.com",
+    "BYD media center press logo download"
+  ],
+  "productImageSearchQueries": [
+    "site:byd.com SEALION 5 DM-i",
+    "BYD SEALION 5 DM-i Atlantis Blue official",
+    "BYD SEALION 5 DM-i exterior France press",
+    "BYD SEALION 5 DM-i front three-quarter packshot",
+    "BYD SEALION 5 DM-i interior dashboard 12.8 inch",
+    "BYD SEALION 5 DM-i Time Grey SUV",
+    "BYD SEALION 5 DM-i Polar White",
+    "BYD SEALION 5 DM-i Obsidian Black rear LED bar",
+    "site:bydukmedia.com SEALION 5 DM-i",
+    "BYD SEALION 5 DM-i 18 inch bi-tone wheels"
+  ]
+}

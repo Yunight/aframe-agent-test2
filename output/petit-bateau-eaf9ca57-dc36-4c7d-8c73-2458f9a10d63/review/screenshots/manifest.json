@@ -1,32 +1,32 @@
 {
-  "captured_at": "2026-06-01T17:44:04.336Z",
-  "entry_html": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\petit-bateau-eaf9ca57-dc36-4c7d-8c73-2458f9a10d63\\code\\V2\\index.html",
-  "entry_url": "file:///C:/Users/Ben/Desktop/formats_creator/aframe-agent-test2/aframe-agent-test2/output/petit-bateau-eaf9ca57-dc36-4c7d-8c73-2458f9a10d63/code/V2/index.html",
+  "captured_at": "2026-06-01T20:13:46.651Z",
+  "entry_html": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\petit-bateau-eaf9ca57-dc36-4c7d-8c73-2458f9a10d63\\code\\V4\\index.html",
+  "entry_url": "file:///C:/Users/Ben/Desktop/formats_creator/aframe-agent-test2/aframe-agent-test2/output/petit-bateau-eaf9ca57-dc36-4c7d-8c73-2458f9a10d63/code/V4/index.html",
   "formats": [
     {
-      "format_id": "300x600",
+      "format_id": "300x250",
       "width": 300,
-      "height": 600,
-      "selector": "#ad-300x600",
+      "height": 250,
+      "selector": "#ad-300x250",
       "error": null,
       "shots": [
         {
           "state": "initial",
-          "fileName": "300x600__initial.png",
-          "relativePath": "300x600__initial.png",
-          "captured_at": "2026-06-01T17:43:56.604Z"
+          "fileName": "300x250__initial.png",
+          "relativePath": "300x250__initial.png",
+          "captured_at": "2026-06-01T20:13:38.957Z"
         },
         {
           "state": "animated",
-          "fileName": "300x600__animated.png",
-          "relativePath": "300x600__animated.png",
-          "captured_at": "2026-06-01T17:43:59.207Z"
+          "fileName": "300x250__animated.png",
+          "relativePath": "300x250__animated.png",
+          "captured_at": "2026-06-01T20:13:41.539Z"
         },
         {
           "state": "settled",
-          "fileName": "300x600__settled.png",
-          "relativePath": "300x600__settled.png",
-          "captured_at": "2026-06-01T17:44:04.304Z"
+          "fileName": "300x250__settled.png",
+          "relativePath": "300x250__settled.png",
+          "captured_at": "2026-06-01T20:13:46.621Z"
         }
       ]
     }

@@ -1,21 +1,21 @@
 {
   "api_calls": 1,
-  "input_tokens": 4093,
-  "output_tokens": 5407,
+  "input_tokens": 4371,
+  "output_tokens": 3971,
   "cache_creation_input_tokens": 0,
   "cache_read_input_tokens": 0,
   "model": "claude-sonnet-4-6",
-  "total_tokens_reported_sum": 9500,
+  "total_tokens_reported_sum": 8342,
   "price_usd": {
-    "input": 0.012279,
-    "output": 0.081105,
-    "total": 0.093384
+    "input": 0.013113,
+    "output": 0.059565,
+    "total": 0.072678
   },
-  "duration_ms_total": 64547,
+  "duration_ms_total": 44634,
   "turn_timings": [
     {
       "turn": 1,
-      "duration_ms": 64545,
+      "duration_ms": 44633,
       "stop_reason": "end_turn"
     }
   ]

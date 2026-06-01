@@ -69,11 +69,11 @@ export function buildRegenerationUserMessage (
 export function parseUiReviewMaxRoundsFromEnv (): number {
   const raw = process.env['CREATIVE_UI_REVIEW_MAX_ROUNDS']?.trim();
   if (raw === undefined || raw.length === 0) {
-    return 3;
+    return 2;
   }
   const n = Number.parseInt(raw, 10);
   if (!Number.isFinite(n) || n < 0) {
-    return 3;
+    return 2;
   }
   return Math.min(n, 10);
 }
@@ -201,13 +201,25 @@ export async function runCreativeNativeUiReview (
   const model = options.model ?? process.env['CREATIVE_UI_REVIEW_MODEL']?.trim() ?? DEFAULT_UI_REVIEW_MODEL;
 
   const captureErrors = manifestCaptureErrors(manifest);
+  const compactManifest = {
+    captured_at: manifest.captured_at,
+    entry_url: manifest.entry_url,
+    formats: manifest.formats.map((entry) => ({
+      format_id: entry.format_id,
+      width: entry.width,
+      height: entry.height,
+      selector: entry.selector,
+      error: entry.error,
+      shots: entry.shots.map((shot) => ({ state: shot.state, relativePath: shot.relativePath }))
+    }))
+  };
   const userContent: Anthropic.Messages.ContentBlockParam[] = [
     {
       type: 'text',
       text:
         `Review round ${String(reviewRound)}. Audit the advertisement creatives from the PNG screenshots below.\n` +
         `Each format may have multiple states: initial, animated, settled.\n` +
-        `Screenshot manifest:\n${JSON.stringify(manifest, null, 2)}\n` +
+        `Screenshot manifest:\n${JSON.stringify(compactManifest)}\n` +
         (captureErrors.length > 0
           ? `\nScreenshot capture errors (treat as blockers):\n${captureErrors.join('\n')}\n`
           : '')
@@ -262,6 +274,10 @@ export async function runCreativeNativeUiReview (
     '--- Local design skills (mandatory) ---',
     skillGuidance
   ].join('\n');
+  const systemPromptForRequest: string | Anthropic.Messages.TextBlockParam[] =
+    process.env['CREATIVE_PROMPT_CACHE']?.trim() === '0'
+      ? systemPrompt
+      : [ { type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } } ];
 
   console.log(`[ui-review] Round ${String(reviewRound)} — model ${model}`);
 
@@ -273,7 +289,7 @@ export async function runCreativeNativeUiReview (
         return await anthropicClient.messages.parse({
           model,
           max_tokens: 8192,
-          system: systemPrompt,
+          system: systemPromptForRequest,
           messages: [ { role: 'user', content: userContent } ],
           output_config: {
             format: zodOutputFormat(uiReviewOutputSchema)

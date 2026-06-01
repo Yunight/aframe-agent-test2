@@ -791,7 +791,7 @@ app.post('/api/creative-code/run', (req, res) => {
   const uiReviewRequested =
     body.uiReviewAfterGeneration === true && creativeScript === 'gen-creative-code-native.mts';
 
-  let codegenPresetEnv: Record<string, string> = {};
+  let codegenPresetEnv: Record<string, string> = envForCreativeCodegenPreset('fast');
   if (typeof body.creativeCodegenPreset === 'string' && body.creativeCodegenPreset.trim().length > 0) {
     const presetRaw = body.creativeCodegenPreset.trim();
     if (!isCreativeCodegenPresetId(presetRaw)) {
@@ -830,7 +830,8 @@ app.post('/api/creative-code/run', (req, res) => {
       argv: [ uiReviewPath, outputFolder ],
       env: {
         CREATIVE_AD_FORMATS: adFormatsJson,
-        CREATIVE_UI_REVIEW_MAX_ROUNDS: '3'
+        CREATIVE_UI_REVIEW_MAX_ROUNDS: '2',
+        CREATIVE_SCREENSHOT_PROFILE: 'fast'
       }
     });
   }
@@ -979,7 +980,8 @@ app.post('/api/creative-code/review-ui', (req, res) => {
     ...imageSearchProviderEnv(imageProviderParsed.provider),
     PIPELINE_PHASE: 'creative',
     CREATIVE_AD_FORMATS: adFormatsJson,
-    CREATIVE_UI_REVIEW_MAX_ROUNDS: '3'
+    CREATIVE_UI_REVIEW_MAX_ROUNDS: '2',
+    CREATIVE_SCREENSHOT_PROFILE: 'fast'
   });
   res.status(202).json({ jobId: job.id });
 });

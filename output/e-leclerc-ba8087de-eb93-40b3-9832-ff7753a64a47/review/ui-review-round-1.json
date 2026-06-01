@@ -1,0 +1,26 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-06-01T19:49:19.539Z",
+  "manifest_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\e-leclerc-ba8087de-eb93-40b3-9832-ff7753a64a47\\review\\screenshots\\manifest.json",
+  "audit": {
+    "satisfied": true,
+    "summary": "All three states (initial, animated, settled) of the 300×250 ad meet structural and visual requirements. The ad correctly uses id=\"ad-300x250\", maintains proper pixel dimensions, displays the E.Leclerc logo clearly, uses on-brand typography and colors (Montserrat bold for \"BONNES AFFAIRES\", Open Sans for body text), includes product imagery, and provides a clear CTA. French copy is accurate and contextually appropriate. No blockers detected.",
+    "findings": [],
+    "regeneration_prompt": "No changes required. All three states conform to the style guide and technical requirements."
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 8458,
+    "output_tokens": 144,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 8458,
+    "price_usd": {
+      "input": 0.008458,
+      "output": 0.00072,
+      "total": 0.009178
+    },
+    "duration_ms": 3364
+  }
+}
