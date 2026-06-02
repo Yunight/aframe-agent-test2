@@ -1,6 +1,6 @@
 {
   "directoryUuid": "ikea-15dbc26d-c234-4591-bee3-9e88461516ff",
-  "updated_at": "2026-06-02T08:25:46.743Z",
+  "updated_at": "2026-06-02T08:42:59.323Z",
   "entries": [
     {
       "action": "style_guide",
@@ -374,14 +374,14 @@
     }
   },
   "run_summary": {
-    "wall_clock_ms": 118331,
-    "ended_at": "2026-06-02T08:25:46.743Z",
+    "wall_clock_ms": 258176,
+    "ended_at": "2026-06-02T08:42:59.323Z",
     "claude_api_calls": 9,
     "claude_api_duration_ms": 346671,
     "phase_duration_ms": {
       "style_guide": 104423,
       "creative": 319601
     },
-    "studio_job_id": "996a208c-2875-417a-bc83-ad6444fd962c"
+    "studio_job_id": "461ff68b-c7a1-4312-9824-3750053235b1"
   }
 }

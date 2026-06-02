@@ -10,9 +10,6 @@ export type LogoAssetValidation = {
   transparentRatio?: number;
 };
 
-/** @deprecated Use LogoAssetValidation */
-export type LogoTransparencyResult = LogoAssetValidation;
-
 function parseEnvFloat (name: string, fallback: number): number {
   const raw = process.env[name]?.trim();
   if (raw === undefined || raw.length === 0) {
@@ -46,10 +43,6 @@ export function isUntrustedLogoUrl (url: string): boolean {
   return false;
 }
 
-/** @deprecated Use isUntrustedLogoUrl */
-export function isOpaqueLogoUrl (url: string): boolean {
-  return isUntrustedLogoUrl(url);
-}
 
 function isValidSvgMarkup (buffer: Buffer): boolean {
   const head = buffer.toString('utf8', 0, Math.min(buffer.length, 4096)).trim();
@@ -360,12 +353,3 @@ export function validateLogoAssetFile (filePath: string): LogoAssetValidation {
   }
 }
 
-/** @deprecated Use validateLogoAssetFile */
-export function analyzeLogoTransparencyFile (filePath: string): LogoAssetValidation {
-  return validateLogoAssetFile(filePath);
-}
-
-/** @deprecated Use validateLogoAssetBuffer */
-export function analyzeLogoTransparencyBuffer (buffer: Buffer): LogoAssetValidation {
-  return validateLogoAssetBuffer(buffer);
-}

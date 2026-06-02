@@ -31,13 +31,3 @@ export function isCreativeCodegenPresetId (value: string): value is CreativeCode
 export function envForCreativeCodegenPreset (preset: CreativeCodegenPresetId): CreativeCodegenPresetEnv {
   return { ...PRESETS[preset] };
 }
-
-export function mergePresetIntoProcessEnv (
-  preset: CreativeCodegenPresetId | undefined,
-  base: NodeJS.ProcessEnv = process.env
-): NodeJS.ProcessEnv {
-  if (preset === undefined) {
-    return { ...base };
-  }
-  return { ...base, ...envForCreativeCodegenPreset(preset) };
-}
