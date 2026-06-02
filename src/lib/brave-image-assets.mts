@@ -318,6 +318,13 @@ export function filterOfficialProductPrioritizeUrls (urls: readonly string[]): s
   return withoutLow.length > 0 ? withoutLow : [ ...urls ];
 }
 
+export function isListingBraveProductCandidateAllowed (
+  url: string,
+  officialHosts: readonly string[]
+): boolean {
+  return isOfficialHostCampaignOrProductImageUrl(url, officialHosts);
+}
+
 export async function braveImageSearch ({
   query,
   num = 10
@@ -609,6 +616,14 @@ export async function gatherValidatedImageUrls (
           : {})
       });
       if (score < -50) {
+        continue;
+      }
+      if (
+        assetKind === 'product' &&
+        options.referenceListingUrls !== undefined &&
+        options.referenceListingUrls.length > 0 &&
+        !isListingBraveProductCandidateAllowed(candidate, officialHosts)
+      ) {
         continue;
       }
       if (
@@ -1300,7 +1315,9 @@ export async function refreshAssetsFromQueries (
   if (productQueries.length > 0) {
     console.log(`${imageSearchLogPrefix()} Refresh — collecting product candidates…`);
     const { extractOfficialProductImageUrls } = await import('./official-site-logo-extract.mts');
-    const officialProductCandidates = await extractOfficialProductImageUrls(context);
+    const officialProductCandidates = await extractOfficialProductImageUrls(context, {
+      minimumCandidates: Math.max(productMax * 2, braveProductCandidatePool())
+    });
     const referenceListingUrls = resolveReferenceListingUrls({
       ...(context.campaignReferenceUrl !== undefined && context.campaignReferenceUrl.length > 0
         ? { campaignReferenceUrl: context.campaignReferenceUrl }

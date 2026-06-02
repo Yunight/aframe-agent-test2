@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  isListingBraveProductCandidateAllowed,
   resolveRefreshLogoQueries,
   resolveRefreshProductQueries,
   type ImageSearchContext
@@ -28,4 +29,26 @@ test('resolveRefreshLogoQueries: omitted logos uses buildLogoSearchQueries', () 
 test('resolveRefreshProductQueries: products [] skips fallback', () => {
   const queries = resolveRefreshProductQueries({ products: [] }, context);
   assert.deepEqual(queries, []);
+});
+
+test('listing mode rejects non-official Brave candidates', () => {
+  const hosts = [ 'decathlon.com' ];
+  assert.equal(
+    isListingBraveProductCandidateAllowed(
+      'https://cache.marieclaire.fr/data/photo/w1000_ci/79/soldes-deco-2026.jpg',
+      hosts
+    ),
+    false
+  );
+});
+
+test('listing mode allows official brand visual hosts', () => {
+  const hosts = [ 'decathlon.com' ];
+  assert.equal(
+    isListingBraveProductCandidateAllowed(
+      'https://www.decathlon.com/cdn/shop/files/8618759-product_image-p2315780.jpg?v=1',
+      hosts
+    ),
+    true
+  );
 });

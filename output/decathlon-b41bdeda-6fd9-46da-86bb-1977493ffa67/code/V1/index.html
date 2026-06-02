@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decathlon — Bons plans été 2026</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="ad-320x480">
+    <!-- Background gradient layer -->
+    <div class="bg-layer"></div>
+
+    <!-- Animated particles -->
+    <div class="particles" aria-hidden="true">
+      <span class="particle p1"></span>
+      <span class="particle p2"></span>
+      <span class="particle p3"></span>
+      <span class="particle p4"></span>
+      <span class="particle p5"></span>
+    </div>
+
+    <!-- Header -->
+    <header class="ad-header">
+      <div class="logo-wrap">
+        <img src="./logo_1261a1e8-0a06-4f18-b458-b8cef2eac37f.png" alt="Decathlon" class="logo">
+      </div>
+      <div class="season-badge">ÉTÉ 2026</div>
+    </header>
+
+    <!-- Hero headline -->
+    <div class="hero-text">
+      <div class="tag-line">BONS PLANS</div>
+      <h1 class="headline">Indispensables<br>de l'été</h1>
+    </div>
+
+    <!-- Product carousel -->
+    <div class="carousel-wrap" aria-label="Produits en promotion">
+      <div class="carousel-track" id="carouselTrack">
+        <!-- Slide 1: Headlamp / Night gear -->
+        <div class="slide active" data-label="Éclairage nuit" data-price="À partir de 9,99 €">
+          <div class="slide-img-wrap">
+            <img src="./8600660-product_image-p2497872.jpg" alt="Lampe frontale outdoor" class="slide-img img-crop-top">
+          </div>
+        </div>
+        <!-- Slide 2: Hiking boot -->
+        <div class="slide" data-label="Chaussures randonnée" data-price="À partir de 39,99 €">
+          <div class="slide-img-wrap slide-img-wrap--light">
+            <img src="./8618759-product_image-p2315780_2a5b96b2-f26e-4ba1-8391-68142d88902c.jpg" alt="Chaussures de randonnée" class="slide-img img-packshot">
+          </div>
+        </div>
+        <!-- Slide 3: Family camping -->
+        <div class="slide" data-label="Camping famille" data-price="Découvrez nos offres">
+          <div class="slide-img-wrap">
+            <img src="./Untitled_design_18.jpg" alt="Camping famille" class="slide-img img-crop-center">
+          </div>
+        </div>
+        <!-- Slide 4: Hiking lifestyle -->
+        <div class="slide" data-label="Randonnée & aventure" data-price="Équipez-vous dès maintenant">
+          <div class="slide-img-wrap">
+            <img src="./Untitled_design_19.jpg" alt="Randonnée aventure" class="slide-img img-crop-center">
+          </div>
+        </div>
+        <!-- Slide 5: Running -->
+        <div class="slide" data-label="Running & fitness" data-price="À partir de 14,99 €">
+          <div class="slide-img-wrap">
+            <img src="./Untitled_design_20.jpg" alt="Running urbain" class="slide-img img-crop-center">
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide label & price -->
+      <div class="slide-info">
+        <span class="slide-label" id="slideLabel">Éclairage nuit</span>
+        <span class="slide-price" id="slidePrice">À partir de 9,99 €</span>
+      </div>
+
+      <!-- Carousel dots -->
+      <div class="carousel-dots" id="carouselDots" role="tablist" aria-label="Navigation carrousel">
+        <button class="dot active" data-index="0" role="tab" aria-selected="true" aria-label="Slide 1"></button>
+        <button class="dot" data-index="1" role="tab" aria-selected="false" aria-label="Slide 2"></button>
+        <button class="dot" data-index="2" role="tab" aria-selected="false" aria-label="Slide 3"></button>
+        <button class="dot" data-index="3" role="tab" aria-selected="false" aria-label="Slide 4"></button>
+        <button class="dot" data-index="4" role="tab" aria-selected="false" aria-label="Slide 5"></button>
+      </div>
+    </div>
+
+    <!-- CTA footer -->
+    <footer class="ad-footer">
+      <button class="cta-btn" id="ctaBtn" aria-label="Voir toutes les offres été">
+        <span class="cta-text">Voir les offres</span>
+        <span class="cta-arrow" aria-hidden="true">→</span>
+      </button>
+      <p class="legal">Offres valables dans la limite des stocks disponibles.</p>
+    </footer>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

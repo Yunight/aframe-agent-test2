@@ -153,7 +153,7 @@ node src/agents/gen-creative-code-native.mts <directory-uuid> --asset-input url
 
 Bypass garde (déconseillé) : `set CREATIVE_ASSETS_REVIEW_SKIP=1` avant la gen.
 
-**Recherche d’images** : logos/produits à l’étape style guide (`web_search` Opus pour le JSON + **Brave Images API** ou **Anthropic `web_search`** selon `CREATIVE_IMAGE_SEARCH_PROVIDER` / sélecteur studio). Pas pendant `gen-creative-code-native` (assets locaux + JSON uniquement).
+**Recherche d’images** : logos/produits à l’étape style guide (`web_search` Opus pour le JSON + **Brave Images API** forcé). Pas pendant `gen-creative-code-native` (assets locaux + JSON uniquement).
 
 #### Profils de génération code (vitesse / coût / qualité)
 

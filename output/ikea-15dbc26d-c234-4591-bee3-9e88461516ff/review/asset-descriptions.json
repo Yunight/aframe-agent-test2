@@ -1,0 +1,123 @@
+{
+  "generated_at": "2026-06-02T08:19:11.417Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/ikea.svg",
+      "fileName": "ikea.svg",
+      "fileType": "logos",
+      "description": "IKEA official logo featuring the blue-and-yellow oval wordmark on a blue rectangular background. Clean, recognizable branding element suitable for banner headers, corner placements, or logo-lockup compositions. Maintains brand identity across all SÖDERHAMN campaign materials.",
+      "layout_hints": [
+        "logo-lockup",
+        "header",
+        "corner-placement",
+        "brand-mark"
+      ],
+      "dominant_colors": [
+        "#0058a3",
+        "#ffdb00"
+      ]
+    },
+    {
+      "asset_id": "products/soederhamn-canape-3-places-blekinge-blanc__1179037_pe895811_s5.jpg",
+      "fileName": "soederhamn-canape-3-places-blekinge-blanc__1179037_pe895811_s5.jpg",
+      "fileType": "products",
+      "description": "Close-up detail shot of white SÖDERHAMN 3-seater sofa fabric and zipper mechanism. Highlights removable, washable upholstery feature on neutral off-white background. Use as a detail hero to emphasize care and durability benefits in compact banner layouts.",
+      "layout_hints": [
+        "detail-shot",
+        "product-feature",
+        "close-up",
+        "care-messaging"
+      ],
+      "dominant_colors": [
+        "#e8e8e8",
+        "#d4d4d4"
+      ]
+    },
+    {
+      "asset_id": "products/soederhamn-canape-3-places-blekinge-blanc__1179090_pe895852_s5.jpg",
+      "fileName": "soederhamn-canape-3-places-blekinge-blanc__1179090_pe895852_s5.jpg",
+      "fileType": "products",
+      "description": "White SÖDERHAMN 3-seater sofa styled in a bright, airy living room with large windows, natural light, and modern decor. Demonstrates product in lifestyle context showing comfort and contemporary Scandinavian aesthetics. Ideal as hero image for lifestyle-focused banner campaigns.",
+      "layout_hints": [
+        "hero",
+        "lifestyle",
+        "room-setting",
+        "aspirational"
+      ],
+      "dominant_colors": [
+        "#f5f5f5",
+        "#c0c0c0",
+        "#8b9a7f"
+      ]
+    },
+    {
+      "asset_id": "products/soederhamn-canape-4-places-avec-meridienne-et-sans-accoudoir-viarp-beige-brun__0814673_ph166247_s5.jpg",
+      "fileName": "soederhamn-canape-4-places-avec-meridienne-et-sans-accoudoir-viarp-beige-brun__0814673_ph166247_s5.jpg",
+      "fileType": "products",
+      "description": "Woman relaxing on a brown-beige SÖDERHAMN 4-seater chaise lounge sofa, showcasing comfort and lounging functionality. Bright, welcoming home setting with natural light emphasizes relaxation and livability. Perfect hero asset for comfort-focused messaging and lifestyle campaigns.",
+      "layout_hints": [
+        "hero",
+        "lifestyle",
+        "comfort-messaging",
+        "aspirational",
+        "usage-context"
+      ],
+      "dominant_colors": [
+        "#a89080",
+        "#d4c5b9",
+        "#f0ede8"
+      ]
+    },
+    {
+      "asset_id": "products/soederhamn-fauteuil-kelinge-brun-orange__1213760_pe911265_s5.jpg",
+      "fileName": "soederhamn-fauteuil-kelinge-brun-orange__1213760_pe911265_s5.jpg",
+      "fileType": "products",
+      "description": "Burnt-orange SÖDERHAMN armchair positioned in a minimalist, bright living room with modern décor and geometric patterns. Demonstrates the chair as a statement piece with bold color and contemporary design. Suitable as hero for product rotation showcasing color range and design versatility.",
+      "layout_hints": [
+        "hero",
+        "packshot-centre",
+        "lifestyle",
+        "color-focus"
+      ],
+      "dominant_colors": [
+        "#c97f5a",
+        "#d4a574",
+        "#e8ddd0"
+      ]
+    },
+    {
+      "asset_id": "products/soederhamn-module-3-places-kelinge-jaune-fonce__1499687_pe1006813_s5.jpg",
+      "fileName": "soederhamn-module-3-places-kelinge-jaune-fonce__1499687_pe1006813_s5.jpg",
+      "fileType": "products",
+      "description": "Golden-yellow SÖDERHAMN modular 3-seater sofa in studio setting on white background, shown from an angle emphasizing cushion arrangement and form. Clean product presentation highlighting bold color option and modular flexibility. Use as packshot hero for color-driven promotions.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-focus",
+        "color-hero",
+        "studio-background"
+      ],
+      "dominant_colors": [
+        "#d4a517",
+        "#d9ad5f"
+      ]
+    },
+    {
+      "asset_id": "products/soederhamn-module-3-places-kelinge-jaune-fonce__1520326_pe1012817_s5.jpg",
+      "fileName": "soederhamn-module-3-places-kelinge-jaune-fonce__1520326_pe1012817_s5.jpg",
+      "fileType": "products",
+      "description": "Golden-yellow SÖDERHAMN modular 3-seater sofa styled in a contemporary bedroom setting with dark floor, black lamp, and layered bedding. Warm, inviting atmosphere showcasing the sofa's versatility across living spaces. Ideal hero for lifestyle rotation campaigns emphasizing adaptable, vibrant design.",
+      "layout_hints": [
+        "hero",
+        "lifestyle",
+        "room-setting",
+        "versatility-messaging"
+      ],
+      "dominant_colors": [
+        "#d4a517",
+        "#2b2b2b",
+        "#f5f0ea"
+      ]
+    }
+  ]
+}

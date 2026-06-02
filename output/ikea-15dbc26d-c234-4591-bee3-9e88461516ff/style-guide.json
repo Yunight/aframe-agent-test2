@@ -1,0 +1,97 @@
+{
+  "companyName": "Inter IKEA Systems B.V.",
+  "companyContext": "Swedish-founded global home furnishings retailer, designing and selling ready-to-assemble furniture, kitchen appliances, home accessories and decor under the IKEA brand across more than 50 markets worldwide.",
+  "companyURL": "https://www.ikea.com/",
+  "brandName": "IKEA",
+  "brandContext": "IKEA is the consumer-facing home furnishings brand known for democratic design, affordable price points, flat-pack furniture and modular living solutions. The current campaign is a French-market promotion on the SÖDERHAMN modular sofa series.",
+  "brandURL": "https://www.ikea.com/fr/fr/cat/soederhamn-serie-22178/",
+  "logoFileUrls": [
+    "https://www.ikea.com/global/assets/logos/brand/ikea.svg"
+  ],
+  "productName": "SÖDERHAMN",
+  "campaignContext": "Promotion sur les SÖDERHAMN / soederhamn",
+  "campaignReferenceUrl": "https://www.ikea.com/fr/fr/cat/soederhamn-serie-22178/",
+  "productPictureUrls": [
+    "https://www.ikea.com/fr/fr/images/products/soederhamn-module-3-places-kelinge-jaune-fonce__1499687_pe1006813_s5.jpg?f=xxs",
+    "https://www.ikea.com/fr/fr/images/products/soederhamn-module-3-places-kelinge-jaune-fonce__1520326_pe1012817_s5.jpg?f=xxs",
+    "https://www.ikea.com/be/fr/images/products/soederhamn-canape-3-places-blekinge-blanc__1179090_pe895852_s5.jpg?f=s",
+    "https://www.ikea.com/fr/fr/images/products/soederhamn-canape-4-places-avec-meridienne-et-sans-accoudoir-viarp-beige-brun__0814673_ph166247_s5.jpg?f=s",
+    "https://www.ikea.com/be/fr/images/products/soederhamn-canape-3-places-blekinge-blanc__1179037_pe895811_s5.jpg?f=s",
+    "https://www.ikea.com/fr/fr/images/products/soederhamn-fauteuil-kelinge-brun-orange__1213760_pe911265_s5.jpg?f=s"
+  ],
+  "primaryColorPalette": [
+    "#0058AB",
+    "#FBD914",
+    "#FFFFFF",
+    "#111111"
+  ],
+  "secondaryColorPalette": [
+    "#F5F2EC",
+    "#D9CDB8",
+    "#8C8C8C",
+    "#3A3A3A",
+    "#2B3A2E",
+    "#1F2A44",
+    "#A0522D"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Noto IKEA Latin",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Brand wordmark and large display headlines (promo titles like 'SÖDERHAMN -20%')"
+    },
+    {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Headings (H1–H3), product titles, price callouts"
+    },
+    {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Subheadings, navigation, CTA buttons"
+    },
+    {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions, captions, fine print"
+    },
+    {
+      "fontFamily": "Verdana",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Fallback font when Noto IKEA / Noto Sans cannot be loaded (e.g. email)"
+    }
+  ],
+  "brandVision": "Créer un meilleur quotidien pour le plus grand nombre — proposer un large assortiment d'articles d'ameublement à la fonctionnalité et au design soignés, à des prix si bas que le plus grand nombre pourra les acheter.",
+  "brandValues": "Conscience des coûts, simplicité, esprit d'équipe et enthousiasme, oser être différent, prendre et donner ses responsabilités, donner et accepter, ouverture au changement — avec un design démocratique fondé sur la forme, la fonction, la qualité, la durabilité et le prix bas.",
+  "logoImageSearchQueries": [
+    "site:ikea.com IKEA logo svg",
+    "IKEA logo svg filetype:svg",
+    "site:en.wikipedia.org IKEA logo",
+    "IKEA logo transparent png official",
+    "IKEA wordmark 2019 logo",
+    "Inter IKEA Systems logo svg"
+  ],
+  "productImageSearchQueries": [
+    "site:ikea.com SÖDERHAMN canapé",
+    "site:ikea.com soederhamn sofa",
+    "SÖDERHAMN canapé modulable IKEA",
+    "SÖDERHAMN 3 places Fridtuna IKEA",
+    "SÖDERHAMN méridienne Gransel naturel IKEA",
+    "SÖDERHAMN Tonerud gris IKEA",
+    "SÖDERHAMN Hillared bleu foncé IKEA",
+    "SÖDERHAMN Viarp beige brun IKEA",
+    "SÖDERHAMN Tallmyra vert IKEA",
+    "SÖDERHAMN sectional sofa IKEA press image",
+    "ikea.com fr soederhamn serie 22178",
+    "SÖDERHAMN modular sofa packshot"
+  ]
+}

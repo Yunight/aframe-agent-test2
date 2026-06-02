@@ -1,0 +1,97 @@
+{
+  "companyName": "Decathlon S.A.",
+  "companyContext": "French sporting goods retailer founded in 1976 by Michel Leclercq in Lille. The world's largest sporting goods retailer with 1,817 stores in 79 countries (2024). Decathlon designs, manufactures, and distributes its own products under its house brands (Quechua, Kipsta, Domyos, Van Rysel, Tribord, Kalenji, Nabaiji, Artengo, Forclaz, Kipsta, etc.) alongside partner brands, with a vertically integrated model that keeps prices accessible. HQ in Villeneuve-d'Ascq, France.",
+  "companyURL": "https://www.decathlon.com",
+  "brandName": "Decathlon",
+  "brandContext": "Following its 2024 rebrand by Wolff Olins (with Grilli Type for type and AMV BBDO for campaign), Decathlon repositioned from a multi-brand retailer to a unified global sports brand. The new system introduces 'L'Orbit', a symbol of motion and circularity, a refreshed brighter blue, the bespoke Decathlon Sans typeface, and a 'Ready to play?' tone of voice anchored on inclusivity and the wonders of sport for all levels and abilities.",
+  "brandURL": "https://www.decathlon.com",
+  "logoFileUrls": [
+    "https://www.decathlon.com/cdn/shop/files/logo_1261a1e8-0a06-4f18-b458-b8cef2eac37f.png?height=56&amp;v=1717047645"
+  ],
+  "productName": "Bons plans été 2026 — Indispensables de l'été",
+  "campaignContext": "Promotions des produits adaptés pour l'été 2026",
+  "productPictureUrls": [
+    "https://www.decathlon.com/cdn/shop/files/8618759-product_image-p2315780_2a5b96b2-f26e-4ba1-8391-68142d88902c.jpg?v=1742379051&amp;width=800",
+    "https://www.decathlon.com/cdn/shop/articles/TREK_MOUNTAIN_AH21_ST_GERVAIS_LES_BAINS_PRARION_HAUTESAVOIE_FRANCE_-_8492336_8605569_8608140_8608653_8670230_-_253_---_Expires_on_04-08-2026.jpg?v=1761256496&width=3840",
+    "https://media.ouest-france.fr/v1/pictures/MjAyNjAxNjQ1M2I3N2FjMjY0YzEwODcwNTY4NGZlNjJlZTFkZmI?width=1260&height=708&focuspoint=50,25&cropresize=1&client_id=bpeditorial&sign=c1b283e8ba1c93fa854009ec0f174f50882aca931ddd7d802b8df0f4f81754c8",
+    "https://cache.marieclaire.fr/data/photo/w1000_ci/79/soldes-deco-2026.jpg",
+    "https://media.ouest-france.fr/v1/pictures/MjAyNjAxY2NkNGZiZWZjMDYxYTkwYTcxZmI0YjdjMzI1ZjI2MjQ?width=1260&height=708&focuspoint=50,50&cropresize=1&client_id=bpeditorial&sign=16851d1befc09e5ce3f8ac3858717f743057d0fe1ef4be9933f22a3749849a42",
+    "https://cache.marieclaire.fr/data/photo/w1000_ci/74/soldes-deco-ete-2025.jpg"
+  ],
+  "primaryColorPalette": [
+    "#3643BA",
+    "#FFFFFF",
+    "#101010",
+    "#FFCD4D"
+  ],
+  "secondaryColorPalette": [
+    "#0082C3",
+    "#00B5E2",
+    "#FF6B35",
+    "#F4A261",
+    "#1B9E77",
+    "#F5F5F7"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Decathlon Sans",
+      "fontWeight": 800,
+      "fontEffect": [],
+      "fontUses": "Brand wordmark and large display headlines (e.g. 'BONS PLANS ÉTÉ 2026'), uppercase preferred"
+    },
+    {
+      "fontFamily": "Decathlon Sans",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Section headings, promotional price tags, campaign taglines such as 'Ready to play?'"
+    },
+    {
+      "fontFamily": "Decathlon Sans",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Sub-headings, product titles, navigation labels"
+    },
+    {
+      "fontFamily": "Decathlon Sans",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions, captions and legal mentions"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Web fallback for body text when Decathlon Sans is unavailable"
+    },
+    {
+      "fontFamily": "Arial",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "System fallback for product sheets and emails"
+    }
+  ],
+  "brandVision": "Move people through the wonders of sport — making sport accessible, inclusive and joyful for all ages, levels and abilities, everywhere in the world.",
+  "brandValues": "Accessibility, vitality, inclusivity, sustainability, innovation, vertical integration, affordability without compromise on quality, and a sense of play. Decathlon believes sport should be for everyone, from beginners to pros, and invests in eco-design, second life, repair services and Decat'Club community.",
+  "logoImageSearchQueries": [
+    "site:free.decathlon.com decathlon logo svg",
+    "site:en.wikipedia.org Decathlon logo",
+    "Decathlon new logo 2024 L'Orbit svg",
+    "Decathlon wordmark blue official svg",
+    "Decathlon logo transparent png official",
+    "site:commons.wikimedia.org Decathlon logo"
+  ],
+  "productImageSearchQueries": [
+    "site:decathlon.fr bons plans été",
+    "site:decathlon.fr indispensables de l'été",
+    "Decathlon Quechua tente été 2026",
+    "Decathlon Subea masque snorkeling été",
+    "Decathlon Nabaiji maillot de bain été",
+    "Decathlon Tribord paddle SUP été",
+    "Decathlon Kipsta beach volley été",
+    "Decathlon Itiwit kayak gonflable été",
+    "Decathlon Kalenji running short été 2026",
+    "Decathlon protection solaire été",
+    "Decathlon randonnée été sac à dos",
+    "Decathlon vélo été promotions 2026"
+  ]
+}

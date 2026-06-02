@@ -1,0 +1,124 @@
+{
+  "generated_at": "2026-06-02T08:03:00.718Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/logo_1261a1e8-0a06-4f18-b458-b8cef2eac37f.png",
+      "fileName": "logo_1261a1e8-0a06-4f18-b458-b8cef2eac37f.png",
+      "fileType": "logos",
+      "description": "Decathlon blue et blanc logo, horizontal layout. Iconic sporting brand mark ideal for banner placement at top or bottom. Positioned on clean white background for maximum contrast and legibility.",
+      "layout_hints": [
+        "logo-lockup",
+        "top-right",
+        "footer-brand",
+        "transparent-bg"
+      ],
+      "dominant_colors": [
+        "#2B5AA0",
+        "#FFFFFF"
+      ]
+    },
+    {
+      "asset_id": "products/8600660-product_image-p2497872.jpg",
+      "fileName": "8600660-product_image-p2497872.jpg",
+      "fileType": "products",
+      "description": "Adventurer wearing orange puffer jacket and blue headlamp against dark background. Strong headlamp glow highlights night outdoor gear, perfect for rotation as hero image emphasizing illumination technology and cold-weather essentials.",
+      "layout_hints": [
+        "hero-lifestyle",
+        "product-feature",
+        "packshot-lifestyle",
+        "dark-background"
+      ],
+      "dominant_colors": [
+        "#D84C2E",
+        "#1A1A2E",
+        "#FF8C00"
+      ]
+    },
+    {
+      "asset_id": "products/8618759-product_image-p2315780_2a5b96b2-f26e-4ba1-8391-68142d88902c.jpg",
+      "fileName": "8618759-product_image-p2315780_2a5b96b2-f26e-4ba1-8391-68142d88902c.jpg",
+      "fileType": "products",
+      "description": "Hiking boot in navy, blue et white colorway shown at three-quarter angle on white background. Professional packshot with clear product detail, rotatable as hero for footwear campaign focus.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-hero",
+        "clean-bg",
+        "three-quarter-view"
+      ],
+      "dominant_colors": [
+        "#1E3A5F",
+        "#FFFFFF",
+        "#4A90E2"
+      ]
+    },
+    {
+      "asset_id": "products/Untitled_design_15.jpg",
+      "fileName": "Untitled_design_15.jpg",
+      "fileType": "products",
+      "description": "Lightweight camping chair in black, displayed on wooden table overlooking mountain landscape and forest scenery. Lifestyle framing showcases portability and outdoor versatility—ideal hero image for camping essentials rotation.",
+      "layout_hints": [
+        "hero-lifestyle",
+        "landscape-bg",
+        "product-centre",
+        "camping-focus"
+      ],
+      "dominant_colors": [
+        "#1A1A1A",
+        "#87CEEB",
+        "#6B8E23"
+      ]
+    },
+    {
+      "asset_id": "products/Untitled_design_18.jpg",
+      "fileName": "Untitled_design_18.jpg",
+      "fileType": "products",
+      "description": "Child in tent with sleeping bag (burgundy/red) and stuffed animal during evening camping. Warm, intimate lifestyle scene illustrating family camping experience. Strong emotional connection ideal for camping collection hero rotation.",
+      "layout_hints": [
+        "hero-lifestyle",
+        "family-camping",
+        "tent-interior",
+        "warm-lighting"
+      ],
+      "dominant_colors": [
+        "#4A1A2E",
+        "#2F5233",
+        "#E85D3F"
+      ]
+    },
+    {
+      "asset_id": "products/Untitled_design_19.jpg",
+      "fileName": "Untitled_design_19.jpg",
+      "fileType": "products",
+      "description": "Two hikers with backpacks (man in beige, woman in white/blue) posed in desert landscape with rocky formations and clear sky. Adventure-focused lifestyle shot showcasing hiking gear and outdoor confidence—strong hero rotation option.",
+      "layout_hints": [
+        "hero-lifestyle",
+        "hiking-adventure",
+        "couple-outdoor",
+        "landscape-bg"
+      ],
+      "dominant_colors": [
+        "#E8DCC8",
+        "#87CEEB",
+        "#8B6F47"
+      ]
+    },
+    {
+      "asset_id": "products/Untitled_design_20.jpg",
+      "fileName": "Untitled_design_20.jpg",
+      "fileType": "products",
+      "description": "Young male runner in neon yellow t-shirt jogging against urban brick wall backdrop. Dynamic action shot emphasizing running apparel and summer fitness activity. Perfect rotation hero for warm-weather running gear promotion.",
+      "layout_hints": [
+        "hero-lifestyle",
+        "running-action",
+        "athletic-apparel",
+        "urban-bg"
+      ],
+      "dominant_colors": [
+        "#FFFF00",
+        "#8B4513",
+        "#1A1A1A"
+      ]
+    }
+  ]
+}

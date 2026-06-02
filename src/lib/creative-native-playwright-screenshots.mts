@@ -53,10 +53,7 @@ function screenshotProfile (): string {
 }
 
 function screenshotStatesForProfile (): readonly ScreenshotState[] {
-  const profile = screenshotProfile();
-  if (profile === 'dev' || profile === 'fast') {
-    return [ 'settled' ];
-  }
+  // Fast/dev keeps shorter waits, but still captures all states to catch transient UI overlaps.
   return SCREENSHOT_STATES;
 }
 

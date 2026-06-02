@@ -89,23 +89,7 @@ function composeStyleGuideContextWithReference (
   );
 }
 
-type ImageSearchProviderId = 'brave' | 'anthropic';
-
-function parseImageSearchProviderFromBody (
-  raw: unknown
-): { ok: true; provider: ImageSearchProviderId } | { ok: false; error: string } {
-  if (raw === undefined || raw === null) {
-    return { ok: true, provider: 'brave' };
-  }
-  if (raw !== 'brave' && raw !== 'anthropic') {
-    return { ok: false, error: 'imageSearchProvider must be "brave" or "anthropic".' };
-  }
-  return { ok: true, provider: raw };
-}
-
-function imageSearchProviderEnv (provider: ImageSearchProviderId): Record<string, string> {
-  return { CREATIVE_IMAGE_SEARCH_PROVIDER: provider };
-}
+const IMAGE_SEARCH_PROVIDER = 'brave';
 
 const agentsDir = join(repoRoot, 'src', 'agents');
 const outputDir = join(repoRoot, 'output');
@@ -152,14 +136,12 @@ interface Job {
   exitCode: number | null;
   outputDirectoryPath: string | null;
   subscribers: Set<Express.Response>;
-  /** Propagated to every spawned agent via CREATIVE_IMAGE_SEARCH_PROVIDER. */
-  imageSearchProvider: ImageSearchProviderId;
 }
 
 const jobs = new Map<string, Job>();
 let activeJobId: string | null = null;
 
-function createJob (imageSearchProvider: ImageSearchProviderId, jobKind: StudioJobKind): Job {
+function createJob (jobKind: StudioJobKind): Job {
   const id = randomUUID();
   const job: Job = {
     id,
@@ -170,8 +152,7 @@ function createJob (imageSearchProvider: ImageSearchProviderId, jobKind: StudioJ
     lines: [],
     exitCode: null,
     outputDirectoryPath: null,
-    subscribers: new Set(),
-    imageSearchProvider
+    subscribers: new Set()
   };
   jobs.set(id, job);
   return job;
@@ -402,7 +383,7 @@ function attachSpawnedNodeProcessSequence (
       pushLine(
         job,
         'stdout',
-        `[studio] Image search provider for this job: ${job.imageSearchProvider} (CREATIVE_IMAGE_SEARCH_PROVIDER)`
+        `[studio] Image search provider for this job: ${IMAGE_SEARCH_PROVIDER} (CREATIVE_IMAGE_SEARCH_PROVIDER)`
       );
       pushLine(
         job,
@@ -416,7 +397,7 @@ function attachSpawnedNodeProcessSequence (
       cwd: repoRoot,
       env: {
         ...process.env,
-        CREATIVE_IMAGE_SEARCH_PROVIDER: job.imageSearchProvider,
+        CREATIVE_IMAGE_SEARCH_PROVIDER: IMAGE_SEARCH_PROVIDER,
         PIPELINE_PHASE: job.jobKind,
         ...step.env
       },
@@ -597,14 +578,8 @@ app.post('/api/style-guide/run', async (req, res) => {
     referenceUrl?: unknown;
     campaignReferenceUrl?: unknown;
     assetsReviewAfterGeneration?: unknown;
-    imageSearchProvider?: unknown;
   };
-  const imageProviderParsed = parseImageSearchProviderFromBody(body.imageSearchProvider);
-  if (!imageProviderParsed.ok) {
-    res.status(400).json({ error: imageProviderParsed.error });
-    return;
-  }
-  const imageEnv = imageSearchProviderEnv(imageProviderParsed.provider);
+  const imageEnv = { CREATIVE_IMAGE_SEARCH_PROVIDER: IMAGE_SEARCH_PROVIDER };
   const referenceParsed = parseReferenceUrlFromBody(body);
   if (!referenceParsed.ok) {
     res.status(400).json({ error: referenceParsed.error });
@@ -667,7 +642,7 @@ app.post('/api/style-guide/run', async (req, res) => {
   const assetsReviewAfterGeneration = body.assetsReviewAfterGeneration === true;
   const styleGuideAssetsReviewPath = join(agentsDir, 'run-style-guide-assets-review.mts');
 
-  const job = createJob(imageProviderParsed.provider, 'style_guide');
+  const job = createJob('style_guide');
   activeJobId = job.id;
 
   if (assetsReviewAfterGeneration) {
@@ -715,13 +690,7 @@ app.post('/api/creative-code/run', (req, res) => {
     assetsReviewBeforeGeneration?: unknown;
     uiReviewAfterGeneration?: unknown;
     creativeCodegenPreset?: unknown;
-    imageSearchProvider?: unknown;
   };
-  const imageProviderParsed = parseImageSearchProviderFromBody(body.imageSearchProvider);
-  if (!imageProviderParsed.ok) {
-    res.status(400).json({ error: imageProviderParsed.error });
-    return;
-  }
   if (typeof body.creativeScript !== 'string' || body.creativeScript.trim().length === 0) {
     res.status(400).json({
       error:
@@ -801,7 +770,7 @@ app.post('/api/creative-code/run', (req, res) => {
     codegenPresetEnv = envForCreativeCodegenPreset(presetRaw);
   }
 
-  const job = createJob(imageProviderParsed.provider, 'creative');
+  const job = createJob('creative');
   activeJobId = job.id;
   job.outputDirectoryPath = join(outputDir, outputFolder);
   const creativePath = join(agentsDir, creativeScript);
@@ -865,13 +834,6 @@ app.post('/api/style-guide/review-assets', (req, res) => {
     res.status(429).json({ error: 'Un job studio est déjà en cours.' });
     return;
   }
-  const imageProviderParsed = parseImageSearchProviderFromBody(
-    (req.body as { imageSearchProvider?: unknown }).imageSearchProvider
-  );
-  if (!imageProviderParsed.ok) {
-    res.status(400).json({ error: imageProviderParsed.error });
-    return;
-  }
   const folderParsed = parseOutputFolderBody(req.body as { outputFolder?: unknown });
   if (!folderParsed.ok) {
     res.status(400).json({ error: folderParsed.error });
@@ -888,11 +850,11 @@ app.post('/api/style-guide/review-assets', (req, res) => {
     return;
   }
 
-  const job = createJob(imageProviderParsed.provider, 'style_guide');
+  const job = createJob('style_guide');
   activeJobId = job.id;
   job.outputDirectoryPath = join(outputDir, folderParsed.folder);
   attachSpawnedNodeProcess(job, [ assetsReviewPath, folderParsed.folder ], {
-    ...imageSearchProviderEnv(imageProviderParsed.provider),
+    CREATIVE_IMAGE_SEARCH_PROVIDER: IMAGE_SEARCH_PROVIDER,
     PIPELINE_PHASE: 'style_guide'
   });
   res.status(202).json({ jobId: job.id });
@@ -906,13 +868,7 @@ app.post('/api/creative-code/review-ui', (req, res) => {
   const body = req.body as {
     outputFolder?: unknown;
     adFormats?: unknown;
-    imageSearchProvider?: unknown;
   };
-  const imageProviderParsed = parseImageSearchProviderFromBody(body.imageSearchProvider);
-  if (!imageProviderParsed.ok) {
-    res.status(400).json({ error: imageProviderParsed.error });
-    return;
-  }
   const folderParsed = parseOutputFolderBody(body);
   if (!folderParsed.ok) {
     res.status(400).json({ error: folderParsed.error });
@@ -973,11 +929,11 @@ app.post('/api/creative-code/review-ui', (req, res) => {
     return;
   }
 
-  const job = createJob(imageProviderParsed.provider, 'creative');
+  const job = createJob('creative');
   activeJobId = job.id;
   job.outputDirectoryPath = join(outputDir, folderParsed.folder);
   attachSpawnedNodeProcess(job, [ uiReviewPath, folderParsed.folder ], {
-    ...imageSearchProviderEnv(imageProviderParsed.provider),
+    CREATIVE_IMAGE_SEARCH_PROVIDER: IMAGE_SEARCH_PROVIDER,
     PIPELINE_PHASE: 'creative',
     CREATIVE_AD_FORMATS: adFormatsJson,
     CREATIVE_UI_REVIEW_MAX_ROUNDS: '2',

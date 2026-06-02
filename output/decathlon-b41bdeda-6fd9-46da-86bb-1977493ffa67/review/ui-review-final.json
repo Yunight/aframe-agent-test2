@@ -1,0 +1,14 @@
+{
+  "ui_review_rounds_run": 1,
+  "max_ui_review_rounds": 2,
+  "satisfied": true,
+  "summary": "The 320×480 ad unit is well-executed and meets all mandatory design and brand requirements. The layout is clean with proper hierarchy, the Decathlon logo is visible and correctly scaled, typography follows the style guide (Decathlon Sans weights), color palette adheres strictly to brand guidelines (#3643BA blue, #FFCD4D yellow CTA), French copy is clear and on-brand, and the product hero image is prominent and high-quality. The CTA button has appropriate spacing from the bottom edge, and all text remains readable. No blockers or critical issues detected.",
+  "findings": [],
+  "screenshots_dir": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\decathlon-b41bdeda-6fd9-46da-86bb-1977493ffa67\\review\\screenshots",
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\decathlon-b41bdeda-6fd9-46da-86bb-1977493ffa67\\pipeline-usage.json",
+  "pipeline_totals_usd": {
+    "input": 0.721419,
+    "output": 0.18267,
+    "total": 0.904089
+  }
+}

@@ -492,13 +492,17 @@ export function officialPageUrlsFromContext (context: ImageSearchContext): strin
   return [ ...new Set(pageUrls) ];
 }
 
-export function officialProductMaxCandidates (): number {
+export function officialProductMaxCandidates (minimum = 0): number {
   const raw = process.env['OFFICIAL_PRODUCT_MAX_CANDIDATES']?.trim();
+  const fallback = minimum > 0 ? minimum : 8;
   if (raw === undefined || raw.length === 0) {
-    return 8;
+    return fallback;
   }
   const n = Number.parseInt(raw, 10);
-  return Number.isFinite(n) && n > 0 ? n : 8;
+  if (!Number.isFinite(n) || n <= 0) {
+    return fallback;
+  }
+  return Math.max(n, minimum);
 }
 
 export type OfficialProductCandidate = {
@@ -941,7 +945,8 @@ export function extractProductCandidatesFromHtml (
  * On official HTTP 403, falls back to Wikipedia lead image (og:image on Wikimedia).
  */
 export async function extractOfficialProductImageUrls (
-  context: ImageSearchContext
+  context: ImageSearchContext,
+  options?: { minimumCandidates?: number }
 ): Promise<OfficialProductCandidate[]> {
   if (!parseEnvEnabled()) {
     return [];
@@ -1003,7 +1008,11 @@ export async function extractOfficialProductImageUrls (
     allCandidates = [ ...allCandidates, ...fallback.candidates ];
   }
 
-  return mergeOfficialProductCandidates(allCandidates).slice(0, officialProductMaxCandidates());
+  const minCandidates = options?.minimumCandidates ?? 0;
+  return mergeOfficialProductCandidates(allCandidates).slice(
+    0,
+    officialProductMaxCandidates(minCandidates)
+  );
 }
 
 /** Whether Wikipedia og:image fallback may run for product heroes. */

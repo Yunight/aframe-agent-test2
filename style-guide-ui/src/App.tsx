@@ -49,8 +49,6 @@ interface StudioCatalog {
 
 const PREFERRED_CREATIVE_SCRIPT = 'gen-creative-code-native.mts'
 
-type ImageSearchProviderId = 'brave' | 'anthropic'
-
 type ReferencePreflightUiState =
   | 'idle'
   | 'checking'
@@ -245,8 +243,7 @@ function App () {
   const [customAdH, setCustomAdH] = useState('')
   const [creativeUiReview, setCreativeUiReview] = useState(true)
   const [styleGuideAssetsReview, setStyleGuideAssetsReview] = useState(true)
-  const [creativeCodegenPreset, setCreativeCodegenPreset] = useState<'fast' | 'balanced' | 'quality'>('balanced')
-  const [imageSearchProvider, setImageSearchProvider] = useState<ImageSearchProviderId>('brave')
+  const [creativeCodegenPreset, setCreativeCodegenPreset] = useState<'fast' | 'balanced' | 'quality'>('fast')
   const [lastRunKind, setLastRunKind] = useState<StudioRunKind | null>(null)
   const [preflightApiAvailable, setPreflightApiAvailable] = useState<boolean | null>(null)
   const preflightApiAvailableRef = useRef<boolean | null>(null)
@@ -816,12 +813,11 @@ function App () {
         context: styleContext,
         referenceUrl: referenceUrl.trim().length > 0 ? referenceUrl.trim() : undefined,
         contextPrompt: composeStyleGuideContextFromParts(brand, styleContext),
-        assetsReviewAfterGeneration: styleGuideAssetsReview,
-        imageSearchProvider
+        assetsReviewAfterGeneration: styleGuideAssetsReview
       },
       'style_guide'
     )
-  }, [brand, referenceUrl, styleContext, styleGuideAssetsReview, imageSearchProvider, runStudioJob])
+  }, [brand, referenceUrl, styleContext, styleGuideAssetsReview, runStudioJob])
 
   const retryAssetsReview = useCallback(async () => {
     if (!canRetryAssetsReview) {
@@ -830,12 +826,11 @@ function App () {
     await runStudioJob(
       '/api/style-guide/review-assets',
       {
-        outputFolder: styleGuideOutputFolder,
-        imageSearchProvider
+        outputFolder: styleGuideOutputFolder
       },
       'style_guide'
     )
-  }, [canRetryAssetsReview, styleGuideOutputFolder, imageSearchProvider, runStudioJob])
+  }, [canRetryAssetsReview, styleGuideOutputFolder, runStudioJob])
 
   const runCreative = useCallback(async () => {
     setOutputDir(null)
@@ -847,8 +842,7 @@ function App () {
         adFormats: creativeAdFormats,
         assetsReviewBeforeGeneration: false,
         uiReviewAfterGeneration: creativeSupportsUiReview && creativeUiReview,
-        creativeCodegenPreset: creativeSupportsNativePipeline ? creativeCodegenPreset : undefined,
-        imageSearchProvider
+        creativeCodegenPreset: creativeSupportsNativePipeline ? creativeCodegenPreset : undefined
       },
       'creative'
     )
@@ -860,7 +854,6 @@ function App () {
     creativeSupportsUiReview,
     creativeUiReview,
     creativeCodegenPreset,
-    imageSearchProvider,
     runStudioJob
   ])
 
@@ -872,12 +865,11 @@ function App () {
       '/api/creative-code/review-ui',
       {
         outputFolder: creativeOutputFolder.trim(),
-        adFormats: creativeAdFormats,
-        imageSearchProvider
+        adFormats: creativeAdFormats
       },
       'creative'
     )
-  }, [canRetryUiReview, creativeOutputFolder, creativeAdFormats, imageSearchProvider, runStudioJob])
+  }, [canRetryUiReview, creativeOutputFolder, creativeAdFormats, runStudioJob])
 
   const statusBadge =
     status === 'idle'
@@ -1193,48 +1185,6 @@ function App () {
                 Pour une marque seule, le contexte peut rester vide. Pour un film sans marque, décrivez le titre dans le contexte.
               </p>
             </fieldset>
-            <fieldset className="fieldset rounded-2xl border border-base-300/50 bg-base-200/15 px-4 py-4">
-              <legend className="fieldset-legend text-base-content/60">Recherche d’images (logos / produits)</legend>
-              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-base-300/40 bg-base-100/80 px-4 py-3 has-checked:border-primary has-checked:ring-2 has-checked:ring-primary/15">
-                  <input
-                    type="radio"
-                    name="imageSearchProvider"
-                    className="radio radio-primary mt-0.5 shrink-0"
-                    value="brave"
-                    checked={imageSearchProvider === 'brave'}
-                    disabled={status === 'running'}
-                    onChange={() => { setImageSearchProvider('brave'); }}
-                    aria-label="Recherche images Brave"
-                  />
-                  <span className="text-sm leading-relaxed text-base-content/85">
-                    <span className="font-medium text-base-content">Brave</span>
-                    {' '}
-                    — API Images Brave (rapide, quota dédié).
-                  </span>
-                </label>
-                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-base-300/40 bg-base-100/80 px-4 py-3 has-checked:border-primary has-checked:ring-2 has-checked:ring-primary/15">
-                  <input
-                    type="radio"
-                    name="imageSearchProvider"
-                    className="radio radio-primary mt-0.5 shrink-0"
-                    value="anthropic"
-                    checked={imageSearchProvider === 'anthropic'}
-                    disabled={status === 'running'}
-                    onChange={() => { setImageSearchProvider('anthropic'); }}
-                    aria-label="Recherche images Anthropic"
-                  />
-                  <span className="text-sm leading-relaxed text-base-content/85">
-                    <span className="font-medium text-base-content">Anthropic</span>
-                    {' '}
-                    — Claude <code className="font-mono text-xs">web_search</code>
-                    {' '}
-                    (<code className="font-mono text-xs">ANTHROPIC_API_KEY</code>
-                    , utile si quota Brave épuisé).
-                  </span>
-                </label>
-              </div>
-            </fieldset>
             <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-base-300/50 bg-base-200/15 px-4 py-4">
               <input
                 type="checkbox"
@@ -1454,7 +1404,7 @@ function App () {
               <fieldset className="rounded-2xl border border-base-300/50 bg-base-200/15 px-4 py-4">
                 <legend className="px-1 text-sm font-medium text-base-content">Profil génération code</legend>
                 <p className="mb-3 text-xs leading-relaxed text-base-content/65">
-                  fast = Sonnet sans thinking · balanced = Sonnet + thinking adaptatif (défaut) · quality = Opus
+                  fast = Sonnet sans thinking (défaut) · balanced = Sonnet + thinking adaptatif · quality = Opus
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {([ 'fast', 'balanced', 'quality' ] as const).map((id) => (

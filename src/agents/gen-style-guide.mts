@@ -714,7 +714,10 @@ if (referenceListingUrls.length > 0) {
 
 const { result: officialProductCandidates, duration_ms: officialExtractMs } = await timedStep(
   'official_product_extract',
-  async () => await extractOfficialProductImageUrls(imageContext)
+  async () =>
+    await extractOfficialProductImageUrls(imageContext, {
+      minimumCandidates: Math.max(braveProductTargetCount() * 2, braveProductCandidatePool())
+    })
 );
 subStepTimings.push({ label: 'official_product_extract', duration_ms: officialExtractMs });
 

@@ -296,3 +296,77 @@ test('single SKU accepts mismatched file name when sourceUrl matches product', a
   const blockers = result.findings.filter((f) => f.severity === 'blocker');
   assert.equal(blockers.length, 0, JSON.stringify(blockers));
 });
+
+test('decathlon listing blocks non-official media hosts', async (t) => {
+  const prevMinW = process.env['CREATIVE_ASSETS_MIN_PRODUCT_W'];
+  const prevMinH = process.env['CREATIVE_ASSETS_MIN_PRODUCT_H'];
+  const prevLogoW = process.env['CREATIVE_ASSETS_MIN_LOGO_W'];
+  const prevLogoH = process.env['CREATIVE_ASSETS_MIN_LOGO_H'];
+  process.env['CREATIVE_ASSETS_MIN_PRODUCT_W'] = '1';
+  process.env['CREATIVE_ASSETS_MIN_PRODUCT_H'] = '1';
+  process.env['CREATIVE_ASSETS_MIN_LOGO_W'] = '1';
+  process.env['CREATIVE_ASSETS_MIN_LOGO_H'] = '1';
+  t.after(() => {
+    if (prevMinW === undefined) {
+      delete process.env['CREATIVE_ASSETS_MIN_PRODUCT_W'];
+    } else {
+      process.env['CREATIVE_ASSETS_MIN_PRODUCT_W'] = prevMinW;
+    }
+    if (prevMinH === undefined) {
+      delete process.env['CREATIVE_ASSETS_MIN_PRODUCT_H'];
+    } else {
+      process.env['CREATIVE_ASSETS_MIN_PRODUCT_H'] = prevMinH;
+    }
+    if (prevLogoW === undefined) {
+      delete process.env['CREATIVE_ASSETS_MIN_LOGO_W'];
+    } else {
+      process.env['CREATIVE_ASSETS_MIN_LOGO_W'] = prevLogoW;
+    }
+    if (prevLogoH === undefined) {
+      delete process.env['CREATIVE_ASSETS_MIN_LOGO_H'];
+    } else {
+      process.env['CREATIVE_ASSETS_MIN_LOGO_H'] = prevLogoH;
+    }
+  });
+
+  const guide: StyleGuide = {
+    ...catalogStyleGuide,
+    brandName: 'Decathlon',
+    companyName: 'Decathlon S.A.',
+    companyURL: 'https://www.decathlon.com',
+    brandURL: 'https://www.decathlon.com',
+    campaignReferenceUrl: 'https://www.decathlon.com',
+    productName: "Bons plans été 2026 — Indispensables de l'été",
+    campaignContext: "Promotions des produits adaptés pour l'été 2026"
+  };
+
+  const directoryPath = mkdtempSync(join(tmpdir(), 'assets-det-decathlon-'));
+  mkdirSync(join(directoryPath, 'logos'), { recursive: true });
+  mkdirSync(join(directoryPath, 'products'), { recursive: true });
+  writeFileSync(
+    join(directoryPath, 'logos', 'logo.svg'),
+    '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="40"><text y="30">D</text></svg>',
+    'utf8'
+  );
+  writeFileSync(join(directoryPath, 'products', 'third-party.jpg'), minimalPng);
+  recordProductAssetSource(
+    directoryPath,
+    'third-party.jpg',
+    'https://media.ouest-france.fr/v1/pictures/random?width=1260'
+  );
+  writeFileSync(
+    join(directoryPath, 'style-guide.json'),
+    `${JSON.stringify(guide, null, 2)}\n`,
+    'utf8'
+  );
+
+  const result = await runDeterministicAssetsCheck(directoryPath, guide);
+  const productBlockers = result.findings.filter(
+    (f) => f.severity === 'blocker' && f.asset_id.startsWith('products/')
+  );
+  assert.equal(productBlockers.length, 1, JSON.stringify(productBlockers));
+  assert.match(
+    productBlockers[0]?.issue ?? '',
+    /official brand visual host/iu
+  );
+});
