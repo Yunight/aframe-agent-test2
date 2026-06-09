@@ -1,0 +1,120 @@
+{
+  "generated_at": "2026-06-08T13:25:58.381Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/Peugeot_2021_Logo.svg",
+      "fileName": "Peugeot_2021_Logo.svg",
+      "fileType": "logos",
+      "description": "Peugeot's 2021 corporate logo featuring a stylized lion head in profile within a shield shape. The design uses black and white with clean geometric lines, representing the brand's premium automotive heritage.",
+      "layout_hints": [
+        "logo-lockup",
+        "shield-emblem"
+      ],
+      "dominant_colors": [
+        "#000000",
+        "#FFFFFF"
+      ]
+    },
+    {
+      "asset_id": "products/nouvelle-peugeot-308-2021.jpg",
+      "fileName": "nouvelle-peugeot-308-2021.jpg",
+      "fileType": "products",
+      "description": "A teal/dark cyan Peugeot 308 sedan photographed in three-quarter front view on an urban street with modern brick and glass architecture in the background. The car displays sharp LED headlights, a hexagonal grille with the Peugeot emblem, and contemporary alloy wheels. License plate HX-808-HV is visible.",
+      "layout_hints": [
+        "packshot-three-quarter",
+        "lifestyle-urban",
+        "automotive-hero"
+      ],
+      "dominant_colors": [
+        "#1B5A6B",
+        "#C0C0C0",
+        "#8B7355"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "Peugeot 308",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/Nouvelle-peugeot-308-SW-bleue-hybride-2022.jpg",
+      "fileName": "Nouvelle-peugeot-308-SW-bleue-hybride-2022.jpg",
+      "fileType": "products",
+      "description": "A bright blue Peugeot 308 SW wagon captured in full side profile under exhibition lighting, showcasing the extended cargo area and sleek side lines. The vehicle is displayed indoors with spectators visible in the background, highlighting the hybrid model's modern design with contemporary alloy wheels.",
+      "layout_hints": [
+        "packshot-side-profile",
+        "automotive-hero",
+        "exhibition-setting"
+      ],
+      "dominant_colors": [
+        "#0066CC",
+        "#E8E8E8",
+        "#1A1A1A"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "Peugeot 308 SW Hybride",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/peugeot-308-2022-blanc-ar-mk-bd.jpg",
+      "fileName": "peugeot-308-2022-blanc-ar-mk-bd.jpg",
+      "fileType": "products",
+      "description": "A white Peugeot 308 hatchback shot from the rear, parked on a coastal road overlooking a misty lake and distant mountains. The scenic lifestyle setting emphasizes the vehicle's sleek rear design, LED tail lights, and contemporary proportions. License plate GB-389-GM is visible.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "coastal-setting",
+        "rear-view"
+      ],
+      "dominant_colors": [
+        "#FFFFFF",
+        "#6B8FA3",
+        "#4A4A4A"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "Peugeot 308",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/PEUGEOT_IMAGE_308SW_F2_810x455.png",
+      "fileName": "PEUGEOT_IMAGE_308SW_F2_810x455.png",
+      "fileType": "products",
+      "description": "A studio packshot of the Peugeot 308 SW wagon in bright blue, captured in three-quarter profile against a clean white background. The image showcases the wagon's extended cargo silhouette, prominent LED headlights, and contemporary wheel design with minimal visual context.",
+      "layout_hints": [
+        "packshot-three-quarter",
+        "studio-white-background",
+        "hero-shot"
+      ],
+      "dominant_colors": [
+        "#0066CC",
+        "#FFFFFF",
+        "#333333"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "Peugeot 308 SW",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/PEUGEOT_IMAGE_308_F2_810x455.png",
+      "fileName": "PEUGEOT_IMAGE_308_F2_810x455.png",
+      "fileType": "products",
+      "description": "A studio packshot of the Peugeot 308 hatchback in bright blue, displayed in three-quarter profile against a clean white background. The image emphasizes the compact sedan's sleek proportions, distinctive LED headlight design, and modern alloy wheels in a professional product photography style.",
+      "layout_hints": [
+        "packshot-three-quarter",
+        "studio-white-background",
+        "hero-shot"
+      ],
+      "dominant_colors": [
+        "#0066CC",
+        "#FFFFFF",
+        "#333333"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "Peugeot 308",
+      "is_generic_collection": false
+    }
+  ]
+}

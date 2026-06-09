@@ -1,6 +1,7 @@
 import type { StyleGuide } from '../agents/gen-style-guide.mjs';
 import { htmlContainsAdDomId, formatIdToAdDomId, findUnselectedAdUnitsInHtml } from './creative-native-ad-dom.mts';
 import { normalizeHexColorBare, styleGuideAllowedHexBareSet } from './style-guide-colors.mts';
+import { getFontComplianceIssue } from './style-guide-typography.mts';
 import type { AdFormatSelection } from './studio-ad-formats.mts';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -74,27 +75,6 @@ function extractHexColorsFromCss (content: string): Set<string> {
       .map((hexValue) => normalizeHexColorBare(hexValue))
       .filter((hexValue) => hexValue.length === 6)
   );
-}
-
-function extractFontFamiliesFromCss (content: string): Set<string> {
-  const fontFamilyMatches = content.match(/font-family\s*:\s*([^;]+);/gi) ?? [];
-  const familySet = new Set<string>();
-
-  for (const declaration of fontFamilyMatches) {
-    const declarationMatch = declaration.match(/font-family\s*:\s*([^;]+);/i);
-    if (declarationMatch === null) {
-      continue;
-    }
-    const list = declarationMatch[1] ?? '';
-    for (const fontName of list.split(',')) {
-      const cleaned = fontName.trim().replace(/^['"]|['"]$/g, '');
-      if (cleaned.length > 0) {
-        familySet.add(cleaned.toLowerCase());
-      }
-    }
-  }
-
-  return familySet;
 }
 
 export function validateCreativeSkillCompliance (
@@ -172,18 +152,9 @@ export function validateCreativeSkillCompliance (
     }
   }
 
-  const styleGuideFonts = new Set(
-    currentStyleGuide.typography
-      .map((item) => item.fontFamily.trim().toLowerCase())
-      .filter((fontName) => fontName.length > 0)
-  );
-  const usedFonts = extractFontFamiliesFromCss(allContent);
-  const disallowedFonts = Array.from(usedFonts).filter((fontName) =>
-    !styleGuideFonts.has(fontName) &&
-    !contains([ 'sans-serif', 'serif', 'monospace', 'cursive', 'fantasy', 'system-ui' ], fontName)
-  );
-  if (disallowedFonts.length > 0) {
-    issues.push(`Contains font families outside style guide: ${disallowedFonts.join(', ')}`);
+  const fontIssue = getFontComplianceIssue(allContent, currentStyleGuide);
+  if (fontIssue !== null) {
+    issues.push(fontIssue);
   }
 
   const allowedColors = styleGuideAllowedHexBareSet(currentStyleGuide);

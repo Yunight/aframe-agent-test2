@@ -1,0 +1,101 @@
+{
+  "companyName": "Groupe Orientis",
+  "companyContext": "Groupe Orientis is the French parent company that owns and operates Kusmi Tea, a premium organic tea house founded in 1867 in Saint Petersburg and headquartered in Paris with workshops in Saint-Vigor d'Ymonville (Le Havre, Normandy). The group has been B Corp certified and employs over 550 people worldwide.",
+  "companyURL": "https://www.kusmitea.com",
+  "brandName": "Kusmi Tea",
+  "brandContext": "Kusmi Tea is a French Maison de thé founded in 1867 by Pavel Kousmichoff in Saint Petersburg and relocated to Paris in 1917. Made in Normandy, the brand offers organic loose-leaf teas, tea bags, herbal infusions and gift sets distributed across 35+ countries, blending Russian heritage with vibrant, contemporary, freethinking style.",
+  "brandURL": "https://www.kusmitea.com/collections/bubble-tea?_kx=XturlU07ZCSNbCfAzgd_GxGhWCbKJoLj31HlvCcKyeknrCZ8RJ2LFr5OKsPVAVgK.WJ9Fzj&country=FR&utm_campaign=NL_FR_RETAIL_RELANCE_OFFRE_BUBBLE_TEA_260605_KLAVIYO&utm_medium=email&utm_source=Klaviyo",
+  "logoFileUrls": [
+    "https://upload.wikimedia.org/wikipedia/en/9/95/Kusmi_Tea_logo.png"
+  ],
+  "productName": "Bubble Tea",
+  "campaignContext": "Mise en avant des derniers produits",
+  "campaignReferenceUrl": "https://www.kusmitea.com/collections/bubble-tea?_kx=XturlU07ZCSNbCfAzgd_GxGhWCbKJoLj31HlvCcKyeknrCZ8RJ2LFr5OKsPVAVgK.WJ9Fzj&country=FR&utm_campaign=NL_FR_RETAIL_RELANCE_OFFRE_BUBBLE_TEA_260605_KLAVIYO&utm_medium=email&utm_source=Klaviyo",
+  "productPictureUrls": [
+    "http://www.kusmitea.com/cdn/shop/files/Capture_d_ecran_2026-04-15_093136.png?v=1776238370&width=2048",
+    "https://www.kusmitea.com/cdn/shop/files/MENU_vp_the_fr_ete_26.webp?v=1780403740&amp;width=610",
+    "https://www.kusmitea.com/cdn/shop/files/MENU_vp_coffret_fr_ete_26.webp?v=1780403740&amp;width=610",
+    "https://www.kusmitea.com/cdn/shop/files/MENU_vp_access_fr_ete_26.webp?v=1780403740&amp;width=610",
+    "https://www.kusmitea.com/cdn/shop/files/MENU_vp_all_fr_ete_26.webp?v=1780403740&amp;width=610",
+    "https://www.kusmitea.com/cdn/shop/files/sommeil_glace.jpg?v=1761298138&amp;width=400"
+  ],
+  "primaryColorPalette": [
+    "#C8102E",
+    "#F7C548",
+    "#1A1A1A",
+    "#FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "#FF6F61",
+    "#E91E63",
+    "#F9A03F",
+    "#8BC34A",
+    "#C8A2C8",
+    "#F4E4D4"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Playfair Display",
+      "fontWeight": 700,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Brand wordmark and editorial display headlines evoking the heritage Kusmi serif italic logotype"
+    },
+    {
+      "fontFamily": "Playfair Display",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "H1 and H2 headings on campaign pages and product hero blocks"
+    },
+    {
+      "fontFamily": "Montserrat",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Subheadings, section labels and product titles in catalog tiles"
+    },
+    {
+      "fontFamily": "Montserrat",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions, ingredient lists and UI text"
+    },
+    {
+      "fontFamily": "Montserrat",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Call-to-action buttons, navigation labels and tags (e.g. BIO, NEW)"
+    },
+    {
+      "fontFamily": "Montserrat",
+      "fontWeight": 400,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Captions, recipe annotations and tasting notes"
+    }
+  ],
+  "brandVision": "To revolutionize the art of tea blends with an inclusive, joyful and resolutely modern vision — accessible, delicious and optimistic teas without elitism or pretention, where every fruit is welcome and everyone is invited. With Bubble Tea, Kusmi extends this freethinking spirit into a playful, summery in-home ritual built around organic infusions and Made-in-France fruit pearls.",
+  "brandValues": "Heritage since 1867, French craftsmanship Made in Normandy, organic and B Corp certified, freedom of taste and creativity, inclusivity (\"tous les fruits sont permis, tout le monde est invité\"), commitment to women's causes and biodiversity (WWF, TX2 tigers), reduced plastic and 100% recyclable packaging, accessible premium quality.",
+  "logoImageSearchQueries": [
+    "site:kusmitea.com logo svg",
+    "Kusmi Tea logo svg transparent",
+    "site:en.wikipedia.org Kusmi Tea logo",
+    "Kusmi Tea wordmark official logo png transparent",
+    "Kusmi Tea brand logo vector"
+  ],
+  "productImageSearchQueries": [
+    "site:kusmitea.com Ensemble de préparation Bubble Tea kit",
+    "site:kusmitea.com Bubble Tea collection packshot",
+    "Kusmi Tea Bubble Tea kit fruité packshot",
+    "Kusmi Tea perles de fruits pêche bubble tea",
+    "Kusmi Tea perles de fruits mangue bubble tea",
+    "Kusmi Tea perles de fruits litchi bubble tea",
+    "Kusmi Tea AquaExotica infusion bio tin packshot",
+    "Kusmi Tea AquaFrutti infusion bio tin",
+    "Kusmi Tea AquaRosa infusion bio tin",
+    "Kusmi Tea AquaSummer infusion bio tin",
+    "Kusmi Tea sirop Monin pêche bubble tea",
+    "Kusmi Tea bubble tea recette pêche fruit de la passion glass"
+  ]
+}

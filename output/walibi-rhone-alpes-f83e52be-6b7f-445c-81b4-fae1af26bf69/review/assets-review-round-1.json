@@ -1,0 +1,29 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-06-05T23:44:32.072Z",
+  "deterministic_ok": true,
+  "audit": {
+    "satisfied": true,
+    "summary": "All 6 assets are suitable for the Walibi Rhône-Alpes summer 2026 campaign. The collection includes 4 strong experience visuals (attraction photos and lifestyle scenes of rides and family moments), 1 logo, and demonstrates clear thematic alignment with the park's Explorer Adventure, Festival City, and Exotic Island zones. No blockers identified. The logo file wra.svg correctly displays the official Walibi Rhône-Alpes brand wordmark with both the iconic 'WALIBI' text in red and the 'RHÔNE-ALPES' sub-brand identifier. The logo matches the official lockup from brandURL (https://www.walibi.fr/content/experience-fragments/wra/fr/b2c/header/master/_jcr_content/root/header/logo.coreimg.svg/1710343837893/wra.svg) and aligns with the primary color palette (#EE7C1B red-orange tones). No blockers identified.",
+    "findings": [],
+    "brave_retry_queries": {
+      "logos": [],
+      "products": []
+    }
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 3559,
+    "output_tokens": 111,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 3559,
+    "price_usd": {
+      "input": 0.003559,
+      "output": 0.000555,
+      "total": 0.004114
+    },
+    "duration_ms": 2436
+  }
+}

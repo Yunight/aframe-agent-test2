@@ -8,7 +8,8 @@ import {
   logPipelineUsageToConsole,
   timedAnthropicCall
 } from './creative-pipeline-usage.mts';
-import { isCatalogCampaign } from './style-guide-context.mts';
+import { buildProductMatchFields, isCatalogCampaign, resolveCampaignAssetProfile } from './style-guide-context.mts';
+import { readLogoFileAsAnthropicImageBlock } from './logo-rasterize.mts';
 import { isSvgAssetFile, readFileAsAnthropicImageBlock, sniffImageMimeFromBuffer } from './image-mime-sniff.mts';
 import { listAssetImageFiles } from './asset-sidecar-files.mts';
 import { loadProductAssetSources } from './product-asset-sources.mts';
@@ -21,13 +22,62 @@ import { imageSizeFromFile } from 'image-size/fromFile';
 
 export const DEFAULT_ASSET_DESCRIPTION_MODEL = 'claude-haiku-4-5-20251001';
 
+export const assetKindSchema = z.enum([
+  'product_packshot',
+  'lifestyle_scene',
+  'text_only_banner',
+  'theatrical_poster',
+  'key_art',
+  'film_still',
+  'promotional_photo',
+  'attraction_photo',
+  'ticket_pass',
+  'venue_lifestyle',
+  'mascot_brand',
+  'logo',
+  'other'
+]);
+
+/** Film/series promo kinds accepted by entertainment audit (not retail packshots). */
+export const ENTERTAINMENT_PROMO_ASSET_KINDS = new Set([
+  'theatrical_poster',
+  'key_art',
+  'film_still',
+  'promotional_photo',
+  'lifestyle_scene'
+]);
+
+/** Theme park / destination promo kinds accepted by experience audit. */
+export const EXPERIENCE_PROMO_ASSET_KINDS = new Set([
+  'attraction_photo',
+  'ticket_pass',
+  'venue_lifestyle',
+  'lifestyle_scene',
+  'promotional_photo',
+  'product_packshot'
+]);
+
+/** Promo / experience visuals usable as ad heroes (not text-only navigation tiles). */
+export const USABLE_PROMO_ASSET_KINDS = new Set([
+  'product_packshot',
+  'lifestyle_scene',
+  ...ENTERTAINMENT_PROMO_ASSET_KINDS,
+  ...EXPERIENCE_PROMO_ASSET_KINDS
+]);
+
 export const assetDescriptionEntrySchema = z.object({
   asset_id: z.string(),
   fileName: z.string(),
   fileType: z.enum([ 'logos', 'products' ]),
   description: z.string(),
   layout_hints: z.array(z.string()),
-  dominant_colors: z.array(z.string())
+  dominant_colors: z.array(z.string()),
+  shows_physical_product: z.boolean().optional(),
+  asset_kind: assetKindSchema.optional(),
+  /** Concrete SKU / ritual / kit name visible in the image (products only). */
+  primary_product_name: z.string().optional(),
+  /** True when the image is a multi-SKU flat-lay with no single dominant product. */
+  is_generic_collection: z.boolean().optional()
 });
 
 export const assetDescriptionsFileSchema = z.object({
@@ -70,7 +120,15 @@ function parseEnvInt (name: string, fallback: number): number {
 }
 
 export function maxProductAssetsForCodegen (): number {
-  return parseEnvInt('CREATIVE_CODEGEN_MAX_PRODUCT_ASSETS', 5);
+  const raw = process.env['CREATIVE_CODEGEN_MAX_PRODUCT_ASSETS']?.trim();
+  if (raw === undefined || raw.length === 0) {
+    return 0;
+  }
+  const n = Number.parseInt(raw, 10);
+  if (!Number.isFinite(n) || n < 0) {
+    return 0;
+  }
+  return n;
 }
 
 function listAssetFiles (directoryPath: string, fileType: 'logos' | 'products'): string[] {
@@ -115,15 +173,27 @@ function urlHostMatchesOfficial (url: string, officialHosts: readonly string[]):
 async function rankProductFiles (
   directoryPath: string,
   fileNames: string[],
-  officialHosts: readonly string[]
+  officialHosts: readonly string[],
+  descriptions?: AssetDescriptionsFile | null
 ): Promise<string[]> {
   const sourceMap = loadProductAssetSources(directoryPath);
+  const descByKey = descriptionMapFromFile(descriptions ?? null);
   const scored: { fileName: string; score: number }[] = [];
   for (const fileName of fileNames) {
     let score = 0;
     const sourceUrl = sourceMap.get(fileName)?.sourceUrl ?? '';
     if (urlHostMatchesOfficial(sourceUrl, officialHosts)) {
       score += 1000;
+    }
+    const entry = descByKey.get(`products/${fileName}`) ?? descByKey.get(fileName);
+    const usablePromo =
+      entry?.asset_kind !== undefined && USABLE_PROMO_ASSET_KINDS.has(entry.asset_kind);
+    if (entry?.shows_physical_product === true || usablePromo) {
+      score += 5000;
+    } else if (entry?.asset_kind === 'text_only_banner') {
+      score -= 10_000;
+    } else if (entry?.shows_physical_product === false) {
+      score -= 5000;
     }
     try {
       const filePath = join(directoryPath, 'products', fileName);
@@ -184,9 +254,17 @@ export async function buildCodegenAssetPromptBlocks (params: {
 
   const maxProducts = maxProductAssetsForCodegen();
   const allProducts = listAssetFiles(params.directoryPath, 'products');
-  const rankedProducts = await rankProductFiles(params.directoryPath, allProducts, officialHosts);
-  const selectedProducts = new Set(rankedProducts.slice(0, maxProducts));
-  if (allProducts.length > maxProducts) {
+  const rankedProducts = await rankProductFiles(
+    params.directoryPath,
+    allProducts,
+    officialHosts,
+    descriptions
+  );
+  const selectedProducts =
+    maxProducts === 0
+      ? new Set(rankedProducts)
+      : new Set(rankedProducts.slice(0, maxProducts));
+  if (maxProducts > 0 && allProducts.length > maxProducts) {
     console.log(
       `[creative-native] Product assets capped at ${String(maxProducts)} of ${String(allProducts.length)} for codegen prompt.`
     );
@@ -291,12 +369,18 @@ export type DescribeApprovedAssetsResult = {
   };
 };
 
-export async function describeApprovedAssets (params: {
+export type DescribeAssetsOptions = {
   anthropicClient: Anthropic;
   directoryPath: string;
   styleGuide: StyleGuide;
   model?: string;
-}): Promise<DescribeApprovedAssetsResult | null> {
+  reviewRound?: number;
+  phase?: 'style_guide' | 'creative';
+};
+
+export async function describeAssetsForReview (
+  params: DescribeAssetsOptions
+): Promise<DescribeApprovedAssetsResult | null> {
   if (process.env['STYLE_GUIDE_SKIP_ASSET_DESCRIPTIONS']?.trim() === '1') {
     console.log('[asset-descriptions] Skipped (STYLE_GUIDE_SKIP_ASSET_DESCRIPTIONS=1).');
     return null;
@@ -313,14 +397,58 @@ export async function describeApprovedAssets (params: {
     brandURL: params.styleGuide.brandURL
   });
 
+  const profile = resolveCampaignAssetProfile(buildProductMatchFields({
+    campaignContext: params.styleGuide.campaignContext ?? null,
+    productName: params.styleGuide.productName,
+    brandName: params.styleGuide.brandName,
+    brandContext: params.styleGuide.brandContext,
+    brandURL: params.styleGuide.brandURL,
+    campaignAssetProfile: params.styleGuide.campaignAssetProfile
+  }));
+  console.log(`[asset-descriptions] Campaign asset profile: ${profile}`);
+
+  const describeIntro =
+    profile === 'entertainment'
+      ? 'Describe each asset below factually for film/series promotional ad review (French descriptions OK). ' +
+        'Focus on: poster/key art/stills, cast, title treatment, framing, readable title text, colors.\n'
+      : profile === 'experience'
+        ? 'Describe each asset below factually for theme park / leisure / destination ad review (French descriptions OK). ' +
+          'Focus on: attractions, rides, families, tickets/passes, mascot, venue atmosphere, readable promo text.\n'
+        : 'Describe each asset below factually for HTML5 display ad review (French descriptions OK). ' +
+          'Focus on: subject, framing, background, readable text on image, colors, photographed products vs text-only graphics.\n';
+
+  const entertainmentRules =
+    'Entertainment campaign: products/ are film promotional visuals (posters, key art, stills, cast photos) — NOT retail packshots. ' +
+    'Set shows_physical_product=false for theatrical posters, key art, and film stills (normal). ' +
+    'Set asset_kind=theatrical_poster | key_art | film_still | promotional_photo | lifestyle_scene as appropriate. ' +
+    'Set text_only_banner only for category navigation tiles with no film imagery. ' +
+    `Set primary_product_name to the film title (e.g. "${params.styleGuide.productName}") — same title on multiple assets is OK. ` +
+    'Set is_generic_collection=false for all entertainment assets.';
+
+  const experienceRules =
+    'Experience campaign (theme park, destination, ticketing): products/ are attraction photos, family lifestyle, passes/tickets — NOT retail SKU packshots. ' +
+    'Set shows_physical_product=false for rides, attractions, venue scenes, and family moments (normal). ' +
+    'Set shows_physical_product=true only when a physical ticket/pass/gift card is visibly photographed. ' +
+    'Set asset_kind=attraction_photo | venue_lifestyle | ticket_pass | lifestyle_scene | mascot_brand | promotional_photo as appropriate. ' +
+    'Set text_only_banner only for category navigation tiles with no park/attraction imagery. ' +
+    `Set primary_product_name to attraction name, ticket type, or campaign offer (e.g. "${params.styleGuide.productName}", "Abonnement Saison", "Mahuka") — generic visit labels are OK. ` +
+    'Set is_generic_collection=false for all experience assets.';
+
+  const retailRules =
+    'Set shows_physical_product=true only when a real product (packshot, box, garment, food item, etc.) is visibly photographed. ' +
+    'Set shows_physical_product=false for category navigation tiles, menu graphics, or promo banners with only typography on a colored background. ' +
+    'Set asset_kind=text_only_banner for those text-only graphics; product_packshot or lifestyle_scene when merchandise is visible.\n' +
+    'For each products/ asset with shows_physical_product=true: set primary_product_name to the concrete dominant SKU/ritual/kit name visible ' +
+    '(e.g. "Sommeil", "Kit Bubble Tea Litchi Rose") — never vague labels like "thés Kusmi" or "sélection". ' +
+    'If multiple products appear, name the most prominent hero. ' +
+    'Set is_generic_collection=true only for flat-lays showing many different SKUs with no single dominant product; otherwise false.';
+
   const expectedAssets: { asset_id: string; fileName: string; fileType: 'logos' | 'products' }[] = [];
   const userContent: Anthropic.Messages.ContentBlockParam[] = [
     {
       type: 'text',
       text:
-        'Describe each asset below for HTML5 display ad layout (French descriptions OK). ' +
-        'Focus on: subject, framing, background, readable text on image, colors, and how to use as hero or logo. ' +
-        'This is NOT a quality audit — assets are already approved.\n' +
+        describeIntro +
         `Brand: ${params.styleGuide.brandName}\n` +
         `Campaign product: ${params.styleGuide.productName}\n` +
         (params.styleGuide.campaignContext !== undefined && params.styleGuide.campaignContext.length > 0
@@ -330,9 +458,17 @@ export async function describeApprovedAssets (params: {
         params.styleGuide.campaignReferenceUrl.length > 0
           ? `Campaign reference URL: ${params.styleGuide.campaignReferenceUrl}\n`
           : '') +
+        (params.styleGuide.brandContext !== undefined && params.styleGuide.brandContext.length > 0
+          ? `Brand context: ${params.styleGuide.brandContext}\n`
+          : '') +
         (catalog
-          ? 'Catalog campaign: each product image may be one SKU from the collection; mention it can rotate as hero.\n'
-          : '')
+          ? 'Catalog campaign: each product image may be one SKU from the collection.\n'
+          : '') +
+        (profile === 'entertainment'
+          ? entertainmentRules
+          : profile === 'experience'
+            ? experienceRules
+            : retailRules)
     }
   ];
 
@@ -351,12 +487,13 @@ export async function describeApprovedAssets (params: {
       const filePath = join(params.directoryPath, fileType, fileName);
       userContent.push({ type: 'text', text: `Asset id: ${asset_id}` });
 
-      if (fileType === 'logos' && fileName.toLowerCase().endsWith('.svg')) {
-        const svgText = readFileSync(filePath, 'utf8').slice(0, 8000);
-        userContent.push({
-          type: 'text',
-          text: `SVG markup (truncated):\n${svgText}`
-        });
+      if (fileType === 'logos') {
+        const logoBlock = await readLogoFileAsAnthropicImageBlock(filePath);
+        if (logoBlock !== null) {
+          userContent.push(logoBlock);
+        } else {
+          userContent.push({ type: 'text', text: `(unreadable logo: ${filePath})` });
+        }
         continue;
       }
 
@@ -374,13 +511,42 @@ export async function describeApprovedAssets (params: {
     return null;
   }
 
-  const systemPrompt = [
-    'You write concise visual descriptions for approved brand assets used in HTML5 banners.',
-    'Return one entry per asset id listed in the user message (exact asset_id, fileName, fileType).',
-    'layout_hints: short tags e.g. hero, logo-lockup, fond-clair, packshot-centre.',
-    'dominant_colors: up to 4 hex colors if visible, else empty array.',
-    'description: 2-4 sentences for ad layout integration.'
-  ].join('\n');
+  const systemPrompt =
+    profile === 'entertainment'
+      ? [
+          'You write factual visual descriptions for film/series promotional assets before HTML5 ad approval.',
+          'Return one entry per asset id listed in the user message (exact asset_id, fileName, fileType).',
+          'shows_physical_product (required): false for posters/key art/stills; true only if merchandise (DVD box, etc.) is visibly photographed.',
+          'asset_kind (required): theatrical_poster | key_art | film_still | promotional_photo | lifestyle_scene | text_only_banner | logo | other.',
+          'primary_product_name (required for products/): film title; same title on multiple assets is expected.',
+          'is_generic_collection (required for products/): always false for entertainment campaigns.',
+          'layout_hints: short tags e.g. theatrical-poster, key-art, character-close-up, ensemble-cast, production-still, logo-lockup.',
+          'dominant_colors: up to 4 hex colors if visible, else empty array.',
+          'description: 2-4 factual sentences — identify poster vs still vs BTS; state title text if readable.'
+        ].join('\n')
+      : profile === 'experience'
+        ? [
+            'You write factual visual descriptions for theme park / leisure / destination assets before HTML5 ad approval.',
+            'Return one entry per asset id listed in the user message (exact asset_id, fileName, fileType).',
+            'shows_physical_product (required): false for attractions/rides/family scenes; true only for photographed tickets/passes/gift cards.',
+            'asset_kind (required): attraction_photo | venue_lifestyle | ticket_pass | lifestyle_scene | mascot_brand | promotional_photo | text_only_banner | logo | other.',
+            'primary_product_name (required for products/): attraction name, ticket/pass type, or campaign offer — not retail SKU codes.',
+            'is_generic_collection (required for products/): always false for experience campaigns.',
+            'layout_hints: short tags e.g. roller-coaster-action, family-moment, ticket-pass, mascot-hero, ride-action, park-setting.',
+            'dominant_colors: up to 4 hex colors if visible, else empty array.',
+            'description: 2-4 factual sentences — identify ride vs family scene vs ticket; name attraction if visible.'
+          ].join('\n')
+        : [
+            'You write factual visual descriptions for brand assets before HTML5 ad approval.',
+            'Return one entry per asset id listed in the user message (exact asset_id, fileName, fileType).',
+            'shows_physical_product (required): true if a product is visibly photographed; false for text-only banners/tiles.',
+            'asset_kind (required): product_packshot | lifestyle_scene | text_only_banner | logo | other.',
+            'primary_product_name (required for products/ with shows_physical_product=true): concrete SKU/ritual/kit name; empty for logos.',
+            'is_generic_collection (required for products/): true only when no single dominant SKU is identifiable.',
+            'layout_hints: short tags e.g. packshot-centre, lifestyle-scene, categorie-banner, logo-lockup.',
+            'dominant_colors: up to 4 hex colors if visible, else empty array.',
+            'description: 2-4 factual sentences — state explicitly when an image contains only text on a solid/gradient background.'
+          ].join('\n');
 
   console.log(`[asset-descriptions] Describing ${String(expectedAssets.length)} asset(s) — model ${model}`);
 
@@ -430,10 +596,21 @@ export async function describeApprovedAssets (params: {
     agent: 'lib/creative-asset-descriptions.mts',
     model,
     usage: msg.usage,
-    phase: 'style_guide',
+    phase: params.phase ?? 'style_guide',
+    ...(params.reviewRound !== undefined ? { review_round: params.reviewRound } : {}),
     duration_ms: apiDurationMs
   });
   logPipelineUsageToConsole(appendPipelineUsage(params.directoryPath, pipelineEntry).entries.at(-1)!);
 
   return { file, usage };
+}
+
+/** Post-approval alias — same vision describe used during review when assets are already vetted. */
+export async function describeApprovedAssets (params: {
+  anthropicClient: Anthropic;
+  directoryPath: string;
+  styleGuide: StyleGuide;
+  model?: string;
+}): Promise<DescribeApprovedAssetsResult | null> {
+  return await describeAssetsForReview({ ...params, phase: 'style_guide' });
 }

@@ -1,0 +1,143 @@
+{
+  "generated_at": "2026-06-05T23:44:24.927Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/wra.svg",
+      "fileName": "wra.svg",
+      "fileType": "logos",
+      "description": "Walibi Rhône-Alpes official logo featuring bold red typography with the park name prominently displayed.",
+      "layout_hints": [
+        "logo-hero",
+        "brand-lockup"
+      ],
+      "dominant_colors": [
+        "#E31E24",
+        "#FFFFFF"
+      ]
+    },
+    {
+      "asset_id": "products/04-parcnov2021.jpg",
+      "fileName": "04-parcnov2021.jpg",
+      "fileType": "products",
+      "description": "Iconic spinning swing ride at Walibi Rhône-Alpes captured from below, with colorful gondolas in motion against a dramatic sky. Visitors experience thrilling sensations on this classic attraction.",
+      "layout_hints": [
+        "ride-action",
+        "sky-perspective",
+        "attraction-hero"
+      ],
+      "dominant_colors": [
+        "#87CEEB",
+        "#8B4513",
+        "#FFCC00"
+      ],
+      "shows_physical_product": false,
+      "asset_kind": "attraction_photo",
+      "primary_product_name": "Swing Ride",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/07-parcnov2021.jpg",
+      "fileName": "07-parcnov2021.jpg",
+      "fileType": "products",
+      "description": "Multi-armed swing ride with colored arms extending outward, passengers swinging in mid-air against a blue-white sky. Demonstrates the thrilling family-friendly attractions available at Walibi Rhône-Alpes.",
+      "layout_hints": [
+        "ride-action",
+        "sky-view",
+        "carousel-style",
+        "excitement"
+      ],
+      "dominant_colors": [
+        "#87CEEB",
+        "#C41E3A",
+        "#1F4E78"
+      ],
+      "shows_physical_product": false,
+      "asset_kind": "attraction_photo",
+      "primary_product_name": "Multi-Swing Ride",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/image--19-.jpg",
+      "fileName": "image--19-.jpg",
+      "fileType": "products",
+      "description": "Adult staff member with child posing at Exotic Island zone entrance, featuring carved wooden tiki-style decorative panel with red accent. Shows family moment enjoying the Pacific-inspired theming area.",
+      "layout_hints": [
+        "family-moment",
+        "zone-theming",
+        "staff-interaction"
+      ],
+      "dominant_colors": [
+        "#8B6F47",
+        "#2D5016",
+        "#C41E3A"
+      ],
+      "shows_physical_product": false,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "Exotic Island Zone",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/tournage-walibi-0123.jpg",
+      "fileName": "tournage-walibi-0123.jpg",
+      "fileType": "products",
+      "description": "Adult guiding child on black and gold themed carousel horse ride within rustic wooden structure. Captures a tender intergenerational moment at a classic park attraction.",
+      "layout_hints": [
+        "family-moment",
+        "carousel-ride",
+        "child-friendly"
+      ],
+      "dominant_colors": [
+        "#FFD700",
+        "#000000",
+        "#8B7355"
+      ],
+      "shows_physical_product": false,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "Carousel",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/walibi-ra-2022-0017.jpg",
+      "fileName": "walibi-ra-2022-0017.jpg",
+      "fileType": "products",
+      "description": "Four children riding in a mine cart-themed coaster car on an Explorer Adventure zone track, hands raised in joy with distant rides and green landscape visible. Exemplifies family fun and themed adventure.",
+      "layout_hints": [
+        "ride-action",
+        "family-moment",
+        "western-theme",
+        "multi-passenger"
+      ],
+      "dominant_colors": [
+        "#8B7355",
+        "#2D5016",
+        "#87CEEB"
+      ],
+      "shows_physical_product": false,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "Mine Cart Ride",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/walibi-shooting-pub-2025---0031.jpg",
+      "fileName": "walibi-shooting-pub-2025---0031.jpg",
+      "fileType": "products",
+      "description": "Roller coaster with multiple cars of riders experiencing inverted thrills at high speed, captured from below against a bright blue sky with white clouds. Showcases an intense thrill ride experience.",
+      "layout_hints": [
+        "coaster-action",
+        "rider-thrill",
+        "sky-perspective",
+        "ride-intensity"
+      ],
+      "dominant_colors": [
+        "#FFD700",
+        "#000000",
+        "#87CEEB"
+      ],
+      "shows_physical_product": false,
+      "asset_kind": "attraction_photo",
+      "primary_product_name": "Roller Coaster",
+      "is_generic_collection": false
+    }
+  ]
+}

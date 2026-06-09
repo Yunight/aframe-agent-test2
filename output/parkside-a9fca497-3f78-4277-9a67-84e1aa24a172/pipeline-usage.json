@@ -1,0 +1,184 @@
+{
+  "directoryUuid": "parkside-a9fca497-3f78-4277-9a67-84e1aa24a172",
+  "updated_at": "2026-06-05T12:24:51.257Z",
+  "entries": [
+    {
+      "action": "style_guide",
+      "agent": "agents/gen-style-guide.mts",
+      "model": "claude-opus-4-7",
+      "review_round": null,
+      "api_calls": 1,
+      "input_tokens": 85599,
+      "output_tokens": 2646,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 85599,
+      "price_usd": {
+        "input": 0.427995,
+        "output": 0.06615,
+        "total": 0.494145
+      },
+      "duration_ms": 51143,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 48590,
+          "stop_reason": "end_turn",
+          "label": "style-guide turn 1"
+        }
+      ],
+      "phase": "style_guide",
+      "sub_step_timings": [
+        {
+          "label": "claude_style_guide",
+          "duration_ms": 48590
+        },
+        {
+          "label": "logo_download",
+          "duration_ms": 826
+        },
+        {
+          "label": "official_product_extract",
+          "duration_ms": 750
+        },
+        {
+          "label": "product_images_brave",
+          "duration_ms": 777
+        },
+        {
+          "label": "write_style_guide_json",
+          "duration_ms": 1
+        }
+      ],
+      "timestamp": "2026-06-05T12:24:23.973Z"
+    },
+    {
+      "action": "asset_descriptions",
+      "agent": "lib/creative-asset-descriptions.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 1,
+      "api_calls": 1,
+      "input_tokens": 10447,
+      "output_tokens": 1355,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 10447,
+      "price_usd": {
+        "input": 0.010447,
+        "output": 0.006775,
+        "total": 0.017222
+      },
+      "duration_ms": 14200,
+      "phase": "style_guide",
+      "timestamp": "2026-06-05T12:24:39.559Z"
+    },
+    {
+      "action": "assets_review",
+      "agent": "lib/asset-descriptions-audit.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 1,
+      "api_calls": 1,
+      "input_tokens": 3651,
+      "output_tokens": 572,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 3651,
+      "price_usd": {
+        "input": 0.003651,
+        "output": 0.00286,
+        "total": 0.006511
+      },
+      "duration_ms": 5486,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 5486,
+          "stop_reason": "end_turn",
+          "label": "asset-descriptions-audit round 1"
+        }
+      ],
+      "phase": "style_guide",
+      "timestamp": "2026-06-05T12:24:45.050Z"
+    },
+    {
+      "action": "logo_vision_audit",
+      "agent": "lib/logo-vision-audit.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 1,
+      "api_calls": 1,
+      "input_tokens": 2192,
+      "output_tokens": 314,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 2192,
+      "price_usd": {
+        "input": 0.002192,
+        "output": 0.00157,
+        "total": 0.003762
+      },
+      "duration_ms": 4852,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 4852,
+          "stop_reason": "end_turn",
+          "label": "logo-vision-audit round 1"
+        }
+      ],
+      "phase": "style_guide",
+      "timestamp": "2026-06-05T12:24:50.675Z"
+    },
+    {
+      "action": "assets_refresh",
+      "agent": "agents/run-style-guide-assets-review.mts",
+      "model": null,
+      "review_round": 1,
+      "api_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 0,
+      "price_usd": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "notes": "post-descriptions-audit products refresh",
+      "duration_ms": 519,
+      "phase": "style_guide",
+      "timestamp": "2026-06-05T12:24:51.203Z"
+    }
+  ],
+  "totals": {
+    "api_calls": 4,
+    "input_tokens": 101889,
+    "output_tokens": 4887,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "billed_input_tokens": 101889,
+    "price_usd": {
+      "input": 0.444285,
+      "output": 0.077355,
+      "total": 0.52164
+    },
+    "duration_ms": 76200,
+    "claude_api_duration_ms": 58928,
+    "wall_clock_ms": 27230,
+    "phase_duration_ms": {
+      "style_guide": 76200,
+      "creative": 0
+    }
+  },
+  "run_summary": {
+    "wall_clock_ms": 78750,
+    "ended_at": "2026-06-05T12:24:51.257Z",
+    "claude_api_calls": 4,
+    "claude_api_duration_ms": 58928,
+    "phase_duration_ms": {
+      "style_guide": 76200,
+      "creative": 0
+    },
+    "studio_job_id": "5772cfdc-634c-41a8-81d0-99ef638b97d3"
+  }
+}

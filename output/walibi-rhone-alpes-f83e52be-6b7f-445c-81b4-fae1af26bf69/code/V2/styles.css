@@ -1,0 +1,381 @@
+/* ============================================
+   Reset
+   ============================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ============================================
+   Page — center the ad
+   ============================================ */
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2B2B2B;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ============================================
+   Ad root — exact 320 x 480 px
+   ============================================ */
+#ad-320x480 {
+  width: 320px;
+  height: 480px;
+  position: relative;
+  overflow: hidden;
+  background: #0050A0;
+}
+
+/* ============================================
+   Hero carousel
+   ============================================ */
+.carousel {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.carousel-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+}
+
+.carousel-slide.active {
+  opacity: 1;
+  animation: kenBurns 6s ease-out forwards;
+}
+
+/* ============================================
+   Product hero image (static, between header and text)
+   ============================================ */
+.hero-img {
+  position: absolute;
+  top: 59px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  object-position: center 40%;
+  z-index: 5;
+  display: block;
+}
+
+/* ============================================
+   Gradient overlay — rgba from #2B2B2B
+   ============================================ */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(43, 43, 43, 0.55)  0%,
+    rgba(43, 43, 43, 0.00) 32%,
+    rgba(43, 43, 43, 0.12) 55%,
+    rgba(43, 43, 43, 0.82) 78%,
+    rgba(43, 43, 43, 0.96) 100%
+  );
+}
+
+/* ============================================
+   Header bar
+   ============================================ */
+.ad-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #FFFFFF;
+  border-bottom: 3px solid #FFD200;
+}
+
+.logo {
+  height: 36px;
+  width: auto;
+  flex-shrink: 0;
+  display: block;
+}
+
+.season-badge {
+  background: #E2001A;
+  color: #FFFFFF;
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  padding: 4px 12px;
+  border-radius: 14px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ============================================
+   Main content block
+   ============================================ */
+.ad-content {
+  position: absolute;
+  bottom: 68px;
+  left: 0;
+  right: 0;
+  padding: 0 20px;
+  z-index: 10;
+}
+
+/* Eyebrow — semantic class */
+.eyebrow {
+  font-family: "Jost", sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  color: #FFD200;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  margin-bottom: 8px;
+  opacity: 0;
+  animation: fadeUp 0.5s ease 0.4s forwards;
+}
+
+/* Headline — semantic class */
+.headline {
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-size: 26px;
+  line-height: 1.15;
+  color: #FFFFFF;
+  margin-bottom: 10px;
+  opacity: 0;
+  animation: fadeUp 0.5s ease 0.6s forwards;
+  text-shadow: 0 2px 8px rgba(43, 43, 43, 0.55);
+}
+
+/* Headline accent — em element: Poppins 700 italic per style guide promotional flash rule */
+.headline em {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-style: italic;
+  color: #FFD200;
+  display: block;
+}
+
+/* Subhead — semantic class */
+.subhead {
+  font-family: "Jost", sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 16px;
+  opacity: 0;
+  animation: fadeUp 0.5s ease 0.8s forwards;
+}
+
+/* ============================================
+   CTA Button
+   ============================================ */
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #EE7C1B;
+  color: #FFFFFF;
+  text-decoration: none;
+  border-radius: 28px;
+  padding: 12px 22px;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeUp 0.5s ease 1s forwards, btnPulse 3s ease-in-out 2.5s infinite;
+  transition: transform 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+/* Shimmer sheen effect */
+.cta-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 60%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.28);
+  transform: skewX(-20deg);
+  animation: ctaShine 4s ease-in-out 3s infinite;
+  pointer-events: none;
+}
+
+.cta-btn:hover,
+.cta-btn:focus {
+  background-color: #FFD200;
+  color: #2B2B2B;
+  transform: scale(1.05);
+  outline: none;
+}
+
+.cta-btn:active {
+  transform: scale(0.97);
+}
+
+.cta-label {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  line-height: 1;
+}
+
+.cta-arrow {
+  font-size: 14px;
+  display: inline-block;
+  transition: transform 0.15s ease;
+  line-height: 1;
+}
+
+.cta-btn:hover .cta-arrow {
+  transform: translateX(4px);
+}
+
+/* ============================================
+   Carousel navigation dots
+   ============================================ */
+.carousel-dots {
+  position: absolute;
+  bottom: 36px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 10;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.40);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background-color 0.3s ease, width 0.3s ease;
+  flex-shrink: 0;
+}
+
+.dot.active {
+  background: #FFD200;
+  width: 18px;
+}
+
+.dot:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+/* ============================================
+   Footer
+   ============================================ */
+.ad-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 80, 160, 0.90);
+  z-index: 10;
+  padding: 0 12px;
+}
+
+.ad-footer span {
+  font-family: "Jost", sans-serif;
+  font-weight: 600;
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.90);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+/* ============================================
+   Decorative accent line (top of content)
+   ============================================ */
+.ad-content::before {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 6px;
+  background: #EE7C1B;
+  border-radius: 2px;
+  margin-bottom: 10px;
+  opacity: 0;
+  animation: fadeUp 0.5s ease 0.25s forwards;
+}
+
+/* ============================================
+   Keyframe animations
+   ============================================ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0);     }
+}
+
+@keyframes kenBurns {
+  from { transform: scale(1.00); }
+  to   { transform: scale(1.08); }
+}
+
+@keyframes btnPulse {
+  0%,  100% { box-shadow: 0 0 0 0px rgba(238, 124, 27, 0.55); }
+  50%        { box-shadow: 0 0 0 8px rgba(238, 124, 27, 0.00); }
+}
+
+@keyframes ctaShine {
+  0%,  65%, 100% { left: -80%; }
+  40%             { left: 130%; }
+}
+
+/* ============================================
+   Reduced motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .carousel-slide {
+    transition: opacity 0.3s;
+  }
+  .carousel-slide.active {
+    animation: none;
+  }
+  .eyebrow,
+  .headline,
+  .subhead {
+    opacity: 1;
+    animation: none;
+    transform: none;
+  }
+  .cta-btn {
+    opacity: 1;
+    animation: none;
+  }
+  .cta-btn::before {
+    animation: none;
+    display: none;
+  }
+  .ad-content::before {
+    opacity: 1;
+    animation: none;
+  }
+  .dot {
+    transition: none;
+  }
+}

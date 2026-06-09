@@ -1,0 +1,93 @@
+{
+  "companyName": "Stellantis (Peugeot SA)",
+  "companyContext": "Stellantis is the multinational automotive group that owns and operates the Peugeot brand. Peugeot SA, founded in 1810 and headquartered in France, designs, manufactures and markets passenger cars, commercial vehicles and electrified vehicles distributed worldwide.",
+  "companyURL": "https://www.stellantis.com",
+  "brandName": "Peugeot",
+  "brandContext": "Peugeot is a French generalist-premium car manufacturer offering a full line-up of thermal, hybrid, plug-in hybrid and 100% electric vehicles (208, 2008, 308, 308 SW, 3008, 5008, 408, Rifter, Traveller, Partner, Expert, Boxer). The pro/business division promotes its current range with dedicated offers for professionals, including the Nouvelle 308 SW range featured on the gamme-thermique campaign page.",
+  "brandURL": "https://www.peugeot.fr/offres-pro/gamme-thermique.html",
+  "logoFileUrls": [
+    "https://www.peugeot.fr/content/dam/peugeot/master/home/peugeot-logo-alt.png"
+  ],
+  "productName": "Nouvelle Peugeot 308 SW",
+  "campaignContext": "promotion de la nouvelle gamme de peugeot 308 sw",
+  "campaignReferenceUrl": "https://www.peugeot.fr/offres-pro/gamme-thermique.html",
+  "productPictureUrls": [
+    "https://www.peugeot.fr/content/dam/peugeot/master/b2c/our-range/308-sw/bbc/l-m/PEUGEOT_IMAGE_308_F2_810x455.png",
+    "https://www.peugeot.fr/content/dam/peugeot/master/b2c/our-range/308/bbc/l-m/PEUGEOT_IMAGE_308SW_F2_810x455.png",
+    "https://images.largus.fr/images/styles/max_1300x1300/public/2022-12/peugeot-308-2022-blanc-ar-mk-bd.jpg",
+    "https://peugeot-pontivy.gemy.fr/_next/image?url=https://peugeot-pontivy.gemy.fr/api/media/files/CoksvF5HK4/download&w=3840&q=75",
+    "http://www.leblog-carspassion.fr/wp-content/uploads/2021/06/Nouvelle-peugeot-308-SW-bleue-hybride-2022.jpg",
+    "https://www.wizicar.com/wp-content/uploads/2021/09/nouvelle-peugeot-308-2021.jpg"
+  ],
+  "primaryColorPalette": [
+    "#002454",
+    "#000000",
+    "#FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "#C8102E",
+    "#8A8D8F",
+    "#1B1B1B",
+    "#E5E5E5"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Peugeot New",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Brand wordmark and large display headlines (uppercase lockup, hero key visuals)"
+    },
+    {
+      "fontFamily": "Peugeot New",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Section headings and sub-headlines on web and print communications"
+    },
+    {
+      "fontFamily": "Peugeot New",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, descriptive paragraphs and product specifications"
+    },
+    {
+      "fontFamily": "Peugeot New",
+      "fontWeight": 400,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Legal mentions, footnotes and editorial emphasis"
+    },
+    {
+      "fontFamily": "Arial",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "System fallback for digital body text when Peugeot New is unavailable"
+    }
+  ],
+  "brandVision": "Allure, Emotion, Excellence — an innovative high-end generalist brand joining history and hyper-modernity, with the energy transition and zero-carbon mobility at the heart of its strategy. Peugeot blends timeless French elegance, bold design (illuminated lion shield, i-Cockpit, sharp Matrix LED light signature) and electrified performance to deliver a fluid, premium customer experience across every touchpoint.",
+  "brandValues": "Quality, timelessness, assertiveness; French savoir-faire and Mulhouse-made craftsmanship; responsible design (>30% recycled & renewable materials, 85% recyclability); driving pleasure through the PEUGEOT i-Cockpit; protection and longevity symbolized by the lion shield (prestige, confidence, lineage); accessible premium for both private and professional customers.",
+  "logoImageSearchQueries": [
+    "site:peugeot.fr logo svg",
+    "site:peugeot.com brand logo 2026",
+    "site:stellantis.com peugeot new logo 2021 shield",
+    "site:en.wikipedia.org Peugeot logo",
+    "site:commons.wikimedia.org Peugeot 2021 logo svg",
+    "Peugeot new lion shield logo filetype:svg",
+    "Peugeot blason 2021 logo transparent png official"
+  ],
+  "productImageSearchQueries": [
+    "site:peugeot.fr nouvelle 308 SW",
+    "site:peugeot.fr 308 SW hybride break",
+    "site:peugeot.fr E-308 SW électrique",
+    "site:peugeot.fr 308 SW GT Exclusive",
+    "site:peugeot.fr offres-pro 308SW hybride",
+    "site:media.stellantis.com Peugeot 308 SW 2025",
+    "site:stellantis.com Peugeot 308 SW press",
+    "Nouvelle Peugeot 308 SW Bleu Ingaro break",
+    "Peugeot 308 SW 2025 illuminated blason face avant",
+    "Peugeot 308 SW GT i-Cockpit interior",
+    "Peugeot 308 SW Mulhouse press photo",
+    "Peugeot 308 SW arrière coffre 1487L"
+  ],
+  "campaignAssetProfile": "retail"
+}

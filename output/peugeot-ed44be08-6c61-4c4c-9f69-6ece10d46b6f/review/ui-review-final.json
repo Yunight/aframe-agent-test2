@@ -1,0 +1,14 @@
+{
+  "ui_review_rounds_run": 1,
+  "max_ui_review_rounds": 2,
+  "satisfied": true,
+  "summary": "The 320×480 ad creative meets all mandatory design and layout requirements. The ad displays correct IAB dimensions, proper logo visibility and scale, on-brand typography hierarchy, accurate color palette adherence, clean French copy, and appropriate CTA spacing from the bottom frame edge. All three states (initial, animated, settled) are consistent and visually sound.",
+  "findings": [],
+  "screenshots_dir": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\peugeot-ed44be08-6c61-4c4c-9f69-6ece10d46b6f\\review\\screenshots",
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\peugeot-ed44be08-6c61-4c4c-9f69-6ece10d46b6f\\pipeline-usage.json",
+  "pipeline_totals_usd": {
+    "input": 0.339711,
+    "output": 0.885785,
+    "total": 1.225496
+  }
+}

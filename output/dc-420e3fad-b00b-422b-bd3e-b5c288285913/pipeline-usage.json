@@ -1,0 +1,129 @@
+{
+  "directoryUuid": "dc-420e3fad-b00b-422b-bd3e-b5c288285913",
+  "updated_at": "2026-06-05T22:01:07.475Z",
+  "entries": [
+    {
+      "action": "style_guide",
+      "agent": "agents/gen-style-guide.mts",
+      "model": "claude-opus-4-7",
+      "review_round": null,
+      "api_calls": 1,
+      "input_tokens": 99411,
+      "output_tokens": 2373,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 99411,
+      "price_usd": {
+        "input": 0.497055,
+        "output": 0.059325,
+        "total": 0.55638
+      },
+      "duration_ms": 46590,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 42315,
+          "stop_reason": "end_turn",
+          "label": "style-guide turn 1"
+        }
+      ],
+      "phase": "style_guide",
+      "sub_step_timings": [
+        {
+          "label": "claude_style_guide",
+          "duration_ms": 42315
+        },
+        {
+          "label": "logo_download",
+          "duration_ms": 370
+        },
+        {
+          "label": "official_product_extract",
+          "duration_ms": 24
+        },
+        {
+          "label": "product_images_brave",
+          "duration_ms": 3609
+        },
+        {
+          "label": "write_style_guide_json",
+          "duration_ms": 1
+        }
+      ],
+      "timestamp": "2026-06-05T22:00:05.145Z"
+    },
+    {
+      "action": "assets_refresh",
+      "agent": "agents/run-style-guide-assets-review.mts",
+      "model": null,
+      "review_round": 1,
+      "api_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 0,
+      "price_usd": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "notes": "deterministic logo refresh",
+      "duration_ms": 298,
+      "phase": "style_guide",
+      "timestamp": "2026-06-05T22:00:06.105Z"
+    },
+    {
+      "action": "assets_refresh",
+      "agent": "agents/run-style-guide-assets-review.mts",
+      "model": null,
+      "review_round": 1,
+      "api_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 0,
+      "price_usd": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "notes": "deterministic logo refresh",
+      "duration_ms": 393,
+      "phase": "style_guide",
+      "timestamp": "2026-06-05T22:01:07.438Z"
+    }
+  ],
+  "totals": {
+    "api_calls": 1,
+    "input_tokens": 99411,
+    "output_tokens": 2373,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "billed_input_tokens": 99411,
+    "price_usd": {
+      "input": 0.497055,
+      "output": 0.059325,
+      "total": 0.55638
+    },
+    "duration_ms": 47281,
+    "claude_api_duration_ms": 42315,
+    "wall_clock_ms": 62293,
+    "phase_duration_ms": {
+      "style_guide": 47281,
+      "creative": 0
+    }
+  },
+  "run_summary": {
+    "wall_clock_ms": 862,
+    "ended_at": "2026-06-05T22:01:07.475Z",
+    "claude_api_calls": 1,
+    "claude_api_duration_ms": 42315,
+    "phase_duration_ms": {
+      "style_guide": 47281,
+      "creative": 0
+    },
+    "studio_job_id": "2d37a140-ba92-4376-9044-b6442889870d"
+  }
+}

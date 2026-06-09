@@ -1,0 +1,30 @@
+{
+  "review_phase": "style_guide",
+  "assets_review_rounds_run": 2,
+  "max_assets_review_rounds": 2,
+  "satisfied": false,
+  "logo_locked": false,
+  "summary": "Logo or asset audit failed: 3 blocker(s). Portfolio audit failed: two assets share identical primary_product_name 'Parkside Cordless Drill' (Image-Youtube-Parkside-III-1716360.jpg and XD-509-WoN-Full-width-teaser-Left-aligned-ArnoldXS-1735161.jpg), violating distinct SKU requirement. All other physical product assets show valid, differentiated tool types suitable for HTML5 ad generation. BLOCKER: The provided logo is the Lidl corporate logo, not the Parkside brand logo. According to the style guide, this audit is for Parkside (Lidl's DIY tools brand), not Lidl itself. The logo file URL points to Lidl's official logo, but the brand context requires the Parkside brand wordmark/lockup.",
+  "findings": [
+    {
+      "asset_id": "products/Image-Youtube-Parkside-III-1716360.jpg",
+      "severity": "blocker",
+      "issue": "Duplicate primary_product_name 'Parkside Cordless Drill' — identical SKU to XD-509-WoN-Full-width-teaser-Left-aligned-ArnoldXS-1735161.jpg. Portfolio requires distinct product variety for meaningful ad creative.",
+      "fix_hint": "Replace with a different Parkside tool SKU (e.g., Parkside Impact Wrench, Parkside Jigsaw, Parkside Circular Saw, Parkside Angle Grinder) or sourced variant with unique primary_product_name."
+    },
+    {
+      "asset_id": "products/XD-509-WoN-Full-width-teaser-Left-aligned-ArnoldXS-1735161.jpg",
+      "severity": "blocker",
+      "issue": "Duplicate primary_product_name 'Parkside Cordless Drill' — identical SKU to Image-Youtube-Parkside-III-1716360.jpg. Ads require distinct product identities across the portfolio.",
+      "fix_hint": "Substitute with a different Parkside tool or variant (e.g., Parkside Angle Grinder, Parkside Belt Sander, Parkside Hedge Trimmer, Parkside Pressure Washer) with unique primary_product_name."
+    },
+    {
+      "asset_id": "logos/lidl-logo-shop-cdn.svg",
+      "severity": "blocker",
+      "issue": "Logo is the Lidl corporate wordmark, not the Parkside brand logo. The audit is for Parkside brand assets (Lidl's DIY tools division), but the provided logo file is Lidl's main retail branding.",
+      "fix_hint": "Replace with the official Parkside logo/wordmark from Lidl's brandURL (https://www.lidl.fr/c/parkside/s10068914). Parkside should have its own distinct brand identity separate from the main Lidl logo."
+    }
+  ],
+  "asset_descriptions_path": null,
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\parkside-a9fca497-3f78-4277-9a67-84e1aa24a172\\pipeline-usage.json"
+}

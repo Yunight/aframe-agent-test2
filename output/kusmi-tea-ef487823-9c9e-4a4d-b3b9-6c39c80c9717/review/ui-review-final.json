@@ -1,0 +1,14 @@
+{
+  "ui_review_rounds_run": 1,
+  "max_ui_review_rounds": 2,
+  "satisfied": true,
+  "summary": "The 320×480 ad creative successfully meets all critical requirements. The layout respects exact IAB dimensions with proper centering. Logo visibility is good, typography hierarchy is clear with appropriate font families and sizes from the style guide. The product hero image (Bubble Tea collection) is prominent and well-positioned. Color palette adheres strictly to brand guidelines (#C8102E for CTA, #F7C548 for accent text, neutral backgrounds). French copy is correct and punchy. The CTA button has appropriate spacing from the bottom edge of the ad frame with visible padding. All three states (initial, animated, settled) appear identical and stable—no animation artifacts or layout shifts detected. The ad demonstrates proper hierarchy: Kusmi Tea logo (serif italic wordmark) → \"NOUVEAUTÉ\" badge → hero image → headline \"Bubble Tea\" (pink, serif) → subhead \"Fait Maison\" (black serif) → product description → product thumbnails → primary CTA \"DÉCOUVRIR LE KIT\" (white text on red #C8102E rounded button). No blocker-level issues identified.",
+  "findings": [],
+  "screenshots_dir": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\kusmi-tea-ef487823-9c9e-4a4d-b3b9-6c39c80c9717\\review\\screenshots",
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\kusmi-tea-ef487823-9c9e-4a4d-b3b9-6c39c80c9717\\pipeline-usage.json",
+  "pipeline_totals_usd": {
+    "input": 0.798891,
+    "output": 0.63832,
+    "total": 1.437211
+  }
+}

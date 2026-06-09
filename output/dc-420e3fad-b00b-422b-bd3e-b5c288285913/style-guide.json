@@ -1,0 +1,92 @@
+{
+  "companyName": "Warner Bros. Discovery",
+  "companyContext": "American multinational mass media and entertainment conglomerate that owns DC and distributes DC Studios films through Warner Bros. Pictures.",
+  "companyURL": "https://www.wbd.com/",
+  "brandName": "DC",
+  "brandContext": "DC (formerly DC Comics) is the iconic American comic book publisher and storytelling brand owned by Warner Bros. Discovery, home to Superman, Batman, Wonder Woman, Supergirl and the DC Universe (DCU) film/TV slate produced by DC Studios under James Gunn and Peter Safran.",
+  "brandURL": "https://www.dc.com/",
+  "logoFileUrls": [
+    "https://static.dc.com/2024-08/dc-logo-313x313.svg"
+  ],
+  "productName": "Supergirl (2026)",
+  "campaignContext": "Promotion du film Supergirl 2026",
+  "productPictureUrls": [
+    "https://static.dc.com/2026-06/2026_06_05_WE-LastDogofKrypton_Marquee_3x1.png?w=2400",
+    "https://static.dc.com/2026-05/SPRGRL_INSTA_MAIN_1936x1936_DOM.jpg?w=2400",
+    "https://static.dc.com/2026-05/DCshop_sg_58.png?w=2400",
+    "https://static.dc.com/2026-05/sg-blade_dcgo_1x1.png?w=2400",
+    "https://static.dc.com/2026-06/DC-Studios-Showcase-Podcast-S2-ka-1400x1400.png?w=2400",
+    "https://static.dc.com/2026-06/AbsoluteCatwomanTrailer_thumb.jpg?w=2400"
+  ],
+  "primaryColorPalette": [
+    "#0476F2",
+    "#C8102E",
+    "#F5C518",
+    "#0A0F1F",
+    "#FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "#1B2A6B",
+    "#7A1F2B",
+    "#B98A2E",
+    "#5B2A86",
+    "#8C8F94",
+    "#E6E8EC"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Gotham",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "DC masterbrand logotype and primary brand wordmark"
+    },
+    {
+      "fontFamily": "Gotham",
+      "fontWeight": 900,
+      "fontEffect": [],
+      "fontUses": "Movie title treatment and key art headlines (SUPERGIRL)"
+    },
+    {
+      "fontFamily": "Gotham",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Subheadings, billing block credits, campaign taglines"
+    },
+    {
+      "fontFamily": "Gotham",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, synopsis text and UI"
+    },
+    {
+      "fontFamily": "Gotham",
+      "fontWeight": 700,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Emphasis, callouts and in-theater date stamps (IN THEATERS JUNE 26)"
+    }
+  ],
+  "brandVision": "To be the definitive home of the world's greatest super heroes — telling bold, hopeful, larger-than-life stories that span comics, film, television and experiences. With the relaunched DC Universe (Chapter One: Gods and Monsters), DC's vision for 'Supergirl' is to reintroduce Kara Zor-El as a harder-edged, cosmic Woman of Tomorrow: a hero whose pain fuels her hope, taking audiences on an interstellar road-trip that redefines what a Super hero story can feel like on screen.",
+  "brandValues": "Hope, heroism, justice, courage, kindness and truth — DC champions characters who do the right thing against impossible odds. For Supergirl specifically: resilience, found family, empathy across the galaxy, and the conviction that even a sole survivor of a dying world can become a symbol of light for others.",
+  "logoImageSearchQueries": [
+    "site:dc.com DC logo SVG",
+    "site:en.wikipedia.org DC Comics logo SVG",
+    "DC Studios official logo transparent SVG",
+    "DC 2024 logo filetype:svg",
+    "site:commons.wikimedia.org DC Comics logo",
+    "DC blue circle logo official transparent PNG"
+  ],
+  "productImageSearchQueries": [
+    "Supergirl 2026 official movie poster Milly Alcock",
+    "site:dc.com Supergirl 2026 key art",
+    "site:supergirlmovie.com Supergirl poster",
+    "Supergirl 2026 teaser poster Warner Bros",
+    "Supergirl Woman of Tomorrow 2026 film poster official",
+    "Milly Alcock Supergirl costume official still 2026",
+    "Supergirl 2026 IMAX poster DC Studios",
+    "Supergirl 2026 trailer still Kara Zor-El official",
+    "Supergirl 2026 logo title treatment transparent",
+    "Supergirl 2026 key art Krypto Lobo official"
+  ]
+}

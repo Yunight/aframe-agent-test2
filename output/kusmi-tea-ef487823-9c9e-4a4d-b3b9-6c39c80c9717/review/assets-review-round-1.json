@@ -1,0 +1,83 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-06-05T09:25:25.467Z",
+  "deterministic_ok": true,
+  "audit": {
+    "satisfied": false,
+    "summary": "Critical blockers found: logo is text-only and cannot be used for HTML5 ad hero generation; product portfolio lacks distinct SKUs for Bubble Tea campaign. While lifestyle scenes show physical products, primary_product_name values are either generic (collections) or misaligned with campaign focus on Bubble Tea kits and fruit pearls. Reference page scrape shows Bubble Tea-specific SKUs (AquaExotica, AquaFrutti, AquaRosa, AquaSummer, Monin syrups, fruit pearl variants) not represented in asset descriptions.",
+    "findings": [
+      {
+        "asset_id": "products/Capture_d_ecran.png",
+        "severity": "blocker",
+        "issue": "Generic collection asset (is_generic_collection=true) showing multiple undefined tea tins without distinct primary_product_name. Does not highlight Bubble Tea kit or specific fruit pearl SKUs referenced in campaign context (Pêche, Mangue, Litchi variants, AquaExotica, AquaFrutti).",
+        "fix_hint": "Source dedicated Bubble Tea kit packshot or Ensemble de préparation with clear SKU labeling. Request 'Kusmi Tea Bubble Tea kit packshot' or 'Kusmi Tea perles de fruits' product images."
+      },
+      {
+        "asset_id": "products/GMS_26.jpg",
+        "severity": "blocker",
+        "issue": "Generic collection asset (is_generic_collection=true) displaying four tea boxes with ritual/flavor names but no primary_product_name specified. Ingredient floats suggest marketing category banner rather than Bubble Tea kit hero. Does not align with campaign productName='Bubble Tea'.",
+        "fix_hint": "Request product images specifically for Bubble Tea Ensemble collection. Search: 'site:kusmitea.com Ensemble de préparation Bubble Tea kit' or 'Kusmi Tea Bubble Tea collection packshot'."
+      },
+      {
+        "asset_id": "products/lot.png",
+        "severity": "blocker",
+        "issue": "Generic collection (is_generic_collection=true) featuring five Kusmi Tea ritual products (Sommeil, Mémoire, Défens immunitaire, Minceur, Drainant) but no Bubble Tea SKU present. Lineup is off-campaign for Bubble Tea focus and contains no distinct primary_product_name for campaign hero.",
+        "fix_hint": "Acquire Bubble Tea-specific product lineup. Request: 'Kusmi Tea Bubble Tea kit fruité packshot' or multi-SKU lifestyle including perles de fruits Pêche, Mangue, Litchi variants."
+      },
+      {
+        "asset_id": "products/RITUELDRAINANT_25_LIFESTYLE_DRAI100BIO_DRAI18SBIO_POR_04_1.jpg",
+        "severity": "blocker",
+        "issue": "primary_product_name='Drainant' is a wellness ritual product, not a Bubble Tea SKU. Off-campaign for Bubble Tea collection campaign. Does not satisfy campaign productName requirement.",
+        "fix_hint": "Replace with Bubble Tea campaign asset. Request: 'Kusmi Tea AquaExotica infusion bio tin packshot' or 'Kusmi Tea perles de fruits pêche bubble tea lifestyle'."
+      },
+      {
+        "asset_id": "products/rituel_minceur.png",
+        "severity": "blocker",
+        "issue": "primary_product_name='Minceur' is a weight-loss ritual product, not a Bubble Tea offering. Off-campaign for Bubble Tea collection focus. Lifestyle presentation does not align with campaign productName.",
+        "fix_hint": "Replace with Bubble Tea campaign product. Request: 'Kusmi Tea AquaFrutti infusion bio tin packshot' or 'Kusmi Tea bubble tea recette pêche fruit de la passion glass'."
+      },
+      {
+        "asset_id": "products/sommeil_glace.jpg",
+        "severity": "blocker",
+        "issue": "primary_product_name='Sommeil' is a sleep ritual product, not a Bubble Tea SKU. Off-campaign for Bubble Tea collection campaign despite high production quality. Does not align with campaign focus.",
+        "fix_hint": "Replace with Bubble Tea campaign asset. Request: 'Kusmi Tea AquaSummer infusion bio tin' or 'Kusmi Tea sirop Monin pêche bubble tea'."
+      }
+    ],
+    "brave_retry_queries": {
+      "logos": [
+        "site:kusmitea.com logo with product visual element",
+        "Kusmi Tea brand mark with tea imagery",
+        "Kusmi Tea logo teacup icon variant"
+      ],
+      "products": [
+        "site:kusmitea.com Ensemble de préparation Bubble Tea kit",
+        "site:kusmitea.com Bubble Tea collection packshot",
+        "Kusmi Tea Bubble Tea kit fruité packshot",
+        "Kusmi Tea perles de fruits pêche bubble tea",
+        "Kusmi Tea perles de fruits mangue bubble tea",
+        "Kusmi Tea perles de fruits litchi bubble tea",
+        "Kusmi Tea AquaExotica infusion bio tin packshot",
+        "Kusmi Tea AquaFrutti infusion bio tin",
+        "Kusmi Tea AquaRosa infusion bio tin",
+        "Kusmi Tea AquaSummer infusion bio tin",
+        "Kusmi Tea sirop Monin pêche bubble tea",
+        "Kusmi Tea bubble tea recette pêche fruit de la passion glass"
+      ]
+    }
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 4006,
+    "output_tokens": 1304,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 4006,
+    "price_usd": {
+      "input": 0.004006,
+      "output": 0.00652,
+      "total": 0.010526
+    },
+    "duration_ms": 12380
+  }
+}

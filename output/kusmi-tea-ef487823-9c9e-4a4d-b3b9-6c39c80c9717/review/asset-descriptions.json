@@ -1,0 +1,123 @@
+{
+  "generated_at": "2026-06-05T09:25:42.801Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/Kusmi_Tea_logo.png",
+      "fileName": "Kusmi_Tea_logo.png",
+      "fileType": "logos",
+      "description": "Black text-based logo reading 'KUSMI TEA' in bold sans-serif with 'PARIS' positioned below in smaller font. Minimal, wordmark-only design on transparent background.",
+      "layout_hints": [
+        "logo-lockup",
+        "text-only"
+      ],
+      "dominant_colors": [
+        "#000000"
+      ],
+      "shows_physical_product": false,
+      "asset_kind": "logo",
+      "primary_product_name": ""
+    },
+    {
+      "asset_id": "products/00-BUBBLETEA_26_BILLESLITCKUSMI450_POR_01.jpg",
+      "fileName": "00-BUBBLETEA_26_BILLESLITCKUSMI450_POR_01.jpg",
+      "fileType": "products",
+      "description": "Lifestyle scene showcasing bubble tea preparation and ingredients on soft pink background. Features a tall glass with orange bubble tea and ice at center, an orange Kusmi Tea tin (top left), a Monin passion fruit syrup bottle (top right), pearls in a gold spoon, and loose fruit pearls. Visible readable text includes 'KUSMI TEA' on product labels and 'MONIN' on syrup bottle.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "bubble-tea-setup",
+        "ingredient-showcase"
+      ],
+      "dominant_colors": [
+        "#F5C5B8",
+        "#FF8C42",
+        "#D4539C"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "Perles de fruits Litchi",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/92d6dada4e776c41b1c71a9d3159183552f75d15_SIROPPASSION25CL_packshot_b2cweb.png",
+      "fileName": "92d6dada4e776c41b1c71a9d3159183552f75d15_SIROPPASSION25CL_packshot_b2cweb.png",
+      "fileType": "products",
+      "description": "Clean packshot of Monin Passion Fruit Syrup 25cl bottle centered against white background. Glass bottle contains golden-yellow liquid with red branded cap. Label clearly displays 'Le Sirop de MONIN', 'Passion Fruit', 'Arômes Naturels', and product details in decorative botanical frame.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-isolation"
+      ],
+      "dominant_colors": [
+        "#D4AF37",
+        "#FFFFFF",
+        "#C41E3A"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "Sirop Passion Monin 25cl",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/b3746a4e4d761d3e8be9f8a6b79752d016c57976_SIROPPASSION25CL_lifestyle_principal_b2cweb.png",
+      "fileName": "b3746a4e4d761d3e8be9f8a6b79752d016c57976_SIROPPASSION25CL_lifestyle_principal_b2cweb.png",
+      "fileType": "products",
+      "description": "Lifestyle action shot on gradient background (white to deep red/burgundy). Hand pours golden Monin Passion Fruit syrup from bottle into a tall glass of orange beverage with ice and fresh mint leaf garnish. Glass features gold-rimmed straw. Dynamic composition emphasizes syrup pouring motion and color richness of the drink.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "action-shot",
+        "pouring-moment"
+      ],
+      "dominant_colors": [
+        "#D4AF37",
+        "#FF8C42",
+        "#8B1538"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "Sirop Passion Monin",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/HP_offre_desk_kambukka_mai_26.jpg",
+      "fileName": "HP_offre_desk_kambukka_mai_26.jpg",
+      "fileType": "products",
+      "description": "Flat-lay product ensemble on checkered outdoor picnic surface with shadows. Hero products include Kusmi Tea 'Thé vert à la menthe' green tin can, two Kambukka insulated drink bottles (pink and tan/beige with colored lids), complemented by fresh fruits (strawberries, blueberries, orange), striped cloth napkin, and natural wood accessories. Readable text on Kusmi Tea tin: 'KUSMI TEA', 'Thé vert à la menthe', 'BIO', '1867'. Kambukka branding visible on bottle sleeves.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "flat-lay",
+        "collection-display",
+        "outdoor-picnic"
+      ],
+      "dominant_colors": [
+        "#2D5016",
+        "#E8B4D4",
+        "#D4A574"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "Kambukka Bottles + Kusmi Tea Menthe",
+      "is_generic_collection": true
+    },
+    {
+      "asset_id": "products/KITBBTEAPECHEPASSION-10FR_packshot.png",
+      "fileName": "KITBBTEAPECHEPASSION-10FR_packshot.png",
+      "fileType": "products",
+      "description": "Packshot of promotional bubble tea kit on white background with -10% discount badge (pink oval, top right). Three-piece product bundle: Kusmi Tea 'Perles de fruits Pêche' jar (pink label, left), Kusmi Tea 'English Breakfast' tin can center (orange label, organic), Monin Passion Fruit syrup bottle (right). All product labels and text clearly readable, commercial pricing/promotional context indicated.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-bundle",
+        "promotion-badge",
+        "three-product-lineup"
+      ],
+      "dominant_colors": [
+        "#FF6B9D",
+        "#FF8C42",
+        "#D4AF37"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "Kit Bubble Tea Pêche Passion",
+      "is_generic_collection": false
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "review_phase": "style_guide",
+  "assets_review_rounds_run": 2,
+  "max_assets_review_rounds": 2,
+  "satisfied": false,
+  "logo_locked": false,
+  "summary": null,
+  "findings": [
+    {
+      "asset_id": "logos",
+      "severity": "blocker",
+      "issue": "No files in logos/ directory.",
+      "fix_hint": "Run style guide generation or assets refresh to download one official logo (SVG, transparent PNG, or opaque PNG from brandURL header)."
+    }
+  ],
+  "asset_descriptions_path": null,
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\dc-420e3fad-b00b-422b-bd3e-b5c288285913\\pipeline-usage.json"
+}

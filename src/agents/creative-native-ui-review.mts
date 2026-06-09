@@ -9,7 +9,12 @@ import {
   timedAnthropicCall,
   type PriceUsd
 } from '../lib/creative-pipeline-usage.mts';
+import {
+  auditCreativeBundleIntegrity,
+  mergeBundleIntegrityIntoUiAudit
+} from '../lib/creative-bundle-integrity.mts';
 import { buildCreativeAdFormatInstructions, type AdFormatSelection } from '../lib/studio-ad-formats.mts';
+import { dirname } from 'node:path';
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Anthropic } from '@anthropic-ai/sdk';
@@ -260,7 +265,9 @@ export async function runCreativeNativeUiReview (
     '- NEVER use words: redesign, rebuild, replace entire, from scratch, new layout, new concept, refonte.',
     '- BLOCKER only for: wrong IAB pixel size, missing/broken logo, unreadable text (logo, headline, CTA label, legal/tagline), style-guide color/typography violation, missing required product hero image, fake browser chrome, screenshot capture failure.',
     '- Product image quality: blocker only if no product image is visible or path is wrong; otherwise warn with a specific src/CSS fix.',
-    '- Carousel/interaction issues: suggest CSS/JS timing or size fixes — not a new carousel design.',
+    '- Carousel/pagination BLOCKER: pagination dots (slide indicators) present while fewer than 2 distinct visible slides, broken/missing carousel background images, or dots count mismatched with slide count.',
+    '- When carousel has <= 1 working slide, dots must be hidden — treat visible orphan dots as a blocker.',
+    '- Other carousel/interaction issues: suggest CSS/JS timing or size fixes — not a new carousel design.',
     '',
     'regeneration_prompt: minimal ordered patch list for the code agent (no prose marketing).',
     'Each ad unit keeps id="ad-{formatId}" unless a blocker requires a one-line structural fix.',
@@ -322,8 +329,17 @@ export async function runCreativeNativeUiReview (
     duration_ms: stepDurationMs
   };
 
-  const blockers = parsed.findings.filter((f) => f.severity === 'blocker');
-  if (captureErrors.length > 0 && blockers.length === 0) {
+  const bundleDir = dirname(manifest.entry_html);
+  const integrityFindings = auditCreativeBundleIntegrity({ bundleDir, adFormats });
+  if (integrityFindings.length > 0) {
+    console.log(`[ui-review] bundle integrity: ${String(integrityFindings.length)} finding(s)`);
+    for (const f of integrityFindings) {
+      console.log(`[ui-review]   [${f.severity}] ${f.format_id}: ${f.issue}`);
+    }
+    mergeBundleIntegrityIntoUiAudit(parsed, integrityFindings);
+  }
+
+  if (captureErrors.length > 0 && parsed.findings.filter((f) => f.severity === 'blocker').length === 0) {
     parsed.satisfied = false;
     parsed.findings = [
       ...parsed.findings,
@@ -340,12 +356,13 @@ export async function runCreativeNativeUiReview (
     }
   }
 
-  if (blockers.length > 0) {
+  const finalBlockers = parsed.findings.filter((f) => f.severity === 'blocker');
+  if (finalBlockers.length > 0) {
     parsed.satisfied = false;
   }
 
   console.log(
-    `[ui-review] satisfied=${String(parsed.satisfied)} blockers=${String(blockers.length)} warns=${String(parsed.findings.filter((f) => f.severity === 'warn').length)}`
+    `[ui-review] satisfied=${String(parsed.satisfied)} blockers=${String(finalBlockers.length)} warns=${String(parsed.findings.filter((f) => f.severity === 'warn').length)}`
   );
 
   logUiReviewAuditToConsole(parsed, reviewRound);

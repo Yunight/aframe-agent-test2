@@ -6,11 +6,14 @@ import {
   dedupeProductUrlKey,
   extractFallbackLogoCandidatesFromHtml,
   extractLogoCandidatesFromHtml,
+  extractProductCandidatesFromHtml,
   isCrawlBlockedHttpStatus,
   isLowValueOfficialProductUrl,
+  isOfficialSiteLogoAssetUrl,
   officialPageUrlsFromContext,
   shouldSkipPageForBlockedHost,
   shouldUseWikipediaProductFallback,
+  upgradeWikimediaThumbToSourceUrl,
   wikipediaSlugFromBrandName
 } from './official-site-logo-extract.mts';
 
@@ -61,7 +64,7 @@ test('wikipediaSlugFromBrandName', () => {
   assert.equal(wikipediaSlugFromBrandName('Red Bull'), 'Red_Bull');
 });
 
-test('officialPageUrlsFromContext lists reference URL before brandURL', () => {
+test('officialPageUrlsFromContext lists brandURL before campaign reference', () => {
   const urls = officialPageUrlsFromContext({
     brandName: 'Petit Bateau',
     companyName: 'Petit Bateau',
@@ -71,13 +74,28 @@ test('officialPageUrlsFromContext lists reference URL before brandURL', () => {
     campaignReferenceUrl: 'https://www.petit-bateau.fr/collection/collection-ete/',
     campaignUrls: [ 'https://www.petit-bateau.fr/collection/other/' ]
   });
+  const brandRoot = 'https://www.petit-bateau.fr/';
   const collectionHref = 'https://www.petit-bateau.fr/collection/collection-ete/';
   assert.ok(urls.includes(collectionHref));
-  const otherCampaign = 'https://www.petit-bateau.fr/collection/other/';
-  const idxCollection = urls.indexOf(collectionHref);
-  const idxOther = urls.indexOf(otherCampaign);
-  assert.ok(idxCollection >= 0);
-  assert.ok(idxOther < 0 || idxCollection < idxOther);
+  assert.ok(urls.indexOf(brandRoot) < urls.indexOf(collectionHref));
+});
+
+test('extractLogoCandidatesFromHtml extracts opaque PNG from /logo/ path', () => {
+  const html = `
+    <header>
+      <a href="https://www.materiel.net/">
+        <img src="https://media.materiel.net/logos/logo-site-matnet-homepage.png" alt="materiel.net" />
+      </a>
+    </header>
+  `;
+  const found = extractLogoCandidatesFromHtml(
+    html,
+    'https://www.materiel.net/',
+    [ 'materiel.net', 'media.materiel.net' ],
+    { brandName: 'Matériel.net' }
+  );
+  assert.ok(found.length >= 1);
+  assert.match(found[0]!.url, /logo-site-matnet-homepage\.png/iu);
 });
 
 test('officialPageUrlsFromContext scrapes collection href before site root', () => {
@@ -200,4 +218,85 @@ test('extractFallbackLogoCandidatesFromHtml infobox', () => {
   );
   assert.ok(found.length >= 1);
   assert.match(found[0]!.url, /Red_Bull_logo\.svg/iu);
+});
+
+test('extractProductCandidatesFromHtml prioritizes og:image on .film microsite', () => {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta property="og:image" content="https://www.scarymovie.film/assets/poster-2026.jpg" />
+        <title>Scary Movie 6</title>
+      </head>
+      <body></body>
+    </html>
+  `;
+  const found = extractProductCandidatesFromHtml(
+    html,
+    'https://www.scarymovie.film/',
+    [ 'scarymovie.film' ]
+  );
+  assert.ok(found.length >= 1);
+  assert.match(found[0]!.url, /poster-2026\.jpg/iu);
+  assert.equal(found[0]!.reason, 'film-og:image');
+});
+
+test('extractFallbackLogoCandidatesFromHtml prefers Peugeot 2021 logo over 2010 variant', () => {
+  const html = `
+    <table class="infobox vcard">
+      <img src="//upload.wikimedia.org/wikipedia/fr/thumb/9/9d/Peugeot_2021_Logo.svg/langfr-250px-Peugeot_2021_Logo.svg.png" />
+    </table>
+    <img src="//upload.wikimedia.org/wikipedia/fr/thumb/6/60/Logo_de_Peugeot_depuis_2010.svg/120px-Logo_de_Peugeot_depuis_2010.svg.png" />
+  `;
+  const found = extractFallbackLogoCandidatesFromHtml(
+    html,
+    'https://fr.wikipedia.org/wiki/Peugeot'
+  );
+  assert.ok(found.length >= 1);
+  assert.match(found[0]!.url, /Peugeot_2021_Logo/iu);
+  assert.ok(found.every((c) => !c.url.includes('depuis_2010')));
+});
+
+test('upgradeWikimediaThumbToSourceUrl resolves SVG source from thumb PNG', () => {
+  const thumb =
+    'https://upload.wikimedia.org/wikipedia/fr/thumb/9/9d/Peugeot_2021_Logo.svg/langfr-250px-Peugeot_2021_Logo.svg.png';
+  const source = upgradeWikimediaThumbToSourceUrl(thumb);
+  assert.equal(
+    source,
+    'https://upload.wikimedia.org/wikipedia/fr/9/9d/Peugeot_2021_Logo.svg'
+  );
+});
+
+test('isOfficialSiteLogoAssetUrl detects peugeot-logo-alt paths', () => {
+  assert.equal(
+    isOfficialSiteLogoAssetUrl(
+      'https://www.peugeot.fr/content/dam/peugeot/master/home/peugeot-logo-alt.png'
+    ),
+    true
+  );
+});
+
+test('extractProductCandidatesFromHtml excludes peugeot-logo-alt from product heroes', () => {
+  const html = `
+    <img src="https://www.peugeot.fr/content/dam/peugeot/master/home/peugeot-logo-alt.png" />
+    <img src="https://www.peugeot.fr/content/dam/peugeot/master/cars/308-sw-hero.jpg" />
+  `;
+  const found = extractProductCandidatesFromHtml(
+    html,
+    'https://www.peugeot.fr/offres-pro/gamme-thermique.html',
+    [ 'peugeot.fr' ]
+  );
+  assert.ok(found.every((c) => !c.url.includes('peugeot-logo-alt')));
+  if (found.length > 0) {
+    assert.match(found[0]!.url, /308-sw-hero/iu);
+  }
+});
+
+test('isLowValueOfficialProductUrl rejects peugeot-logo-alt', () => {
+  assert.equal(
+    isLowValueOfficialProductUrl(
+      'https://www.peugeot.fr/content/dam/peugeot/master/home/peugeot-logo-alt.png'
+    ),
+    true
+  );
 });

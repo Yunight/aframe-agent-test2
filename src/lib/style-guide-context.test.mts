@@ -5,13 +5,18 @@ import {
   extractCampaignContextFromPrompt,
   filterPrioritizeProductUrls,
   isCatalogCampaign,
+  isEntertainmentCampaign,
+  isEntertainmentVisualHost,
+  isExperienceCampaign,
   isListingPageCampaign,
   isOfficialBrandProductImageUrl,
   isOfficialHostCampaignOrProductImageUrl,
   isProductAssetFromReferenceListing,
+  resolveCampaignAssetProfile,
   resolveReferenceListingUrls,
   parseStyleGuideContextPrompt,
   scoreProductContextRelevance,
+  wouldPassEntertainmentProductAsset,
   wouldPassListingProductAsset
 } from './style-guide-context.mts';
 import { extractHttpsUrlsFromText } from './style-guide-urls.mts';
@@ -166,6 +171,20 @@ test('isOfficialHostCampaignOrProductImageUrl trusts Lidl promo assets on static
   assert.equal(isOfficialHostCampaignOrProductImageUrl(visa, hosts), false);
 });
 
+test('isOfficialBrandProductImageUrl trusts Stellantis media CDN and Peugeot content/dam heroes', () => {
+  const hosts = [ 'peugeot.fr', 'stellantis.com' ];
+  const media =
+    'https://media.stellantis.com/is/image/stellantis/Peugeot308SW2024';
+  const damHero =
+    'https://www.peugeot.fr/content/dam/peugeot/master/cars/308-sw-hero.jpg';
+  const damLogo =
+    'https://www.peugeot.fr/content/dam/peugeot/master/home/peugeot-logo-alt.png';
+  assert.equal(isOfficialBrandProductImageUrl(media, hosts), true);
+  assert.equal(isOfficialHostCampaignOrProductImageUrl(media, hosts), true);
+  assert.equal(isOfficialBrandProductImageUrl(damHero, hosts), true);
+  assert.equal(isOfficialBrandProductImageUrl(damLogo, hosts), false);
+});
+
 test('filterPrioritizeProductUrls keeps Lidl static promo URLs without term match', () => {
   const hosts = [ 'lidl.fr' ];
   const promoUrl = 'https://www.lidl.fr/static/assets/WON-2224544.jpg';
@@ -274,4 +293,110 @@ test('buildProductMatchTerms extracts slug from brandURL without brand-specific 
   assert.ok(terms.some((t) => /summer-drop|summer drop/iu.test(t)));
   assert.equal(terms.some((t) => t === 'en'), false);
   assert.equal(terms.some((t) => t === 'categories'), false);
+});
+
+test('isEntertainmentCampaign detects film promo context', () => {
+  assert.equal(
+    isEntertainmentCampaign({
+      productName: 'Scary Movie 6',
+      campaignContext: 'promotion du film Scary Movie 2026',
+      brandName: 'Scary Movie',
+      brandURL: 'https://www.scarymovie.film/'
+    }),
+    true
+  );
+});
+
+test('isListingPageCampaign is false for film promotion (not retail catalog)', () => {
+  assert.equal(
+    isListingPageCampaign({
+      productName: 'Scary Movie 6',
+      campaignContext: 'promotion du film Scary Movie 2026',
+      brandName: 'Scary Movie',
+      brandURL: 'https://www.scarymovie.film/'
+    }),
+    false
+  );
+  assert.equal(
+    isListingPageCampaign({
+      productName: 'Promotions soldes',
+      campaignContext: 'promotion soldes été',
+      brandName: 'Example Retail'
+    }),
+    true
+  );
+});
+
+test('wouldPassEntertainmentProductAsset accepts Allociné acsta poster with title context', () => {
+  const terms = buildProductMatchTerms({
+    campaignContext: 'promotion du film Scary Movie 2026',
+    productName: 'Scary Movie 6',
+    brandName: 'Scary Movie',
+    brandURL: 'https://www.scarymovie.film/'
+  });
+  const acstaUrl =
+    'https://fr.web.img6.acsta.net/c_310_420/bde1b6a.jpg';
+  assert.equal(isEntertainmentVisualHost(acstaUrl), true);
+  assert.equal(
+    wouldPassEntertainmentProductAsset({
+      entry: undefined,
+      sourceUrl: acstaUrl,
+      referenceListingUrls: [],
+      officialHosts: [ 'scarymovie.film' ],
+      terms,
+      sourceTitle: 'Scary Movie 6 — Affiche officielle Allociné'
+    }),
+    true
+  );
+});
+
+test('isExperienceCampaign detects Walibi theme park context', () => {
+  const walibi = {
+    productName: 'Été à Walibi Rhône-Alpes',
+    campaignContext: "Promotion pour l'été du parc d'attraction Walibi rhone alpes",
+    brandName: 'Walibi Rhône-Alpes',
+    brandContext:
+      "Parc d'attractions situé aux Avenières (Isère). Plus de 36 attractions et spectacles répartis en 3 univers thématiques.",
+    brandURL: 'https://www.walibi.fr/fr'
+  };
+  assert.equal(isExperienceCampaign(walibi), true);
+  assert.equal(isEntertainmentCampaign(walibi), false);
+  assert.equal(resolveCampaignAssetProfile(walibi), 'experience');
+});
+
+test('resolveCampaignAssetProfile respects explicit field', () => {
+  assert.equal(
+    resolveCampaignAssetProfile({
+      productName: 'Tea',
+      campaignAssetProfile: 'retail'
+    }),
+    'retail'
+  );
+  assert.equal(
+    resolveCampaignAssetProfile({
+      productName: 'Scary Movie 6',
+      campaignContext: 'promotion du film Scary Movie 2026',
+      campaignAssetProfile: 'entertainment'
+    }),
+    'entertainment'
+  );
+});
+
+test('isExperienceCampaign is false for retail catalog', () => {
+  assert.equal(
+    isExperienceCampaign({
+      productName: 'Sommeil',
+      campaignContext: 'promotion thés Kusmi',
+      brandName: 'Kusmi Tea'
+    }),
+    false
+  );
+  assert.equal(
+    resolveCampaignAssetProfile({
+      productName: 'Sommeil',
+      campaignContext: 'promotion thés Kusmi',
+      brandName: 'Kusmi Tea'
+    }),
+    'retail'
+  );
 });

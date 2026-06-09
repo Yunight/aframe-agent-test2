@@ -1,0 +1,114 @@
+{
+  "generated_at": "2026-06-04T16:34:52.473Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/langfr-250px-Logo_NIKE.svg.png",
+      "fileName": "langfr-250px-Logo_NIKE.svg.png",
+      "fileType": "logos",
+      "description": "Classic Nike Swoosh logo in solid black. Ideal for placement in banner corners or as a header lockup. Works seamlessly on light or dark backgrounds with excellent contrast for all banner placements.",
+      "layout_hints": [
+        "logo-lockup",
+        "corner-placement",
+        "header-anchor"
+      ],
+      "dominant_colors": [
+        "#000000"
+      ]
+    },
+    {
+      "asset_id": "products/NIKE_MIND_001.jpg",
+      "fileName": "NIKE_MIND_001.jpg",
+      "fileType": "products",
+      "description": "Nike Mind slider shoe in all-black with textured perforated details and responsive cushioning visible. Positioned side-angle on neutral background. Can rotate as hero product to showcase innovative footwear design.",
+      "layout_hints": [
+        "hero",
+        "packshot-centre",
+        "product-rotate"
+      ],
+      "dominant_colors": [
+        "#000000",
+        "#1a1a1a",
+        "#333333"
+      ]
+    },
+    {
+      "asset_id": "products/W_NIKE_MIND_001.jpg",
+      "fileName": "W_NIKE_MIND_001.jpg",
+      "fileType": "products",
+      "description": "Nike Mind women's slider in mint-green with contrasting white perforated sole and red interior cushioning visible. Clean three-quarter view on white background. Rotates as hero to highlight contemporary color innovation.",
+      "layout_hints": [
+        "hero",
+        "packshot-centre",
+        "product-rotate"
+      ],
+      "dominant_colors": [
+        "#c8e6e0",
+        "#ffffff",
+        "#e63946"
+      ]
+    },
+    {
+      "asset_id": "products/W_NK_STDO_FLC_MW_MR_STD_4_SHRT.jpg",
+      "fileName": "W_NK_STDO_FLC_MW_MR_STD_4_SHRT.jpg",
+      "fileType": "products",
+      "description": "Female model wearing mauve ribbed cardigan and lavender shorts with white Nike socks and burgundy boots on neutral background. Full-body lifestyle shot perfect for hero placement showcasing coordinated new arrival apparel collection.",
+      "layout_hints": [
+        "hero",
+        "lifestyle-full-body",
+        "apparel-showcase"
+      ],
+      "dominant_colors": [
+        "#a4637f",
+        "#e8d5e8",
+        "#ffffff"
+      ]
+    },
+    {
+      "asset_id": "products/W_NK_STDO_FLC_MW_MR_STD_OH_PNT.jpg",
+      "fileName": "W_NK_STDO_FLC_MW_MR_STD_OH_PNT.jpg",
+      "fileType": "products",
+      "description": "Female model in iridescent purple windbreaker and matching lavender tracksuit with white accents on clean white background. Full-body presentation ideal as rotating hero to highlight seasonal layering pieces and color coordination.",
+      "layout_hints": [
+        "hero",
+        "lifestyle-full-body",
+        "product-rotate"
+      ],
+      "dominant_colors": [
+        "#9b7fb5",
+        "#d9bfe8",
+        "#ffffff"
+      ]
+    },
+    {
+      "asset_id": "products/W_NK_STDO_FLC_MW_STD_FZ_HDY.jpg",
+      "fileName": "W_NK_STDO_FLC_MW_STD_FZ_HDY.jpg",
+      "fileType": "products",
+      "description": "Female model in beige zip-up fleece hoodie with small white Nike Swoosh detail, captured in shoulder portrait on neutral background. Minimal, elegant styling suitable for sidebar or secondary product placement in banner layouts.",
+      "layout_hints": [
+        "product-detail",
+        "sidebar-placement",
+        "close-crop"
+      ],
+      "dominant_colors": [
+        "#d4c5c0",
+        "#ffffff"
+      ]
+    },
+    {
+      "asset_id": "products/W_NK_STDO_FLC_MW_STD_PO_HDY.jpg",
+      "fileName": "W_NK_STDO_FLC_MW_STD_PO_HDY.jpg",
+      "fileType": "products",
+      "description": "Female model in soft pink pullover hoodie with embroidered white Nike Swoosh on neutral background. Portrait-style shot emphasizing comfort and minimalist design. Works well as rotating hero or secondary product tile in apparel-focused campaigns.",
+      "layout_hints": [
+        "hero",
+        "product-rotate",
+        "apparel-detail"
+      ],
+      "dominant_colors": [
+        "#e8d5e1",
+        "#ffffff"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "review_round": 2,
+  "captured_at": "2026-06-05T10:06:37.502Z",
+  "manifest_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\kusmi-tea-ef487823-9c9e-4a4d-b3b9-6c39c80c9717\\review\\screenshots\\manifest.json",
+  "audit": {
+    "satisfied": true,
+    "summary": "970x250 ad unit meets all mandatory design requirements. Logo visible and properly scaled, French copy is clear and on-brand, color palette adheres to style guide (#C8102E for CTA, #1A1A1A for headlines), typography hierarchy is sound (Playfair Display for headline, Montserrat for body/CTA), layout respects exact pixel dimensions with proper spacing, product imagery is prominent and high-quality, and CTA has visible margin from the bottom edge. Animation states (initial → animated → settled) are smooth and enhance engagement without structural issues. No blockers detected.",
+    "findings": [],
+    "regeneration_prompt": "No patches required. The creative meets all audit criteria: correct 970×250 px frame, logo at readable scale, on-brand French headline 'Préparez votre Bubble Tea', proper color usage (#C8102E CTA button, #1A1A1A text), clear typography hierarchy, product hero image dominant in center/right, and CTA 'DÉCOUVRIR LA COLLECTION' with safe margin from bottom. Animation transitions are smooth and tasteful. Creative is production-ready."
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 4424,
+    "output_tokens": 260,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 4424,
+    "price_usd": {
+      "input": 0.004424,
+      "output": 0.0013,
+      "total": 0.005724
+    },
+    "duration_ms": 4995
+  }
+}

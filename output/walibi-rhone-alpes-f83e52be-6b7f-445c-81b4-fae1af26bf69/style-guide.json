@@ -1,0 +1,99 @@
+{
+  "companyName": "Compagnie des Alpes",
+  "companyContext": "French leisure group operating theme parks and ski resorts across Europe (Parc Astérix, Futuroscope, Grévin, Walibi parks). Owner-operator of Walibi Rhône-Alpes since 2006.",
+  "companyURL": "https://www.compagniedesalpes.com",
+  "brandName": "Walibi Rhône-Alpes",
+  "brandContext": "French theme park located in Les Avenières (Isère), between Lyon and Chambéry. Opened in 1979 as Avenir Land, it spans 35 hectares with 36 attractions and shows organised across three themed worlds: Explorer Adventure (Wild West), Festival City (New Orleans) and Exotic Island (Pacific-inspired with the flagship Mahuka single-rail coaster). In 2025 it welcomed 616,000 visitors, its second-best season.",
+  "brandURL": "https://www.walibi.fr/fr",
+  "logoFileUrls": [
+    "https://www.walibi.fr/content/experience-fragments/wra/fr/b2c/header/master/_jcr_content/root/header/logo.coreimg.svg/1710343837893/wra.svg"
+  ],
+  "productName": "Été à Walibi Rhône-Alpes 2026",
+  "campaignContext": "Promotion du parc d'attraction l'été",
+  "campaignReferenceUrl": "https://www.walibi.fr/fr",
+  "productPictureUrls": [
+    "https://www.walibi.fr/adobe/dynamicmedia/deliver/dm-aid--f87ff790-85f8-4df8-9db2-49c1d444023d/walibi-shooting-pub-2025---0031.jpg?quality=85&preferwebp=true",
+    "https://www.walibi.fr/adobe/dynamicmedia/deliver/dm-aid--adf91699-9850-42ad-8d2e-3a233ecaee99/walibi-ra-2022-0017.jpg?quality=85&preferwebp=true",
+    "https://www.walibi.fr/adobe/dynamicmedia/deliver/dm-aid--a1f521e5-b2f6-4634-aae4-fc19295fd622/tournage-walibi-0123.jpg?quality=85&preferwebp=true",
+    "https://www.walibi.fr/adobe/dynamicmedia/deliver/dm-aid--c7114d4d-b65f-41ce-aa0f-130794b13afa/07-parcnov2021.jpg?quality=85&preferwebp=true",
+    "https://www.walibi.fr/adobe/dynamicmedia/deliver/dm-aid--a511af06-a768-4be0-a90d-9fd82dcde4b8/04-parcnov2021.jpg?quality=85&preferwebp=true",
+    "https://www.walibi.fr/adobe/dynamicmedia/deliver/dm-aid--32fb0033-ae26-4a58-92a9-07c55aa6cf7a/image--19-.jpg?quality=85&preferwebp=true"
+  ],
+  "primaryColorPalette": [
+    "#EE7C1B",
+    "#0050A0",
+    "#FFD200",
+    "#E2001A",
+    "#FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "#1AAE4E",
+    "#00A6D6",
+    "#5A2D82",
+    "#F5A623",
+    "#2B2B2B",
+    "#FFF4DE"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Poppins",
+      "fontWeight": 800,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Hero headlines, campaign claims, WAAA-style impact titles"
+    },
+    {
+      "fontFamily": "Poppins",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Sub-headlines, attraction names, CTAs"
+    },
+    {
+      "fontFamily": "Futura",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Body text, descriptive paragraphs, ticket info"
+    },
+    {
+      "fontFamily": "Futura",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Legal mentions, fine print, captions"
+    },
+    {
+      "fontFamily": "Poppins",
+      "fontWeight": 700,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Promotional flashes, price badges, summer offer stickers"
+    }
+  ],
+  "brandVision": "Become a complete and differentiating regional leisure destination — moving beyond a seasonal amusement park to a year-round family playground for adventure, thrills and shared emotions, anchored locally in Auvergne-Rhône-Alpes while attracting wider audiences with bold themed universes and signature events (WAAAlloween, Merry ChristWAAAs).",
+  "brandValues": "Family fun, shared emotions, adventure and exploration, thrills made accessible, festive and playful spirit (the iconic 'WAAA'), warm hospitality, regional anchoring, immersive storytelling and sustainable operations (photovoltaic parking, local recruitment).",
+  "logoImageSearchQueries": [
+    "site:walibi.fr logo Rhône-Alpes",
+    "Walibi Rhône-Alpes logo svg",
+    "Walibi logo kangourou transparent png",
+    "site:en.wikipedia.org Walibi Rhône-Alpes logo",
+    "site:commons.wikimedia.org Walibi logo",
+    "Walibi Rhône-Alpes logo officiel 2026",
+    "Walibi brand logo filetype:svg"
+  ],
+  "productImageSearchQueries": [
+    "site:walibi.fr Exotic Island été",
+    "site:walibi.fr Mahuka attraction",
+    "Walibi Rhône-Alpes été famille parc",
+    "Walibi Rhône-Alpes Bambooz River été",
+    "Walibi Rhône-Alpes Tiki Academy water",
+    "Walibi Rhône-Alpes Surf Music slide",
+    "Walibi Rhône-Alpes Expédition Perdue 2026",
+    "Walibi Rhône-Alpes RépaR'TaKar nouveauté 2026",
+    "Walibi Rhône-Alpes Festival City photo",
+    "Walibi Rhône-Alpes affiche été 2026",
+    "site:walibi.fr photos parc attractions",
+    "Walibi Rhône-Alpes famille piscine vacances été"
+  ],
+  "campaignAssetProfile": "experience"
+}

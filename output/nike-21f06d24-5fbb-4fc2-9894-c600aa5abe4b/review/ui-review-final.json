@@ -1,0 +1,14 @@
+{
+  "ui_review_rounds_run": 1,
+  "max_ui_review_rounds": 2,
+  "satisfied": true,
+  "summary": "The 300×600 px Nike ad creative meets all mandatory design and brand compliance requirements. Logo is visible at proper scale, product imagery is clear, typography hierarchy follows the style guide, color palette adheres strictly to Nike brand guidelines (#111111, #FFFFFF, #FA5400), French copy is clean and on-brand, and the CTA has appropriate spacing from the ad frame bottom. All three states (initial, animated, settled) render correctly with no structural or visual issues.",
+  "findings": [],
+  "screenshots_dir": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\nike-21f06d24-5fbb-4fc2-9894-c600aa5abe4b\\review\\screenshots",
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\nike-21f06d24-5fbb-4fc2-9894-c600aa5abe4b\\pipeline-usage.json",
+  "pipeline_totals_usd": {
+    "input": 0.230868,
+    "output": 0.12525,
+    "total": 0.356118
+  }
+}

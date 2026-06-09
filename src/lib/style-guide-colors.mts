@@ -1,5 +1,7 @@
 /** Normalize palette entries to `#RRGGBB` for style-guide.json and CSS consumers. */
 
+import { appendFontComplianceRetryHint, type StyleGuideTypography } from './style-guide-typography.mts';
+
 export function toStyleGuideHex (value: string): string {
   const bare = value.trim().replace(/^#+/u, '').toUpperCase();
   if (/^[0-9A-F]{3}$/u.test(bare)) {
@@ -77,18 +79,22 @@ export function buildStyleGuideColorConstraintText (styleGuide: StyleGuidePalett
 
 const COLOR_COMPLIANCE_ISSUE = /colors outside style guide palettes/iu;
 
-/** Extra retry hint when compliance failed on off-palette hex colors. */
+export type StyleGuideCodegenHints = StyleGuidePalettes & StyleGuideTypography;
+
+/** Extra retry hint when compliance failed on off-palette hex colors or fonts. */
 export function buildComplianceRetryHint (
   issues: readonly string[],
-  styleGuide: StyleGuidePalettes
+  styleGuide: StyleGuideCodegenHints
 ): string {
-  if (!issues.some((issue) => COLOR_COMPLIANCE_ISSUE.test(issue))) {
-    return '';
+  let hint = '';
+  if (issues.some((issue) => COLOR_COMPLIANCE_ISSUE.test(issue))) {
+    const allowed = collectStyleGuideAllowedHex(styleGuide);
+    hint += (
+      ` Allowed hex colors ONLY: ${allowed.join(', ')}. `
+      + 'Replace every non-allowed #hex in styles.css; use rgba() with a palette base for transparency — '
+      + 'never invent new hex codes for gradients or shadows.'
+    );
   }
-  const allowed = collectStyleGuideAllowedHex(styleGuide);
-  return (
-    ` Allowed hex colors ONLY: ${allowed.join(', ')}. `
-    + 'Replace every non-allowed #hex in styles.css; use rgba() with a palette base for transparency — '
-    + 'never invent new hex codes for gradients or shadows.'
-  );
+  hint += appendFontComplianceRetryHint(issues, styleGuide);
+  return hint;
 }

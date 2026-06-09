@@ -1,13 +1,21 @@
 import { readFileSync } from 'node:fs';
 import { inflateSync } from 'node:zlib';
+import type { LogoSourcePhase } from './logo-asset-sources.mts';
 
 const PNG_SIGNATURE = Buffer.from([ 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a ]);
+
+export type LogoValidationContext = {
+  sourceUrl?: string;
+  officialHosts?: readonly string[];
+  sourcePhase?: LogoSourcePhase;
+};
 
 export type LogoAssetValidation = {
   ok: boolean;
   issue: string;
   warn?: string;
   transparentRatio?: number;
+  tier?: 'A' | 'B';
 };
 
 function parseEnvFloat (name: string, fallback: number): number {
@@ -25,10 +33,58 @@ export function logoMinTransparentRatio (): number {
 
 /**
  * Logos must be SVG or raster with real alpha (transparent pixels).
- * Set CREATIVE_ASSETS_LOGO_ALLOW_OPAQUE=1 to allow opaque JPEG/PNG (not recommended).
+ * Tier B: opaque PNG/WebP/JPEG from official host logo paths (see allowsTierBOpaque).
+ * Set CREATIVE_ASSETS_LOGO_ALLOW_OPAQUE=1 to allow all opaque rasters globally.
  */
 export function logoRequireTransparency (): boolean {
   return process.env['CREATIVE_ASSETS_LOGO_ALLOW_OPAQUE']?.trim() !== '1';
+}
+
+function normalizeHost (hostname: string): string {
+  return hostname.toLowerCase().replace(/^www\./u, '');
+}
+
+export function urlHostMatchesOfficial (url: string, officialHosts: readonly string[]): boolean {
+  if (officialHosts.length === 0) {
+    return false;
+  }
+  try {
+    const h = normalizeHost(new URL(url).hostname);
+    return officialHosts.some((oh) => {
+      const o = normalizeHost(oh);
+      return h === o || h.endsWith(`.${o}`);
+    });
+  } catch {
+    return false;
+  }
+}
+
+/** True when URL path looks like a header/wordmark asset on an official host. */
+export function isOfficialLogoUrl (url: string, officialHosts: readonly string[]): boolean {
+  if (!urlHostMatchesOfficial(url, officialHosts)) {
+    return false;
+  }
+  const lower = url.toLowerCase();
+  return /\/logo|logo[-_./]|wordmark|\/assets\/logos\/|logo-site|\/matnet\/logo\//iu.test(lower);
+}
+
+export function allowsTierBOpaque (context: LogoValidationContext | undefined): boolean {
+  if (!logoRequireTransparency()) {
+    return true;
+  }
+  if (context === undefined) {
+    return false;
+  }
+  const url = context.sourceUrl?.trim() ?? '';
+  const hosts = context.officialHosts ?? [];
+  if (url.length === 0 || hosts.length === 0) {
+    return false;
+  }
+  const phase = context.sourcePhase ?? 'unknown';
+  if (phase === 'brave' || phase === 'wikipedia') {
+    return false;
+  }
+  return isOfficialLogoUrl(url, hosts);
 }
 
 /** Reject known low-quality third-party logo URLs (not JPEG — opaque official JPEG is OK). */
@@ -42,7 +98,6 @@ export function isUntrustedLogoUrl (url: string): boolean {
   }
   return false;
 }
-
 
 function isValidSvgMarkup (buffer: Buffer): boolean {
   const head = buffer.toString('utf8', 0, Math.min(buffer.length, 4096)).trim();
@@ -169,7 +224,7 @@ function analyzePngTransparencyStrict (
   }
 
   if (colorType === 3 && hasTrns) {
-    return { ok: true, issue: '', transparentRatio: 1 };
+    return { ok: true, issue: '', transparentRatio: 1, tier: 'A' };
   }
 
   if (colorType !== 4 && colorType !== 6) {
@@ -224,7 +279,7 @@ function analyzePngTransparencyStrict (
     };
   }
 
-  return { ok: true, issue: '', transparentRatio: ratio };
+  return { ok: true, issue: '', transparentRatio: ratio, tier: 'A' };
 }
 
 function analyzePngTransparencyRelaxed (buffer: Buffer, minRatio: number): LogoAssetValidation {
@@ -244,7 +299,8 @@ function analyzePngTransparencyRelaxed (buffer: Buffer, minRatio: number): LogoA
     return {
       ok: true,
       issue: '',
-      warn: 'Opaque PNG (no alpha channel); acceptable for official logos on solid backgrounds.'
+      warn: 'Opaque PNG (no alpha channel); acceptable for official logos on solid backgrounds.',
+      tier: 'B'
     };
   }
 
@@ -254,11 +310,12 @@ function analyzePngTransparencyRelaxed (buffer: Buffer, minRatio: number): LogoA
       ok: true,
       issue: '',
       warn: strict.issue,
-      transparentRatio: strict.transparentRatio
+      transparentRatio: strict.transparentRatio,
+      tier: 'A'
     };
   }
 
-  return strict;
+  return strict.ok ? { ...strict, tier: 'A' as const } : strict;
 }
 
 function analyzeWebpLogo (buffer: Buffer, strict: boolean): LogoAssetValidation {
@@ -293,41 +350,65 @@ function analyzeWebpLogo (buffer: Buffer, strict: boolean): LogoAssetValidation 
     return {
       ok: true,
       issue: '',
-      warn: 'Opaque WebP logo; acceptable when sourced from the official brand site.'
+      warn: 'Opaque WebP logo; acceptable when sourced from the official brand site.',
+      tier: 'B'
     };
   }
 
-  return { ok: true, issue: '', transparentRatio: 1 };
+  return { ok: true, issue: '', transparentRatio: 1, tier: 'A' };
 }
 
-export function validateLogoAssetBuffer (buffer: Buffer): LogoAssetValidation {
-  const strict = logoRequireTransparency();
+function applyTierBIfEligible (
+  result: LogoAssetValidation,
+  context: LogoValidationContext | undefined
+): LogoAssetValidation {
+  if (result.ok) {
+    return result;
+  }
+  if (allowsTierBOpaque(context)) {
+    return {
+      ok: true,
+      issue: '',
+      warn: `${result.issue} Accepted as Tier B official header logo.`,
+      tier: 'B'
+    };
+  }
+  return result;
+}
+
+export function validateLogoAssetBuffer (
+  buffer: Buffer,
+  context?: LogoValidationContext
+): LogoAssetValidation {
+  const strict = logoRequireTransparency() && !allowsTierBOpaque(context);
   const minRatio = logoMinTransparentRatio();
 
   const trimmed = buffer.toString('utf8', 0, Math.min(buffer.length, 256)).trim();
   if (trimmed.startsWith('<svg') || trimmed.startsWith('<?xml') || trimmed.includes('<svg')) {
     return isValidSvgMarkup(buffer)
-      ? { ok: true, issue: '' }
+      ? { ok: true, issue: '', tier: 'A' }
       : { ok: false, issue: 'Invalid or unreadable SVG logo markup.' };
   }
 
   if (buffer.length >= 2 && buffer[0] === 0xff && buffer[1] === 0xd8) {
-    return {
+    const jpegBlock: LogoAssetValidation = {
       ok: false,
       issue: strict
         ? 'JPEG has no transparency; use SVG or PNG/WebP with transparent pixels.'
         : 'JPEG has no transparency channel (set CREATIVE_ASSETS_LOGO_ALLOW_OPAQUE=1 only if required).'
     };
+    return applyTierBIfEligible(jpegBlock, context);
   }
 
   if (buffer.subarray(0, 8).equals(PNG_SIGNATURE)) {
-    return strict
+    const pngResult = strict
       ? analyzePngTransparencyStrict(buffer, minRatio)
       : analyzePngTransparencyRelaxed(buffer, minRatio);
+    return applyTierBIfEligible(pngResult, context);
   }
 
   if (buffer.length >= 12 && buffer.toString('ascii', 0, 4) === 'RIFF') {
-    return analyzeWebpLogo(buffer, strict);
+    return applyTierBIfEligible(analyzeWebpLogo(buffer, strict), context);
   }
 
   if (buffer.length >= 6 && buffer.toString('ascii', 0, 6) === 'GIF89a') {
@@ -343,13 +424,15 @@ export function validateLogoAssetBuffer (buffer: Buffer): LogoAssetValidation {
   };
 }
 
-export function validateLogoAssetFile (filePath: string): LogoAssetValidation {
+export function validateLogoAssetFile (
+  filePath: string,
+  context?: LogoValidationContext
+): LogoAssetValidation {
   try {
     const buffer = readFileSync(filePath);
-    return validateLogoAssetBuffer(buffer);
+    return validateLogoAssetBuffer(buffer, context);
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
     return { ok: false, issue: `Failed to read logo file: ${msg}` };
   }
 }
-

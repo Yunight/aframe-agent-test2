@@ -1,0 +1,29 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-06-08T16:01:55.609Z",
+  "deterministic_ok": true,
+  "audit": {
+    "satisfied": true,
+    "summary": "Asset audit passed. 6 product assets meet retail ad suitability: 1 logo asset (text-only, acceptable for brand use) and 5 distinct lifestyle scenes with visible Kusmi Tea merchandise. Four assets have concrete primary_product_names (Drainant, Minceur, Sommeil) plus one generic collection asset. No duplicate SKUs detected. Minimum 2 usable retail product assets requirement satisfied. Logo asset audit passed. The Kusmi_Tea_logo.png file displays the official Kusmi Tea wordmark with correct branding. The logo shows 'KUSMI TEA' in the brand's characteristic serif typography with 'PARIS' as a subtitle, matching the official brand identity from kusmitea.com. No blockers identified.",
+    "findings": [],
+    "brave_retry_queries": {
+      "logos": [],
+      "products": []
+    }
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 4022,
+    "output_tokens": 125,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 4022,
+    "price_usd": {
+      "input": 0.004022,
+      "output": 0.000625,
+      "total": 0.004647
+    },
+    "duration_ms": 3954
+  }
+}

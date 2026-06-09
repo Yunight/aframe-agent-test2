@@ -1,59 +1,32 @@
 {
-  "captured_at": "2026-06-02T08:25:35.992Z",
-  "entry_html": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\ikea-15dbc26d-c234-4591-bee3-9e88461516ff\\code\\V1\\index.html",
-  "entry_url": "file:///C:/Users/Ben/Desktop/formats_creator/aframe-agent-test2/aframe-agent-test2/output/ikea-15dbc26d-c234-4591-bee3-9e88461516ff/code/V1/index.html",
+  "captured_at": "2026-06-02T08:59:40.164Z",
+  "entry_html": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\ikea-15dbc26d-c234-4591-bee3-9e88461516ff\\code\\V4\\index.html",
+  "entry_url": "file:///C:/Users/Ben/Desktop/formats_creator/aframe-agent-test2/aframe-agent-test2/output/ikea-15dbc26d-c234-4591-bee3-9e88461516ff/code/V4/index.html",
   "formats": [
     {
-      "format_id": "320x480",
-      "width": 320,
-      "height": 480,
-      "selector": "#ad-320x480",
-      "error": null,
-      "shots": [
-        {
-          "state": "initial",
-          "fileName": "320x480__initial.png",
-          "relativePath": "320x480__initial.png",
-          "captured_at": "2026-06-02T08:25:33.472Z"
-        },
-        {
-          "state": "animated",
-          "fileName": "320x480__animated.png",
-          "relativePath": "320x480__animated.png",
-          "captured_at": "2026-06-02T08:25:34.362Z"
-        },
-        {
-          "state": "settled",
-          "fileName": "320x480__settled.png",
-          "relativePath": "320x480__settled.png",
-          "captured_at": "2026-06-02T08:25:35.965Z"
-        }
-      ]
-    },
-    {
-      "format_id": "300x600",
+      "format_id": "300x250",
       "width": 300,
-      "height": 600,
-      "selector": "#ad-300x600",
+      "height": 250,
+      "selector": "#ad-300x250",
       "error": null,
       "shots": [
         {
           "state": "initial",
-          "fileName": "300x600__initial.png",
-          "relativePath": "300x600__initial.png",
-          "captured_at": "2026-06-02T08:25:33.459Z"
+          "fileName": "300x250__initial.png",
+          "relativePath": "300x250__initial.png",
+          "captured_at": "2026-06-02T08:59:37.670Z"
         },
         {
           "state": "animated",
-          "fileName": "300x600__animated.png",
-          "relativePath": "300x600__animated.png",
-          "captured_at": "2026-06-02T08:25:34.363Z"
+          "fileName": "300x250__animated.png",
+          "relativePath": "300x250__animated.png",
+          "captured_at": "2026-06-02T08:59:38.551Z"
         },
         {
           "state": "settled",
-          "fileName": "300x600__settled.png",
-          "relativePath": "300x600__settled.png",
-          "captured_at": "2026-06-02T08:25:35.965Z"
+          "fileName": "300x250__settled.png",
+          "relativePath": "300x250__settled.png",
+          "captured_at": "2026-06-02T08:59:40.138Z"
         }
       ]
     }

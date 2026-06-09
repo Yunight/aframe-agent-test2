@@ -1,0 +1,136 @@
+{
+  "generated_at": "2026-06-05T12:24:39.554Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/lidl-logo-shop-cdn.svg",
+      "fileName": "lidl-logo-shop-cdn.svg",
+      "fileType": "logos",
+      "description": "Official Lidl logo featuring the brand name in white text on a blue and yellow circular background. Clean, recognizable lockup suitable for HTML5 ad headers and footers.",
+      "layout_hints": [
+        "logo-lockup",
+        "header-footer"
+      ],
+      "dominant_colors": [
+        "#0066CC",
+        "#FFCC00",
+        "#FFFFFF"
+      ]
+    },
+    {
+      "asset_id": "products/Card-001-1440x1440px-1865321.jpg",
+      "fileName": "Card-001-1440x1440px-1865321.jpg",
+      "fileType": "products",
+      "description": "Close-up lifestyle shot of a Parkside brushless drill being held in use. The black and silver drill with red accents is prominently displayed, showing the Parkside branding and performance label clearly visible on the tool body. Warm, blurred background emphasizes the tool in hand.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "product-hero",
+        "close-up"
+      ],
+      "dominant_colors": [
+        "#2A2A2A",
+        "#8B8B8B",
+        "#CC0000"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "Parkside Brushless Drill"
+    },
+    {
+      "asset_id": "products/Card-002-1440x1440px-1724162.jpg",
+      "fileName": "Card-002-1440x1440px-1724162.jpg",
+      "fileType": "products",
+      "description": "Action lifestyle image showing a Parkside impact driver in use, held by a gloved hand driving into a white surface indoors. The drill features Parkside branding on the black housing. Cool blue-toned workshop lighting creates industrial atmosphere with blurred background.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "product-in-action",
+        "indoor-workshop"
+      ],
+      "dominant_colors": [
+        "#1A1A1A",
+        "#4A90E2",
+        "#FFFFFF"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "Parkside Impact Driver"
+    },
+    {
+      "asset_id": "products/Card-003-1440x1440px-1724164.jpg",
+      "fileName": "Card-003-1440x1440px-1724164.jpg",
+      "fileType": "products",
+      "description": "Multi-person lifestyle scene in a workshop with pegboard wall displaying numerous Parkside tools. Four diverse individuals hold various green and black Parkside power tools including drills, saws, and sanders, demonstrating product range and versatility. Bright pegboard background and concrete floor suggest hardware store or workshop environment.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "multi-person",
+        "product-range"
+      ],
+      "dominant_colors": [
+        "#2D5A3D",
+        "#1A1A1A",
+        "#FFFFFF"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "Parkside Power Tools Collection",
+      "is_generic_collection": true
+    },
+    {
+      "asset_id": "products/Card-004-1440x1440px-1724124.jpg",
+      "fileName": "Card-004-1440x1440px-1724124.jpg",
+      "fileType": "products",
+      "description": "Close-up outdoor garden scene showing a Parkside pruning shear with green and black handle being used to trim pink rose petals and green foliage. Natural daylight, blurred green garden background, emphasizes precision tool handling in gardening application.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "garden-product",
+        "close-up"
+      ],
+      "dominant_colors": [
+        "#2D5A3D",
+        "#000000",
+        "#FFB6D9"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "Parkside Pruning Shear"
+    },
+    {
+      "asset_id": "products/Image-Youtube-Parkside-III-1716360.jpg",
+      "fileName": "Image-Youtube-Parkside-III-1716360.jpg",
+      "fileType": "products",
+      "description": "Portrait-style image of a male model in green Parkside-branded shirt holding a black Parkside cordless drill with visible battery pack against a solid green background. Clean studio lighting, straightforward product display emphasizing the tool's design and brand identity.",
+      "layout_hints": [
+        "product-lifestyle",
+        "portrait-hero",
+        "branded-apparel"
+      ],
+      "dominant_colors": [
+        "#2D5A3D",
+        "#1A1A1A",
+        "#E8E8E8"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "Parkside Cordless Drill"
+    },
+    {
+      "asset_id": "products/XD-509-WoN-Full-width-teaser-Left-aligned-ArnoldXS-1735161.jpg",
+      "fileName": "XD-509-WoN-Full-width-teaser-Left-aligned-ArnoldXS-1735161.jpg",
+      "fileType": "products",
+      "description": "Wide-format teaser image showing male celebrity in green Parkside shirt holding a black Parkside cordless drill with battery against solid green background. Left-aligned composition suitable for full-width banner placement. Clean studio production with direct product-to-viewer engagement.",
+      "layout_hints": [
+        "full-width-banner",
+        "lifestyle-hero",
+        "left-aligned"
+      ],
+      "dominant_colors": [
+        "#2D5A3D",
+        "#1A1A1A",
+        "#E8E8E8"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "Parkside Cordless Drill"
+    }
+  ]
+}

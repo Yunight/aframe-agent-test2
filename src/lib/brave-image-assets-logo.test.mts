@@ -2,8 +2,26 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   buildLogoSearchQueries,
-  scoreCampaignLogoAdjustment
+  logoSearchCurrentYear,
+  scoreCampaignLogoAdjustment,
+  scoreEntertainmentLogoOpusPenalty,
+  scoreSubBrandLogoAdjustment
 } from './brave-image-assets.mts';
+
+test('buildLogoSearchQueries includes current year for latest logo lockup', () => {
+  const year = logoSearchCurrentYear();
+  const queries = buildLogoSearchQueries({
+    brandName: 'Peugeot',
+    companyName: 'Stellantis',
+    productName: 'Peugeot 308 SW',
+    brandURL: 'https://www.peugeot.fr/',
+    companyURL: 'https://www.stellantis.com/',
+    logoImageSearchQueries: [],
+    productImageSearchQueries: []
+  });
+  assert.ok(queries.some((q) => q.includes(String(year))), `expected year ${String(year)} in ${queries.join(' | ')}`);
+  assert.ok(queries.some((q) => /Peugeot logo \d{4}/iu.test(q)));
+});
 
 test('buildLogoSearchQueries prepends expansion queries when product differs from brand', () => {
   const queries = buildLogoSearchQueries({
@@ -39,4 +57,56 @@ test('scoreCampaignLogoAdjustment penalizes corporate Blizzard logo vs expansion
   assert.ok(corporate < expansion, `corporate=${String(corporate)} expansion=${String(expansion)}`);
   assert.ok(corporate <= -100);
   assert.ok(expansion >= 80);
+});
+
+test('scoreSubBrandLogoAdjustment penalizes parent Lidl logo for Parkside sub-brand', () => {
+  const scoring = {
+    brandName: 'Parkside',
+    companyName: 'Lidl'
+  };
+  const parentLogo = scoreSubBrandLogoAdjustment(
+    'https://www.lidl.fr/cdn/assets/logos/brand/lidl-logo-shop-cdn.svg',
+    'Lidl logo',
+    scoring
+  );
+  const subBrandLogo = scoreSubBrandLogoAdjustment(
+    'https://www.lidl.fr/cdn/assets/logos/brand/parkside-logo.svg',
+    'Parkside tools logo',
+    scoring
+  );
+  assert.ok(parentLogo < subBrandLogo, `parent=${String(parentLogo)} sub=${String(subBrandLogo)}`);
+  assert.ok(parentLogo <= -100);
+});
+
+test('scoreSubBrandLogoAdjustment penalizes NET homonym for Matériel.net', () => {
+  const scoring = {
+    brandName: 'Matériel.net',
+    companyName: 'Matériel.net'
+  };
+  const homonym = scoreSubBrandLogoAdjustment(
+    'https://upload.wikimedia.org/wikipedia/commons/NET_Logo_1970.svg',
+    'NET Logo 1970',
+    scoring
+  );
+  const official = scoreSubBrandLogoAdjustment(
+    'https://media.materiel.net/logos/logo-site-matnet-homepage.png',
+    'materiel.net logo',
+    scoring
+  );
+  assert.ok(homonym < official, `homonym=${String(homonym)} official=${String(official)}`);
+});
+
+test('scoreEntertainmentLogoOpusPenalty penalizes Scary Movie 4 logo for Scary Movie 6 / 2026', () => {
+  const wrongOpus = scoreEntertainmentLogoOpusPenalty(
+    'https://upload.wikimedia.org/wikipedia/commons/Scarymovie4-logo.svg',
+    'Scary Movie 4 logo',
+    'Scary Movie 6 (2026)'
+  );
+  const currentTitle = scoreEntertainmentLogoOpusPenalty(
+    'https://www.scarymovie.film/assets/scary-movie-6-title.svg',
+    'Scary Movie 6 title treatment',
+    'Scary Movie 6 (2026)'
+  );
+  assert.ok(wrongOpus <= -150, `wrongOpus=${String(wrongOpus)}`);
+  assert.ok(currentTitle > wrongOpus, `current=${String(currentTitle)} wrong=${String(wrongOpus)}`);
 });

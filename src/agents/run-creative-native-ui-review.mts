@@ -11,6 +11,7 @@ import type { StyleGuide } from './gen-style-guide.mjs';
 import { captureCreativeNativeScreenshots } from '../lib/creative-native-playwright-screenshots.mts';
 import { loadSkillsForCodegenPrompt } from '../lib/creative-native-codegen-prompt.mts';
 import { runCreativeNativeGeneration } from '../lib/creative-native-generate.mts';
+import { writeGenericAdConfigFile } from '../lib/generic-ad-config.mts';
 import {
   appendPipelineRunSummary,
   formatDurationMinSec,
@@ -46,6 +47,7 @@ import {
   snapshotCodeBundleForDiff,
   writeRegenBaselineSnapshot
 } from '../lib/creative-native-regen-diff.mts';
+import { healBundleAssetsFromRunDirectory } from '../lib/creative-bundle-assets.mts';
 import { latestCodeVersion } from '../lib/creative-code-versions.mts';
 import { config as loadDotenv } from 'dotenv';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -177,6 +179,17 @@ while (uiReviewRound < maxUiReviewRounds) {
   console.log(`[ui-review-agent] Round ${String(uiReviewRound)}/${String(maxUiReviewRounds)}`);
 
   mkdirSync(screenshotsDirectoryPath, { recursive: true });
+  const healed = healBundleAssetsFromRunDirectory({
+    bundleDir: codeDirectoryPath,
+    runDirectoryPath: directoryPath
+  });
+  if (healed.copied.length > 0) {
+    console.log(`[ui-review-agent] Healed bundle assets: ${healed.copied.join(', ')}`);
+  }
+  if (healed.missing.length > 0) {
+    console.warn(`[ui-review-agent] Bundle still missing assets: ${healed.missing.join(', ')}`);
+  }
+
   const manifest = await captureCreativeNativeScreenshots({
     codeDirectoryPath,
     adFormats,
@@ -267,6 +280,17 @@ while (uiReviewRound < maxUiReviewRounds) {
 }
 
 writeUiReviewTokenUsage(reviewDirectoryPath, uiReviewUsageRounds);
+
+try {
+  const { path: genericConfigPath } = writeGenericAdConfigFile({
+    bundleDir: codeDirectoryPath,
+    outputRunDir: directoryPath
+  });
+  console.log(`[ui-review-agent] Wrote ${genericConfigPath}`);
+} catch (err) {
+  const message = err instanceof Error ? err.message : String(err);
+  console.warn(`[ui-review-agent] generic-config.json not written: ${message}`);
+}
 
 let pipelineTotalsUsd: { total: number } | null = null;
 const pipelinePath = pipelineUsagePath(directoryPath);

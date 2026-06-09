@@ -15,13 +15,22 @@ import { join, extname } from 'node:path';
 import { imageSizeFromFile } from 'image-size/fromFile';
 import mime from 'mime';
 import { looksLikeProductPackshotInLogosFolder } from './logo-asset-rules.mts';
+import {
+  loadLogoAssetSources,
+  logoValidationContextFromEntry,
+  removeLogoAssetSource
+} from './logo-asset-sources.mts';
 import { validateLogoAssetFile } from './logo-transparency-check.mts';
 import {
+  buildProductMatchFields,
   buildProductMatchTerms,
   isListingPageCampaign,
   productMinRelevanceScore,
+  resolveCampaignAssetProfile,
   resolveReferenceListingUrls,
   scoreProductContextRelevance,
+  wouldPassEntertainmentProductAsset,
+  wouldPassExperienceProductAsset,
   wouldPassListingProductAsset
 } from './style-guide-context.mts';
 
@@ -46,10 +55,10 @@ function parseEnvInt (name: string, fallback: number): number {
   return Number.isFinite(n) && n > 0 ? n : fallback;
 }
 
-const MIN_LOGO_W = () => parseEnvInt('CREATIVE_ASSETS_MIN_LOGO_W', 120);
-const MIN_LOGO_H = () => parseEnvInt('CREATIVE_ASSETS_MIN_LOGO_H', 40);
-const MIN_PRODUCT_W = () => parseEnvInt('CREATIVE_ASSETS_MIN_PRODUCT_W', 200);
-const MIN_PRODUCT_H = () => parseEnvInt('CREATIVE_ASSETS_MIN_PRODUCT_H', 200);
+const MIN_LOGO_W = () => parseEnvInt('CREATIVE_ASSETS_MIN_LOGO_W', 1);
+const MIN_LOGO_H = () => parseEnvInt('CREATIVE_ASSETS_MIN_LOGO_H', 1);
+const MIN_PRODUCT_W = () => parseEnvInt('CREATIVE_ASSETS_MIN_PRODUCT_W', 1);
+const MIN_PRODUCT_H = () => parseEnvInt('CREATIVE_ASSETS_MIN_PRODUCT_H', 1);
 
 export function getAssetMinDimensions (fileType: 'logos' | 'products'): {
   minW: number;
@@ -59,6 +68,33 @@ export function getAssetMinDimensions (fileType: 'logos' | 'products'): {
     return { minW: MIN_LOGO_W(), minH: MIN_LOGO_H() };
   }
   return { minW: MIN_PRODUCT_W(), minH: MIN_PRODUCT_H() };
+}
+
+export async function pruneOversizedAssets (directoryPath: string): Promise<{ removed: string[] }> {
+  const removed: string[] = [];
+  const maxBytes = MAX_FILE_BYTES();
+  for (const fileType of [ 'logos', 'products' ] as const) {
+    const subdirectoryPath = join(directoryPath, fileType);
+    for (const fileName of listImageFiles(directoryPath, fileType)) {
+      const filePath = join(subdirectoryPath, fileName);
+      try {
+        const sizeBytes = statSync(filePath).size;
+        if (sizeBytes > maxBytes) {
+          unlinkSync(filePath);
+          removed.push(`${fileType}/${fileName}`);
+          if (fileType === 'products') {
+            removeProductAssetSource(directoryPath, fileName);
+          }
+          console.log(
+            `[assets-prune] Removed oversized ${fileType}/${fileName} (${String(sizeBytes)} bytes, max ${String(maxBytes)})`
+          );
+        }
+      } catch {
+        /* keep for deterministic to flag */
+      }
+    }
+  }
+  return { removed };
 }
 
 export async function pruneUndersizedAssets (directoryPath: string): Promise<{ removed: string[] }> {
@@ -111,14 +147,20 @@ export async function pruneNonWordmarkLogos (directoryPath: string): Promise<{ r
   return { removed };
 }
 
-export async function pruneInvalidLogos (directoryPath: string): Promise<{ removed: string[] }> {
+export async function pruneInvalidLogos (
+  directoryPath: string,
+  officialHosts: readonly string[] = []
+): Promise<{ removed: string[] }> {
   const removed: string[] = [];
   const subdirectoryPath = join(directoryPath, 'logos');
+  const logoSources = loadLogoAssetSources(directoryPath);
   for (const fileName of listImageFiles(directoryPath, 'logos')) {
     const filePath = join(subdirectoryPath, fileName);
-    const check = validateLogoAssetFile(filePath);
+    const context = logoValidationContextFromEntry(logoSources.get(fileName), officialHosts);
+    const check = validateLogoAssetFile(filePath, context);
     if (!check.ok) {
       unlinkSync(filePath);
+      removeLogoAssetSource(directoryPath, fileName);
       removed.push(`logos/${fileName}`);
       console.log(`[assets-prune] Removed invalid logo ${fileName}: ${check.issue}`);
     }
@@ -135,11 +177,13 @@ function listImageFiles (directoryPath: string, fileType: 'logos' | 'products'):
 async function checkLogoFiles (
   directoryPath: string,
   minW: number,
-  minH: number
+  minH: number,
+  officialHosts: readonly string[] = []
 ): Promise<DeterministicFinding[]> {
   const findings: DeterministicFinding[] = [];
   const subdirectoryPath = join(directoryPath, 'logos');
   const files = listImageFiles(directoryPath, 'logos');
+  const logoSources = loadLogoAssetSources(directoryPath);
 
   if (files.length === 0) {
     findings.push({
@@ -147,7 +191,7 @@ async function checkLogoFiles (
       severity: 'blocker',
       issue: 'No files in logos/ directory.',
       fix_hint:
-        'Run style guide generation or assets refresh to download one transparent logo (SVG or PNG with alpha).'
+        'Run style guide generation or assets refresh to download one official logo (SVG, transparent PNG, or opaque PNG from brandURL header).'
     });
     return findings;
   }
@@ -199,23 +243,30 @@ async function checkLogoFiles (
       continue;
     }
 
-    const validation = validateLogoAssetFile(filePath);
+    const validation = validateLogoAssetFile(
+      filePath,
+      logoValidationContextFromEntry(logoSources.get(fileName), officialHosts)
+    );
     if (!validation.ok) {
       findings.push({
         asset_id: assetId,
         severity: 'blocker',
         issue: validation.issue,
-        fix_hint: 'Source a transparent SVG or PNG/WebP logo (official site first, then Wikipedia).'
+        fix_hint:
+          'Source an official brand logo from brandURL/companyURL (SVG, transparent PNG, or opaque header PNG).'
       });
       continue;
     }
 
-    if (validation.warn !== undefined && process.env['CREATIVE_ASSETS_LOGO_ALLOW_OPAQUE']?.trim() === '1') {
+    if (validation.warn !== undefined) {
       findings.push({
         asset_id: assetId,
         severity: 'warn',
         issue: validation.warn,
-        fix_hint: 'Prefer SVG or PNG with transparent pixels; opaque logos are discouraged.'
+        fix_hint:
+          validation.tier === 'B'
+            ? 'Tier B opaque official logo — Haiku vision audit must confirm brand identity.'
+            : 'Prefer SVG or PNG with transparent pixels when available.'
       });
     }
 
@@ -264,12 +315,19 @@ async function checkImageFiles (
   productMatch?: {
     terms: readonly string[];
     listing: boolean;
+    entertainment: boolean;
+    experience: boolean;
     referenceListingUrls: readonly string[];
     officialHosts: readonly string[];
   }
 ): Promise<DeterministicFinding[]> {
   if (fileType === 'logos') {
-    return checkLogoFiles(directoryPath, minW, minH);
+    return checkLogoFiles(
+      directoryPath,
+      minW,
+      minH,
+      productMatch?.officialHosts ?? []
+    );
   }
   const findings: DeterministicFinding[] = [];
   const subdirectoryPath = join(directoryPath, fileType);
@@ -327,7 +385,51 @@ async function checkImageFiles (
       const sourceUrl = entry?.sourceUrl ?? '';
       const minScore = productMinRelevanceScore();
 
-      if (productMatch.listing) {
+      if (productMatch.entertainment) {
+        if (
+          !wouldPassEntertainmentProductAsset({
+            entry,
+            sourceUrl,
+            referenceListingUrls: productMatch.referenceListingUrls,
+            officialHosts: productMatch.officialHosts,
+            terms: productMatch.terms,
+            minScore,
+            ...(entry?.sourceTitle !== undefined ? { sourceTitle: entry.sourceTitle } : {})
+          })
+        ) {
+          findings.push({
+            asset_id: assetId,
+            severity: 'blocker',
+            issue:
+              'Product image is not from an official film/studio host or trusted cinema database (IMDb, Allociné).',
+            fix_hint:
+              'Use poster/key art from scarymovie.film, Paramount, IMDb, or Allociné — not fan merch or blogs.'
+          });
+          continue;
+        }
+      } else if (productMatch.experience) {
+        if (
+          !wouldPassExperienceProductAsset({
+            entry,
+            sourceUrl,
+            referenceListingUrls: productMatch.referenceListingUrls,
+            officialHosts: productMatch.officialHosts,
+            terms: productMatch.terms,
+            minScore,
+            ...(entry?.sourceTitle !== undefined ? { sourceTitle: entry.sourceTitle } : {})
+          })
+        ) {
+          findings.push({
+            asset_id: assetId,
+            severity: 'blocker',
+            issue:
+              'Product image is not from the official park/destination site or does not match campaign context.',
+            fix_hint:
+              'Use official attraction photos, lifestyle scenes, or ticket visuals from the brand domain.'
+          });
+          continue;
+        }
+      } else if (productMatch.listing) {
         if (
           !wouldPassListingProductAsset({
             entry,
@@ -350,7 +452,11 @@ async function checkImageFiles (
         }
       } else {
         if (sourceUrl.length > 0) {
-          const relevance = scoreProductContextRelevance(sourceUrl, '', productMatch.terms);
+          const relevance = scoreProductContextRelevance(
+            sourceUrl,
+            entry?.sourceTitle ?? '',
+            productMatch.terms
+          );
           if (relevance < minScore) {
             findings.push({
               asset_id: assetId,
@@ -560,8 +666,28 @@ export async function runDeterministicAssetsCheck (
   }
 
   findings.push(...checkStyleGuideFields(styleGuide));
+
+  const imageCtx: ImageSearchContext = {
+    brandName: styleGuide.brandName,
+    companyName: styleGuide.companyName,
+    productName: styleGuide.productName,
+    brandURL: styleGuide.brandURL,
+    companyURL: styleGuide.companyURL,
+    ...(styleGuide.campaignReferenceUrl !== undefined && styleGuide.campaignReferenceUrl.length > 0
+      ? { campaignReferenceUrl: styleGuide.campaignReferenceUrl }
+      : {})
+  };
+  const officialHosts = officialHostsFromContext(imageCtx);
+
   findings.push(
-    ...(await checkImageFiles('logos', directoryPath, MIN_LOGO_W(), MIN_LOGO_H()))
+    ...(await checkImageFiles('logos', directoryPath, MIN_LOGO_W(), MIN_LOGO_H(), {
+      terms: [],
+      listing: false,
+      entertainment: false,
+      experience: false,
+      referenceListingUrls: [],
+      officialHosts
+    }))
   );
 
   const productMatchTerms = buildProductMatchTerms({
@@ -586,17 +712,17 @@ export async function runDeterministicAssetsCheck (
       ? { campaignReferenceUrl: styleGuide.campaignReferenceUrl }
       : {})
   });
-  const imageCtx: ImageSearchContext = {
-    brandName: styleGuide.brandName,
-    companyName: styleGuide.companyName,
+  const profile = resolveCampaignAssetProfile(buildProductMatchFields({
+    campaignContext: styleGuide.campaignContext ?? null,
     productName: styleGuide.productName,
+    brandName: styleGuide.brandName,
+    brandContext: styleGuide.brandContext,
     brandURL: styleGuide.brandURL,
-    companyURL: styleGuide.companyURL,
+    campaignAssetProfile: styleGuide.campaignAssetProfile,
     ...(styleGuide.campaignReferenceUrl !== undefined && styleGuide.campaignReferenceUrl.length > 0
       ? { campaignReferenceUrl: styleGuide.campaignReferenceUrl }
       : {})
-  };
-  const officialHosts = officialHostsFromContext(imageCtx);
+  }));
   findings.push(
     ...(await checkImageFiles(
       'products',
@@ -604,7 +730,14 @@ export async function runDeterministicAssetsCheck (
       MIN_PRODUCT_W(),
       MIN_PRODUCT_H(),
       productMatchTerms.length > 0
-        ? { terms: productMatchTerms, listing, referenceListingUrls, officialHosts }
+        ? {
+            terms: productMatchTerms,
+            listing,
+            entertainment: profile === 'entertainment',
+            experience: profile === 'experience',
+            referenceListingUrls,
+            officialHosts
+          }
         : undefined
     ))
   );
@@ -614,6 +747,116 @@ export async function runDeterministicAssetsCheck (
     ok: blockers.length === 0,
     findings
   };
+}
+
+/** Remove product files flagged as blockers by deterministic pre-audit (before Brave retry). */
+export function pruneDeterministicBlockedProducts (
+  directoryPath: string,
+  findings: readonly { severity: string; asset_id: string }[]
+): { removed: string[]; excludedSourceUrls: string[] } {
+  const removed: string[] = [];
+  const excludedSourceUrls: string[] = [];
+  const seenUrls = new Set<string>();
+  const sourceMap = loadProductAssetSources(directoryPath);
+
+  for (const f of findings) {
+    if (f.severity !== 'blocker' || !f.asset_id.startsWith('products/')) {
+      continue;
+    }
+    const fileName = f.asset_id.slice('products/'.length);
+    const filePath = join(directoryPath, 'products', fileName);
+    if (existsSync(filePath)) {
+      unlinkSync(filePath);
+      removed.push(f.asset_id);
+    }
+    const sourceUrl = sourceMap.get(fileName)?.sourceUrl?.trim() ?? '';
+    if (sourceUrl.length > 0 && !seenUrls.has(sourceUrl)) {
+      seenUrls.add(sourceUrl);
+      excludedSourceUrls.push(sourceUrl);
+    }
+    removeProductAssetSource(directoryPath, fileName);
+  }
+
+  return { removed, excludedSourceUrls };
+}
+
+/** Remove logo files flagged as blockers by Haiku vision audit. */
+export function pruneVisionBlockedLogos (
+  directoryPath: string,
+  findings: readonly { asset_id: string; severity: string }[],
+  logoSourceUrls: readonly string[] = []
+): { removed: string[]; excludedSourceUrls: string[] } {
+  const removed: string[] = [];
+  const excludedSourceUrls: string[] = [];
+  const seenUrls = new Set<string>();
+  const seenFiles = new Set<string>();
+
+  for (const url of logoSourceUrls) {
+    const trimmed = url.trim();
+    if (trimmed.length > 0 && !seenUrls.has(trimmed)) {
+      seenUrls.add(trimmed);
+      excludedSourceUrls.push(trimmed);
+    }
+  }
+
+  for (const f of findings) {
+    if (f.severity !== 'blocker' || !f.asset_id.startsWith('logos/')) {
+      continue;
+    }
+    const fileName = f.asset_id.slice('logos/'.length);
+    if (fileName.length === 0 || fileName === 'logos' || seenFiles.has(fileName)) {
+      continue;
+    }
+    seenFiles.add(fileName);
+
+    const filePath = join(directoryPath, 'logos', fileName);
+    if (existsSync(filePath)) {
+      unlinkSync(filePath);
+      removeLogoAssetSource(directoryPath, fileName);
+      removed.push(f.asset_id);
+      console.log(`[assets-prune] Removed vision-blocked logo: ${f.asset_id}`);
+    }
+  }
+
+  return { removed, excludedSourceUrls };
+}
+
+/** Remove product files flagged as blockers by vision or descriptions audit. */
+export function pruneVisionBlockedProducts (
+  directoryPath: string,
+  findings: readonly { asset_id: string; severity: string }[]
+): { removed: string[]; excludedSourceUrls: string[] } {
+  const removed: string[] = [];
+  const excludedSourceUrls: string[] = [];
+  const seenUrls = new Set<string>();
+  const sourceMap = loadProductAssetSources(directoryPath);
+  const seenFiles = new Set<string>();
+
+  for (const f of findings) {
+    if (f.severity !== 'blocker' || !f.asset_id.startsWith('products/')) {
+      continue;
+    }
+    const fileName = f.asset_id.slice('products/'.length);
+    if (fileName.length === 0 || fileName === 'products' || seenFiles.has(fileName)) {
+      continue;
+    }
+    seenFiles.add(fileName);
+
+    const sourceUrl = sourceMap.get(fileName)?.sourceUrl?.trim() ?? '';
+    if (sourceUrl.length > 0 && !seenUrls.has(sourceUrl)) {
+      seenUrls.add(sourceUrl);
+      excludedSourceUrls.push(sourceUrl);
+    }
+
+    const filePath = join(directoryPath, 'products', fileName);
+    if (existsSync(filePath)) {
+      unlinkSync(filePath);
+      removed.push(f.asset_id);
+      console.log(`[assets-prune] Removed vision-blocked product: ${f.asset_id}`);
+    }
+    removeProductAssetSource(directoryPath, fileName);
+  }
+  return { removed, excludedSourceUrls };
 }
 
 export function logDeterministicFindings (findings: DeterministicFinding[]): void {

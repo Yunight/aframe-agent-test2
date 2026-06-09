@@ -1,0 +1,45 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-06-06T00:01:03.187Z",
+  "manifest_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\walibi-rhone-alpes-f83e52be-6b7f-445c-81b4-fae1af26bf69\\review\\screenshots\\manifest.json",
+  "audit": {
+    "satisfied": false,
+    "summary": "The 300×250 ad displays correct layout, logo visibility, and typography hierarchy. However, there are two blockers: (1) the product hero image is missing entirely—only a solid dark blue background is visible where the main visual should be, and (2) the CTA button text 'RÉSERVEZ MAINTENANT' is unreadable due to insufficient color contrast against the red background. Additionally, the ad lacks safe-zone padding at the bottom (CTA sits too close to the frame edge).",
+    "findings": [
+      {
+        "format_id": "300x250",
+        "severity": "blocker",
+        "issue": "Missing product hero image: the upper portion of the ad shows only a solid dark blue background. No attraction or park imagery is visible, breaking the visual hierarchy and campaign storytelling.",
+        "fix_hint": "Add a high-quality product image (e.g. Mahuka coaster, Exotic Island water attraction, or family scene) as a background image or <img> element in the hero section. Use one of the provided productPictureUrls and ensure it covers the hero zone with appropriate background-size: cover and background-position: center. Example: #ad-300x250 .hero { background-image: url('./walibi-hero.jpg'); background-size: cover; background-position: center; }"
+      },
+      {
+        "format_id": "300x250",
+        "severity": "blocker",
+        "issue": "CTA button text contrast failure: 'RÉSERVEZ MAINTENANT' in white on red (#E2001A) fails WCAG contrast requirements. The text is visually dim and difficult to read.",
+        "fix_hint": "Change the CTA button text color to white with sufficient opacity, or use a lighter shade. Verify WCAG AA contrast ratio (4.5:1 minimum for normal text). Example: #ad-300x250 .cta-button { color: #FFFFFF; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.2); } to improve legibility."
+      },
+      {
+        "format_id": "300x250",
+        "severity": "warn",
+        "issue": "CTA button spacing: the red 'RÉSERVEZ MAINTENANT' button appears to sit very close to the bottom edge of the 300×250 frame with minimal visible padding. Safe-zone best practice requires at least 20px clearance from the bottom frame edge.",
+        "fix_hint": "Add padding-bottom: 20px to #ad-300x250 or apply margin-bottom: 20px to the CTA button container to create breathing room above the footer tagline and ensure compliance with safe-zone guidelines."
+      }
+    ],
+    "regeneration_prompt": "1. Add a high-resolution product image (Mahuka coaster or Exotic Island family scene) to the hero section via background-image or <img>; use background-size: cover and background-position: center to fill the dark blue zone.\n2. Fix CTA button text color to pure white (#FFFFFF) with font-weight: 600 and optional text-shadow for WCAG AA contrast compliance against the red background.\n3. Add padding-bottom: 20px to the #ad-300x250 container or margin-bottom: 20px to the CTA button wrapper to ensure 20px safe-zone clearance from the bottom frame edge."
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 3713,
+    "output_tokens": 743,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 3713,
+    "price_usd": {
+      "input": 0.003713,
+      "output": 0.003715,
+      "total": 0.007428
+    },
+    "duration_ms": 8742
+  }
+}

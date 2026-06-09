@@ -7,7 +7,11 @@ import {
   collectAndDownloadValidAssetUrls,
   braveLogoCandidatePool
 } from './brave-image-assets.mts';
-import { extractOfficialSiteLogoUrls, extractWikipediaLogoUrls } from './official-site-logo-extract.mts';
+import {
+  extractOfficialSiteLogoUrls,
+  extractWikipediaLogoUrls,
+  upgradeWikimediaThumbToSourceUrl
+} from './official-site-logo-extract.mts';
 import { resolveImageSearchProvider } from './image-search.mts';
 import { enforceSingleCanonicalLogo, CANONICAL_LOGO_COUNT } from './logo-asset-rules.mts';
 import { pruneInvalidLogos, pruneNonWordmarkLogos } from './creative-native-assets-deterministic.mts';
@@ -34,18 +38,31 @@ async function tryLogoUrl (
   directoryPath: string,
   fileUrl: string,
   urlBySavedFile: Map<string, string>,
-  rejectedUrls: string[]
+  rejectedUrls: string[],
+  options: {
+    sourcePhase: 'official' | 'wikipedia' | 'brave';
+    officialHosts: readonly string[];
+  }
 ): Promise<boolean> {
-  const batch = await downloadUrlsToAssetFolder('logos', directoryPath, [ fileUrl ], {
+  let downloadUrl = fileUrl;
+  if (options.sourcePhase === 'wikipedia') {
+    const upgraded = upgradeWikimediaThumbToSourceUrl(fileUrl);
+    if (upgraded !== null) {
+      downloadUrl = upgraded;
+    }
+  }
+  const batch = await downloadUrlsToAssetFolder('logos', directoryPath, [ downloadUrl ], {
     validateDimensions: true,
-    rejectedUrls
+    rejectedUrls,
+    logoSourcePhase: options.sourcePhase,
+    officialHosts: options.officialHosts
   });
   if (batch.count === 0) {
     return false;
   }
   for (const name of listAssetImageFiles(directoryPath, 'logos')) {
     if (!urlBySavedFile.has(name)) {
-      urlBySavedFile.set(name, fileUrl);
+      urlBySavedFile.set(name, downloadUrl);
     }
   }
   return true;
@@ -67,6 +84,8 @@ export async function collectSingleTransparentLogo (
   let source: CollectSingleLogoResult['source'] = null;
 
   clearAssetSubdirectory(join(directoryPath, 'logos'));
+  const { clearLogoAssetSources } = await import('./logo-asset-sources.mts');
+  clearLogoAssetSources(directoryPath);
 
   const officialHosts = officialHostsFromContext(context);
   const officialUrls = await extractOfficialSiteLogoUrls(context);
@@ -84,7 +103,10 @@ export async function collectSingleTransparentLogo (
     if (officialHostTracker.isBlocked(fileUrl)) {
       continue;
     }
-    const ok = await tryLogoUrl(directoryPath, fileUrl, urlBySavedFile, rejectedUrls);
+    const ok = await tryLogoUrl(directoryPath, fileUrl, urlBySavedFile, rejectedUrls, {
+      sourcePhase: 'official',
+      officialHosts
+    });
     if (ok) {
       source = 'official';
       console.log(`[logo] Official site logo saved: ${fileUrl}`);
@@ -117,7 +139,10 @@ export async function collectSingleTransparentLogo (
       if (wikiHostTracker.isBlocked(fileUrl)) {
         continue;
       }
-      const ok = await tryLogoUrl(directoryPath, fileUrl, urlBySavedFile, rejectedUrls);
+      const ok = await tryLogoUrl(directoryPath, fileUrl, urlBySavedFile, rejectedUrls, {
+        sourcePhase: 'wikipedia',
+        officialHosts
+      });
       if (ok) {
         source = 'wikipedia';
         console.log(`[logo] Wikipedia logo saved: ${fileUrl}`);
@@ -160,7 +185,7 @@ export async function collectSingleTransparentLogo (
   }
 
   await pruneNonWordmarkLogos(directoryPath);
-  await pruneInvalidLogos(directoryPath);
+  await pruneInvalidLogos(directoryPath, officialHosts);
   const { kept, removed } = await enforceSingleCanonicalLogo(directoryPath);
   if (removed.length > 0) {
     console.log(`[logo] Canonical logo kept: ${kept ?? 'none'} (removed ${String(removed.length)} extra file(s))`);

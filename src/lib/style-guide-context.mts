@@ -77,6 +77,32 @@ export type ParsedStyleGuideContext = {
 const CATALOG_CAMPAIGN_RE =
   /\b(collection|campagne|campaign|lookbook|catalogue|catalog|saison|season|été|ete|summer|spring|winter|holiday|plage|beach|promotion|promotions|offres?|coupons?|soldes|imbattable|deals|prospectus|arrivages?|hebdomadaire|weekly)\b/iu;
 
+/** French film promo phrasing — not a retail listing campaign. */
+const FILM_PROMOTION_RE = /\bpromotion\s+(?:du\s+)?(?:film|movie|cin[éè]ma)\b/iu;
+
+/** Film/series/theatrical — avoid generic tokens (saison, spectacle) that match theme parks. */
+const ENTERTAINMENT_CAMPAIGN_RE =
+  /\b(film|movie|cin[éè]ma|cinema|s[ée]ries?\s+(?:tv|t[eé]l[eé]|netflix|prime|disney\+?)|series\s+(?:tv|netflix)|trailer|poster|affiche\s+(?:du\s+)?film|sortie\s+(?:du\s+)?film|theatrical|rebooquel|key\s*art|blockbuster|acteurs?|actrices?)\b/iu;
+
+const EXPERIENCE_CAMPAIGN_RE =
+  /\b(parc\s+d['']?\s*attractions?|theme\s+park|amusement\s+park|parc\s+de\s+loisirs|zoo|aquarium|mus[eé]e|futuroscope|domaine\s+skiable|station\s+de\s+ski|walibi|ast[eé]rix|eurodisney|disneyland|attractions?\s+(?:aquatiques?|th[eé]matiques?)|billetterie|billet\s+d['']?\s*entr[eé]e|pass\s+saison|carte\s+cadeau\s+(?:parc|Walibi)|visite\s+(?:famille|parc)|man[eè]ge|roller\s+coaster)\b/iu;
+
+export type CampaignAssetProfile = 'retail' | 'entertainment' | 'experience';
+
+/** Trusted cinema / film-database hosts for poster and still images. */
+export const ENTERTAINMENT_VISUAL_HOST_SUFFIXES = [
+  'imdb.com',
+  'media-amazon.com',
+  'allocine.fr',
+  'acsta.net',
+  'impawards.com',
+  'themoviedb.org',
+  'tmdb.org'
+] as const;
+
+export const ENTERTAINMENT_DENIED_HOST_RE =
+  /(?:^|\.)redbubble\.|kindpng|pngaaa|pinterest\.|blogspot\.|discussingfilm\.|horreurnews\./iu;
+
 export type ProductMatchFields = {
   campaignContext?: string | null;
   productName?: string;
@@ -85,7 +111,48 @@ export type ProductMatchFields = {
   brandURL?: string;
   campaignReferenceUrl?: string | null;
   campaignUrls?: readonly string[];
+  /** Explicit profile from style guide; overrides heuristic detection when set. */
+  campaignAssetProfile?: CampaignAssetProfile;
 };
+
+/** Build ProductMatchFields without passing explicit `undefined` (exactOptionalPropertyTypes). */
+export function buildProductMatchFields (input: {
+  campaignContext?: string | null | undefined;
+  productName?: string | undefined;
+  brandName?: string | undefined;
+  brandContext?: string | undefined;
+  brandURL?: string | undefined;
+  campaignReferenceUrl?: string | null | undefined;
+  campaignUrls?: readonly string[] | undefined;
+  campaignAssetProfile?: CampaignAssetProfile | undefined;
+}): ProductMatchFields {
+  const out: ProductMatchFields = {};
+  if (input.campaignContext !== undefined) {
+    out.campaignContext = input.campaignContext;
+  }
+  if (input.productName !== undefined) {
+    out.productName = input.productName;
+  }
+  if (input.brandName !== undefined) {
+    out.brandName = input.brandName;
+  }
+  if (input.brandContext !== undefined) {
+    out.brandContext = input.brandContext;
+  }
+  if (input.brandURL !== undefined) {
+    out.brandURL = input.brandURL;
+  }
+  if (input.campaignReferenceUrl !== undefined) {
+    out.campaignReferenceUrl = input.campaignReferenceUrl;
+  }
+  if (input.campaignUrls !== undefined) {
+    out.campaignUrls = input.campaignUrls;
+  }
+  if (input.campaignAssetProfile !== undefined) {
+    out.campaignAssetProfile = input.campaignAssetProfile;
+  }
+  return out;
+}
 
 /** Extract campaign clause from a composed context prompt. */
 export function extractCampaignContextFromPrompt (prompt: string): string | null {
@@ -104,8 +171,99 @@ export function extractCampaignContextFromPrompt (prompt: string): string | null
   return null;
 }
 
+function campaignHaystack (fields: ProductMatchFields): string {
+  return [
+    fields.productName ?? '',
+    fields.campaignContext ?? '',
+    fields.brandContext ?? '',
+    fields.brandName ?? ''
+  ]
+    .join(' ')
+    .trim();
+}
+
+/** Film, series, or theatrical promo — not a retail product catalog. */
+export function isEntertainmentCampaign (fields: ProductMatchFields): boolean {
+  const hay = campaignHaystack(fields);
+  if (hay.length > 0 && FILM_PROMOTION_RE.test(hay)) {
+    return true;
+  }
+  if (hay.length > 0 && ENTERTAINMENT_CAMPAIGN_RE.test(hay)) {
+    return true;
+  }
+  const brandUrl = fields.brandURL?.trim() ?? '';
+  if (brandUrl.length > 0) {
+    try {
+      const host = new URL(brandUrl).hostname.toLowerCase();
+      if (host.endsWith('.film')) {
+        return true;
+      }
+    } catch {
+      // skip invalid URL
+    }
+  }
+  return false;
+}
+
+/** Theme parks, leisure venues, destinations, ticketing — not retail SKU catalogs. */
+export function isExperienceCampaign (fields: ProductMatchFields): boolean {
+  if (isEntertainmentCampaign(fields)) {
+    return false;
+  }
+  const hay = campaignHaystack(fields);
+  if (hay.length > 0 && EXPERIENCE_CAMPAIGN_RE.test(hay)) {
+    return true;
+  }
+  return false;
+}
+
+/** Resolve asset audit/describe profile: explicit field → entertainment → experience → retail. */
+export function resolveCampaignAssetProfile (fields: ProductMatchFields): CampaignAssetProfile {
+  const explicit = fields.campaignAssetProfile;
+  if (explicit === 'retail' || explicit === 'entertainment' || explicit === 'experience') {
+    return explicit;
+  }
+  if (isEntertainmentCampaign(fields)) {
+    return 'entertainment';
+  }
+  if (isExperienceCampaign(fields)) {
+    return 'experience';
+  }
+  return 'retail';
+}
+
+export function isEntertainmentVisualHost (url: string): boolean {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return ENTERTAINMENT_VISUAL_HOST_SUFFIXES.some(
+      (suffix) => host === suffix || host.endsWith(`.${suffix}`)
+    );
+  } catch {
+    return false;
+  }
+}
+
+export function isEntertainmentDeniedHost (url: string): boolean {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return ENTERTAINMENT_DENIED_HOST_RE.test(host) || ENTERTAINMENT_DENIED_HOST_RE.test(url);
+  } catch {
+    return false;
+  }
+}
+
+function isRetailCatalogContext (hay: string): boolean {
+  if (FILM_PROMOTION_RE.test(hay)) {
+    return false;
+  }
+  return CATALOG_CAMPAIGN_RE.test(hay);
+}
+
 /** Listing / multi-product campaign: reference URL and/or catalog-style context text. */
 export function isListingPageCampaign (fields: ProductMatchFields): boolean {
+  if (isEntertainmentCampaign(fields) || isExperienceCampaign(fields)) {
+    return false;
+  }
   if (resolveReferenceListingUrls(fields).length > 0) {
     return true;
   }
@@ -119,7 +277,7 @@ export function isListingPageCampaign (fields: ProductMatchFields): boolean {
   if (hay.length === 0) {
     return false;
   }
-  return CATALOG_CAMPAIGN_RE.test(hay);
+  return isRetailCatalogContext(hay);
 }
 
 /** @deprecated Use isListingPageCampaign — kept for existing imports. */
@@ -170,6 +328,85 @@ export function wouldPassListingProductAsset (params: {
     isProductAssetFromReferenceListing(params.entry, params.referenceListingUrls);
   const contextOk = scoreProductContextRelevance(sourceUrl, '', params.terms) >= minScore;
   return referenceProvenance || (hostOk && trustedOfficialVisual) || contextOk;
+}
+
+/** Hero poster / still validation for film and series campaigns. */
+export function wouldPassEntertainmentProductAsset (params: {
+  entry: ProductAssetSourceEntry | undefined;
+  sourceUrl: string;
+  referenceListingUrls: readonly string[];
+  officialHosts: readonly string[];
+  terms: readonly string[];
+  minScore?: number;
+  sourceTitle?: string;
+}): boolean {
+  const sourceUrl = params.sourceUrl.trim();
+  if (sourceUrl.length === 0 || isEntertainmentDeniedHost(sourceUrl)) {
+    return false;
+  }
+  const minScore = params.minScore ?? productMinRelevanceScore();
+  const title = params.sourceTitle?.trim() ?? params.entry?.sourceTitle?.trim() ?? '';
+  const relevance = scoreProductContextRelevance(sourceUrl, title, params.terms);
+
+  if (
+    params.entry !== undefined &&
+    isProductAssetFromReferenceListing(params.entry, params.referenceListingUrls)
+  ) {
+    return true;
+  }
+  if (params.officialHosts.length > 0) {
+    if (isOfficialHostCampaignOrProductImageUrl(sourceUrl, params.officialHosts)) {
+      return true;
+    }
+    if (
+      hostOnOfficialList(sourceUrl, params.officialHosts) &&
+      relevance >= minScore
+    ) {
+      return true;
+    }
+  }
+  if (isEntertainmentVisualHost(sourceUrl) && relevance >= minScore) {
+    return true;
+  }
+  if (isEntertainmentVisualHost(sourceUrl) && title.length > 0 && relevance >= minScore - 8) {
+    return true;
+  }
+  return relevance >= minScore + 15;
+}
+
+/** Attraction / park promo visuals — official site lifestyle and campaign photos. */
+export function wouldPassExperienceProductAsset (params: {
+  entry: ProductAssetSourceEntry | undefined;
+  sourceUrl: string;
+  referenceListingUrls: readonly string[];
+  officialHosts: readonly string[];
+  terms: readonly string[];
+  minScore?: number;
+  sourceTitle?: string;
+}): boolean {
+  const sourceUrl = params.sourceUrl.trim();
+  if (sourceUrl.length === 0) {
+    return false;
+  }
+  const minScore = params.minScore ?? productMinRelevanceScore();
+  const title = params.sourceTitle?.trim() ?? params.entry?.sourceTitle?.trim() ?? '';
+  const relevance = scoreProductContextRelevance(sourceUrl, title, params.terms);
+
+  if (
+    params.entry !== undefined &&
+    isProductAssetFromReferenceListing(params.entry, params.referenceListingUrls)
+  ) {
+    return true;
+  }
+  if (params.officialHosts.length > 0) {
+    if (isOfficialHostCampaignOrProductImageUrl(sourceUrl, params.officialHosts)) {
+      return true;
+    }
+    if (hostOnOfficialList(sourceUrl, params.officialHosts) && relevance >= minScore - 4) {
+      return true;
+    }
+  }
+  return relevance >= minScore;
 }
 
 export function parseStyleGuideContextPrompt (
@@ -436,6 +673,22 @@ export function isOfficialBrandProductImageUrl (
       return false;
     }
     const lower = url.toLowerCase();
+    const host = new URL(url).hostname.toLowerCase();
+    if (host.startsWith('media.') && hostOnOfficialList(url, officialHosts)) {
+      if (/\/is\/image\//iu.test(lower)) {
+        return true;
+      }
+      if (/\.(?:jpe?g|png|webp)(?:\?|$)/iu.test(lower)) {
+        return true;
+      }
+    }
+    if (
+      /\/content\/dam\//iu.test(lower) &&
+      /\.(?:jpe?g|png|webp)(?:\?|$)/iu.test(lower) &&
+      !/(?:^|\/)(?:logo|master\/home\/[^/]*logo)/iu.test(lower)
+    ) {
+      return true;
+    }
     return (
       /\/dw\/image\//iu.test(lower) ||
       /\/on\/demandware\.static\//iu.test(lower) ||

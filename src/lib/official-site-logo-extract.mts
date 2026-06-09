@@ -1,6 +1,7 @@
 import type { ImageSearchContext } from './brave-image-assets.mts';
 import { isUntrustedLogoUrl } from './logo-transparency-check.mts';
 import { officialPageFetchHeaders } from './official-fetch.mts';
+import { isTextOnlyCategoryNavProductAsset } from './product-asset-rules.mts';
 import { pageUrlsMatchForBoost, resolveReferenceListingUrls } from './reference-listing-urls.mts';
 
 const FETCH_TIMEOUT_MS = 20_000;
@@ -114,7 +115,53 @@ export function dedupeProductUrlKey (url: string): string {
 
 export function isLowValueOfficialProductUrl (url: string): boolean {
   const lower = url.toLowerCase();
-  return /\/iris\.png(\?|$)/iu.test(lower) || /resize,width=48/iu.test(lower);
+  if (isTextOnlyCategoryNavProductAsset(url)) {
+    return true;
+  }
+  if (/\/iris\.png(\?|$)/iu.test(lower) || /resize,width=48/iu.test(lower)) {
+    return true;
+  }
+  if (isOfficialSiteLogoAssetUrl(url)) {
+    return true;
+  }
+  return false;
+}
+
+/** True when URL path looks like a brand header/wordmark asset, not a product hero. */
+export function isOfficialSiteLogoAssetUrl (url: string): boolean {
+  const lower = url.toLowerCase();
+  return (
+    /[-_]logo[-_.]|logo[-_]alt|logo_alt/iu.test(lower) ||
+    /\/master\/home\/[^/]*logo|\/home\/[^/]*logo[-_]/iu.test(lower) ||
+    /logo-petit|\/logo[./_-]|logo\.svg|wordmark|brand-logo|site-logo/iu.test(lower)
+  );
+}
+
+/**
+ * Wikimedia thumbnail → source file (e.g. …/thumb/…/File.svg/120px-File.svg.png → …/File.svg).
+ */
+export function upgradeWikimediaThumbToSourceUrl (url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    if (!/upload\.wikimedia\.org$/iu.test(parsed.hostname)) {
+      return null;
+    }
+    const match =
+      /^\/wikipedia\/([^/]+)\/thumb\/((?:[^/]+\/){2}[^/]+)\/(?:[\w-]+-)?\d+px-[^/]+$/iu.exec(
+        parsed.pathname
+      );
+    if (match === null) {
+      return null;
+    }
+    const lang = match[1];
+    const filePath = match[2];
+    if (lang === undefined || filePath === undefined) {
+      return null;
+    }
+    return `https://upload.wikimedia.org/wikipedia/${lang}/${filePath}`;
+  } catch {
+    return null;
+  }
 }
 
 /** Wikipedia article slug from brand or company name (spaces → underscores). */
@@ -222,7 +269,10 @@ function urlHostAllowed (
   }
 }
 
-function scoreLogoUrl (url: string, hints: { classHint?: string; inHeader?: boolean }): number {
+function scoreLogoUrl (
+  url: string,
+  hints: { classHint?: string; inHeader?: boolean; brandName?: string }
+): number {
   const lower = url.toLowerCase();
   let score = 0;
 
@@ -249,6 +299,31 @@ function scoreLogoUrl (url: string, hints: { classHint?: string; inHeader?: bool
     score += 75;
   }
 
+  if (/logo-site|\/matnet\/logo\//iu.test(lower)) {
+    score += 60;
+  }
+
+  const brand = hints.brandName?.trim() ?? '';
+  if (brand.length > 0) {
+    const brandToken = brand
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/\p{M}/gu, '')
+      .replace(/\s+/gu, '');
+    if (brandToken.length >= 4 && lower.includes(brandToken)) {
+      score += 45;
+    }
+    const brandParts = brand
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/\p{M}/gu, '')
+      .split(/[^a-z0-9]+/u)
+      .filter((t) => t.length >= 4);
+    if (brandParts.some((t) => lower.includes(t))) {
+      score += 25;
+    }
+  }
+
   if (/kungscissus|\/images\/kung|plant[-_]|decorative|campaign[-_]asset|startpage|thumbnail/iu.test(lower)) {
     score -= 90;
   }
@@ -268,7 +343,8 @@ function extractLogoAssetPathsFromHeaderHtml (
   html: string,
   pageUrl: string,
   officialHosts: readonly string[],
-  bucket: Map<string, ScoredLogoUrl>
+  bucket: Map<string, ScoredLogoUrl>,
+  brandName = ''
 ): void {
   const headerSlice = html.slice(0, Math.min(html.length, 160_000));
   const attrRe = /(?:href|src|content)\s*=\s*["']([^"']+)["']/giu;
@@ -279,13 +355,18 @@ function extractLogoAssetPathsFromHeaderHtml (
       continue;
     }
     const lower = raw.toLowerCase();
-    const isBrandSvg =
-      /\.svg($|[?#])/iu.test(lower) &&
-      (/\/assets\/logos\//iu.test(lower) || /\/logo|wordmark|brand-logo/iu.test(lower));
-    if (!isBrandSvg) {
+    const isBrandLogoAsset =
+      (/\.(svg|png|jpe?g|webp)($|[?#])/iu.test(lower)) &&
+      (/\/assets\/logos\//iu.test(lower) ||
+        /\/logo|wordmark|brand-logo|logo-site|\/matnet\/logo\//iu.test(lower));
+    if (!isBrandLogoAsset) {
       continue;
     }
-    pushCandidate(bucket, pageUrl, raw, officialHosts, { inHeader: true, classHint: 'brand-logo-path' });
+    pushCandidate(bucket, pageUrl, raw, officialHosts, {
+      inHeader: true,
+      classHint: 'brand-logo-path',
+      brandName
+    });
   }
 }
 
@@ -320,7 +401,7 @@ function pushCandidate (
   pageUrl: string,
   rawSrc: string,
   officialHosts: readonly string[],
-  hints: { classHint?: string; inHeader?: boolean }
+  hints: { classHint?: string; inHeader?: boolean; brandName?: string }
 ): void {
   const absolute = resolveAbsoluteUrl(pageUrl, rawSrc);
   if (absolute === null || !/^https?:\/\//iu.test(absolute)) {
@@ -343,15 +424,66 @@ function pushCandidate (
   }
 }
 
+function isFilmMicrositePage (pageUrl: string): boolean {
+  try {
+    return new URL(pageUrl).hostname.toLowerCase().endsWith('.film');
+  } catch {
+    return false;
+  }
+}
+
+function extractOgImageCandidates (
+  html: string,
+  pageUrl: string,
+  officialHosts: readonly string[],
+  bucket: Map<string, ScoredLogoUrl>,
+  options: { brandName?: string; scoreBoost?: number; classHint?: string }
+): void {
+  const ogRe =
+    /<meta[^>]+(?:property|name)\s*=\s*["'](?:og:image|twitter:image)["'][^>]+content\s*=\s*["']([^"']+)["'][^>]*>/giu;
+  let ogMatch: RegExpExecArray | null;
+  while ((ogMatch = ogRe.exec(html)) !== null) {
+    const src = ogMatch[1];
+    if (src === undefined) {
+      continue;
+    }
+    pushCandidate(bucket, pageUrl, src, officialHosts, {
+      classHint: options.classHint ?? 'og:image',
+      ...(options.brandName !== undefined ? { brandName: options.brandName } : {}),
+      inHeader: true
+    });
+    const absolute = resolveAbsoluteUrl(pageUrl, src);
+    if (absolute !== null) {
+      const existing = bucket.get(absolute);
+      if (existing !== undefined && options.scoreBoost !== undefined) {
+        bucket.set(absolute, {
+          ...existing,
+          score: existing.score + options.scoreBoost
+        });
+      }
+    }
+  }
+}
+
 /** Parse homepage HTML for header lockup patterns (primary-logo, logo-container, img.logo-simple, etc.). */
 export function extractLogoCandidatesFromHtml (
   html: string,
   pageUrl: string,
-  officialHosts: readonly string[]
+  officialHosts: readonly string[],
+  options?: { brandName?: string }
 ): ScoredLogoUrl[] {
   const bucket = new Map<string, ScoredLogoUrl>();
+  const brandName = options?.brandName?.trim() ?? '';
 
-  extractLogoAssetPathsFromHeaderHtml(html, pageUrl, officialHosts, bucket);
+  if (isFilmMicrositePage(pageUrl)) {
+    extractOgImageCandidates(html, pageUrl, officialHosts, bucket, {
+      brandName,
+      scoreBoost: 80,
+      classHint: 'film-og:title-treatment'
+    });
+  }
+
+  extractLogoAssetPathsFromHeaderHtml(html, pageUrl, officialHosts, bucket, brandName);
 
   for (const hint of LOGO_CLASS_HINTS) {
     const containerRe = new RegExp(
@@ -365,7 +497,7 @@ export function extractLogoCandidatesFromHtml (
       if (imgMatch !== null) {
         const src = extractSrcFromImgTag(imgMatch[0]);
         if (src !== null) {
-          pushCandidate(bucket, pageUrl, src, officialHosts, { classHint: hint });
+          pushCandidate(bucket, pageUrl, src, officialHosts, { classHint: hint, brandName });
         }
       }
     }
@@ -400,7 +532,8 @@ export function extractLogoCandidatesFromHtml (
       officialHosts,
       {
         ...(classHint !== undefined ? { classHint } : {}),
-        ...(inHeader ? { inHeader: true } : {})
+        ...(inHeader ? { inHeader: true } : {}),
+        brandName
       }
     );
   }
@@ -467,15 +600,21 @@ export function officialPageUrlsFromContext (context: ImageSearchContext): strin
   ].filter((u): u is string => u !== undefined && u.trim().length > 0);
 
   const rawUrls: (string | undefined)[] = [
+    context.brandURL,
     context.campaignReferenceUrl,
-    ...(context.campaignUrls ?? []),
-    context.brandURL
+    ...(context.campaignUrls ?? [])
   ];
   const companyUrl = context.companyURL?.trim() ?? '';
+  const brandUrl = context.brandURL?.trim() ?? '';
   if (companyUrl.length > 0) {
     const skipCompany =
       primaryRefs.length > 0 && !companyUrlMatchesPrimaryHosts(companyUrl, primaryRefs);
-    if (!skipCompany) {
+    const sameAsBrand =
+      brandUrl.length > 0 &&
+      companyUrl.replace(/\/+$/u, '').toLowerCase() === brandUrl.replace(/\/+$/u, '').toLowerCase();
+    if (!skipCompany && !sameAsBrand) {
+      rawUrls.push(context.companyURL);
+    } else if (!skipCompany && sameAsBrand && !rawUrls.includes(context.companyURL)) {
       rawUrls.push(context.companyURL);
     }
   }
@@ -662,6 +801,20 @@ async function scrapePagesForCandidates (params: {
   };
 }
 
+/** Score boost when a Wikimedia logo URL suggests a recent rebrand (current year ± few years). */
+function wikipediaRecentLogoYearBoost (urlLower: string): number {
+  const currentYear = new Date().getFullYear();
+  for (let y = currentYear; y >= currentYear - 5; y--) {
+    if (urlLower.includes(String(y))) {
+      return 40;
+    }
+  }
+  if (/new[-_]?lion|shield/iu.test(urlLower)) {
+    return 40;
+  }
+  return 0;
+}
+
 /** Wikipedia / Wikimedia: infobox image, og:image, logo filenames on upload.wikimedia.org. */
 export function extractFallbackLogoCandidatesFromHtml (
   html: string,
@@ -683,6 +836,16 @@ export function extractFallbackLogoCandidatesFromHtml (
     }
     if (/\/logo|wordmark|brand[_-]?logo/iu.test(lower)) {
       s += 25;
+    }
+    if (/[_-]logo(?:[._-]|$)/iu.test(lower)) {
+      s += 25;
+    }
+    s += wikipediaRecentLogoYearBoost(lower);
+    if (/depuis_2010|first_logo|logo_1810|logo_depuis/iu.test(lower)) {
+      s -= 100;
+    }
+    if (/\/thumb\//iu.test(lower) || /\d+px-/iu.test(lower)) {
+      s -= 30;
     }
     if (isUntrustedLogoUrl(absolute)) {
       s -= 400;
@@ -770,11 +933,13 @@ export async function extractOfficialSiteLogoUrls (context: ImageSearchContext):
   }
 
   const officialHosts = hostsFromContext(context);
+  const brandName = context.brandName?.trim() ?? '';
   const { candidates } = await scrapePagesForCandidates({
     pageUrls: officialPageUrlsFromContext(context),
     logTag: 'official-logo',
     allowedHosts: officialHosts,
-    extract: extractLogoCandidatesFromHtml
+    extract: (html, pageUrl, hosts) =>
+      extractLogoCandidatesFromHtml(html, pageUrl, hosts, { brandName })
   });
 
   return mergeCandidates(candidates);
@@ -831,7 +996,7 @@ function scoreProductImageUrl (url: string): number {
   if (/product|packshot|hero|catalogue|media|cdn/iu.test(lower)) {
     score += 15;
   }
-  if (/logo-petit|\/logo[./_-]|logo\.svg/iu.test(lower)) {
+  if (isOfficialSiteLogoAssetUrl(url)) {
     score -= 120;
   }
   if (isUntrustedLogoUrl(url)) {
@@ -847,6 +1012,7 @@ export function extractProductCandidatesFromHtml (
 ): ScoredLogoUrl[] {
   const bucket = new Map<string, ScoredLogoUrl>();
 
+  const ogBoost = isFilmMicrositePage(pageUrl) ? 60 : 0;
   const ogRe =
     /<meta[^>]+(?:property|name)\s*=\s*["'](?:og:image|twitter:image)["'][^>]+content\s*=\s*["']([^"']+)["'][^>]*>/giu;
   let ogMatch: RegExpExecArray | null;
@@ -859,9 +1025,13 @@ export function extractProductCandidatesFromHtml (
     if (absolute === null || !urlHostAllowed(absolute, officialHosts, pageUrl)) {
       continue;
     }
-    const score = scoreProductImageUrl(absolute);
+    const score = scoreProductImageUrl(absolute) + ogBoost;
     if (score >= 10) {
-      bucket.set(absolute, { url: absolute, score, reason: 'og:image' });
+      bucket.set(absolute, {
+        url: absolute,
+        score,
+        reason: isFilmMicrositePage(pageUrl) ? 'film-og:image' : 'og:image'
+      });
     }
   }
 

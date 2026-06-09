@@ -3,7 +3,11 @@ import type { AdFormatSelection } from './studio-ad-formats.mts';
 import { buildCreativeAdFormatInstructions } from './studio-ad-formats.mts';
 import { CREATIVE_DESIGN_SKILLS_COMPACT, isFullSkillsModeEnabled } from './creative-native-skills-compact.mts';
 import { loadDesignSkillGuidance } from './creative-native-skills.mts';
-import { buildStyleGuideColorConstraintText, type StyleGuidePalettes } from './style-guide-colors.mts';
+import {
+  buildStyleGuideColorConstraintText,
+  type StyleGuideCodegenHints
+} from './style-guide-colors.mts';
+import { buildStyleGuideFontConstraintText } from './style-guide-typography.mts';
 import type { Anthropic } from '@anthropic-ai/sdk';
 
 export const DEFAULT_CREATIVE_MODEL = 'claude-opus-4-6';
@@ -17,8 +21,7 @@ export function resolveCreativeModel (isRegen: boolean): string {
   return fromEnv !== undefined && fromEnv.length > 0 ? fromEnv : DEFAULT_CREATIVE_MODEL;
 }
 
-/** Dynamic creative-version rule from actual IAB format count. */
-/** Campaign product hero — required in layout when product assets exist. */
+/** Campaign product visuals — integrate prominently; multi-asset layouts encouraged. */
 export function buildCampaignProductHeroInstruction (
   prunedStyleGuide: Pick<StyleGuide, 'productName' | 'brandName'>
 ): string {
@@ -27,14 +30,27 @@ export function buildCampaignProductHeroInstruction (
   const label = product.length > 0 ? product : brand;
   if (label.length === 0) {
     return (
-      'Use at least one image from the provided product assets as a visible hero '
-      + '(large packshot) in each format that has room for product focus.'
+      'Integrate at least one product visual from the provided assets in each ad format. '
+      + 'When multiple product images are available, use them creatively (carousel, gallery, hero + vignettes, etc.).'
     );
   }
   return (
-    `Campaign focus: "${label}". Each format MUST show a prominent product hero using a file from products/ `
-    + '(relative path ./filename.jpg). Tall formats (e.g. 300×600): dedicate clear vertical space to the packshot. '
+    `Campaign focus: "${label}". Each format must include at least one product visual from products/ `
+    + '(relative path ./filename.jpg). When several assets are provided, combine them freely — '
+    + 'carousel, slideshow, animated grid, or layered hero are all valid. '
     + 'Do not substitute unrelated stock imagery.'
+  );
+}
+
+/** Positive instruction when multiple product assets are available. */
+export function buildMultiAssetCreativeInstruction (productAssetCount: number): string {
+  if (productAssetCount <= 1) {
+    return '';
+  }
+  return (
+    `You have ${String(productAssetCount)} validated product visuals. Use them freely: `
+    + 'carousel, slideshow, animated grid, hero + thumbnails, crossfade, and similar dynamic layouts. '
+    + 'Combine multiple images when the format supports it.'
   );
 }
 
@@ -42,8 +58,8 @@ export function buildCreativeVersionsInstruction (formats: readonly AdFormatSele
   const n = formats.length;
   if (n <= 1) {
     return (
-      'Create **1 primary creative layout** for the required ad frame. ' +
-      'You may add **at most 1 alternate variant** (e.g. A/B toggle) inside the same viewport — do not build 4 unrelated full layouts.'
+      'Create a dynamic, interactive creative layout for the required ad frame. ' +
+      'Carousels, slideshows, animated reveals, and micro-interactions are encouraged when multiple product assets are available.'
     );
   }
   if (n === 2) {
@@ -73,7 +89,7 @@ export type CodegenSystemParts = {
 export function buildRegenPatchSystemPrompt (params: {
   adFormats: readonly AdFormatSelection[];
   skillsText: string;
-  styleGuide: StyleGuidePalettes;
+  styleGuide: StyleGuideCodegenHints;
 }): string {
   return `You are patching an existing HTML5/CSS/JS advertisement bundle after a visual UI review.
 
@@ -96,7 +112,9 @@ ${buildCreativeAdFormatInstructions(params.adFormats)}
 
 ${buildStyleGuideColorConstraintText(params.styleGuide)}
 
-Fonts: only typography families listed in the style guide. Ad copy in French.
+${buildStyleGuideFontConstraintText(params.styleGuide)}
+
+Ad copy in French.
 Follow design skills for compliance on what you touch:
 ${params.skillsText}`.trim();
 }
@@ -105,7 +123,8 @@ export function buildCodegenSystemParts (params: {
   isRegen: boolean;
   adFormats: readonly AdFormatSelection[];
   skillsText: string;
-  styleGuide: StyleGuidePalettes;
+  styleGuide: StyleGuideCodegenHints;
+  productAssetCount?: number;
 }): CodegenSystemParts {
   if (params.isRegen) {
     return {
@@ -118,6 +137,9 @@ export function buildCodegenSystemParts (params: {
     };
   }
 
+  const productAssetCount = params.productAssetCount ?? 0;
+  const multiAssetInstruction = buildMultiAssetCreativeInstruction(productAssetCount);
+
   const staticBlock = `You are an agent that invents modern interactive advertisement creatives.
 
 Required stack: plain HTML5, CSS, and JavaScript only. No React, Vue, Svelte, no Vite/Webpack,
@@ -127,12 +149,12 @@ no Tailwind/DaisyUI/npm dependencies, no JSX/TSX, no build step. The result must
 Assets: use ONLY the local logo and product files described in the user message (already downloaded and pre-described).
 The "Visual description (authoritative)" lines in the user message are the ground truth for each asset — do NOT re-scan, re-describe, or infer new pixels; use only those descriptions and the local paths (e.g. ./product.jpg).
 Do NOT search the web for new images, fonts, or brand facts — everything needed is in the style guide JSON and local assets.
-
+${multiAssetInstruction.length > 0 ? `\n${multiAssetInstruction}\n` : ''}
 ${buildCreativeVersionsInstruction(params.adFormats)}
 
 Graphic elements (fonts, colors, pictures) must follow only the JSON style guide from the user.
-The layout and interaction design are up to you: fresh, modern, eye-catching, with animation and
-interactivity where appropriate.
+Layout and interaction design are your creative choice: fresh, modern, eye-catching — use animation,
+carousels, transitions, and micro-interactions where they strengthen the ad.
 Only use one logo image by default the light theme only; if the logo is not visible in the light theme, use the dark theme.
 The logo should remain visible at a good scale; do not apply filters to the logo.
 Logo and product images are local files copied next to index.html under code/. Reference them with
@@ -153,17 +175,26 @@ Fonts and colors: use ONLY hex colors from the closed allowlist in the user mess
 For gradients/shadows use opacity or rgba() derived from a palette hex — never invent new hex codes.
 Ad copy in French.
 Include at least one logo and one product image from the provided assets in the HTML/CSS/JS.
-Product hero requirement is detailed in the user message (campaign product instruction).
+Product visual integration is detailed in the user message (campaign product instruction).
 Do not add browser chrome: no zoom, fullscreen, or VR toggles in the creative UI.
 
-The design skills below are mandatory constraints.
-Before returning final files, internally run a compliance check against these skills.
-If any skill rule is not satisfied, keep refining and do not finalize.
-Use only typography families listed in the style guide.
-Follow the design skills below for layout, color, typography, hierarchy, animation, and interaction:
+Gallery export (generic-config.json): follow style-guide-ui/public/ad-format-json-reference.md —
+stable semantic classes: .eyebrow, .headline (accent inside <em> for headlineAccent), .subhead,
+.body-copy, .ad-footer span for footer copy; plain Unicode in copy (no &amp; / &nbsp; in text nodes).
+CTA: <a class="cta-btn" href="…"><span class="cta-label">Label</span></a> (export binds ctaText on the anchor only).
+Skip non-editable chrome in the ad frame: no aria-hidden decorative layers (floating bubbles),
+no ::before gradient strips on the ad root, no preview-only border-radius/box-shadow on the IAB wrapper.
+
+The design skills below are brand compliance rules (colors, typography, logo visibility, IAB dimensions).
+Prioritize creative layout and dynamic interactions; technical consistency is validated by the pipeline after generation.
+Load brand typography via Google Fonts CDN only (see user message font constraints — no proprietary font names in CSS).
+Follow the design skills below for brand compliance on color, typography, hierarchy, and interaction polish:
 ${params.skillsText}`.trim();
 
-  const dynamicBlock = buildStyleGuideColorConstraintText(params.styleGuide);
+  const dynamicBlock = [
+    buildStyleGuideColorConstraintText(params.styleGuide),
+    buildStyleGuideFontConstraintText(params.styleGuide)
+  ].join('\n\n');
 
   return { staticBlock, dynamicBlock };
 }

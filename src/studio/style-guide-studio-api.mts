@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { spawn } from 'node:child_process';
-import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { basename, join, relative } from 'node:path';
 import { config as loadDotenv } from 'dotenv';
 import Express from 'express';
@@ -20,6 +20,13 @@ import {
   listCodeVersions,
   resolveCodeDirectory
 } from '../lib/creative-code-versions.mts';
+import {
+  buildGenericAdConfig,
+  genericConfigFilePath,
+  getUnboundGenericConfigKeysError,
+  isGenericConfigFileFresh,
+  readGenericAdConfigFile
+} from '../lib/generic-ad-config.mts';
 import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
 
 const repoRoot = repoRootFromModuleDir(import.meta.dirname);
@@ -994,6 +1001,69 @@ app.get('/api/output/index-html-previews', (_req, res) => {
     res.json({ previews: listOutputIndexHtmlPreviews() });
   } catch (e) {
     res.status(500).json({ error: e instanceof Error ? e.message : String(e) });
+  }
+});
+
+app.get('/api/output/:folderName/generic-config', (req, res) => {
+  const folderName = req.params['folderName'];
+  if (folderName === undefined || !isSafeOutputFolderSegment(folderName)) {
+    res.status(400).json({ error: 'Invalid folder name.' });
+    return;
+  }
+  const outputRunDir = join(outputDir, folderName);
+  if (!existsSync(outputRunDir)) {
+    res.status(404).json({ error: 'Output folder not found.' });
+    return;
+  }
+  const versionRaw = req.query['version'];
+  const versionHint =
+    typeof versionRaw === 'string'
+      ? versionRaw
+      : Array.isArray(versionRaw) && typeof versionRaw[0] === 'string'
+        ? versionRaw[0]
+        : undefined;
+  const bundleDir = resolveCodeDirectory(outputRunDir, versionHint);
+  if (bundleDir === null) {
+    res.status(404).json({
+      error: 'No creative code version found. Run creative generation first.'
+    });
+    return;
+  }
+  try {
+    let config = buildGenericAdConfig({ bundleDir, outputRunDir });
+    if (isGenericConfigFileFresh(bundleDir)) {
+      try {
+        const cached = readGenericAdConfigFile(bundleDir);
+        const dimsMatch =
+          cached.dimensions.width === config.dimensions.width
+          && cached.dimensions.height === config.dimensions.height;
+        if (getUnboundGenericConfigKeysError(cached) === null && dimsMatch) {
+          config = cached;
+        }
+      } catch {
+        // unreadable cache — use rebuilt config
+      }
+    }
+    writeFileSync(
+      genericConfigFilePath(bundleDir),
+      `${JSON.stringify(config, null, 2)}\n`,
+      { encoding: 'utf8' }
+    );
+    const versionId =
+      versionHint !== undefined && versionHint.trim().length > 0
+        ? versionHint.trim()
+        : (listCodeVersions(outputRunDir).at(-1)?.versionId ?? 'V1');
+    const filename = `${folderName}-${versionId}-generic-config.json`;
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send(JSON.stringify(config, null, 2));
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    if (message.includes('Missing required file')) {
+      res.status(404).json({ error: message });
+      return;
+    }
+    res.status(500).json({ error: message });
   }
 });
 

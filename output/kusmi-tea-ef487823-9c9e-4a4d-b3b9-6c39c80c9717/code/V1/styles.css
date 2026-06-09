@@ -1,0 +1,261 @@
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F4E4D4;
+  font-family: "Montserrat", sans-serif;
+}
+
+/* ===== Ad Frame ===== */
+#ad-320x480 {
+  width: 320px;
+  height: 480px;
+  position: relative;
+  overflow: hidden;
+  background: #FFFFFF;
+  border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(26,26,26,0.18);
+}
+
+/* ===== Background Bubbles ===== */
+.bg-bubbles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.18;
+  animation: floatBubble linear infinite;
+}
+.b1 { width:48px; height:48px; background:#F7C548; left:8%;  animation-duration:7s;  animation-delay:0s;   bottom:-60px; }
+.b2 { width:32px; height:32px; background:#F9A03F; left:25%; animation-duration:9s;  animation-delay:1.5s; bottom:-60px; }
+.b3 { width:56px; height:56px; background:#C8A2C8; left:55%; animation-duration:8s;  animation-delay:0.8s; bottom:-60px; }
+.b4 { width:24px; height:24px; background:#8BC34A; left:72%; animation-duration:6s;  animation-delay:2s;   bottom:-60px; }
+.b5 { width:40px; height:40px; background:#FF6F61; left:85%; animation-duration:10s; animation-delay:0.3s; bottom:-60px; }
+.b6 { width:20px; height:20px; background:#F7C548; left:42%; animation-duration:7.5s;animation-delay:3s;   bottom:-60px; }
+
+@keyframes floatBubble {
+  0%   { transform: translateY(0)   scale(1);   opacity: 0.18; }
+  50%  { opacity: 0.28; }
+  100% { transform: translateY(-560px) scale(1.1); opacity: 0; }
+}
+
+/* ===== Header ===== */
+.ad-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px 8px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(4px);
+}
+.logo {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+}
+.badge {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: #FFFFFF;
+  background: #C8102E;
+  padding: 3px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  animation: badgePulse 2.4s ease-in-out infinite;
+}
+@keyframes badgePulse {
+  0%,100% { transform: scale(1); }
+  50%      { transform: scale(1.08); }
+}
+
+/* ===== Hero Image ===== */
+.hero-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 248px;
+  overflow: hidden;
+  z-index: 1;
+}
+.hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  transition: transform 0.7s ease, opacity 0.5s ease;
+  animation: heroZoom 12s ease-in-out infinite alternate;
+}
+@keyframes heroZoom {
+  from { transform: scale(1); }
+  to   { transform: scale(1.06); }
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0) 30%,
+    rgba(255,255,255,0.97) 100%
+  );
+}
+
+/* ===== Ad Content ===== */
+.ad-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  padding: 0 16px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.eyebrow {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #F9A03F;
+  margin-bottom: 0;
+}
+
+.headline {
+  font-family: "Playfair Display", sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.15;
+  color: #1A1A1A;
+  text-align: center;
+}
+.headline em {
+  font-style: italic;
+  font-family: "Playfair Display", sans-serif;
+  font-weight: 700;
+  color: #C8102E;
+}
+
+.subline {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 1.55;
+  color: rgba(26,26,26,0.65);
+  text-align: center;
+}
+
+/* ===== Pills Carousel ===== */
+.pills-track {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  width: 100%;
+  scrollbar-width: none;
+  padding: 4px 0;
+  cursor: grab;
+}
+.pills-track::-webkit-scrollbar { display: none; }
+.pill {
+  flex-shrink: 0;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  color: #1A1A1A;
+  background: rgba(247,197,72,0.22);
+  border: 1.5px solid rgba(247,197,72,0.5);
+  border-radius: 20px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s, color 0.25s, transform 0.2s;
+  white-space: nowrap;
+  user-select: none;
+}
+.pill:hover {
+  background: #F7C548;
+  border-color: #F7C548;
+  transform: translateY(-1px);
+}
+.pill.active {
+  background: #C8102E;
+  border-color: #C8102E;
+  color: #FFFFFF;
+}
+
+/* ===== CTA Button ===== */
+.cta-btn {
+  display: inline-block;
+  margin-top: 4px;
+  margin-bottom: 20px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #FFFFFF;
+  background: #C8102E;
+  border: none;
+  border-radius: 40px;
+  padding: 12px 28px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 16px rgba(200,16,46,0.35);
+  animation: ctaGlow 3s ease-in-out infinite;
+}
+.cta-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.15);
+  transform: translateX(-100%);
+  transition: transform 0.4s ease;
+}
+.cta-btn:hover::after {
+  transform: translateX(0);
+}
+.cta-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(200,16,46,0.45);
+}
+.cta-btn:active {
+  transform: scale(0.97);
+}
+@keyframes ctaGlow {
+  0%,100% { box-shadow: 0 4px 16px rgba(200,16,46,0.35); }
+  50%      { box-shadow: 0 4px 28px rgba(200,16,46,0.6); }
+}
+
+/* ===== Hero swap transition ===== */
+.hero-img.fading {
+  opacity: 0;
+  transform: scale(1.04);
+}
+
+/* ===== Reduced motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  .bubble, .hero-img, .cta-btn, .badge { animation: none !important; }
+  .hero-img { transition: opacity 0.3s; }
+}

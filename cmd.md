@@ -20,13 +20,20 @@ src/
 | Fichier | Type | Rôle |
 |---------|------|------|
 | [`agents/gen-style-guide.mts`](src/agents/gen-style-guide.mts) | Script (entrée) | **Étape 1 — Style guide.** `STYLE_GUIDE_CONTEXT` + option `STYLE_GUIDE_REFERENCE_URL` → `style-guide.json` (`campaignReferenceUrl`) + assets. |
-| [`agents/run-style-guide-assets-review.mts`](src/agents/run-style-guide-assets-review.mts) | Script (entrée) | **Étape 2 — Review assets style guide** (léger) + `asset-descriptions.json`. |
+| [`agents/run-style-guide-assets-review.mts`](src/agents/run-style-guide-assets-review.mts) | Script (entrée) | **Étape 2 — Review assets style guide** : déterministe + describe Haiku + logo vision audit + lock logo + audit descriptions texte. Produit `asset-descriptions.json` et `assets-review-final.json`. |
+| [`lib/asset-descriptions-audit.mts`](src/lib/asset-descriptions-audit.mts) | Module | Audit texte des descriptions assets (profils retail / entertainment / experience). |
+| [`lib/logo-vision-audit.mts`](src/lib/logo-vision-audit.mts) | Module | Audit vision logo Haiku + `logo-lock.json` après validation. |
+| [`lib/style-guide-context.mts`](src/lib/style-guide-context.mts) | Module | Parse contexte studio, profils campagne (`retail` \| `entertainment` \| `experience`), termes de matching produit. |
 | [`lib/creative-asset-descriptions.mts`](src/lib/creative-asset-descriptions.mts) | Module | Descriptions vision Haiku pour la gen créative (batch). |
 | [`agents/run-creative-native-assets-review.mts`](src/agents/run-creative-native-assets-review.mts) | Script (legacy) | Review assets complète (CLI / debug ; plus dans le studio créatif). |
 | [`agents/creative-native-assets-review.mts`](src/agents/creative-native-assets-review.mts) | Module agent | Review assets Haiku + vision (utilisé par le script legacy). |
 | [`lib/creative-native-assets-deterministic.mts`](src/lib/creative-native-assets-deterministic.mts) | Module | Contrôles sans LLM. |
 | [`lib/brave-image-assets.mts`](src/lib/brave-image-assets.mts) | Module | Recherche / téléchargement / refresh Brave. |
-| [`agents/gen-creative-code-native.mts`](src/agents/gen-creative-code-native.mts) | Script (entrée) | **Étape 3 — Génération créative** (Opus). Texte seul : `asset-descriptions.json` + garde `assets-review-final.json`. |
+| [`agents/gen-creative-code-native.mts`](src/agents/gen-creative-code-native.mts) | Script (entrée) | **Étape 3 — Génération créative** (Opus). Texte seul : `asset-descriptions.json` + garde `assets-review-final.json`. Écrit aussi `generic-config.json` dans le bundle. |
+| [`lib/generic-ad-config.mts`](src/lib/generic-ad-config.mts) | Module | Export `generic-config.json` (schéma §2 ad-format-json-reference) depuis HTML/CSS/JS du bundle. |
+| [`lib/creative-bundle-assets.mts`](src/lib/creative-bundle-assets.mts) | Module | Sync assets locaux référencés dans le bundle `code/`. |
+| [`lib/creative-bundle-integrity.mts`](src/lib/creative-bundle-integrity.mts) | Module | Vérifications d’intégrité bundle (slides, assets manquants). |
+| [`lib/bundle-asset-refs.mts`](src/lib/bundle-asset-refs.mts) | Module | Parse des références `./asset.ext` dans HTML/CSS/JS. |
 | [`agents/run-creative-native-ui-review.mts`](src/agents/run-creative-native-ui-review.mts) | Script (entrée) | **Étape 4 — Review UI** (optionnel). |
 | [`lib/creative-native-playwright-screenshots.mts`](src/lib/creative-native-playwright-screenshots.mts) | Module | Captures Playwright. |
 | [`agents/creative-native-ui-review.mts`](src/agents/creative-native-ui-review.mts) | Module agent | Review UI (Haiku + vision). |
@@ -205,7 +212,7 @@ Logos : `gen-style-guide` ne garde qu’**un** wordmark (`targetCount: 1`) ; si 
 
 Produits : scrape `og:image` / JSON-LD Product sur brandURL avant Brave ; la gen code exige un **héros produit** depuis `products/` (voir message utilisateur dans `gen-creative-code-native.mts`).
 
-Tests unitaires : `npm test` (logo heuristics, extract HTML, compliance skills).
+Tests unitaires : `npm test` (découverte auto de `src/**/*.test.mts` → `build/src/**/*.test.mjs`).
 
 Pour forcer Sonnet en regen : `set CREATIVE_REGEN_MODEL=claude-sonnet-4-6` avant la review UI.
 
@@ -306,6 +313,8 @@ Puis lancer `style-guide-ui` (Vite).
 | `output/<uuid>/style-guide.json` | gen-style-guide |
 | `output/<uuid>/pipeline-usage.json` | Tous les agents (append cumulatif) |
 | `output/<uuid>/code/` | gen-creative-code-native |
+| `output/<uuid>/code/Vn/generic-config.json` | gen-creative-code-native, run-creative-native-ui-review |
+| `output/<uuid>/review/logo-lock.json` | run-style-guide-assets-review (logo validé) |
 | `output/<uuid>/creative-native-ad-formats.json` | gen-creative-code-native |
 | `output/<uuid>/creative-native-token-usage.json` | Dernière exécution gen native |
 | `output/<uuid>/review/screenshots/*.png` | Playwright (via run-creative-native-ui-review) |

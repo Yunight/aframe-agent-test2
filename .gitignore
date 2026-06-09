@@ -178,4 +178,7 @@ Temporary Items
 !.eslintrc.json
 !.vscode
 
+# Pipeline run artefacts (regenerate locally; keep fixtures/ if added later)
+#output/
+
 # End of https://www.toptal.com/developers/gitignore/api/node,osx

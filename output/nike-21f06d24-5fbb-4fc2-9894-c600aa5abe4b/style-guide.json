@@ -1,0 +1,97 @@
+{
+  "companyName": "NIKE, Inc.",
+  "companyContext": "American multinational corporation headquartered in Beaverton, Oregon, that designs, develops, manufactures and markets athletic footwear, apparel, equipment, accessories and services worldwide. NIKE, Inc. owns the Nike, Jordan and Converse brands.",
+  "companyURL": "https://www.nike.com/",
+  "brandName": "Nike",
+  "brandContext": "Nike is the flagship sportswear brand of NIKE, Inc., focused on innovative performance footwear, apparel and equipment for athletes across running, basketball, football, training, lifestyle and more. The 'Nouveautés' page on Nike France gathers all the brand's latest product launches (sneakers, apparel, accessories) for men, women and kids.",
+  "brandURL": "https://www.nike.com/fr/w/nouveau-3n82y",
+  "logoFileUrls": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Logo_NIKE.svg/langfr-250px-Logo_NIKE.svg.png"
+  ],
+  "productName": "Nouveautés Nike (New Arrivals)",
+  "campaignContext": "promotion des nouveautés chez nike",
+  "campaignReferenceUrl": "https://www.nike.com/fr/w/nouveau-3n82y",
+  "productPictureUrls": [
+    "https://static.nike.com/a/images/t_web_pw_592_v2/f_auto/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/6c61314a-1fba-476e-9816-e1e9dcb81c31/W+NK+STDO+FLC+MW+STD+PO+HDY.png",
+    "https://static.nike.com/a/images/t_web_pw_592_v2/f_auto/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/d267cd4e-0986-4504-aece-b943cfd1ef03/W+NK+STDO+FLC+MW+MR+STD+OH+PNT.png",
+    "https://static.nike.com/a/images/t_web_pw_592_v2/f_auto/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/acce7c12-12a0-423c-90ef-8b5097b8b99f/W+NK+STDO+FLC+MW+MR+STD+4+SHRT.png",
+    "https://static.nike.com/a/images/t_web_pw_592_v2/f_auto/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/329ba5a9-bda6-4428-b6c3-70fba55121cc/W+NK+STDO+FLC+MW+STD+FZ+HDY.png",
+    "https://static.nike.com/a/images/t_web_pw_592_v2/f_auto/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/ef2f4720-6ad2-4457-94b5-7a2390cf3cec/NIKE+MIND+001.png",
+    "https://static.nike.com/a/images/t_web_pw_592_v2/f_auto/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/1ce7c395-5692-4a9b-b9ae-5bc3ecb4a3f0/W+NIKE+MIND+001.png"
+  ],
+  "primaryColorPalette": [
+    "#111111",
+    "#FFFFFF",
+    "#FA5400"
+  ],
+  "secondaryColorPalette": [
+    "#757575",
+    "#E5E5E5",
+    "#F5F5F5",
+    "#000000",
+    "#CCCCCC"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Futura",
+      "fontWeight": 800,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Logotype / wordmark — historical Nike lockup uses a customized Futura Bold Condensed Oblique"
+    },
+    {
+      "fontFamily": "Trade Gothic",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Display & primary headings on Nike.com and campaign visuals (Trade Gothic Bold Condensed)"
+    },
+    {
+      "fontFamily": "Helvetica Now",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Secondary headings, product titles, navigation labels"
+    },
+    {
+      "fontFamily": "Helvetica",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions, UI text"
+    },
+    {
+      "fontFamily": "Helvetica",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Buttons, CTAs and emphasized inline text"
+    },
+    {
+      "fontFamily": "Palatino",
+      "fontWeight": 400,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Editorial accents / occasional campaign quotes"
+    }
+  ],
+  "brandVision": "To bring inspiration and innovation to every athlete in the world — if you have a body, you are an athlete. Nike empowers people through innovative products, services and experiences engineered for the future of sport.",
+  "brandValues": "Innovation, performance, inclusivity, sustainability, athletic excellence, boldness, empowerment and a relentless 'Just Do It' mindset that pushes athletes (and everyone) to surpass their limits.",
+  "logoImageSearchQueries": [
+    "Nike swoosh logo site:nike.com filetype:svg",
+    "Nike logo site:en.wikipedia.org",
+    "Nike swoosh black logo svg transparent",
+    "Nike logo site:commons.wikimedia.org svg",
+    "Nike Inc official logo vector",
+    "Nike swoosh wordmark transparent png"
+  ],
+  "productImageSearchQueries": [
+    "site:nike.com/fr nouveau nouveautés",
+    "Nike nouveautés 2026 sneakers site:nike.com",
+    "Nike new arrivals shoes packshot site:nike.com",
+    "Nike nouveau collection homme femme site:nike.com/fr",
+    "Nike latest release sneaker official product image",
+    "Nike nouveautés vêtements site:nike.com/fr",
+    "Nike new releases 2026 official press image",
+    "Nike just dropped sneakers hero image site:nike.com",
+    "Nike nouveau drop campaign visual"
+  ]
+}

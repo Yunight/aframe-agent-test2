@@ -1,0 +1,11 @@
+{
+  "review_phase": "style_guide",
+  "assets_review_rounds_run": 2,
+  "max_assets_review_rounds": 2,
+  "satisfied": true,
+  "logo_locked": true,
+  "summary": "Campaign meets retail ad requirements. All 5 product assets are valid packshots or lifestyle scenes showing the Peugeot 308 and 308 SW with visible merchandise. Logo asset is compliant. No duplicate SKUs detected—primary_product_name values correctly distinguish variants (308 vs 308 SW; 308 SW Hybride is a sub-variant). Asset count exceeds minimum threshold. Logo audit complete. The submitted Peugeot_2021_Logo.svg file displays the official Peugeot brand lockup with the iconic lion shield (blason) and wordmark \"PEUGEOT\" in the correct style guide identity. The logo features the illuminated lion icon, characteristic sharp lines, and proper black/white color palette matching the primary palette (#000000, #FFFFFF). This is the recognizable official Peugeot sub-brand symbol required for the Nouvelle 308 SW campaign and conforms to the brand identity guidelines.",
+  "findings": [],
+  "asset_descriptions_path": "review/asset-descriptions.json",
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\peugeot-ed44be08-6c61-4c4c-9f69-6ece10d46b6f\\pipeline-usage.json"
+}

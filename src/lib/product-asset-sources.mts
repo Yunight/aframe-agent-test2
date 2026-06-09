@@ -7,11 +7,14 @@ export type ProductAssetSourceEntry = {
   sourceUrl: string;
   sourcePageUrl?: string;
   fromReferencePage?: boolean;
+  /** Brave/search result title — used for entertainment poster relevance when URL is opaque. */
+  sourceTitle?: string;
 };
 
 export type ProductAssetSourceProvenance = {
   sourcePageUrl?: string;
   fromReferencePage?: boolean;
+  sourceTitle?: string;
 };
 
 export type ProductAssetSourcesFile = {
@@ -42,7 +45,10 @@ function readSourcesFile (path: string): Map<string, ProductAssetSourceEntry> {
           ...(typeof e.sourcePageUrl === 'string' && e.sourcePageUrl.length > 0
             ? { sourcePageUrl: e.sourcePageUrl }
             : {}),
-          ...(e.fromReferencePage === true ? { fromReferencePage: true } : {})
+          ...(e.fromReferencePage === true ? { fromReferencePage: true } : {}),
+          ...(typeof e.sourceTitle === 'string' && e.sourceTitle.length > 0
+            ? { sourceTitle: e.sourceTitle }
+            : {})
         });
       }
     }
@@ -100,6 +106,11 @@ export function recordProductAssetSource (
       ? { fromReferencePage: true }
       : prev?.fromReferencePage === true
         ? { fromReferencePage: true }
+        : {}),
+    ...(provenance?.sourceTitle !== undefined && provenance.sourceTitle.length > 0
+      ? { sourceTitle: provenance.sourceTitle }
+      : prev?.sourceTitle !== undefined
+        ? { sourceTitle: prev.sourceTitle }
         : {})
   });
   writeSourcesMap(directoryPath, map);

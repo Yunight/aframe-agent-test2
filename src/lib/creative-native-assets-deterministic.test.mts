@@ -370,3 +370,80 @@ test('decathlon listing blocks non-official media hosts', async (t) => {
     /official brand visual host/iu
   );
 });
+
+test('entertainment campaign accepts Allociné acsta poster and blocks redbubble', async (t) => {
+  const prevMinW = process.env['CREATIVE_ASSETS_MIN_PRODUCT_W'];
+  const prevMinH = process.env['CREATIVE_ASSETS_MIN_PRODUCT_H'];
+  const prevLogoW = process.env['CREATIVE_ASSETS_MIN_LOGO_W'];
+  const prevLogoH = process.env['CREATIVE_ASSETS_MIN_LOGO_H'];
+  process.env['CREATIVE_ASSETS_MIN_PRODUCT_W'] = '1';
+  process.env['CREATIVE_ASSETS_MIN_PRODUCT_H'] = '1';
+  process.env['CREATIVE_ASSETS_MIN_LOGO_W'] = '1';
+  process.env['CREATIVE_ASSETS_MIN_LOGO_H'] = '1';
+  t.after(() => {
+    if (prevMinW === undefined) {
+      delete process.env['CREATIVE_ASSETS_MIN_PRODUCT_W'];
+    } else {
+      process.env['CREATIVE_ASSETS_MIN_PRODUCT_W'] = prevMinW;
+    }
+    if (prevMinH === undefined) {
+      delete process.env['CREATIVE_ASSETS_MIN_PRODUCT_H'];
+    } else {
+      process.env['CREATIVE_ASSETS_MIN_PRODUCT_H'] = prevMinH;
+    }
+    if (prevLogoW === undefined) {
+      delete process.env['CREATIVE_ASSETS_MIN_LOGO_W'];
+    } else {
+      process.env['CREATIVE_ASSETS_MIN_LOGO_W'] = prevLogoW;
+    }
+    if (prevLogoH === undefined) {
+      delete process.env['CREATIVE_ASSETS_MIN_LOGO_H'];
+    } else {
+      process.env['CREATIVE_ASSETS_MIN_LOGO_H'] = prevLogoH;
+    }
+  });
+
+  const filmGuide: StyleGuide = {
+    ...catalogStyleGuide,
+    companyName: 'Paramount Pictures',
+    brandName: 'Scary Movie',
+    brandURL: 'https://www.scarymovie.film/',
+    campaignReferenceUrl: 'https://www.scarymovie.film/',
+    productName: 'Scary Movie 6',
+    campaignContext: 'promotion du film Scary Movie 2026'
+  };
+
+  const directoryPath = mkdtempSync(join(tmpdir(), 'assets-det-film-'));
+  mkdirSync(join(directoryPath, 'logos'), { recursive: true });
+  mkdirSync(join(directoryPath, 'products'), { recursive: true });
+  writeFileSync(
+    join(directoryPath, 'logos', 'logo.svg'),
+    '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="40"><text y="30">SM</text></svg>',
+    'utf8'
+  );
+  writeFileSync(join(directoryPath, 'products', 'poster-acsta.jpg'), minimalPng);
+  writeFileSync(join(directoryPath, 'products', 'fan-redbubble.jpg'), minimalPng);
+  recordProductAssetSource(
+    directoryPath,
+    'poster-acsta.jpg',
+    'https://fr.web.img6.acsta.net/c_310_420/bde1b6a.jpg',
+    { sourceTitle: 'Scary Movie 6 — Affiche Allociné' }
+  );
+  recordProductAssetSource(
+    directoryPath,
+    'fan-redbubble.jpg',
+    'https://www.redbubble.com/i/poster/Scary-Movie-fan-art/12345.jpg'
+  );
+  writeFileSync(
+    join(directoryPath, 'style-guide.json'),
+    `${JSON.stringify(filmGuide, null, 2)}\n`,
+    'utf8'
+  );
+
+  const result = await runDeterministicAssetsCheck(directoryPath, filmGuide);
+  const productBlockers = result.findings.filter(
+    (f) => f.severity === 'blocker' && f.asset_id.startsWith('products/')
+  );
+  assert.equal(productBlockers.length, 1, JSON.stringify(productBlockers));
+  assert.match(productBlockers[0]?.asset_id ?? '', /fan-redbubble/iu);
+});

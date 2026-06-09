@@ -5,6 +5,7 @@ import type { AdFormatPreset, AdFormatSelection } from '../lib/studio-ad-formats
 import { sniffImageMimeFromBuffer } from '../lib/image-mime-sniff.mts';
 import { allocateNextCodeVersionDirectory } from '../lib/creative-code-versions.mts';
 import { loadAdFormatPresets, parseCreativeAdFormatsFromEnv } from '../lib/studio-ad-formats.mts';
+import { getFontComplianceIssue } from '../lib/style-guide-typography.mts';
 import { basename, dirname, extname, join } from 'node:path';
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { config as loadDotenv } from 'dotenv';
@@ -386,27 +387,6 @@ function extractHexColorsFromCss(content: string): Set<string> {
   );
 }
 
-function extractFontFamiliesFromCss(content: string): Set<string> {
-  const fontFamilyMatches = content.match(/font-family\s*:\s*([^;]+);/gi) ?? [];
-  const familySet = new Set<string>();
-
-  for (const declaration of fontFamilyMatches) {
-    const declarationMatch = declaration.match(/font-family\s*:\s*([^;]+);/i);
-    if (declarationMatch === null) {
-      continue;
-    }
-    const list = declarationMatch[1] ?? '';
-    for (const fontName of list.split(',')) {
-      const cleaned = fontName.trim().replace(/^['"]|['"]$/g, '');
-      if (cleaned.length > 0) {
-        familySet.add(cleaned.toLowerCase());
-      }
-    }
-  }
-
-  return familySet;
-}
-
 function validateCreativeSkillCompliance(
   files: z.infer<typeof filesSchema>,
   currentStyleGuide: Omit<StyleGuide, 'logoFileUrls' | 'productPictureUrls'>,
@@ -482,18 +462,9 @@ function validateCreativeSkillCompliance(
     }
   }
 
-  const styleGuideFonts = new Set(
-    currentStyleGuide.typography
-      .map((item) => item.fontFamily.trim().toLowerCase())
-      .filter((fontName) => fontName.length > 0)
-  );
-  const usedFonts = extractFontFamiliesFromCss(allContent);
-  const disallowedFonts = Array.from(usedFonts).filter((fontName) =>
-    !styleGuideFonts.has(fontName) &&
-    !contains([ 'sans-serif', 'serif', 'monospace', 'cursive', 'fantasy', 'system-ui' ], fontName)
-  );
-  if (disallowedFonts.length > 0) {
-    issues.push(`Contains font families outside style guide: ${disallowedFonts.join(', ')}`);
+  const fontIssue = getFontComplianceIssue(allContent, currentStyleGuide);
+  if (fontIssue !== null) {
+    issues.push(fontIssue);
   }
 
   const allowedColors = new Set([

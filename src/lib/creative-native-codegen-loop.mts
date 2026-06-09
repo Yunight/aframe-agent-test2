@@ -240,11 +240,13 @@ export async function runCreativeCodegen (params: {
   prunedStyleGuide: Omit<StyleGuide, 'logoFileUrls' | 'productPictureUrls'>;
   assetFiles: AssetFile[];
 }): Promise<CodegenLoopResult> {
+  const productAssetCount = params.assetFiles.filter((a) => a.fileType === 'products').length;
   const systemParts = buildCodegenSystemParts({
     isRegen: params.isRegen,
     adFormats: params.adFormats,
     skillsText: params.skillsText,
-    styleGuide: params.prunedStyleGuide
+    styleGuide: params.prunedStyleGuide,
+    productAssetCount
   });
 
   if (params.isRegen) {
@@ -274,7 +276,8 @@ export async function runCreativeCodegen (params: {
           isRegen: false,
           adFormats: singleFormat,
           skillsText: params.skillsText,
-          styleGuide: params.prunedStyleGuide
+          styleGuide: params.prunedStyleGuide,
+          productAssetCount
         });
         const formatInstructions = buildCreativeAdFormatInstructions(singleFormat);
         const extraDynamic = `Generate ONLY for this single format. ${formatInstructions}`;

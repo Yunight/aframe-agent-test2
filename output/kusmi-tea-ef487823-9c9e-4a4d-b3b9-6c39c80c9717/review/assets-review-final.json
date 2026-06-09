@@ -1,0 +1,11 @@
+{
+  "review_phase": "style_guide",
+  "assets_review_rounds_run": 2,
+  "max_assets_review_rounds": 2,
+  "satisfied": true,
+  "logo_locked": true,
+  "summary": "All 5 assets passed audit. Logo is text-only but acceptable as brand asset. Four physical product assets show distinct SKUs (Perles Litchi, Sirop Passion Monin, Kambukka+Menthe ensemble, Kit Bubble Tea Pêche Passion) with appropriate packshots and lifestyle scenes. No duplicate primary_product_name values detected among physical products.",
+  "findings": [],
+  "asset_descriptions_path": "review/asset-descriptions.json",
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\kusmi-tea-ef487823-9c9e-4a4d-b3b9-6c39c80c9717\\pipeline-usage.json"
+}

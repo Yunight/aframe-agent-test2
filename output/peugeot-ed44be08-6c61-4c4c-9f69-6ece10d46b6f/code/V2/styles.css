@@ -1,0 +1,329 @@
+/* ============================================================
+   Peugeot 308 SW – 320x480 Ad Creative
+   Font  : Inter (Google Fonts substitute for Peugeot New)
+   Palette: #002454 #000000 #FFFFFF #C8102E #8A8D8F #1B1B1B #E5E5E5
+   ============================================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1B1B1B;
+  font-family: "Inter", sans-serif;
+}
+
+/* ─── Ad Root ─── */
+#ad-320x480 {
+  width: 320px;
+  height: 480px;
+  background: #002454;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Header ─── */
+.ad-header {
+  height: 48px;
+  flex-shrink: 0;
+  background: #000000;
+  border-bottom: 2px solid #C8102E;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 10px;
+}
+
+.logo-wrap {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ad-logo {
+  width: 26px;
+  height: 26px;
+  display: block;
+}
+
+.brand-name {
+  flex: 1;
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.22em;
+  color: #FFFFFF;
+  text-transform: uppercase;
+}
+
+.pro-badge {
+  flex-shrink: 0;
+  background: #C8102E;
+  color: #FFFFFF;
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  padding: 4px 8px;
+  text-transform: uppercase;
+}
+
+/* ─── Carousel ─── */
+.carousel-wrapper {
+  width: 320px;
+  height: 204px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  background: #000000;
+}
+
+.carousel-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity 0.9s ease-in-out;
+  will-change: opacity;
+}
+
+.carousel-img.active {
+  opacity: 1;
+}
+
+.carousel-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 68px;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 36, 84, 0) 0%,
+    rgba(0, 36, 84, 1) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+.carousel-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  z-index: 5;
+}
+
+.bar-fill {
+  height: 100%;
+  width: 0%;
+  background: #C8102E;
+  will-change: width;
+}
+
+.carousel-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 4;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.3s ease, width 0.3s ease, border-radius 0.3s ease;
+}
+
+.dot.active {
+  width: 20px;
+  border-radius: 3px;
+  background: #FFFFFF;
+}
+
+.dot:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+/* ─── Content ─── */
+.ad-content {
+  flex: 1;
+  padding: 14px 16px 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+}
+
+.eyebrow {
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 8.5px;
+  letter-spacing: 0.26em;
+  color: #C8102E;
+  text-transform: uppercase;
+  animation: slideUp 0.45s ease 0.1s both;
+}
+
+.headline {
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: #FFFFFF;
+  line-height: 1.0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  animation: slideUp 0.5s ease 0.22s both;
+}
+
+.headline em {
+  font-style: normal;
+  display: block;
+  font-size: 30px;
+  color: #C8102E;
+  letter-spacing: -0.01em;
+  line-height: 1.0;
+}
+
+.subhead {
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  color: #E5E5E5;
+  line-height: 1.35;
+  animation: slideUp 0.5s ease 0.38s both;
+}
+
+.body-copy {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  font-size: 10px;
+  color: #8A8D8F;
+  animation: slideUp 0.45s ease 0.52s both;
+}
+
+/* ─── CTA ─── */
+.ad-cta-area {
+  flex-shrink: 0;
+  padding: 4px 16px 10px;
+  animation: fadeIn 0.4s ease 0.6s both;
+}
+
+.cta-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #C8102E;
+  text-decoration: none;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.cta-btn:hover {
+  opacity: 0.88;
+  transform: translateY(-2px);
+}
+
+.cta-btn:active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cta-label {
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  color: #FFFFFF;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.cta-arrow {
+  flex-shrink: 0;
+  animation: arrowNudge 2s ease-in-out 1.8s infinite;
+}
+
+/* ─── Footer ─── */
+.ad-footer {
+  flex-shrink: 0;
+  padding: 5px 16px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ad-footer span {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  font-size: 7px;
+  color: #8A8D8F;
+  line-height: 1.4;
+  display: block;
+}
+
+/* ─── Keyframes ─── */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes arrowNudge {
+  0%, 100% { transform: translateX(0); }
+  50%       { transform: translateX(3px); }
+}
+
+/* ─── Reduced Motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  .carousel-img,
+  .dot {
+    transition: none;
+  }
+  .bar-fill {
+    transition: none !important;
+  }
+  .eyebrow,
+  .headline,
+  .subhead,
+  .body-copy,
+  .ad-cta-area,
+  .cta-arrow {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

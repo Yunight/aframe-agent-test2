@@ -1,0 +1,22 @@
+{
+  "api_calls": 1,
+  "input_tokens": 6088,
+  "output_tokens": 4914,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "model": "claude-sonnet-4-6",
+  "total_tokens_reported_sum": 11002,
+  "price_usd": {
+    "input": 0.018264,
+    "output": 0.07371,
+    "total": 0.091974
+  },
+  "duration_ms_total": 61186,
+  "turn_timings": [
+    {
+      "turn": 1,
+      "duration_ms": 61183,
+      "stop_reason": "end_turn"
+    }
+  ]
+}

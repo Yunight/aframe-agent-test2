@@ -6,6 +6,7 @@ export type PipelineAction =
   | 'assets_review'
   | 'assets_refresh'
   | 'asset_descriptions'
+  | 'logo_vision_audit'
   | 'creative_generation'
   | 'creative_regeneration'
   | 'screenshots'

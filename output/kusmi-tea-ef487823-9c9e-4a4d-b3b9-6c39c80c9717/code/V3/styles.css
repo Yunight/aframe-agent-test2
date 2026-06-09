@@ -1,0 +1,311 @@
+/* === Reset === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* === Page centering === */
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F4E4D4;
+  font-family: "Montserrat", sans-serif;
+}
+
+/* === Ad Root === */
+#ad-970x250 {
+  width: 970px;
+  height: 250px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  background: #FFFFFF;
+  border: 1px solid rgba(200,16,46,0.15);
+}
+
+/* === Animated background gradient strip === */
+#ad-970x250::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg,
+    rgba(247,197,72,0.18) 0%,
+    rgba(249,160,63,0.12) 40%,
+    rgba(200,16,46,0.08) 70%,
+    rgba(244,228,212,0.25) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* === Decorative Bubbles === */
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.22;
+  animation: floatBubble 6s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+.b1 { width: 54px; height: 54px; background: #F7C548; top: -18px; left: 200px; animation-delay: 0s; animation-duration: 7s; }
+.b2 { width: 36px; height: 36px; background: #C8102E; top: 30px; left: 480px; animation-delay: 1.2s; animation-duration: 5.5s; }
+.b3 { width: 24px; height: 24px; background: #F9A03F; bottom: 10px; left: 340px; animation-delay: 0.7s; animation-duration: 6.5s; }
+.b4 { width: 44px; height: 44px; background: #C8A2C8; bottom: -14px; right: 260px; animation-delay: 2s; animation-duration: 8s; }
+.b5 { width: 20px; height: 20px; background: #F7C548; top: 60px; right: 80px; animation-delay: 0.4s; animation-duration: 5s; }
+
+@keyframes floatBubble {
+  0%   { transform: translateY(0) scale(1); }
+  50%  { transform: translateY(-10px) scale(1.08); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* === LEFT PANEL === */
+.ad-left {
+  position: relative;
+  z-index: 2;
+  width: 290px;
+  min-width: 290px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 16px 32px 24px;
+  background: #FFFFFF;
+}
+
+/* --- Logo: official Kusmi Tea wordmark, top-left safe zone --- */
+.logo-wrap {
+  margin-bottom: 8px;
+  margin-top: 4px;
+}
+.logo {
+  height: 44px;
+  width: auto;
+  max-height: 48px;
+  display: block;
+}
+
+.eyebrow {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #C8102E;
+  margin-bottom: 4px;
+}
+
+.headline {
+  font-family: "Playfair Display", sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.15;
+  color: #1A1A1A;
+  margin-bottom: 2px;
+}
+.headline em {
+  font-style: italic;
+  color: #C8102E;
+}
+
+/* Subhead: bumped to 13px, Montserrat 500 for ≥4.5:1 contrast on white */
+.subhead {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  color: #1A1A1A;
+  margin-bottom: 6px;
+}
+
+/* Body copy: bumped to 11px, opacity raised for better contrast */
+.body-copy {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  color: #1A1A1A;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  opacity: 0.85;
+}
+
+/* === CTA Button === */
+.cta-btn {
+  display: inline-block;
+  background: #C8102E;
+  color: #FFFFFF;
+  text-decoration: none;
+  border-radius: 4px;
+  padding: 8px 14px;
+  transition: background 0.25s ease, transform 0.18s ease;
+  width: fit-content;
+  margin-bottom: 4px;
+}
+.cta-btn:hover {
+  background: #F9A03F;
+  transform: translateY(-2px);
+}
+.cta-label {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  pointer-events: none;
+}
+
+/* === CENTER PANEL === */
+.ad-center {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F4E4D4;
+}
+
+.hero-img {
+  height: 110%;
+  width: auto;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  animation: heroZoom 8s ease-in-out infinite alternate;
+  transform-origin: center center;
+}
+
+@keyframes heroZoom {
+  0%   { transform: scale(1.0) translateY(0); }
+  100% { transform: scale(1.08) translateY(-8px); }
+}
+
+/* === RIGHT PANEL === */
+.ad-right {
+  position: relative;
+  z-index: 2;
+  width: 230px;
+  min-width: 230px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 10px 12px 32px 8px;
+  background: rgba(244,228,212,0.45);
+  overflow: hidden;
+  /* subtle shadow on carousel container for visual hierarchy */
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.product-badge {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: #E91E63;
+  color: #FFFFFF;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+  box-shadow: 0 2px 8px rgba(200,16,46,0.25);
+  animation: pulseBadge 2s ease-in-out infinite;
+}
+
+@keyframes pulseBadge {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.12); }
+}
+
+/* Product images: boosted by ~12% (180→202px, 150→168px) */
+.product-kit {
+  height: 202px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+  animation: slideInRight 0.7s cubic-bezier(.22,.68,0,1.2) both;
+  animation-delay: 0.3s;
+  transform-origin: bottom center;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+}
+
+.product-syrup {
+  height: 168px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+  margin-left: -10px;
+  animation: slideInRight 0.7s cubic-bezier(.22,.68,0,1.2) both;
+  animation-delay: 0.55s;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px) scale(0.88); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+/* === VERTICAL DIVIDERS === */
+.ad-left::after {
+  content: '';
+  position: absolute;
+  top: 16px;
+  right: 0;
+  bottom: 16px;
+  width: 1px;
+  background: rgba(200,16,46,0.15);
+  z-index: 3;
+}
+
+.ad-right::before {
+  content: '';
+  position: absolute;
+  top: 16px;
+  left: 0;
+  bottom: 16px;
+  width: 1px;
+  background: rgba(200,16,46,0.15);
+  z-index: 3;
+}
+
+/* === FOOTER === */
+.ad-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26,26,26,0.04);
+  border-top: 1px solid rgba(200,16,46,0.1);
+  z-index: 5;
+  padding: 0 24px;
+}
+
+.ad-footer span {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 7.5px;
+  color: #1A1A1A;
+  opacity: 0.5;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* === REDUCED MOTION === */
+@media (prefers-reduced-motion: reduce) {
+  .bubble, .hero-img, .product-kit, .product-syrup, .product-badge {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "generated_at": "2026-06-08T16:01:48.662Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/Kusmi_Tea_logo.png",
+      "fileName": "Kusmi_Tea_logo.png",
+      "fileType": "logos",
+      "description": "Black sans-serif wordmark reading 'KUSMI TEA' with 'PARIS' in smaller text below. Minimal, elegant text-only logo on white background with no imagery or decorative elements.",
+      "layout_hints": [
+        "logo-lockup",
+        "text-only"
+      ],
+      "dominant_colors": [
+        "#000000",
+        "#FFFFFF"
+      ],
+      "asset_kind": "logo"
+    },
+    {
+      "asset_id": "products/Capture_d_ecran_2026-04-15_093136.png",
+      "fileName": "Capture_d_ecran_2026-04-15_093136.png",
+      "fileType": "products",
+      "description": "Flat-lay lifestyle scene on warm beige background featuring multiple Kusmi Tea products: colorful metal tins (orange, green, dark), decorative sachets, glass cups with brewed teas (amber and pale green), a bamboo whisk, fresh mint leaves, and a small glass jar. No single dominant SKU visible; diverse range of emblematic blends displayed.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "flat-lay",
+        "product-variety"
+      ],
+      "dominant_colors": [
+        "#E8D5C4",
+        "#D4A574",
+        "#2D8659",
+        "#FF6B35"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "is_generic_collection": true
+    },
+    {
+      "asset_id": "products/GMS_26_INGC20SBIO_INVC20SBIO_INPA20SBIO_INCC20SBIO_UNI_02_057c8caa-f192-412e-b9e6-ab27d7239f83.jpg",
+      "fileName": "GMS_26_INGC20SBIO_INVC20SBIO_INPA20SBIO_INCC20SBIO_UNI_02_057c8caa-f192-412e-b9e6-ab27d7239f83.jpg",
+      "fileType": "products",
+      "description": "Styled flat-lay on pink background showcasing four decorative Kusmi Tea boxes with ornate botanical patterns in rich colors (deep red, teal, rose, bronze-gold). Each box topped by floating ingredient photography (apple & ginger, ginger root & citrus, peach & apricot, cornflower & almonds), creating four distinct flavor stories aligned vertically.",
+      "layout_hints": [
+        "flat-lay",
+        "product-hero",
+        "ingredient-showcase"
+      ],
+      "dominant_colors": [
+        "#E8A9A9",
+        "#A92047",
+        "#2B6E6E",
+        "#C4914A"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "is_generic_collection": true
+    },
+    {
+      "asset_id": "products/lot.png",
+      "fileName": "lot.png",
+      "fileType": "products",
+      "description": "Product ensemble on neutral beige background featuring five colorful metal Kusmi Tea ritual tins in various heights (navy, purple, orange, red, teal) with visible dry tea blend inside the teal tin. Fresh garnish elements visible: red bell pepper, yellow flower, and a cup of pale brewed tea. Multiple emblematic ritual blends shown without single dominant hero.",
+      "layout_hints": [
+        "flat-lay",
+        "product-collection",
+        "ritual-ensemble"
+      ],
+      "dominant_colors": [
+        "#E8D5C4",
+        "#003D6B",
+        "#6A3A7D",
+        "#FF6B35"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "is_generic_collection": true
+    },
+    {
+      "asset_id": "products/RITUELDRAINANT_25_LIFESTYLE_DRAI100BIO_DRAI18SBIO_POR_04_1.jpg",
+      "fileName": "RITUELDRAINANT_25_LIFESTYLE_DRAI100BIO_DRAI18SBIO_POR_04_1.jpg",
+      "fileType": "products",
+      "description": "Lifestyle scene on white background featuring Kusmi Tea Drainant ritual tin and matching box, positioned on a woven tray with a soft gray cloth. Yellow flower and wooden mortar & pestle accent the composition. The open tin displays reddish-brown herbal blend; gentle, wellness-focused aesthetic emphasizing the draining ritual benefit.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "product-hero",
+        "ritual-wellness"
+      ],
+      "dominant_colors": [
+        "#FFFFFF",
+        "#1B9CA0",
+        "#8B6F47",
+        "#D4A574"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "Drainant",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/rituel_minceur.png",
+      "fileName": "rituel_minceur.png",
+      "fileType": "products",
+      "description": "Portrait-style lifestyle photograph showing hands holding a red-and-white Kusmi Tea Minceur tin against a soft pink background, paired with the wearer's red ribbed sweater. The metal tin clearly displays 'Minceur – Rituel' and organic certification. Hero shot emphasizing the slimming ritual product for direct consumer engagement.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "hands-on",
+        "product-hero"
+      ],
+      "dominant_colors": [
+        "#E8A9A9",
+        "#D10000",
+        "#FFFFFF",
+        "#FF8A9B"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "Minceur",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/sommeil_glace.jpg",
+      "fileName": "sommeil_glace.jpg",
+      "fileType": "products",
+      "description": "Lifestyle composition on warm beige background featuring the emblematic Kusmi Tea Sommeil tin (navy band) open to reveal dark herbal blend, a matching Sommeil box, a glass pitcher of pale brewed tea with fresh mint, an iced beverage in tall glass with straw, and a sliced mango garnish. Night-time ritual and cold-brew preparation prominently showcased.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "product-hero",
+        "beverage-preparation"
+      ],
+      "dominant_colors": [
+        "#E8D5C4",
+        "#003D6B",
+        "#8B6F47",
+        "#F5DEB3"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "Sommeil",
+      "is_generic_collection": false
+    }
+  ]
+}

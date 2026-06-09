@@ -48,3 +48,14 @@ export function writeLogoLock (
     unlinkSync(legacy);
   }
 }
+
+export function clearLogoLock (directoryPath: string): void {
+  const path = logoLockPath(directoryPath);
+  if (existsSync(path)) {
+    unlinkSync(path);
+  }
+  const legacy = legacyLogoLockPath(directoryPath);
+  if (existsSync(legacy)) {
+    unlinkSync(legacy);
+  }
+}

@@ -1,5 +1,6 @@
 import { withAnthropicRetry } from '../lib/anthropic-retry.mts';
 import type { StyleGuide } from './gen-style-guide.mjs';
+import { readLogoFileAsAnthropicImageBlock } from '../lib/logo-rasterize.mts';
 import { readFileAsAnthropicImageBlock } from '../lib/image-mime-sniff.mts';
 import {
   appendPipelineUsage,
@@ -169,20 +170,21 @@ export async function runCreativeNativeAssetsReview (
     });
     for (const fileName of files) {
       const filePath = join(directoryPath, fileType, fileName);
-      const isSvgLogo = fileType === 'logos' && fileName.toLowerCase().endsWith('.svg');
       userContent.push({
         type: 'text',
         text: `Asset: ${fileType}/${fileName}`
       });
-      if (isSvgLogo) {
+      if (!existsSync(filePath)) {
         userContent.push({
           type: 'text',
-          text:
-            '(SVG vector logo — not sent to vision API; verify it is the official wordmark from companyURL/brandURL, not a third-party scraper.)'
+          text: `(missing file: ${filePath})`
         });
         continue;
       }
-      const block = existsSync(filePath) ? readFileAsAnthropicImageBlock(filePath) : null;
+      const block =
+        fileType === 'logos'
+          ? await readLogoFileAsAnthropicImageBlock(filePath)
+          : readFileAsAnthropicImageBlock(filePath);
       if (block !== null) {
         userContent.push(block);
       } else {
@@ -207,7 +209,7 @@ export async function runCreativeNativeAssetsReview (
     '  * BLOCKER if hostname of the image URL does not match companyURL/brandURL (or their parent domain) unless it is a known official CDN/subdomain of that brand.',
     '  * Accept transparent PNG, opaque PNG/JPEG on brand background, and official SVG wordmarks.',
     '  * Warn (not blocker) for low padding or baked checkerboard; suggest site:official_host queries in brave_retry_queries.',
-    '  * Readable at small banner sizes (min ~120×40px for raster); SVG logos are validated separately (no vision preview).',
+    '  * Readable at small banner sizes (min ~120×40px for raster); SVG logos are rasterized to PNG for vision review.',
     '- Product images: must match STYLE_GUIDE_CONTEXT / campaignContext and productName (exact hero model); reject other models from the same brand line-up.',
     '  * BLOCKER for watermarked press blogs, unrelated stock, meme images, or obvious thumbnails/wallpapers when official packshots exist.',
     '  * brave_retry_queries must prioritize site:hostname from brandURL/companyURL and concrete product names — never generic "product photo" alone.',

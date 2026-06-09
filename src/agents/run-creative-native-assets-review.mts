@@ -13,6 +13,7 @@ import {
   imageContextFromStyleGuide,
   loadBraveExcludedUrls,
   mergeRefreshIntoStyleGuideFile,
+  officialHostsFromContext,
   refreshAssetsFromQueries
 } from '../lib/brave-image-assets.mts';
 import {
@@ -21,10 +22,18 @@ import {
   resolveImageSearchProvider
 } from '../lib/image-search.mts';
 import {
+  runDescriptionsBasedAssetsReview,
+  useDescriptionsBasedAssetsReview
+} from '../lib/asset-descriptions-audit.mts';
+import { listAssetImageFiles } from '../lib/asset-sidecar-files.mts';
+import {
   logDeterministicFindings,
+  pruneDeterministicBlockedProducts,
   pruneInvalidLogos,
   pruneNonWordmarkLogos,
   pruneUndersizedAssets,
+  pruneVisionBlockedLogos,
+  pruneVisionBlockedProducts,
   runDeterministicAssetsCheck
 } from '../lib/creative-native-assets-deterministic.mts';
 import {
@@ -40,6 +49,7 @@ import {
   type PipelineUsageFile
 } from '../lib/creative-pipeline-usage.mts';
 import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
+import { hasLogoBlockers } from '../lib/logo-vision-audit.mts';
 import {
   buildBraveRetryQueriesFromAudit,
   parseAssetsReviewMaxRoundsFromEnv,
@@ -108,24 +118,10 @@ let lastAudit: AssetsReviewOutput | null = null;
 
 console.log(`[assets-review-agent] Max rounds: ${String(maxRounds)}`);
 
-function productOnlyBlockers (
-  findings: { severity: string; asset_id: string }[]
-): boolean {
-  const blockers = findings.filter((f) => f.severity === 'blocker');
-  if (blockers.length === 0) {
-    return false;
-  }
-  return blockers.every((f) => f.asset_id.startsWith('products/'));
-}
-
-function logoOnlyBlockers (
-  findings: { severity: string; asset_id: string }[]
-): boolean {
-  const blockers = findings.filter((f) => f.severity === 'blocker');
-  if (blockers.length === 0) {
-    return false;
-  }
-  return blockers.every((f) => f.asset_id.startsWith('logos/') || f.asset_id === 'logos');
+function hasProductBlockers (findings: { severity: string; asset_id: string }[]): boolean {
+  return findings.some(
+    (f) => f.severity === 'blocker' && f.asset_id.startsWith('products/')
+  );
 }
 
 async function runBraveRefresh (
@@ -179,6 +175,36 @@ async function runBraveRefresh (
   return refresh.downloaded.logos >= 1;
 }
 
+async function runAssetsReviewStep (
+  round: number,
+  deterministicSummary?: string
+): Promise<{ audit: AssetsReviewOutput; usage: AssetsReviewUsageTotals }> {
+  const productFileCount = listAssetImageFiles(directoryPath, 'products').length;
+  if (useDescriptionsBasedAssetsReview()) {
+    console.log('[assets-review-agent] Descriptions-based review (vision describe + text audit)…');
+    const described = await runDescriptionsBasedAssetsReview({
+      anthropicClient,
+      directoryPath,
+      styleGuide,
+      prunedStyleGuide,
+      reviewRound: round,
+      productFileCount,
+      phase: 'creative'
+    });
+    return { audit: described.audit, usage: described.auditUsage };
+  }
+
+  console.log('[assets-review-agent] Full vision assets review (CREATIVE_ASSETS_REVIEW_MODE=vision)…');
+  const { audit, usage } = await runCreativeNativeAssetsReview({
+    anthropicClient,
+    directoryPath,
+    prunedStyleGuide,
+    reviewRound: round,
+    ...(deterministicSummary !== undefined ? { deterministicFindingsSummary: deterministicSummary } : {})
+  });
+  return { audit, usage };
+}
+
 while (reviewRound < maxRounds) {
   reviewRound += 1;
   console.log(`[assets-review-agent] Round ${String(reviewRound)}/${String(maxRounds)}`);
@@ -186,37 +212,56 @@ while (reviewRound < maxRounds) {
   mkdirSync(reviewDirectoryPath, { recursive: true });
   await pruneUndersizedAssets(directoryPath);
   await pruneNonWordmarkLogos(directoryPath);
-  await pruneInvalidLogos(directoryPath);
+  await pruneInvalidLogos(directoryPath, officialHostsFromContext(imageContext));
 
   const deterministic = await runDeterministicAssetsCheck(directoryPath, styleGuide);
   logDeterministicFindings(deterministic.findings);
 
   if (!deterministic.ok && reviewRound < maxRounds) {
-    const productsOnly = productOnlyBlockers(deterministic.findings);
-    const logosOnly = logoOnlyBlockers(deterministic.findings);
-    const productQueries = buildProductSearchQueriesFromFindings(
-      imageContext,
-      deterministic.findings,
-      lastAudit?.brave_retry_queries.products
-    );
-    const logoQueries = buildLogoSearchQueriesFromFindings(
-      imageContext,
-      deterministic.findings,
-      lastAudit?.brave_retry_queries.logos
-    );
-    const refreshQueries = productsOnly
-      ? { logos: [] as string[], products: productQueries }
-      : logosOnly
-        ? { logos: logoQueries, products: [] as string[] }
-        : {
-            logos: logoQueries,
-            products: productQueries
-          };
-    console.log(
-      '[assets-review-agent] Deterministic blockers — Brave refresh (targeted queries)…'
-    );
-    const refreshed = await runBraveRefresh(refreshQueries, reviewRound);
-    if (refreshed) {
+    let retried = false;
+
+    if (hasProductBlockers(deterministic.findings)) {
+      const prunedProducts = pruneDeterministicBlockedProducts(
+        directoryPath,
+        deterministic.findings
+      );
+      if (prunedProducts.excludedSourceUrls.length > 0) {
+        excludedUrls = appendBraveExcludedUrls(
+          reviewDirectoryPath,
+          excludedUrls,
+          prunedProducts.excludedSourceUrls
+        );
+      }
+      const productQueries = buildProductSearchQueriesFromFindings(
+        imageContext,
+        deterministic.findings,
+        lastAudit?.brave_retry_queries.products
+      );
+      if (productQueries.length > 0) {
+        console.log('[assets-review-agent] Product blockers — Brave refresh (products)…');
+        const refreshed = await runBraveRefresh({ logos: [], products: productQueries }, reviewRound);
+        if (refreshed) {
+          retried = true;
+        }
+      }
+    }
+
+    if (hasLogoBlockers(deterministic.findings)) {
+      const logoQueries = buildLogoSearchQueriesFromFindings(
+        imageContext,
+        deterministic.findings,
+        lastAudit?.brave_retry_queries.logos
+      );
+      if (logoQueries.length > 0) {
+        console.log('[assets-review-agent] Logo blockers — Brave refresh (logos)…');
+        const refreshed = await runBraveRefresh({ logos: logoQueries, products: [] }, reviewRound);
+        if (refreshed) {
+          retried = true;
+        }
+      }
+    }
+
+    if (retried) {
       styleGuide = JSON.parse(readFileSync(styleGuidePath, 'utf8')) as StyleGuide;
       imageContext = imageContextFromStyleGuide(styleGuide);
       continue;
@@ -228,13 +273,7 @@ while (reviewRound < maxRounds) {
       ? deterministic.findings.map((f) => `[${f.severity}] ${f.asset_id}: ${f.issue}`).join('\n')
       : undefined;
 
-  const { audit, usage } = await runCreativeNativeAssetsReview({
-    anthropicClient,
-    directoryPath,
-    prunedStyleGuide,
-    reviewRound,
-    ...(deterministicSummary !== undefined ? { deterministicFindingsSummary: deterministicSummary } : {})
-  });
+  const { audit, usage } = await runAssetsReviewStep(reviewRound, deterministicSummary);
 
   usageRounds.push(usage);
   lastAudit = audit;
@@ -255,22 +294,59 @@ while (reviewRound < maxRounds) {
     break;
   }
 
-  const retryQueries = buildBraveRetryQueriesFromAudit(audit, imageContext);
-  const products = buildProductSearchQueriesFromFindings(
-    imageContext,
+  const prunedLogos = pruneVisionBlockedLogos(
+    directoryPath,
     audit.findings,
-    retryQueries.products
+    styleGuide.logoFileUrls ?? []
   );
-  const logos = buildLogoSearchQueriesFromFindings(
+  if (prunedLogos.excludedSourceUrls.length > 0) {
+    excludedUrls = appendBraveExcludedUrls(
+      reviewDirectoryPath,
+      excludedUrls,
+      prunedLogos.excludedSourceUrls
+    );
+  }
+
+  const pruned = pruneVisionBlockedProducts(directoryPath, audit.findings);
+  if (pruned.excludedSourceUrls.length > 0) {
+    excludedUrls = appendBraveExcludedUrls(
+      reviewDirectoryPath,
+      excludedUrls,
+      pruned.excludedSourceUrls
+    );
+  }
+  const retryQueries = buildBraveRetryQueriesFromAudit(audit, imageContext);
+  const logoQueries = buildLogoSearchQueriesFromFindings(
     imageContext,
     audit.findings,
     retryQueries.logos
   );
-  const refreshed = await runBraveRefresh({ logos, products }, reviewRound);
-  if (!refreshed) {
+  const productQueries = buildProductSearchQueriesFromFindings(
+    imageContext,
+    audit.findings,
+    retryQueries.products
+  );
+
+  let retried = false;
+  if (hasLogoBlockers(audit.findings) && logoQueries.length > 0) {
+    console.log('[assets-review-agent] Logo vision blockers — Brave refresh (logos)…');
+    const refreshed = await runBraveRefresh({ logos: logoQueries, products: [] }, reviewRound);
+    if (refreshed) {
+      retried = true;
+    }
+  }
+  if (productQueries.length > 0) {
+    console.log('[assets-review-agent] Audit blockers — Brave refresh (products)…');
+    const refreshed = await runBraveRefresh({ logos: [], products: productQueries }, reviewRound);
+    if (refreshed) {
+      retried = true;
+    }
+  }
+  if (!retried) {
     console.warn('[assets-review-agent] Brave refresh did not download enough assets; continuing to next round.');
   }
   styleGuide = JSON.parse(readFileSync(styleGuidePath, 'utf8')) as StyleGuide;
+  imageContext = imageContextFromStyleGuide(styleGuide);
 }
 
 let postAuditRefreshDone = false;
@@ -286,25 +362,28 @@ if (lastAudit !== null && !lastAudit.satisfied) {
     lastAudit.findings,
     retryQueries.logos
   );
-  if (logos.length > 0 || products.length > 0) {
+  const needsLogoRefresh = hasLogoBlockers(lastAudit.findings) && logos.length > 0;
+  const needsProductRefresh = products.length > 0;
+  if (needsLogoRefresh || needsProductRefresh) {
     console.log('[assets-review-agent] Post-audit Brave refresh (Haiku retry queries)…');
     postAuditRefreshDone = true;
     await pruneUndersizedAssets(directoryPath);
     await pruneNonWordmarkLogos(directoryPath);
-  await pruneInvalidLogos(directoryPath);
-    await runBraveRefresh({ logos, products }, reviewRound + 1);
+    await pruneInvalidLogos(directoryPath, officialHostsFromContext(imageContext));
+    if (needsLogoRefresh) {
+      await runBraveRefresh({ logos, products: [] }, reviewRound + 1);
+    }
+    if (needsProductRefresh) {
+      await runBraveRefresh({ logos: [], products }, reviewRound + 1);
+    }
     styleGuide = JSON.parse(readFileSync(styleGuidePath, 'utf8')) as StyleGuide;
+    imageContext = imageContextFromStyleGuide(styleGuide);
 
     const postDeterministic = await runDeterministicAssetsCheck(directoryPath, styleGuide);
     logDeterministicFindings(postDeterministic.findings);
 
     if (postDeterministic.ok) {
-      const { audit, usage } = await runCreativeNativeAssetsReview({
-        anthropicClient,
-        directoryPath,
-        prunedStyleGuide,
-        reviewRound: reviewRound + 1
-      });
+      const { audit, usage } = await runAssetsReviewStep(reviewRound + 1);
       usageRounds.push(usage);
       lastAudit = audit;
       writeAssetsReviewRoundReport(reviewDirectoryPath, reviewRound + 1, {

@@ -1,0 +1,95 @@
+{
+  "companyName": "Lidl",
+  "companyContext": "Lidl est une chaîne allemande de supermarchés à bas prix appartenant au groupe Schwarz, présente dans plus de 30 pays. En France, Lidl exploite près de 1 600 magasins et un site e-commerce proposant alimentation, bricolage, jardinage, maison, sport et textile à prix compétitifs.",
+  "companyURL": "https://www.lidl.fr/",
+  "brandName": "Parkside",
+  "brandContext": "Parkside est la marque d'outils, d'équipements et d'accessoires de bricolage et de jardin distribuée exclusivement par Lidl. Elle propose un large assortiment d'outils électroportatifs, sans fil (systèmes X 12 V et X 20 V), outils à main et matériel de jardin pour bricoleurs amateurs et semi-professionnels, avec une garantie de 3 ans et un excellent rapport qualité-prix. La gamme Parkside Performance cible les travaux les plus exigeants.",
+  "brandURL": "https://www.lidl.fr/c/parkside/s10068914",
+  "logoFileUrls": [
+    "https://www.lidl.fr/cdn/assets/logos/1.0.1/lidl-logo-shop-cdn.svg"
+  ],
+  "productName": "Parkside",
+  "campaignContext": "Promotion des produits lidl",
+  "campaignReferenceUrl": "https://www.lidl.fr/c/parkside/s10068914",
+  "productPictureUrls": [
+    "https://www.lidl.fr/static/assets/Image-Youtube-Parkside-III-1716360.jpg",
+    "https://www.lidl.fr/static/assets/XD-509-WoN-Full-width-teaser-Left-aligned-ArnoldXS-1735161.jpg",
+    "https://www.lidl.fr/static/assets/Card-001-1440x1440px-1865321.jpg",
+    "https://www.lidl.fr/static/assets/Card-002-1440x1440px-1724162.jpg",
+    "https://www.lidl.fr/static/assets/Card-003-1440x1440px-1724164.jpg",
+    "https://www.lidl.fr/static/assets/Card-004-1440x1440px-1724124.jpg"
+  ],
+  "primaryColorPalette": [
+    "#00A6A6",
+    "#0E6E76",
+    "#1A1A1A",
+    "#FFCB05"
+  ],
+  "secondaryColorPalette": [
+    "#015AA2",
+    "#EE1C25",
+    "#FFF200",
+    "#FFFFFF",
+    "#E5E5E5"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Lidl Font Pro",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Logo Lidl et titres de campagne principaux (wordmark, hero headlines)"
+    },
+    {
+      "fontFamily": "Lidl Font Cond Pro",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Sous-titres, étiquettes prix, accroches promotionnelles condensées"
+    },
+    {
+      "fontFamily": "Lidl Font Pro",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Corps de texte produit, descriptions et paragraphes éditoriaux"
+    },
+    {
+      "fontFamily": "Arial",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Police de remplacement web safe pour titres lorsque Lidl Font Pro n'est pas disponible"
+    },
+    {
+      "fontFamily": "Arial",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Police de remplacement pour le corps de texte (compatibilité réseaux sociaux et e-mails)"
+    }
+  ],
+  "brandVision": "Rendre le bricolage et le jardinage accessibles à tous — bricoleurs débutants comme passionnés — en proposant des outils puissants, fiables et au meilleur rapport qualité-prix. « Voir grand. Faire simple. » : avec Parkside, peu importe le projet, vous pouvez le faire.",
+  "brandValues": "Accessibilité, qualité allemande, fiabilité, puissance, garantie 3 ans, écosystème de batteries compatible, motivation et autonomisation des utilisateurs (DIY), prix juste, durabilité et seconde vie des objets, esprit « just do it » incarné par Arnold Schwarzenegger.",
+  "logoImageSearchQueries": [
+    "site:lidl.fr Parkside logo svg",
+    "site:commons.wikimedia.org Parkside Lidl logo",
+    "Parkside Lidl tools logo filetype:svg",
+    "site:seeklogo.com Parkside Lidl",
+    "Lidl logo svg site:commons.wikimedia.org",
+    "Lidl official logo transparent png"
+  ],
+  "productImageSearchQueries": [
+    "site:lidl.fr Parkside perceuse visseuse X 20 V",
+    "site:lidl.fr Parkside outils sans fil",
+    "site:lidl.fr Parkside Performance",
+    "Parkside X 20 V Team packshot Lidl",
+    "Parkside tondeuse gazon Lidl packshot",
+    "Parkside taille-haie Lidl produit",
+    "Parkside ponceuse multifonction Lidl",
+    "Parkside scie circulaire Lidl produit",
+    "Parkside meuleuse angulaire Lidl",
+    "Parkside nettoyeur haute pression Lidl",
+    "Parkside outils jardin Lidl gamme",
+    "Parkside batterie X 12 V X 20 V Lidl"
+  ]
+}

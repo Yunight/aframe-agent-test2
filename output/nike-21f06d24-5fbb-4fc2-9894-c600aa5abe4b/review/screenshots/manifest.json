@@ -1,0 +1,34 @@
+{
+  "captured_at": "2026-06-04T16:50:46.758Z",
+  "entry_html": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\nike-21f06d24-5fbb-4fc2-9894-c600aa5abe4b\\code\\V3\\index.html",
+  "entry_url": "file:///C:/Users/Ben/Desktop/formats_creator/aframe-agent-test2/aframe-agent-test2/output/nike-21f06d24-5fbb-4fc2-9894-c600aa5abe4b/code/V3/index.html",
+  "formats": [
+    {
+      "format_id": "300x600",
+      "width": 300,
+      "height": 600,
+      "selector": "#ad-300x600",
+      "error": null,
+      "shots": [
+        {
+          "state": "initial",
+          "fileName": "300x600__initial.png",
+          "relativePath": "300x600__initial.png",
+          "captured_at": "2026-06-04T16:50:44.258Z"
+        },
+        {
+          "state": "animated",
+          "fileName": "300x600__animated.png",
+          "relativePath": "300x600__animated.png",
+          "captured_at": "2026-06-04T16:50:45.139Z"
+        },
+        {
+          "state": "settled",
+          "fileName": "300x600__settled.png",
+          "relativePath": "300x600__settled.png",
+          "captured_at": "2026-06-04T16:50:46.722Z"
+        }
+      ]
+    }
+  ]
+}

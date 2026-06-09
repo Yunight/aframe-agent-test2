@@ -1,0 +1,95 @@
+{
+  "companyName": "Orientis Gourmet",
+  "companyContext": "French parent company (Groupe Orientis) that owns and operates Kusmi Tea, headquartered at 89 Avenue Niel, 75017 Paris, with production workshops in Normandy. Founded as a tea house in 1867 in Saint Petersburg by Pavel Kousmichoff, acquired by Orientis in 2003. The group employs over 550 people worldwide and is B Corp certified.",
+  "companyURL": "https://www.kusmitea.com",
+  "brandName": "Kusmi Tea",
+  "brandContext": "Iconic French organic tea house, made in Normandy since 1867. Kusmi Tea blends black, green, white teas, matcha, rooibos, maté and herbal infusions in colourful, decorative metal tins. The brand is famed for emblematic recipes (Anastasia, Prince Vladimir, Detox, BB Detox, Tropical White, Sweet Love) and for its KusmiKlub loyalty programme, which gives members access to recurring private sales ('Ventes Privilèges').",
+  "brandURL": "https://www.kusmitea.com/collections/vente-privilege",
+  "logoFileUrls": [
+    "https://upload.wikimedia.org/wikipedia/en/9/95/Kusmi_Tea_logo.png"
+  ],
+  "productName": "Vente Privilège du KusmiKlub",
+  "campaignContext": "Vente Privilège du kusmiclub",
+  "campaignReferenceUrl": "https://www.kusmitea.com/collections/vente-privilege",
+  "productPictureUrls": [
+    "http://www.kusmitea.com/cdn/shop/files/Capture_d_ecran_2026-04-15_093136.png?v=1776238370&width=2048",
+    "https://www.kusmitea.com/cdn/shop/files/sommeil_glace.jpg?v=1761298138&amp;width=400",
+    "https://www.kusmitea.com/cdn/shop/files/RITUELDRAINANT_25_LIFESTYLE_DRAI100BIO_DRAI18SBIO_POR_04_1.jpg?v=1760017586&amp;width=500",
+    "https://www.kusmitea.com/cdn/shop/files/lot.png?v=1769079671&amp;width=985",
+    "https://www.kusmitea.com/cdn/shop/files/rituel_minceur.webp?v=1770393850&amp;width=1366",
+    "https://www.kusmitea.com/cdn/shop/files/GMS_26_INGC20SBIO_INVC20SBIO_INPA20SBIO_INCC20SBIO_UNI_02_057c8caa-f192-412e-b9e6-ab27d7239f83.jpg?v=1774365823&amp;width=3712"
+  ],
+  "primaryColorPalette": [
+    "#000000",
+    "#F4ECDC",
+    "#FFFFFF",
+    "#C8A24B",
+    "#1F3A5F"
+  ],
+  "secondaryColorPalette": [
+    "#E84B6A",
+    "#F2B441",
+    "#7BBF6A",
+    "#3FA9C9",
+    "#A23B2E",
+    "#2C2C2C"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Playfair Display",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Brand wordmark feel, editorial headlines, 'Vente Privilège' hero title — elegant serif echoing the Kusmi Tea logo's classic Parisian-Russian heritage"
+    },
+    {
+      "fontFamily": "Playfair Display",
+      "fontWeight": 400,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Secondary editorial accents, pull quotes, romantic taglines (e.g. 'réservée aux KusmiKlubbers')"
+    },
+    {
+      "fontFamily": "Montserrat",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Subheadings, navigation labels, category tags, KusmiKlub badges"
+    },
+    {
+      "fontFamily": "Montserrat",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions, legal mentions, e-commerce UI"
+    },
+    {
+      "fontFamily": "Montserrat",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Call-to-action buttons ('J'en profite', 'Connectez-vous'), discount percentages (-50%, -30%)"
+    }
+  ],
+  "brandVision": "Kusmi Tea is home to an ongoing revolution — a freethinking, modern French tea house that shrugs off convention and etiquette. Its mission is to introduce as many people as possible to the best tea has to offer: accessible, delicious, optimistic, organic teas with no fuss and no pretension. Through the KusmiKlub and its Ventes Privilèges, the brand turns loyalty into a joyful, inclusive ritual that unites novices and connoisseurs around the universal emotion of pleasure.",
+  "brandValues": "Freedom, creativity and audacity in blending; organic and natural ingredients; inclusivity and joyful modernity ('every fruit is welcome, and everyone as well'); French savoir-faire made in Normandy; sustainability (B Corp certified, organic-certified range, reduced plastic, ARRONDI charitable round-up); commitment to women's causes (Cancer du Sein Parlons-en) and biodiversity (TX2 wild tigers); rewarding customer loyalty through exclusive, generous member experiences.",
+  "logoImageSearchQueries": [
+    "site:kusmitea.com logo svg",
+    "Kusmi Tea logo svg transparent",
+    "site:en.wikipedia.org Kusmi Tea logo",
+    "Kusmi Tea logo 2026 png transparent",
+    "KusmiKlub logo official",
+    "Kusmi Tea wordmark vector"
+  ],
+  "productImageSearchQueries": [
+    "site:kusmitea.com vente privilège kusmiklub",
+    "Kusmi Tea vente privilège bannière 2026",
+    "KusmiKlub vente privée visuel",
+    "Kusmi Tea Anastasia tin packshot",
+    "Kusmi Tea Prince Vladimir tin",
+    "Kusmi Tea Detox boîte métal",
+    "Kusmi Tea coffret cadeau vente privilège",
+    "Kusmi Tea BB Detox tin packshot",
+    "site:kusmitea.com collections vente-privilege",
+    "Kusmi Tea Tsarevna tin",
+    "Kusmi Tea Tropical White boîte"
+  ],
+  "campaignAssetProfile": "retail"
+}

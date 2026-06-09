@@ -145,11 +145,71 @@ test('buildCodegenAssetPromptBlocks skips logo-approved.json sidecar', async () 
   assert.equal(assetFiles.some((a) => a.fileName === 'logo-approved.json'), false);
 });
 
-test('maxProductAssetsForCodegen defaults to 5', () => {
+test('maxProductAssetsForCodegen defaults to 0 (no cap)', () => {
   const prev = process.env['CREATIVE_CODEGEN_MAX_PRODUCT_ASSETS'];
   delete process.env['CREATIVE_CODEGEN_MAX_PRODUCT_ASSETS'];
-  assert.equal(maxProductAssetsForCodegen(), 5);
+  assert.equal(maxProductAssetsForCodegen(), 0);
   if (prev !== undefined) {
     process.env['CREATIVE_CODEGEN_MAX_PRODUCT_ASSETS'] = prev;
+  }
+});
+
+test('maxProductAssetsForCodegen respects positive env cap', () => {
+  const prev = process.env['CREATIVE_CODEGEN_MAX_PRODUCT_ASSETS'];
+  process.env['CREATIVE_CODEGEN_MAX_PRODUCT_ASSETS'] = '3';
+  assert.equal(maxProductAssetsForCodegen(), 3);
+  if (prev === undefined) {
+    delete process.env['CREATIVE_CODEGEN_MAX_PRODUCT_ASSETS'];
+  } else {
+    process.env['CREATIVE_CODEGEN_MAX_PRODUCT_ASSETS'] = prev;
+  }
+});
+
+test('buildCodegenAssetPromptBlocks includes all products when cap is 0', async () => {
+  const directoryPath = mkdtempSync(join(tmpdir(), 'codegen-uncap-'));
+  mkdirSync(join(directoryPath, 'logos'), { recursive: true });
+  mkdirSync(join(directoryPath, 'products'), { recursive: true });
+
+  const minimalPng = Buffer.from(
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+    'base64'
+  );
+  for (const name of [ 'a.jpg', 'b.jpg', 'c.jpg', 'd.jpg', 'e.jpg', 'f.jpg' ]) {
+    writeFileSync(join(directoryPath, 'products', name), minimalPng);
+  }
+
+  const styleGuide: StyleGuide = {
+    companyName: 'Walibi',
+    companyContext: 'Test',
+    companyURL: 'https://www.walibi.fr/',
+    brandName: 'Walibi',
+    brandContext: 'Test',
+    brandURL: 'https://www.walibi.fr/',
+    productName: 'Saison 2026',
+    primaryColorPalette: [ '#0050A0' ],
+    secondaryColorPalette: [],
+    typography: [
+      { fontFamily: 'Arial', fontWeight: 400, fontEffect: [], fontUses: 'body' }
+    ],
+    brandVision: 'Test',
+    brandValues: 'Test',
+    logoFileUrls: [],
+    productPictureUrls: [],
+    logoImageSearchQueries: [],
+    productImageSearchQueries: []
+  };
+
+  const prevMax = process.env['CREATIVE_CODEGEN_MAX_PRODUCT_ASSETS'];
+  delete process.env['CREATIVE_CODEGEN_MAX_PRODUCT_ASSETS'];
+  try {
+    const { assetFiles } = await buildCodegenAssetPromptBlocks({ directoryPath, styleGuide });
+    const products = assetFiles.filter((a) => a.fileType === 'products');
+    assert.equal(products.length, 6);
+  } finally {
+    if (prevMax === undefined) {
+      delete process.env['CREATIVE_CODEGEN_MAX_PRODUCT_ASSETS'];
+    } else {
+      process.env['CREATIVE_CODEGEN_MAX_PRODUCT_ASSETS'] = prevMax;
+    }
   }
 });

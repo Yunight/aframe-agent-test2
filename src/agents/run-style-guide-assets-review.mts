@@ -1,15 +1,18 @@
 /**
  * Post–style-guide assets review: JSON + logo (lock after OK) + products.
- * Lightweight: max 2 deterministic rounds, Haiku only if products still blocked.
+ * Deterministic checks + Haiku vision describe + logo vision audit + text-only descriptions audit.
  *
  * Usage: node src/agents/run-style-guide-assets-review.mts <directory-uuid>
  */
 
 import type { StyleGuide } from './gen-style-guide.mjs';
 import {
-  buildLogoSearchQueries,
+  appendBraveExcludedUrls,
+  buildLogoSearchQueriesFromFindings,
   buildProductSearchQueriesFromFindings,
   imageContextFromStyleGuide,
+  loadBraveExcludedUrls,
+  officialHostsFromContext,
   refreshAssetsFromQueries
 } from '../lib/brave-image-assets.mts';
 import {
@@ -17,12 +20,18 @@ import {
   imageSearchLogPrefix,
   resolveImageSearchProvider
 } from '../lib/image-search.mts';
+import { runDescriptionsBasedAssetsReview } from '../lib/asset-descriptions-audit.mts';
+import { buildProductMatchFields, resolveCampaignAssetProfile } from '../lib/style-guide-context.mts';
 import {
   logDeterministicFindings,
+  pruneDeterministicBlockedProducts,
   pruneInvalidLogos,
   pruneListingIneligibleProducts,
   pruneNonWordmarkLogos,
+  pruneOversizedAssets,
   pruneUndersizedAssets,
+  pruneVisionBlockedLogos,
+  pruneVisionBlockedProducts,
   runDeterministicAssetsCheck
 } from '../lib/creative-native-assets-deterministic.mts';
 import {
@@ -36,18 +45,16 @@ import {
   recomputePhaseTotals,
   type PipelineUsageFile
 } from '../lib/creative-pipeline-usage.mts';
-import {
-  assetDescriptionsPath,
-  describeApprovedAssets
-} from '../lib/creative-asset-descriptions.mts';
+import { assetDescriptionsPath } from '../lib/creative-asset-descriptions.mts';
 import { listAssetImageFiles } from '../lib/asset-sidecar-files.mts';
-import { logoLockExists, writeLogoLock } from '../lib/logo-lock.mts';
+import { clearLogoLock, logoLockExists, writeLogoLock } from '../lib/logo-lock.mts';
+import { hasLogoBlockers, runLogoVisionAudit, useLogoVisionAudit } from '../lib/logo-vision-audit.mts';
 import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
 import {
   buildBraveRetryQueriesFromAudit,
-  runCreativeNativeAssetsReview,
   writeAssetsReviewRoundReport,
-  type AssetsReviewOutput
+  type AssetsReviewOutput,
+  type AssetsReviewUsageTotals
 } from './creative-native-assets-review.mts';
 import { config as loadDotenv } from 'dotenv';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -93,6 +100,16 @@ console.log(
 );
 
 let styleGuide = JSON.parse(readFileSync(styleGuidePath, 'utf8')) as StyleGuide;
+console.log(
+  `[style-guide-review] Campaign asset profile: ${resolveCampaignAssetProfile(buildProductMatchFields({
+    campaignContext: styleGuide.campaignContext ?? null,
+    productName: styleGuide.productName,
+    brandName: styleGuide.brandName,
+    brandContext: styleGuide.brandContext,
+    brandURL: styleGuide.brandURL,
+    campaignAssetProfile: styleGuide.campaignAssetProfile
+  }))}`
+);
 const prunedStyleGuide = JSON.parse(JSON.stringify(styleGuide)) as Omit<
 StyleGuide,
 'logoFileUrls' | 'productPictureUrls'
@@ -104,7 +121,13 @@ let imageContext = imageContextFromStyleGuide(styleGuide);
 
 let reviewRound = 0;
 let lastAudit: AssetsReviewOutput | null = null;
-let logoLocked = logoLockExists(directoryPath);
+let logoLocked = false;
+let excludedUrls = loadBraveExcludedUrls(reviewDirectoryPath);
+
+if (useLogoVisionAudit() && logoLockExists(directoryPath)) {
+  console.log('[style-guide-review] Clearing pre-vision logo lock — Haiku vision audit required.');
+  clearLogoLock(directoryPath);
+}
 
 function countProductFiles (): number {
   return listAssetImageFiles(directoryPath, 'products').length;
@@ -117,13 +140,31 @@ function countLogoFiles (): number {
 async function refreshProductsOnly (
   productQueries: string[],
   round: number,
-  notes: string
+  notes: string,
+  refreshOptions?: { clearProductFolder?: boolean }
 ): Promise<void> {
   if (productQueries.length === 0) {
     return;
   }
   const refreshStartedAt = Date.now();
-  await refreshAssetsFromQueries(directoryPath, imageContext, { logos: [], products: productQueries }, {});
+  const refresh = await refreshAssetsFromQueries(
+    directoryPath,
+    imageContext,
+    { logos: [], products: productQueries },
+    {
+      excludeUrls: excludedUrls,
+      ...(refreshOptions?.clearProductFolder !== undefined
+        ? { clearProductFolder: refreshOptions.clearProductFolder }
+        : {})
+    }
+  );
+  if (refresh.rejectedUrls.length > 0) {
+    excludedUrls = appendBraveExcludedUrls(
+      reviewDirectoryPath,
+      excludedUrls,
+      refresh.rejectedUrls
+    );
+  }
   appendPipelineUsage(
     directoryPath,
     entryZeroCost({
@@ -139,46 +180,62 @@ async function refreshProductsOnly (
   imageContext = imageContextFromStyleGuide(styleGuide);
 }
 
-async function tryApproveAndLockLogo (): Promise<boolean> {
-  if (logoLocked) {
-    return true;
+function lockLogoAfterVisionAudit (): void {
+  if (logoLocked || countLogoFiles() < 1) {
+    return;
   }
-  const det = await runDeterministicAssetsCheck(directoryPath, styleGuide);
-  const logoBlockers = det.findings.filter(
-    (f) =>
-      f.severity === 'blocker' &&
-      (f.asset_id.startsWith('logos/') || f.asset_id === 'logos')
-  );
-  if (logoBlockers.length === 0 && countLogoFiles() >= 1) {
-    writeLogoLock(directoryPath, {
-      approved_at: new Date().toISOString(),
-      source: 'deterministic'
-    });
-    logoLocked = true;
-    console.log('[style-guide-review] Logo approved and locked.');
-    return true;
-  }
-  if (logoBlockers.length > 0) {
-    logDeterministicFindings(logoBlockers);
-  }
-  return false;
+  writeLogoLock(directoryPath, {
+    approved_at: new Date().toISOString(),
+    source: 'logo-vision-audit'
+  });
+  logoLocked = true;
+  console.log('[style-guide-review] Logo passed Haiku vision audit — locked.');
 }
 
-function productOnlyBlockers (findings: { severity: string; asset_id: string }[]): boolean {
-  const blockers = findings.filter((f) => f.severity === 'blocker');
-  if (blockers.length === 0) {
-    return false;
+function hasProductBlockers (findings: { severity: string; asset_id: string }[]): boolean {
+  return findings.some(
+    (f) => f.severity === 'blocker' && f.asset_id.startsWith('products/')
+  );
+}
+
+async function refreshLogosOnly (
+  logoQueries: string[],
+  round: number,
+  notes: string
+): Promise<void> {
+  if (logoQueries.length === 0) {
+    return;
   }
-  return blockers.every((f) => f.asset_id.startsWith('products/'));
+  const refreshStartedAt = Date.now();
+  const refresh = await refreshAssetsFromQueries(
+    directoryPath,
+    imageContext,
+    { logos: logoQueries, products: [] },
+    { excludeUrls: excludedUrls }
+  );
+  if (refresh.rejectedUrls.length > 0) {
+    excludedUrls = appendBraveExcludedUrls(
+      reviewDirectoryPath,
+      excludedUrls,
+      refresh.rejectedUrls
+    );
+  }
+  appendPipelineUsage(
+    directoryPath,
+    entryZeroCost({
+      action: 'assets_refresh',
+      agent: 'agents/run-style-guide-assets-review.mts',
+      review_round: round,
+      phase: 'style_guide',
+      duration_ms: Date.now() - refreshStartedAt,
+      notes
+    })
+  );
+  styleGuide = JSON.parse(readFileSync(styleGuidePath, 'utf8')) as StyleGuide;
+  imageContext = imageContextFromStyleGuide(styleGuide);
 }
 
 console.log(`[style-guide-review] Max rounds: ${String(maxRounds)}`);
-
-if (logoLocked) {
-  console.log('[style-guide-review] Logo already approved — skipping logo refresh.');
-} else {
-  await tryApproveAndLockLogo();
-}
 
 while (reviewRound < maxRounds) {
   reviewRound += 1;
@@ -186,137 +243,240 @@ while (reviewRound < maxRounds) {
 
   mkdirSync(reviewDirectoryPath, { recursive: true });
   pruneListingIneligibleProducts(directoryPath, styleGuide);
+  await pruneOversizedAssets(directoryPath);
   await pruneUndersizedAssets(directoryPath);
   if (!logoLocked) {
     await pruneNonWordmarkLogos(directoryPath);
-    await pruneInvalidLogos(directoryPath);
-  }
-
-  if (!logoLocked) {
-    const logoOk = await tryApproveAndLockLogo();
-    if (!logoOk && reviewRound < maxRounds) {
-      console.log('[style-guide-review] Logo refresh (once)…');
-      const refreshStartedAt = Date.now();
-      await refreshAssetsFromQueries(
-        directoryPath,
-        imageContext,
-        { logos: buildLogoSearchQueries(imageContext), products: [] },
-        {}
-      );
-      appendPipelineUsage(
-        directoryPath,
-        entryZeroCost({
-          action: 'assets_refresh',
-          agent: 'agents/run-style-guide-assets-review.mts',
-          review_round: reviewRound,
-          phase: 'style_guide',
-          duration_ms: Date.now() - refreshStartedAt,
-          notes: 'logo-only refresh'
-        })
-      );
-      styleGuide = JSON.parse(readFileSync(styleGuidePath, 'utf8')) as StyleGuide;
-      imageContext = imageContextFromStyleGuide(styleGuide);
-      continue;
-    }
+    await pruneInvalidLogos(directoryPath, officialHostsFromContext(imageContext));
   }
 
   const deterministic = await runDeterministicAssetsCheck(directoryPath, styleGuide);
   logDeterministicFindings(deterministic.findings);
 
-  if (deterministic.ok) {
-    console.log('[style-guide-review] Deterministic checks passed.');
-    lastAudit = {
-      satisfied: true,
-      summary: 'Deterministic OK',
-      findings: [],
-      brave_retry_queries: { logos: [], products: [] }
-    };
+  if (!deterministic.ok) {
+    if (reviewRound < maxRounds) {
+      let retried = false;
+
+      if (
+        !hasLogoBlockers(deterministic.findings) &&
+        listAssetImageFiles(directoryPath, 'logos').length > 0 &&
+        useLogoVisionAudit()
+      ) {
+        console.log('[style-guide-review] Product blockers — running logo vision audit before retry…');
+        const logoVision = await runLogoVisionAudit({
+          anthropicClient,
+          directoryPath,
+          prunedStyleGuide,
+          reviewRound,
+          phase: 'style_guide'
+        });
+        const prunedLogos = pruneVisionBlockedLogos(
+          directoryPath,
+          logoVision.audit.findings,
+          styleGuide.logoFileUrls ?? []
+        );
+        if (prunedLogos.excludedSourceUrls.length > 0) {
+          excludedUrls = appendBraveExcludedUrls(
+            reviewDirectoryPath,
+            excludedUrls,
+            prunedLogos.excludedSourceUrls
+          );
+        }
+        if (prunedLogos.removed.length > 0) {
+          clearLogoLock(directoryPath);
+          logoLocked = false;
+          const logoQueries = buildLogoSearchQueriesFromFindings(
+            imageContext,
+            logoVision.audit.findings,
+            logoVision.audit.brave_retry_queries.logos
+          );
+          if (logoQueries.length > 0) {
+            await refreshLogosOnly(logoQueries, reviewRound, 'pre-retry logo vision refresh');
+            retried = true;
+          }
+        }
+      }
+
+      if (hasProductBlockers(deterministic.findings)) {
+        const prunedProducts = pruneDeterministicBlockedProducts(
+          directoryPath,
+          deterministic.findings
+        );
+        if (prunedProducts.excludedSourceUrls.length > 0) {
+          excludedUrls = appendBraveExcludedUrls(
+            reviewDirectoryPath,
+            excludedUrls,
+            prunedProducts.excludedSourceUrls
+          );
+        }
+        const productQueries = buildProductSearchQueriesFromFindings(
+          imageContext,
+          deterministic.findings,
+          lastAudit?.brave_retry_queries.products
+        );
+        if (productQueries.length > 0) {
+          console.log('[style-guide-review] Product blockers — Brave refresh (products)…');
+          await refreshProductsOnly(productQueries, reviewRound, 'deterministic product refresh');
+          retried = true;
+        }
+      }
+
+      if (hasLogoBlockers(deterministic.findings)) {
+        const logoQueries = buildLogoSearchQueriesFromFindings(
+          imageContext,
+          deterministic.findings,
+          lastAudit?.brave_retry_queries.logos
+        );
+        if (logoQueries.length > 0) {
+          console.log('[style-guide-review] Logo blockers — Brave refresh (logos)…');
+          await refreshLogosOnly(logoQueries, reviewRound, 'deterministic logo refresh');
+          retried = true;
+        }
+      }
+
+      if (retried) {
+        styleGuide = JSON.parse(readFileSync(styleGuidePath, 'utf8')) as StyleGuide;
+        imageContext = imageContextFromStyleGuide(styleGuide);
+        continue;
+      }
+    }
     break;
   }
 
-  if (productOnlyBlockers(deterministic.findings) && reviewRound < maxRounds) {
-    const productQueries = buildProductSearchQueriesFromFindings(
-      imageContext,
-      deterministic.findings,
-      lastAudit?.brave_retry_queries.products
-    );
-    console.log('[style-guide-review] Product blockers — Brave refresh (products only)…');
-    await refreshProductsOnly(productQueries, reviewRound, 'products-only refresh');
-    continue;
+  const productCount = countProductFiles();
+  let reviewUsage: AssetsReviewUsageTotals;
+  try {
+    if (productCount === 0) {
+      console.log('[style-guide-review] No product files — Haiku logo vision audit only…');
+      const logoVision = await runLogoVisionAudit({
+        anthropicClient,
+        directoryPath,
+        prunedStyleGuide,
+        reviewRound,
+        phase: 'style_guide'
+      });
+      lastAudit = logoVision.audit;
+      reviewUsage =
+        logoVision.usage ??
+        ({
+          api_calls: 0,
+          input_tokens: 0,
+          output_tokens: 0,
+          cache_creation_input_tokens: 0,
+          cache_read_input_tokens: 0,
+          model: '',
+          billed_input_tokens: 0,
+          price_usd: { input: 0, output: 0, total: 0 },
+          duration_ms: 0
+        } satisfies AssetsReviewUsageTotals);
+    } else {
+      console.log('[style-guide-review] Deterministic OK — Haiku describe + descriptions + logo vision audit…');
+      const described = await runDescriptionsBasedAssetsReview({
+        anthropicClient,
+        directoryPath,
+        styleGuide,
+        prunedStyleGuide,
+        reviewRound,
+        productFileCount: productCount,
+        phase: 'style_guide'
+      });
+      lastAudit = described.audit;
+      reviewUsage = described.auditUsage;
+    }
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`[style-guide-review] Assets review failed: ${msg}`);
+    break;
+  }
+
+  writeAssetsReviewRoundReport(reviewDirectoryPath, reviewRound, {
+    audit: lastAudit,
+    usage: reviewUsage,
+    deterministic_ok: true
+  });
+
+  if (lastAudit.satisfied) {
+    lockLogoAfterVisionAudit();
+    console.log('[style-guide-review] Descriptions + logo vision audit satisfied.');
+    break;
   }
 
   if (reviewRound >= maxRounds) {
     break;
   }
 
-  const hasProductBlockers = deterministic.findings.some(
-    (f) => f.severity === 'blocker' && f.asset_id.startsWith('products/')
-  );
-  if (!hasProductBlockers) {
-    break;
-  }
-
-  console.log('[style-guide-review] Product blockers — Haiku vision (single pass)…');
-  const { audit, usage } = await runCreativeNativeAssetsReview({
-    anthropicClient,
+  const prunedLogos = pruneVisionBlockedLogos(
     directoryPath,
-    prunedStyleGuide,
-    reviewRound
-  });
-  lastAudit = audit;
-  writeAssetsReviewRoundReport(reviewDirectoryPath, reviewRound, {
-    audit,
-    usage,
-    deterministic_ok: deterministic.ok
-  });
-
-  if (audit.satisfied) {
-    break;
+    lastAudit.findings,
+    styleGuide.logoFileUrls ?? []
+  );
+  if (prunedLogos.excludedSourceUrls.length > 0) {
+    excludedUrls = appendBraveExcludedUrls(
+      reviewDirectoryPath,
+      excludedUrls,
+      prunedLogos.excludedSourceUrls
+    );
+  }
+  if (prunedLogos.removed.length > 0) {
+    clearLogoLock(directoryPath);
+    logoLocked = false;
   }
 
-  const retryQueries = buildBraveRetryQueriesFromAudit(audit, imageContext);
+  const pruned = pruneVisionBlockedProducts(directoryPath, lastAudit.findings);
+  if (pruned.excludedSourceUrls.length > 0) {
+    excludedUrls = appendBraveExcludedUrls(
+      reviewDirectoryPath,
+      excludedUrls,
+      pruned.excludedSourceUrls
+    );
+  }
+
+  const retryQueries = buildBraveRetryQueriesFromAudit(lastAudit, imageContext);
+  const logoQueries = buildLogoSearchQueriesFromFindings(
+    imageContext,
+    lastAudit.findings,
+    retryQueries.logos
+  );
   const products = buildProductSearchQueriesFromFindings(
     imageContext,
-    audit.findings,
+    lastAudit.findings,
     retryQueries.products
   );
+
+  let retried = false;
+  if (hasLogoBlockers(lastAudit.findings) && logoQueries.length > 0) {
+    console.log('[style-guide-review] Logo vision blockers — Brave refresh (logos)…');
+    await refreshLogosOnly(logoQueries, reviewRound, 'post-logo-vision-audit logos refresh');
+    retried = true;
+  }
+
   if (products.length > 0) {
-    await refreshProductsOnly(products, reviewRound, 'post-haiku products refresh');
+    console.log('[style-guide-review] Descriptions audit blockers — Brave refresh (products)…');
+    await refreshProductsOnly(products, reviewRound, 'post-descriptions-audit products refresh', {
+      clearProductFolder: false
+    });
+    retried = true;
+  }
+
+  if (retried) {
+    continue;
   }
 }
 
 const finalDeterministic = await runDeterministicAssetsCheck(directoryPath, styleGuide);
 const satisfied =
   finalDeterministic.ok &&
-  (logoLocked || countLogoFiles() >= 1) &&
-  (lastAudit?.satisfied ?? finalDeterministic.ok);
+  logoLocked &&
+  countLogoFiles() >= 1 &&
+  lastAudit?.satisfied === true;
 
 let assetDescriptionsRel: string | null = null;
-if (satisfied) {
-  const productCount = countProductFiles();
-  const skipDescribe = process.env['STYLE_GUIDE_SKIP_ASSET_DESCRIPTIONS']?.trim() === '1';
-  try {
-    const describeResult = await describeApprovedAssets({
-      anthropicClient,
-      directoryPath,
-      styleGuide
-    });
-    if (existsSync(assetDescriptionsPath(directoryPath))) {
-      assetDescriptionsRel = 'review/asset-descriptions.json';
-    }
-    if (productCount > 0 && describeResult === null && !skipDescribe) {
-      throw new Error(
-        'Product images present but asset-descriptions.json was not written. Re-run review or fix describe step.'
-      );
-    }
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    if (productCount > 0 && !skipDescribe) {
-      console.error(`[style-guide-review] Asset descriptions failed: ${msg}`);
-      process.exit(1);
-    }
-    console.warn(`[style-guide-review] Asset descriptions skipped or failed: ${msg}`);
-  }
+if (satisfied && existsSync(assetDescriptionsPath(directoryPath))) {
+  assetDescriptionsRel = 'review/asset-descriptions.json';
+} else if (satisfied && countProductFiles() > 0) {
+  console.warn(
+    '[style-guide-review] Satisfied but asset-descriptions.json missing — descriptions step may have been skipped.'
+  );
 }
 
 writeFileSync(

@@ -11,7 +11,12 @@ import {
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { imageSizeFromFile } from 'image-size/fromFile';
-import { isUntrustedLogoUrl, validateLogoAssetFile } from './logo-transparency-check.mts';
+import type { LogoSourcePhase } from './logo-asset-sources.mts';
+import {
+  isUntrustedLogoUrl,
+  validateLogoAssetFile,
+  type LogoValidationContext
+} from './logo-transparency-check.mts';
 import { AssetHostFailureTracker } from './asset-host-fail-fast.mts';
 import {
   isLowValueOfficialProductUrl,
@@ -23,11 +28,17 @@ import {
 } from './official-fetch.mts';
 import type { ProductAssetSourceProvenance } from './product-asset-sources.mts';
 import {
+  buildProductMatchFields,
   buildProductMatchTerms,
   filterPrioritizeProductUrls,
+  isEntertainmentCampaign,
+  isEntertainmentDeniedHost,
+  isEntertainmentVisualHost,
+  isExperienceCampaign,
   isOfficialHostCampaignOrProductImageUrl,
   normalizeForTermMatch,
   productMinRelevanceScore,
+  resolveCampaignAssetProfile,
   resolveReferenceListingUrls,
   scoreProductContextRelevance
 } from './style-guide-context.mts';
@@ -87,6 +98,7 @@ export interface ImageSearchContext {
   brandName: string;
   companyName: string;
   productName: string;
+  brandContext?: string;
   brandURL?: string;
   companyURL?: string;
   logoImageSearchQueries?: string[];
@@ -121,12 +133,14 @@ export function imageContextFromStyleGuide (styleGuide: {
     brandURL: styleGuide.brandURL
   });
   const campaignUrls = styleGuide.campaignUrls?.filter((u) => u.length > 0) ?? [];
+  const brandContext = styleGuide.brandContext?.trim() ?? '';
   return {
     brandName: styleGuide.brandName,
     companyName: styleGuide.companyName,
     productName: styleGuide.productName,
     brandURL: styleGuide.brandURL,
     companyURL: styleGuide.companyURL,
+    ...(brandContext.length > 0 ? { brandContext } : {}),
     logoImageSearchQueries: styleGuide.logoImageSearchQueries ?? [],
     productImageSearchQueries: styleGuide.productImageSearchQueries ?? [],
     ...(campaignContext.length > 0 ? { campaignContext } : {}),
@@ -174,13 +188,13 @@ export function braveProductMinReportedHeight (): number {
 function assetMinDimensions (fileType: 'logos' | 'products'): { minW: number; minH: number } {
   if (fileType === 'logos') {
     return {
-      minW: parseEnvInt('CREATIVE_ASSETS_MIN_LOGO_W', 120),
-      minH: parseEnvInt('CREATIVE_ASSETS_MIN_LOGO_H', 40)
+      minW: parseEnvInt('CREATIVE_ASSETS_MIN_LOGO_W', 1),
+      minH: parseEnvInt('CREATIVE_ASSETS_MIN_LOGO_H', 1)
     };
   }
   return {
-    minW: parseEnvInt('CREATIVE_ASSETS_MIN_PRODUCT_W', 200),
-    minH: parseEnvInt('CREATIVE_ASSETS_MIN_PRODUCT_H', 200)
+    minW: parseEnvInt('CREATIVE_ASSETS_MIN_PRODUCT_W', 1),
+    minH: parseEnvInt('CREATIVE_ASSETS_MIN_PRODUCT_H', 1)
   };
 }
 
@@ -325,6 +339,19 @@ export function isListingBraveProductCandidateAllowed (
   return isOfficialHostCampaignOrProductImageUrl(url, officialHosts);
 }
 
+/** When true, Brave product search runs without listing-mode host restrictions. */
+export function shouldRelaxProductListingBraveFilter (params: {
+  fileType: 'logos' | 'products';
+  listingMode: boolean;
+  downloadedCount: number;
+}): boolean {
+  return (
+    params.fileType === 'products' &&
+    params.listingMode &&
+    params.downloadedCount === 0
+  );
+}
+
 export async function braveImageSearch ({
   query,
   num = 10
@@ -443,6 +470,94 @@ export function scoreCampaignLogoAdjustment (
   return adjust;
 }
 
+/** Penalize parent-company logos and homonyms when brandName differs from companyName. */
+export function scoreSubBrandLogoAdjustment (
+  url: string,
+  title: string,
+  logoScoring: {
+    companyName: string;
+    brandName: string;
+  }
+): number {
+  const brand = logoScoring.brandName.trim();
+  const company = logoScoring.companyName.trim();
+  if (brand.length === 0 || company.length === 0) {
+    return 0;
+  }
+
+  const hay = normalizeForTermMatch(`${url} ${title}`);
+  let adjust = 0;
+
+  if (/\bnet[_\s-]?logo\b/iu.test(hay) && !/materiel|matnet/iu.test(hay)) {
+    adjust -= 200;
+  }
+
+  if (brand.toLowerCase() === company.toLowerCase()) {
+    const brandNorm = normalizeForTermMatch(brand).replace(/\s+/gu, '');
+    if (brandNorm.length >= 4 && hay.includes(brandNorm)) {
+      adjust += 50;
+    }
+    return adjust;
+  }
+
+  const brandNorm = normalizeForTermMatch(brand).replace(/\s+/gu, '');
+  const companyNorm = normalizeForTermMatch(company).replace(/\s+/gu, '');
+  const brandTokens = brand
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .split(/[^a-z0-9]+/u)
+    .filter((t) => t.length >= 4);
+
+  if (brandNorm.length >= 4 && hay.includes(brandNorm)) {
+    adjust += 80;
+  } else if (brandTokens.some((t) => hay.includes(t))) {
+    adjust += 50;
+  }
+
+  if (companyNorm.length >= 4 && hay.includes(companyNorm) && !hay.includes(brandNorm)) {
+    adjust -= 150;
+  }
+
+  return adjust;
+}
+
+/** Penalize franchise logos from the wrong installment (e.g. Scary Movie 4 vs 2026 / part 6). */
+export function scoreEntertainmentLogoOpusPenalty (
+  url: string,
+  title: string,
+  productName: string
+): number {
+  const hay = normalizeForTermMatch(`${url} ${title}`);
+  const productHay = normalizeForTermMatch(productName);
+  if (productHay.length === 0) {
+    return 0;
+  }
+
+  let adjust = 0;
+
+  const productYear = productHay.match(/\b(20\d{2})\b/)?.[1];
+  const productSequel = productHay.match(/\b(?:movie|film|part|scary\s*movie)\s*(\d+)\b/)?.[1]
+    ?? productHay.match(/\bscary\s*movie\s*(\d+)\b/)?.[1];
+
+  const urlOpus = hay.match(/(?:scarymovie|scary-movie|movie[-_]?)(\d+)/)?.[1]
+    ?? hay.match(/\bfilm[-_]?(\d+)\b/)?.[1];
+
+  if (urlOpus !== undefined) {
+    if (productSequel !== undefined && urlOpus !== productSequel) {
+      adjust -= 150;
+    } else if (productYear !== undefined && urlOpus !== productYear.slice(-1) && !productHay.includes(urlOpus)) {
+      adjust -= 120;
+    }
+  }
+
+  if (/scarymovie4|scary-movie-4|\bmovie[-_]?4\b/.test(hay) && /(?:\b6\b|2026)/.test(productHay)) {
+    adjust -= 150;
+  }
+
+  return adjust;
+}
+
 function scoreImageSearchRow (
   url: string,
   row: ImageSearchRow,
@@ -499,8 +614,31 @@ function scoreImageSearchRow (
     }
     if (options.logoScoring !== undefined) {
       score += scoreCampaignLogoAdjustment(url, title, options.logoScoring);
+      score += scoreSubBrandLogoAdjustment(url, title, options.logoScoring);
+    }
+    if (/wikimedia\.org|wikipedia\.org/iu.test(url) && options.logoScoring !== undefined) {
+      const brandNorm = normalizeForTermMatch(options.logoScoring.brandName).replace(/\s+/gu, '');
+      if (brandNorm.length >= 4 && !normalizeForTermMatch(`${url} ${title}`).includes(brandNorm)) {
+        score -= 120;
+      }
+    }
+    if (options.logoScoring !== undefined) {
+      score += scoreEntertainmentLogoOpusPenalty(url, title, options.logoScoring.productName);
+    }
+    const currentYear = String(logoSearchCurrentYear());
+    if (url.includes(currentYear) || title.includes(currentYear)) {
+      score += 30;
     }
   } else {
+    if (isEntertainmentVisualHost(url)) {
+      score += 55;
+    }
+    if (isEntertainmentDeniedHost(url)) {
+      score -= 200;
+    }
+    if (/poster|affiche|key\s*art|still|cast|cinema|theatrical/iu.test(title)) {
+      score += 22;
+    }
     if (/packshot|produit|product|official|officiel|catalogue/iu.test(title)) {
       score += 14;
     }
@@ -554,6 +692,8 @@ export type GatherImageUrlsOptions = {
   officialHosts?: readonly string[];
   productMatchTerms?: readonly string[];
   referenceListingUrls?: readonly string[];
+  entertainmentMode?: boolean;
+  experienceMode?: boolean;
   logoScoring?: {
     productName: string;
     companyName: string;
@@ -564,14 +704,20 @@ export type GatherImageUrlsOptions = {
 export async function gatherValidatedImageUrls (
   queries: readonly string[],
   options: GatherImageUrlsOptions
-): Promise<string[]> {
+): Promise<{ urls: string[]; titlesByUrl: Map<string, string> }> {
   const seen = new Set<string>();
+  const titlesByUrl = new Map<string, string>();
   const skipLowRes = options.skipLowResUrls !== false;
   const assetKind = options.assetKind ?? 'product';
   const officialHosts = options.officialHosts ?? [];
-  const ranked: { url: string; score: number }[] = [];
+  const ranked: { url: string; score: number; title: string }[] = [];
   const provider = resolveImageSearchProvider();
   const logPrefix = imageSearchLogPrefix(provider);
+  const listingFilter =
+    options.entertainmentMode !== true &&
+    options.experienceMode !== true &&
+    options.referenceListingUrls !== undefined &&
+    options.referenceListingUrls.length > 0;
 
   for (const query of queries) {
     let results: ImageSearchRow[];
@@ -620,8 +766,7 @@ export async function gatherValidatedImageUrls (
       }
       if (
         assetKind === 'product' &&
-        options.referenceListingUrls !== undefined &&
-        options.referenceListingUrls.length > 0 &&
+        listingFilter &&
         !isListingBraveProductCandidateAllowed(candidate, officialHosts)
       ) {
         continue;
@@ -630,7 +775,9 @@ export async function gatherValidatedImageUrls (
         assetKind === 'product' &&
         options.productMatchTerms !== undefined &&
         options.productMatchTerms.length > 0 &&
-        (options.referenceListingUrls === undefined ||
+        (options.entertainmentMode === true ||
+          options.experienceMode === true ||
+          options.referenceListingUrls === undefined ||
           options.referenceListingUrls.length === 0 ||
           !isOfficialHostCampaignOrProductImageUrl(candidate, officialHosts)) &&
         scoreProductContextRelevance(candidate, row.title ?? '', options.productMatchTerms) <
@@ -641,7 +788,7 @@ export async function gatherValidatedImageUrls (
 
       if (assetKind === 'logo' && /\.svg($|[?#])/iu.test(candidate)) {
         seen.add(candidate);
-        ranked.push({ url: candidate, score });
+        ranked.push({ url: candidate, score, title: row.title ?? '' });
         continue;
       }
 
@@ -652,7 +799,7 @@ export async function gatherValidatedImageUrls (
             : {})
         });
         seen.add(candidate);
-        ranked.push({ url: candidate, score });
+        ranked.push({ url: candidate, score, title: row.title ?? '' });
       } catch {
         /* URL not a usable image */
       }
@@ -661,6 +808,11 @@ export async function gatherValidatedImageUrls (
 
   ranked.sort((a, b) => b.score - a.score);
   const urls = ranked.slice(0, options.maxResults).map((r) => r.url);
+  for (const row of ranked.slice(0, options.maxResults)) {
+    if (row.title.length > 0) {
+      titlesByUrl.set(row.url, row.title);
+    }
+  }
   if (urls.length > 0 && ranked[0] !== undefined) {
     console.log(
       `${logPrefix} Top ${assetKind} candidate score=${String(ranked[0].score)} host=${(() => {
@@ -671,8 +823,30 @@ export async function gatherValidatedImageUrls (
         }
       })()}`
     );
+  } else if (assetKind === 'product') {
+    const filterHints: string[] = [];
+    if (listingFilter) {
+      filterHints.push('listing-mode official-host filter');
+    }
+    if (options.minContentLength !== undefined) {
+      filterHints.push(`min content-length ${String(options.minContentLength)}`);
+    }
+    if (options.productMatchTerms !== undefined && options.productMatchTerms.length > 0) {
+      filterHints.push('product context match terms');
+    }
+    if (skipLowRes) {
+      filterHints.push('low-res URL skip');
+    }
+    console.warn(
+      `${logPrefix} No product candidates after filtering (${filterHints.join('; ') || 'queries returned no usable images'}).`
+    );
   }
-  return urls;
+  return { urls, titlesByUrl };
+}
+
+/** Calendar year used in logo search queries to bias toward the latest brand lockup. */
+export function logoSearchCurrentYear (): number {
+  return new Date().getFullYear();
 }
 
 function expansionLogoSearchQueries (base: ImageSearchContext): string[] {
@@ -685,10 +859,12 @@ function expansionLogoSearchQueries (base: ImageSearchContext): string[] {
     return [];
   }
 
+  const year = logoSearchCurrentYear();
   const queries: string[] = [
     `${product} logo transparent`,
     `${product} wordmark svg`,
-    `${product} official logo`
+    `${product} official logo`,
+    `${product} logo ${year}`
   ];
   const ref = base.campaignReferenceUrl?.trim() ?? base.brandURL?.trim() ?? '';
   if (ref.length > 0) {
@@ -711,6 +887,7 @@ function expansionLogoSearchQueries (base: ImageSearchContext): string[] {
 function buildLogoSearchQueriesBuiltin (base: ImageSearchContext): string[] {
   const brand = base.brandName.trim();
   const company = base.companyName.trim();
+  const year = logoSearchCurrentYear();
   const queries: string[] = [ ...expansionLogoSearchQueries(base) ];
   const brandHost = hostFromBrandUrl(base.brandURL);
   const companyHost = hostFromBrandUrl(base.companyURL);
@@ -723,7 +900,9 @@ function buildLogoSearchQueriesBuiltin (base: ImageSearchContext): string[] {
       `site:${h} logo filetype:png`,
       `site:${h} inurl:logo`,
       `site:${h} wordmark`,
-      `${brand} logo officiel site:${h}`
+      `${brand} logo officiel site:${h}`,
+      `site:${h} logo ${year}`,
+      `${brand} logo ${year} site:${h}`
     );
   }
   if (companyHost !== null && companyHost !== brandHost) {
@@ -734,7 +913,13 @@ function buildLogoSearchQueriesBuiltin (base: ImageSearchContext): string[] {
     queries.push(`${company} logo officiel`);
   }
 
-  queries.push(`${brand} identité visuelle logo`, `${brand} charte graphique logo`);
+  queries.push(
+    `${brand} identité visuelle logo`,
+    `${brand} charte graphique logo`,
+    `${brand} logo ${year}`,
+    `${brand} nouveau logo ${year}`,
+    `${brand} identité visuelle logo ${year}`
+  );
 
   return queries;
 }
@@ -761,6 +946,44 @@ function buildProductSearchQueriesBuiltin (base: ImageSearchContext): string[] {
   const queries: string[] = [];
   const host = hostFromBrandUrl(base.brandURL);
   const companyHost = hostFromBrandUrl(base.companyURL);
+  const entertainment = isEntertainmentCampaign(buildProductMatchFields({
+    campaignContext: campaign.length > 0 ? campaign : null,
+    productName: product,
+    brandName: brand,
+    brandContext: base.brandContext,
+    brandURL: base.brandURL
+  }));
+  const experience = isExperienceCampaign(buildProductMatchFields({
+    campaignContext: campaign.length > 0 ? campaign : null,
+    productName: product,
+    brandName: brand,
+    brandContext: base.brandContext,
+    brandURL: base.brandURL
+  }));
+
+  if (entertainment) {
+    const title = product.length > 0 ? product : brand;
+    queries.push(
+      `site:imdb.com ${title} poster`,
+      `site:allocine.fr ${title} affiche`,
+      `site:impawards.com ${title}`,
+      `${title} official poster key art`,
+      `${title} theatrical poster Paramount`
+    );
+    if (host !== null) {
+      queries.push(`site:${host} poster`, `site:${host} key art`);
+    }
+  }
+
+  if (experience && host !== null) {
+    queries.push(
+      `site:${host} attraction photo`,
+      `site:${host} ${product} été`,
+      `site:${host} famille parc`,
+      `${brand} ${product} attraction officielle`,
+      `${brand} roller coaster photo officielle`
+    );
+  }
 
   if (campaign.length > 0) {
     if (host !== null) {
@@ -834,13 +1057,16 @@ export function buildLogoSearchQueriesFromFindings (
     findings?.some((f) => f.asset_id?.startsWith('logos/') === true) ?? false;
 
   if (hasLogoIssue) {
+    const year = logoSearchCurrentYear();
     const brandHost = hostFromBrandUrl(base.brandURL);
     const companyHost = hostFromBrandUrl(base.companyURL);
     if (brandHost !== null) {
       queries.unshift(
         `site:${brandHost} logo filetype:svg`,
         `site:${brandHost} inurl:logo`,
-        `site:${brandHost} logo officiel`
+        `site:${brandHost} logo officiel`,
+        `site:${brandHost} logo ${year}`,
+        `${brand} logo ${year}`
       );
     }
     if (companyHost !== null && companyHost !== brandHost) {
@@ -875,6 +1101,31 @@ export function buildProductSearchQueriesFromFindings (
         (f.issue?.includes('Dimensions') ?? false) ||
         (f.asset_id?.includes('thumb') ?? false)
     ) ?? false;
+
+  const hasHostIssue =
+    findings?.some(
+      (f) =>
+        (f.issue?.includes('official brand visual host') ?? false) ||
+        (f.issue?.includes('official film/studio host') ?? false) ||
+        (f.issue?.includes('cinema database') ?? false)
+    ) ?? false;
+
+  const entertainment = isEntertainmentCampaign(buildProductMatchFields({
+    campaignContext: base.campaignContext ?? null,
+    productName: base.productName,
+    brandName: base.brandName,
+    brandContext: base.brandContext,
+    brandURL: base.brandURL
+  }));
+
+  if (hasHostIssue && entertainment) {
+    const title = base.productName.trim() || base.brandName.trim();
+    queries.unshift(
+      `site:allocine.fr ${title} affiche`,
+      `site:imdb.com ${title} poster`,
+      `site:impawards.com ${title}`
+    );
+  }
 
   if (hasDimensionIssue) {
     const host = hostFromBrandUrl(base.brandURL);
@@ -935,14 +1186,20 @@ export function clearAssetSubdirectory (subdirectoryPath: string): void {
   }
 }
 
-function validateDownloadedLogoAsset (filePath: string): boolean {
-  const check = validateLogoAssetFile(filePath);
+function validateDownloadedLogoAsset (
+  filePath: string,
+  context?: LogoValidationContext
+): boolean {
+  const check = validateLogoAssetFile(filePath, context);
   if (!check.ok) {
     console.warn(`[download] Rejected logo ${basename(filePath)}: ${check.issue}`);
     return false;
   }
   if (check.warn !== undefined) {
     console.log(`[download] Logo ${basename(filePath)}: ${check.warn}`);
+  }
+  if (check.tier === 'B') {
+    console.log(`[download] Logo ${basename(filePath)}: Tier B official opaque lockup accepted.`);
   }
   return true;
 }
@@ -980,6 +1237,9 @@ export async function downloadUrlsToAssetFolder (
     validateDimensions?: boolean;
     rejectedUrls?: string[];
     productProvenanceByUrl?: ReadonlyMap<string, ProductAssetSourceProvenance>;
+    productTitleByUrl?: ReadonlyMap<string, string>;
+    logoSourcePhase?: LogoSourcePhase;
+    officialHosts?: readonly string[];
   }
 ): Promise<{ downloadedUrls: string[]; count: number }> {
   const subdirectoryPath = join(directoryPath, fileType);
@@ -989,6 +1249,7 @@ export async function downloadUrlsToAssetFolder (
   const downloadedUrls: string[] = [];
 
   const { recordProductAssetSource } = await import('./product-asset-sources.mts');
+  const { recordLogoAssetSource } = await import('./logo-asset-sources.mts');
 
   for (const fileUrl of fileUrls) {
     const logoFileNameSanitized = fileNameFromImageUrl(fileUrl);
@@ -1020,19 +1281,39 @@ export async function downloadUrlsToAssetFolder (
         }
       }
 
-      if (fileType === 'logos' && !validateDownloadedLogoAsset(filePath)) {
-        unlinkSync(filePath);
-        options?.rejectedUrls?.push(fileUrl);
-        continue;
+      if (fileType === 'logos') {
+        const logoContext: LogoValidationContext = {
+          sourceUrl: fileUrl,
+          officialHosts: options?.officialHosts ?? [],
+          sourcePhase: options?.logoSourcePhase ?? 'unknown'
+        };
+        if (!validateDownloadedLogoAsset(filePath, logoContext)) {
+          unlinkSync(filePath);
+          options?.rejectedUrls?.push(fileUrl);
+          continue;
+        }
       }
 
       downloadedUrls.push(fileUrl);
       if (fileType === 'products') {
+        const provenance = options?.productProvenanceByUrl?.get(fileUrl);
+        const sourceTitle = options?.productTitleByUrl?.get(fileUrl);
         recordProductAssetSource(
           directoryPath,
           resolvedFileName,
           fileUrl,
-          options?.productProvenanceByUrl?.get(fileUrl)
+          {
+            ...(provenance ?? {}),
+            ...(sourceTitle !== undefined && sourceTitle.length > 0 ? { sourceTitle } : {})
+          }
+        );
+      }
+      if (fileType === 'logos') {
+        recordLogoAssetSource(
+          directoryPath,
+          resolvedFileName,
+          fileUrl,
+          options?.logoSourcePhase ?? 'unknown'
         );
       }
     } catch (err: unknown) {
@@ -1059,6 +1340,8 @@ export type CollectAndDownloadOptions = {
   skipBraveWhenPrioritizedFilled?: boolean;
   productMatchTerms?: readonly string[];
   referenceListingUrls?: readonly string[];
+  entertainmentMode?: boolean;
+  experienceMode?: boolean;
   logoScoring?: {
     productName: string;
     companyName: string;
@@ -1091,7 +1374,12 @@ export async function collectAndDownloadValidAssetUrls (
     fileType === 'products' ? braveProductMinContentLength() : undefined;
 
   const listingMode =
-    options.referenceListingUrls !== undefined && options.referenceListingUrls.length > 0;
+    options.entertainmentMode !== true &&
+    options.experienceMode !== true &&
+    options.referenceListingUrls !== undefined &&
+    options.referenceListingUrls.length > 0;
+  const entertainmentMode = options.entertainmentMode === true;
+  const experienceMode = options.experienceMode === true;
 
   const productProvenanceByUrl = new Map<string, ProductAssetSourceProvenance>();
   let prioritize: string[] = [];
@@ -1157,6 +1445,9 @@ export async function collectAndDownloadValidAssetUrls (
         rejectedUrls,
         ...(fileType === 'products' && productProvenanceByUrl.size > 0
           ? { productProvenanceByUrl }
+          : {}),
+        ...(fileType === 'logos'
+          ? { logoSourcePhase: 'official' as const, officialHosts }
           : {})
       });
       if (batch.count > 0) {
@@ -1186,12 +1477,28 @@ export async function collectAndDownloadValidAssetUrls (
     return { downloadedUrls, count: downloadedUrls.length, rejectedUrls };
   }
 
+  let effectiveListingMode = listingMode;
+  if (
+    shouldRelaxProductListingBraveFilter({
+      fileType,
+      listingMode: effectiveListingMode,
+      downloadedCount: downloadedUrls.length
+    })
+  ) {
+    console.log(
+      prioritize.length > 0
+        ? '[download] Official product candidates failed — relaxing listing-mode Brave filter.'
+        : '[download] No official product assets — relaxing listing-mode Brave filter.'
+    );
+    effectiveListingMode = false;
+  }
+
   let pass = 0;
   while (downloadedUrls.length < options.targetCount && pass < 4) {
     pass += 1;
     const need = options.targetCount - downloadedUrls.length;
     const poolSize = Math.max(options.candidatePool, need * 3);
-    const candidates = await gatherValidatedImageUrls(queries, {
+    const gathered = await gatherValidatedImageUrls(queries, {
       maxResults: poolSize,
       perQuery: fileType === 'logos' ? 15 : 12,
       excludeUrls,
@@ -1204,13 +1511,24 @@ export async function collectAndDownloadValidAssetUrls (
       options.productMatchTerms.length > 0
         ? { productMatchTerms: options.productMatchTerms }
         : {}),
-      ...(fileType === 'products' && listingMode
+      ...(fileType === 'products' && effectiveListingMode
         ? { referenceListingUrls: options.referenceListingUrls }
         : {}),
+      ...(fileType === 'products' && entertainmentMode ? { entertainmentMode: true } : {}),
+      ...(fileType === 'products' && experienceMode ? { experienceMode: true } : {}),
       ...(fileType === 'logos' && options.logoScoring !== undefined
         ? { logoScoring: options.logoScoring }
         : {})
     });
+    const candidates = gathered.urls;
+    const productTitleByUrl = gathered.titlesByUrl;
+
+    if (fileType === 'products' && candidates.length === 0) {
+      console.warn(
+        `[download] Brave product search pass ${String(pass)}: 0 candidates after gather` +
+          (effectiveListingMode ? ' (listing-mode filter was active)' : '')
+      );
+    }
 
     for (const fileUrl of candidates) {
       if (downloadedUrls.length >= options.targetCount) {
@@ -1222,7 +1540,21 @@ export async function collectAndDownloadValidAssetUrls (
       const before = downloadedUrls.length;
       const batch = await downloadUrlsToAssetFolder(fileType, directoryPath, [ fileUrl ], {
         validateDimensions: true,
-        rejectedUrls
+        rejectedUrls,
+        ...(fileType === 'products' && productProvenanceByUrl.size > 0
+          ? { productProvenanceByUrl }
+          : {}),
+        ...(fileType === 'products' && productTitleByUrl.size > 0
+          ? { productTitleByUrl }
+          : {}),
+        ...(fileType === 'logos'
+          ? {
+              logoSourcePhase: /wikimedia\.org|wikipedia\.org/iu.test(fileUrl)
+                ? ('wikipedia' as const)
+                : ('brave' as const),
+              officialHosts
+            }
+          : {})
       });
       if (batch.count > 0) {
         downloadedUrls.push(...batch.downloadedUrls);
@@ -1285,6 +1617,8 @@ export async function refreshAssetsFromQueries (
     logoMaxResults?: number;
     productMaxResults?: number;
     excludeUrls?: Set<string>;
+    /** When false, keep existing products/ files and only add new downloads (post-audit refresh). */
+    clearProductFolder?: boolean;
   }
 ): Promise<RefreshAssetsResult & { rejectedUrls: string[] }> {
   const productMax = options?.productMaxResults ?? braveProductTargetCount();
@@ -1334,11 +1668,27 @@ export async function refreshAssetsFromQueries (
         targetCount: productMax,
         candidatePool: braveProductCandidatePool(),
         excludeUrls,
-        clearFolder: true,
+        clearFolder: options?.clearProductFolder !== false,
         officialHosts: officialHostsFromContext(context),
         prioritizeCandidates: officialProductCandidates,
         skipBraveWhenPrioritizedFilled: true,
         ...(referenceListingUrls.length > 0 ? { referenceListingUrls } : {}),
+        ...(() => {
+          const profile = resolveCampaignAssetProfile(buildProductMatchFields({
+            campaignContext: context.campaignContext ?? null,
+            productName: context.productName,
+            brandName: context.brandName,
+            brandContext: context.brandContext,
+            brandURL: context.brandURL
+          }));
+          if (profile === 'entertainment') {
+            return { entertainmentMode: true as const };
+          }
+          if (profile === 'experience') {
+            return { experienceMode: true as const };
+          }
+          return {};
+        })(),
         ...(context.productMatchTerms !== undefined && context.productMatchTerms.length > 0
           ? { productMatchTerms: context.productMatchTerms }
           : {})

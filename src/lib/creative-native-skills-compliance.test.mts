@@ -7,6 +7,10 @@ import {
   buildStyleGuideColorConstraintText,
   collectStyleGuideAllowedHex
 } from './style-guide-colors.mts';
+import {
+  buildStyleGuideFontConstraintText,
+  resolveGoogleFontSubstitute
+} from './style-guide-typography.mts';
 
 const minimalGuide: Omit<StyleGuide, 'logoFileUrls' | 'productPictureUrls'> = {
   companyName: 'Test Co',
@@ -127,6 +131,86 @@ test('buildComplianceRetryHint includes allowed list for color issues', () => {
 test('buildComplianceRetryHint is empty when no color issue', () => {
   const hint = buildComplianceRetryHint([ 'Missing index.html at project root.' ], minimalGuide);
   assert.equal(hint, '');
+});
+
+const nikeLikeGuide: typeof minimalGuide = {
+  ...minimalGuide,
+  typography: [
+    { fontFamily: 'Futura', fontWeight: 800, fontEffect: [], fontUses: 'display' },
+    { fontFamily: 'Trade Gothic', fontWeight: 700, fontEffect: [], fontUses: 'headings' },
+    { fontFamily: 'Helvetica', fontWeight: 400, fontEffect: [], fontUses: 'body' },
+    { fontFamily: 'Palatino', fontWeight: 400, fontEffect: [], fontUses: 'editorial' }
+  ]
+};
+
+test('resolveGoogleFontSubstitute maps Nike brand fonts to Google Fonts', () => {
+  assert.equal(resolveGoogleFontSubstitute('Trade Gothic').googleFamily, 'Barlow Condensed');
+  assert.equal(resolveGoogleFontSubstitute('Helvetica').googleFamily, 'Inter');
+  assert.equal(resolveGoogleFontSubstitute('Palatino').googleFamily, 'Lora');
+  assert.equal(resolveGoogleFontSubstitute('Futura').googleFamily, 'Jost');
+});
+
+test('buildStyleGuideFontConstraintText includes Google Fonts CDN url', () => {
+  const text = buildStyleGuideFontConstraintText(nikeLikeGuide);
+  assert.match(text, /fonts\.googleapis\.com/iu);
+  assert.match(text, /Barlow Condensed/iu);
+  assert.match(text, /Inter/iu);
+});
+
+test('validateCreativeSkillCompliance accepts Google Font substitutes for Nike guide', () => {
+  const gfUrl =
+    'https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Inter:wght@400;700&family=Lora:wght@400&family=Jost:wght@700&display=swap';
+  const files = [
+    {
+      fileName: 'index.html',
+      fileContent:
+        '<!DOCTYPE html><html><head>'
+        + `<link rel="stylesheet" href="${gfUrl}">`
+        + '<link rel="stylesheet" href="styles.css"></head>'
+        + '<body><img src="./logo.svg"><img src="./prod.jpg"><script src="app.js" defer></script></body></html>'
+    },
+    {
+      fileName: 'styles.css',
+      fileContent:
+        'body { color: #111111; font-family: "Inter", sans-serif; }'
+        + '.headline { font-family: "Barlow Condensed", sans-serif; }'
+        + '.quote { font-family: "Lora", serif; }'
+    },
+    { fileName: 'app.js', fileContent: 'document.querySelector("body");' }
+  ];
+  const result = validateCreativeSkillCompliance(files, nikeLikeGuide, minimalAssets);
+  assert.equal(result.ok, true);
+});
+
+test('validateCreativeSkillCompliance rejects unmapped system fonts for Nike guide', () => {
+  const files = [
+    {
+      fileName: 'index.html',
+      fileContent:
+        '<!DOCTYPE html><html><head><link rel="stylesheet" href="styles.css"></head>'
+        + '<body><img src="./logo.svg"><img src="./prod.jpg"><script src="app.js" defer></script></body></html>'
+    },
+    {
+      fileName: 'styles.css',
+      fileContent:
+        'body { color: #111111; font-family: "Inter", sans-serif; }'
+        + '.bad { font-family: "Century Gothic", sans-serif; }'
+    },
+    { fileName: 'app.js', fileContent: 'document.querySelector("body");' }
+  ];
+  const result = validateCreativeSkillCompliance(files, nikeLikeGuide, minimalAssets);
+  assert.equal(result.ok, false);
+  if (!result.ok) {
+    assert.match(result.issues.join(' '), /century gothic/iu);
+  }
+});
+
+test('buildComplianceRetryHint includes font mapping when font issue present', () => {
+  const issues = [ 'Contains font families outside style guide: century gothic' ];
+  const hint = buildComplianceRetryHint(issues, nikeLikeGuide);
+  assert.match(hint, /Google Fonts/iu);
+  assert.match(hint, /Trade Gothic/iu);
+  assert.match(hint, /Barlow Condensed/iu);
 });
 
 test('validateCreativeSkillCompliance rejects unselected companion formats on arche-only job', () => {

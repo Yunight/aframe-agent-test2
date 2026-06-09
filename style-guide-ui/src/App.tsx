@@ -229,6 +229,7 @@ function App () {
   const [outputPreviews, setOutputPreviews] = useState<OutputFolderPreview[]>([])
   const [previewsLoading, setPreviewsLoading] = useState(false)
   const [previewsError, setPreviewsError] = useState<string | null>(null)
+  const [exportingConfigKey, setExportingConfigKey] = useState<string | null>(null)
   const [selectedVersionByFolder, setSelectedVersionByFolder] = useState<Record<string, string>>({})
   const [previewModal, setPreviewModal] = useState<PreviewModalState | null>(null)
   const [catalog, setCatalog] = useState<StudioCatalog | null>(null)
@@ -677,6 +678,50 @@ function App () {
       return row.versions[row.versions.length - 1]!
     },
     [ selectedVersionByFolder ]
+  )
+
+  const downloadGenericConfig = useCallback(
+    async (row: OutputFolderPreview) => {
+      const v = resolvePreviewVersion(row)
+      setExportingConfigKey(row.folderName)
+      setPreviewsError(null)
+      try {
+        const url =
+          `/api/output/${encodeURIComponent(row.folderName)}/generic-config?version=${encodeURIComponent(v.versionId)}`
+        const res = await fetch(url)
+        if (!res.ok) {
+          let errText = `HTTP ${String(res.status)}`
+          try {
+            const errBody = await res.json() as { error?: unknown }
+            if (typeof errBody.error === 'string' && errBody.error.length > 0) {
+              errText = errBody.error
+            }
+          } catch {
+            /* ignore */
+          }
+          setPreviewsError(errText)
+          return
+        }
+        const blob = await res.blob()
+        const disp = res.headers.get('Content-Disposition')
+        let filename = `${row.folderName}-${v.versionId}-generic-config.json`
+        const nameMatch = disp?.match(/filename="([^"]+)"/u)
+        if (nameMatch?.[1] !== undefined) {
+          filename = nameMatch[1]
+        }
+        const objectUrl = URL.createObjectURL(blob)
+        const anchor = document.createElement('a')
+        anchor.href = objectUrl
+        anchor.download = filename
+        anchor.click()
+        URL.revokeObjectURL(objectUrl)
+      } catch (e) {
+        setPreviewsError(e instanceof Error ? e.message : String(e))
+      } finally {
+        setExportingConfigKey(null)
+      }
+    },
+    [ resolvePreviewVersion ]
   )
 
   const appendLog = useCallback((entry: LogLine) => {
@@ -1628,6 +1673,23 @@ function App () {
                               }}
                             >
                               Aperçu
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-outline btn-xs rounded-lg px-2.5"
+                              disabled={previewsLoading || exportingConfigKey === row.folderName}
+                              onClick={() => { void downloadGenericConfig(row); }}
+                            >
+                              {exportingConfigKey === row.folderName
+                                ? (
+                                  <>
+                                    <span className="loading loading-spinner loading-xs" aria-hidden="true" />
+                                    Export…
+                                  </>
+                                  )
+                                : (
+                                    'Config JSON'
+                                  )}
                             </button>
                             <a
                               className="btn btn-ghost btn-xs rounded-lg font-medium opacity-85 hover:opacity-100"

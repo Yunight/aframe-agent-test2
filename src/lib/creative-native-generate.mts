@@ -11,6 +11,7 @@ import {
   resolveCreativeModel
 } from './creative-native-codegen-prompt.mts';
 import { buildStyleGuideColorConstraintText } from './style-guide-colors.mts';
+import { buildStyleGuideFontConstraintText } from './style-guide-typography.mts';
 import { buildCodegenAssetPromptBlocks } from './creative-asset-descriptions.mts';
 import {
   appendPipelineUsage,
@@ -27,9 +28,11 @@ import {
   allocateNextCodeVersionDirectory,
   resolveCodeDirectory
 } from './creative-code-versions.mts';
+import { syncBundleAssetsFromCodeFiles } from './creative-bundle-assets.mts';
+import { writeGenericAdConfigFile } from './generic-ad-config.mts';
 import { loadAdFormatPresets, parseCreativeAdFormatsFromEnv } from './studio-ad-formats.mts';
 import { basename, dirname, extname, join } from 'node:path';
-import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { Anthropic } from '@anthropic-ai/sdk';
 
 export type CreativeNativeGenerationOptions = {
@@ -110,7 +113,8 @@ export async function runCreativeNativeGeneration (
       ...fileMessages,
       { type: 'text', text: buildCampaignProductHeroInstruction(prunedStyleGuide) },
       { type: 'text', text: JSON.stringify(prunedStyleGuide) },
-      { type: 'text', text: buildStyleGuideColorConstraintText(prunedStyleGuide) }
+      { type: 'text', text: buildStyleGuideColorConstraintText(prunedStyleGuide) },
+      { type: 'text', text: buildStyleGuideFontConstraintText(prunedStyleGuide) }
     ]
   }];
 
@@ -155,9 +159,23 @@ export async function runCreativeNativeGeneration (
     mkdirSync(dirname(filePath), { recursive: true });
     writeFileSync(filePath, codeFile.fileContent, { encoding: 'utf8' });
   }
-  for (const assetFile of assetFiles) {
-    copyFileSync(assetFile.filePath, join(codeDirectoryPath, assetFile.fileName));
+  const { missing: missingBundleAssets } = syncBundleAssetsFromCodeFiles({
+    bundleDir: codeDirectoryPath,
+    codeFiles: codegenResult.files,
+    assetFiles,
+    runDirectoryPath: directoryPath
+  });
+  if (missingBundleAssets.length > 0) {
+    console.warn(
+      `[creative-native] ${String(missingBundleAssets.length)} referenced asset(s) could not be copied: ${missingBundleAssets.join(', ')}`
+    );
   }
+
+  const { path: genericConfigPath } = writeGenericAdConfigFile({
+    bundleDir: codeDirectoryPath,
+    outputRunDir: directoryPath
+  });
+  console.log(`[creative-native] Wrote ${genericConfigPath}`);
 
   const creativeUsageTotals = codegenResult.usage;
   const sumReportedTokens =

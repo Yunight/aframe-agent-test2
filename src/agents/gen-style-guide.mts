@@ -8,7 +8,13 @@ import {
 } from '../lib/brave-image-assets.mts';
 import { collectSingleTransparentLogo } from '../lib/logo-pipeline.mts';
 import { extractOfficialProductImageUrls } from '../lib/official-site-logo-extract.mts';
-import { resolveReferenceListingUrls } from '../lib/style-guide-context.mts';
+import {
+  buildProductMatchFields,
+  buildProductMatchTerms,
+  parseStyleGuideContextPrompt,
+  resolveCampaignAssetProfile,
+  resolveReferenceListingUrls
+} from '../lib/style-guide-context.mts';
 import { basename, join, extname } from 'node:path';
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
@@ -19,10 +25,6 @@ import { z } from 'zod';
 import { withAnthropicRetry } from '../lib/anthropic-retry.mts';
 import { buildOutputDirectoryName, repoRootFromModuleDir } from '../lib/repo-paths.mts';
 import { toStyleGuideHex } from '../lib/style-guide-colors.mts';
-import {
-  buildProductMatchTerms,
-  parseStyleGuideContextPrompt
-} from '../lib/style-guide-context.mts';
 import {
   extractHttpsUrlsFromText,
   normalizeBrandAndCompanyUrls,
@@ -389,7 +391,13 @@ const brandStyleGuideSchema = z.object({
   productImageSearchQueries: z
     .array(z.string())
     .default([])
-    .describe('Brave Image Search queries for official product/packshot images.')
+    .describe('Brave Image Search queries for official product/packshot images.'),
+  campaignAssetProfile: z
+    .enum([ 'retail', 'entertainment', 'experience' ])
+    .optional()
+    .describe(
+      'Asset audit profile: retail = physical products/packshots; entertainment = film/series posters and stills; experience = theme parks, destinations, ticketing, attraction lifestyle photos.'
+    )
 })
   .describe('Brand style guide object')
   .strict();
@@ -494,11 +502,17 @@ const STYLE_GUIDE_SYSTEM_PROMPT = (referenceNote: string, skillGuidance: string)
       - Pipeline keeps a single logo: SVG, or PNG/WebP with real transparent pixels (alpha). JPEG/opaque logos are rejected.
       - Source order: (1) brandURL/companyURL header lockup (primary-logo, logo-container, img.logo-simple), (2) Wikipedia/Wikimedia if official fails, (3) Brave using logoImageSearchQueries.
       - Use web_search to confirm brandURL and header structure; do not guess image URLs in JSON.
-      - Fill logoImageSearchQueries with 2-8 queries for Brave fallback only (site:official-host filetype:svg, site:en.wikipedia.org brand logo).
+      - Fill logoImageSearchQueries with 2-8 queries for Brave fallback only (site:official-host filetype:svg, site:en.wikipedia.org brand logo). Include the current calendar year (e.g. 2026) in some queries to bias toward the latest logo lockup, not an older Wikipedia variant.
+      - For film campaigns: prefer the current installment title treatment / key art — never an older franchise logo (e.g. Scary Movie 4 when promoting Scary Movie 6 / 2026).
       - Never use KindPNG, PNGaaa, Pinterest, or generic scraper "transparent PNG" sites.
 
       Product images (must match the user message context):
       - The first user message states brand and campaign context. productName MUST be the hero product from that context (e.g. "SEAL U", "208 GTI"), not a different model from the same brand.
+      - For film/series/theatrical campaigns: productName is the film title; companyName is the studio/distributor; use poster/key art and cast stills (not retail packshots).
+      - For theme parks, zoos, museums, leisure venues: productName is the campaign/season offer; use attraction photos, family lifestyle, passes/tickets — not retail SKU packshots.
+      - campaignAssetProfile (required): retail | entertainment | experience — choose from user context (retail default for CPG/e-commerce; entertainment for film/series; experience for parks, destinations, events, billetterie).
+      - productImageSearchQueries for films must include site:imdb.com, site:allocine.fr, site:impawards.com, and site:{brandURL-host} poster queries.
+      - productImageSearchQueries for experience campaigns: site:{brandURL-host} + attraction names, summer campaign, family park photos.
       - brandURL should be the official page for that product or collection when possible.
       - Use the exact HTTPS URL from the user message when provided (collection/listing page). Do not append invented filter segments (color codes, /Bleu200, etc.) — only paths that exist on the live site.
       - productImageSearchQueries must include the exact product name and words from the context; do not query sibling models (e.g. no Sealion if context is SEAL U).
@@ -643,6 +657,36 @@ styleGuideFromModel = {
   companyURL: normalizedUrls.companyURL
 };
 
+const profileFields = {
+  campaignContext: parsedUserContext.campaignContext,
+  productName: styleGuideFromModel.productName,
+  brandName: styleGuideFromModel.brandName,
+  brandContext: styleGuideFromModel.brandContext,
+  brandURL: styleGuideFromModel.brandURL,
+  campaignAssetProfile: styleGuideFromModel.campaignAssetProfile
+};
+const campaignAssetProfile = resolveCampaignAssetProfile(buildProductMatchFields(profileFields));
+styleGuideFromModel = {
+  ...styleGuideFromModel,
+  campaignAssetProfile
+};
+console.log(`[style-guide] Campaign asset profile: ${campaignAssetProfile}`);
+
+const entertainmentCampaign = campaignAssetProfile === 'entertainment';
+const experienceCampaign = campaignAssetProfile === 'experience';
+
+let effectiveCampaignReferenceUrl = campaignReferenceUrl;
+if (
+  effectiveCampaignReferenceUrl === null &&
+  (entertainmentCampaign || experienceCampaign) &&
+  styleGuideFromModel.brandURL.trim().length > 0
+) {
+  effectiveCampaignReferenceUrl = styleGuideFromModel.brandURL.trim();
+  console.log(
+    `[style-guide] ${entertainmentCampaign ? 'Entertainment' : 'Experience'} campaign — using brandURL as campaignReferenceUrl`
+  );
+}
+
 const directoryUuid = randomUUID();
 const brandForFolder =
   styleGuideFromModel.brandName.trim() || styleGuideFromModel.companyName.trim() || 'brand';
@@ -676,7 +720,7 @@ const imageContext = {
   productImageSearchQueries: styleGuideFromModel.productImageSearchQueries,
   campaignContext,
   campaignUrls: parsedUserContext.campaignUrls,
-  ...(campaignReferenceUrl !== null ? { campaignReferenceUrl } : {}),
+  ...(effectiveCampaignReferenceUrl !== null ? { campaignReferenceUrl: effectiveCampaignReferenceUrl } : {}),
   productMatchTerms
 };
 
@@ -696,16 +740,16 @@ if (logoDownload.source !== null) {
   console.log(`[logo] Source: ${logoDownload.source}`);
 }
 if (logoDownload.count >= 1) {
-  const { writeLogoLock } = await import('../lib/logo-lock.mts');
-  writeLogoLock(directoryPath, {
-    approved_at: new Date().toISOString(),
-    source: logoDownload.source ?? 'gen-style-guide'
-  });
+  console.log(
+    '[logo] Downloaded — vision audit in assets review will validate before lock.'
+  );
 }
 
 console.log('[Official site] Extracting product images from brand pages…');
 const referenceListingUrls = resolveReferenceListingUrls({
-  campaignReferenceUrl,
+  ...(effectiveCampaignReferenceUrl !== null
+    ? { campaignReferenceUrl: effectiveCampaignReferenceUrl }
+    : {}),
   campaignUrls: parsedUserContext.campaignUrls
 });
 if (referenceListingUrls.length > 0) {
@@ -737,6 +781,8 @@ const { result: productDownload, duration_ms: productBraveMs } = await timedStep
         prioritizeCandidates: officialProductCandidates,
         skipBraveWhenPrioritizedFilled: true,
         productMatchTerms,
+        ...(entertainmentCampaign ? { entertainmentMode: true } : {}),
+        ...(experienceCampaign ? { experienceMode: true } : {}),
         ...(referenceListingUrls.length > 0 ? { referenceListingUrls } : {})
       }
     )
@@ -753,7 +799,7 @@ if (logoDownload.count < minimumAssetsPerType || productDownload.count < minimum
 const finalMessageContent: StyleGuide = brandStyleGuideSchema.parse({
   ...styleGuideFromModel,
   campaignContext: parsedUserContext.campaignContext ?? undefined,
-  ...(campaignReferenceUrl !== null ? { campaignReferenceUrl } : {}),
+  ...(effectiveCampaignReferenceUrl !== null ? { campaignReferenceUrl: effectiveCampaignReferenceUrl } : {}),
   logoFileUrls: logoDownload.downloadedUrls,
   productPictureUrls: productDownload.downloadedUrls
 });

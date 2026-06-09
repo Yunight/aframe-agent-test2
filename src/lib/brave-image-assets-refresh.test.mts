@@ -4,6 +4,7 @@ import {
   isListingBraveProductCandidateAllowed,
   resolveRefreshLogoQueries,
   resolveRefreshProductQueries,
+  shouldRelaxProductListingBraveFilter,
   type ImageSearchContext
 } from './brave-image-assets.mts';
 
@@ -50,5 +51,40 @@ test('listing mode allows official brand visual hosts', () => {
       hosts
     ),
     true
+  );
+});
+
+test('shouldRelaxProductListingBraveFilter when no products downloaded in listing mode', () => {
+  assert.equal(
+    shouldRelaxProductListingBraveFilter({
+      fileType: 'products',
+      listingMode: true,
+      downloadedCount: 0
+    }),
+    true
+  );
+  assert.equal(
+    shouldRelaxProductListingBraveFilter({
+      fileType: 'products',
+      listingMode: true,
+      downloadedCount: 1
+    }),
+    false
+  );
+  assert.equal(
+    shouldRelaxProductListingBraveFilter({
+      fileType: 'logos',
+      listingMode: true,
+      downloadedCount: 0
+    }),
+    false
+  );
+  assert.equal(
+    shouldRelaxProductListingBraveFilter({
+      fileType: 'products',
+      listingMode: false,
+      downloadedCount: 0
+    }),
+    false
   );
 });

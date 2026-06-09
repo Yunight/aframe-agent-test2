@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nike Nouveautés – 300×600</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@600;700;800&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="ad-300x600">
+    <!-- Header -->
+    <div class="ad-header">
+      <img src="./langfr-250px-Logo_NIKE.svg.png" alt="Nike" class="nike-logo">
+      <span class="nouveautes-tag">NOUVEAUTÉS</span>
+    </div>
+
+    <!-- Slide track -->
+    <div class="slide-track" id="slideTrack">
+      <!-- Slide 1: Nike Mind 001 (black) -->
+      <div class="slide" data-index="0">
+        <div class="product-bg bg-dark">
+          <img src="./NIKE_MIND_001.jpg" alt="Nike Mind 001" class="product-img">
+        </div>
+        <div class="slide-copy">
+          <p class="slide-label">CHAUSSURES</p>
+          <h2 class="slide-headline">NIKE MIND 001</h2>
+          <p class="slide-sub">Design épuré, confort sans compromis.</p>
+        </div>
+      </div>
+
+      <!-- Slide 2: Nike Mind 001 (mint) -->
+      <div class="slide" data-index="1">
+        <div class="product-bg bg-light">
+          <img src="./W_NIKE_MIND_001.jpg" alt="W Nike Mind 001" class="product-img">
+        </div>
+        <div class="slide-copy">
+          <p class="slide-label">NOUVEAUTÉ FEMME</p>
+          <h2 class="slide-headline">MIND 001<br>FEMME</h2>
+          <p class="slide-sub">Couleur menthe, énergie maximale.</p>
+        </div>
+      </div>
+
+      <!-- Slide 3: Apparel cardigan/shorts -->
+      <div class="slide" data-index="2">
+        <div class="product-bg bg-neutral">
+          <img src="./W_NK_STDO_FLC_MW_MR_STD_4_SHRT.jpg" alt="Studio Fleece Short" class="product-img product-apparel">
+        </div>
+        <div class="slide-copy">
+          <p class="slide-label">VÊTEMENTS</p>
+          <h2 class="slide-headline">STUDIO<br>FLEECE</h2>
+          <p class="slide-sub">Style et douceur à chaque mouvement.</p>
+        </div>
+      </div>
+
+      <!-- Slide 4: Windbreaker tracksuit -->
+      <div class="slide" data-index="3">
+        <div class="product-bg bg-light">
+          <img src="./W_NK_STDO_FLC_MW_MR_STD_OH_PNT.jpg" alt="Studio Fleece Pant" class="product-img product-apparel">
+        </div>
+        <div class="slide-copy">
+          <p class="slide-label">COLLECTION</p>
+          <h2 class="slide-headline">SURVET<br>IRISÉ</h2>
+          <p class="slide-sub">Coordiné, bold, prêt à tout.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dots navigation -->
+    <div class="dots" id="dots">
+      <button class="dot active" data-dot="0" aria-label="Slide 1"></button>
+      <button class="dot" data-dot="1" aria-label="Slide 2"></button>
+      <button class="dot" data-dot="2" aria-label="Slide 3"></button>
+      <button class="dot" data-dot="3" aria-label="Slide 4"></button>
+    </div>
+
+    <!-- CTA Footer -->
+    <div class="ad-footer">
+      <a href="https://www.nike.com/fr/w/nouveau-3n82y" class="cta-btn" target="_blank" rel="noopener">
+        Découvrir les nouveautés
+      </a>
+      <p class="legal">nike.com/fr &nbsp;·&nbsp; Offre valable sur nike.com</p>
+    </div>
+
+    <!-- Animated orange accent bar -->
+    <div class="accent-bar" id="accentBar"></div>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

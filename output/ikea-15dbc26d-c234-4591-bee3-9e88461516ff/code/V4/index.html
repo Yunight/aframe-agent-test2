@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IKEA SÖDERHAMN – Publicité 300×250</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="ad-300x250">
+    <!-- Background layers -->
+    <div class="ad-bg"></div>
+
+    <!-- Header bar with logo -->
+    <div class="ad-header">
+      <img src="./ikea.svg" alt="logo" class="ad-logo">
+      <span class="ad-series">SÖDERHAMN</span>
+    </div>
+
+    <!-- Product image carousel -->
+    <div class="ad-carousel">
+      <div class="carousel-track" id="carouselTrack">
+        <div class="carousel-slide active">
+          <img src="./soederhamn-canape-3-places-blekinge-blanc__1179090_pe895852_s5.jpg" alt="SÖDERHAMN canapé blanc lifestyle">
+          <div class="slide-badge">Style &amp; Confort</div>
+        </div>
+        <div class="carousel-slide">
+          <img src="./soederhamn-fauteuil-kelinge-brun-orange__1213760_pe911265_s5.jpg" alt="SÖDERHAMN fauteuil orange">
+          <div class="slide-badge">Couleurs Vives</div>
+        </div>
+        <div class="carousel-slide">
+          <img src="./soederhamn-module-3-places-kelinge-jaune-fonce__1499687_pe1006813_s5.jpg" alt="SÖDERHAMN module jaune">
+          <div class="slide-badge">Modulable</div>
+        </div>
+        <div class="carousel-slide">
+          <img src="./soederhamn-canape-4-places-avec-meridienne-et-sans-accoudoir-viarp-beige-brun__0814673_ph166247_s5.jpg" alt="SÖDERHAMN méridienne beige">
+          <div class="slide-badge">Détente Totale</div>
+        </div>
+      </div>
+      <!-- Dots -->
+      <div class="carousel-dots" id="carouselDots">
+        <span class="dot active" data-idx="0"></span>
+        <span class="dot" data-idx="1"></span>
+        <span class="dot" data-idx="2"></span>
+        <span class="dot" data-idx="3"></span>
+      </div>
+    </div>
+
+    <!-- Copy area -->
+    <div class="ad-copy">
+      <p class="ad-headline" id="adHeadline">Vivez le confort<br>à votre façon</p>
+      <p class="ad-sub" id="adSub">Canapés modulables – Configurez, changez, profitez.</p>
+    </div>
+
+    <!-- CTA -->
+    <div class="ad-footer">
+      <a class="ad-cta" href="https://www.ikea.com/fr/fr/cat/soederhamn-serie-22178/" target="_blank" rel="noopener">Découvrir la série</a>
+    </div>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
