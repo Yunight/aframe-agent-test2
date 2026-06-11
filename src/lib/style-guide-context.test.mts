@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   buildProductMatchTerms,
+  buildRetailCampaignRelevanceTerms,
   extractCampaignContextFromPrompt,
   filterPrioritizeProductUrls,
   isCatalogCampaign,
@@ -243,6 +244,68 @@ test('buildProductMatchTerms includes collection slug from brandURL', () => {
     brandURL: 'https://www.petit-bateau.fr/collection/collection-ete/'
   });
   assert.ok(terms.some((t) => /collection-ete|collection ete/iu.test(t)));
+});
+
+test('wouldPassListingProductAsset accepts LEGO Pokémon set number in official CDN URL', () => {
+  const refs = [ 'https://www.lego.com/fr-fr/themes/pokemon' ];
+  const hosts = [ 'lego.com', 'www.lego.com' ];
+  const terms = buildRetailCampaignRelevanceTerms({
+    campaignContext: 'mise en avant des produits pokemon',
+    productName: 'LEGO® Pokémon™ collection (2026 collaboration)',
+    brandName: 'LEGO® Pokémon™',
+    companyName: 'The LEGO Group',
+    brandContext:
+      'First wave features 72151 Eevee, 72152 Pikachu and Poké Ball, and 72153 Venusaur.',
+    brandURL: 'https://www.lego.com/fr-fr/themes/pokemon'
+  });
+  assert.equal(
+    wouldPassListingProductAsset({
+      entry: {
+        fileName: '72152_Prod_en-gb.jpg',
+        sourceUrl:
+          'https://www.lego.com/cdn/cs/set/assets/bltcc712e807c108c42/72152_Prod_en-gb.png'
+      },
+      sourceUrl:
+        'https://www.lego.com/cdn/cs/set/assets/bltcc712e807c108c42/72152_Prod_en-gb.png',
+      referenceListingUrls: refs,
+      officialHosts: hosts,
+      terms,
+      relevanceFields: {
+        brandName: 'LEGO® Pokémon™',
+        companyName: 'The LEGO Group'
+      }
+    }),
+    true
+  );
+});
+
+test('wouldPassListingProductAsset rejects official LEGO CDN without campaign terms', () => {
+  const refs = [ 'https://www.lego.com/fr-fr/themes/pokemon' ];
+  const hosts = [ 'lego.com', 'www.lego.com' ];
+  const terms = buildProductMatchTerms({
+    campaignContext: 'mise en avant des produits pokemon',
+    productName: 'LEGO® Pokémon™ collection (2026 collaboration)',
+    brandName: 'LEGO® Pokémon™',
+    brandURL: 'https://www.lego.com/fr-fr/themes/pokemon'
+  });
+  assert.equal(
+    wouldPassListingProductAsset({
+      entry: {
+        fileName: 'fifa-trophy.jpg',
+        sourceUrl:
+          'https://assets.lego.com/images/cn/blt4040f2bc95e1380d-43032_Prod_en-gb.jpg'
+      },
+      sourceUrl: 'https://assets.lego.com/images/cn/blt4040f2bc95e1380d-43032_Prod_en-gb.jpg',
+      referenceListingUrls: refs,
+      officialHosts: hosts,
+      terms,
+      relevanceFields: {
+        brandName: 'LEGO® Pokémon™',
+        companyName: 'The LEGO Group'
+      }
+    }),
+    false
+  );
 });
 
 test('wouldPassListingProductAsset rejects Wikipedia cover, accepts Lord of Hatred CDN URL', () => {

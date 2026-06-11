@@ -1,0 +1,93 @@
+{
+  "companyName": "Nike",
+  "companyContext": "Nike, Inc. is an American multinational corporation headquartered near Beaverton, Oregon, that designs, develops, manufactures and markets athletic footwear, apparel, equipment and accessories. It is the world's largest supplier of athletic shoes and apparel.",
+  "companyURL": "https://www.nike.com",
+  "brandName": "Nike Football",
+  "brandContext": "Nike Football is Nike's football (soccer) division, producing on-pitch performance gear and off-pitch lifestyle apparel for national teams and clubs — including the French Football Federation (FFF) — blending sport heritage with streetwear codes.",
+  "brandURL": "https://www.nike.com/fr/w/off-pitch-looks-france-9wreezabxgs",
+  "logoFileUrls": [
+    "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"
+  ],
+  "productName": "Off-Pitch Looks France",
+  "campaignContext": "promotion de la gamme look de foot france",
+  "campaignReferenceUrl": "https://www.nike.com/fr/w/off-pitch-looks-france-9wreezabxgs",
+  "productPictureUrls": [
+    "https://static.nike.com/a/images/t_web_pw_592_v2/f_auto/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/76ef5e8c-5d8f-40a0-a78f-06343eab6375/FFF+M+NK+DF+JSY+SS+STAD+HM.png",
+    "https://static.nike.com/a/images/t_web_pw_592_v2/f_auto/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/51c51922-8284-44cc-abcb-2c476a9fcf62/FFF+M+NK+DF+JSY+SS+STAD+AW.png",
+    "https://static.nike.com/a/images/t_web_pw_592_v2/f_auto/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/52449336-a2b2-490e-a2e7-48e15d480cdd/NIKE+AIR+MAX+PLUS+OG+PRM.png",
+    "https://static.nike.com/a/images/t_web_pw_592_v2/f_auto/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/9dbf9f2b-8dfa-46ca-a1ae-d474c56743d6/FFF+M+NK+DF+ENERGY+PANT+W.png",
+    "https://static.nike.com/a/images/t_web_pw_592_v2/f_auto/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/489bc946-b871-4bd8-a451-088cd083f6b9/FFF+M+NK+DF+ENERGY+TOP+SS.png",
+    "https://static.nike.com/a/images/t_web_pw_592_v2/f_auto/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/115f0cf8-ce96-4f70-af0b-e32d86dfc7b6/FFF+M+NK+DF+ENERGY+JKT+W.png"
+  ],
+  "primaryColorPalette": [
+    "#111111",
+    "#FFFFFF",
+    "#0055A4",
+    "#EF4135"
+  ],
+  "secondaryColorPalette": [
+    "#F26522",
+    "#E5E5E5",
+    "#1A1A1A",
+    "#C8102E",
+    "#002654",
+    "#F5F5F5"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Futura",
+      "fontWeight": 900,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Display headlines and campaign hero type — bold condensed oblique for impact (Nike signature look)"
+    },
+    {
+      "fontFamily": "Trade Gothic",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Subheadings, category labels and CTA buttons on product listing pages"
+    },
+    {
+      "fontFamily": "Helvetica Neue",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions and UI text on Nike.com"
+    },
+    {
+      "fontFamily": "Helvetica Neue",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Navigation links, filters and product titles on the listing grid"
+    },
+    {
+      "fontFamily": "Futura",
+      "fontWeight": 800,
+      "fontEffect": [],
+      "fontUses": "Brand wordmark / 'NIKE' lockup applications"
+    }
+  ],
+  "brandVision": "To bring inspiration and innovation to every athlete in the world — uniting the world through sport to create a healthy planet, active communities, and an equal playing field for all. For Off-Pitch Looks France, the vision is to extend the passion of the French national team beyond the stadium into everyday street style.",
+  "brandValues": "Performance, authenticity, innovation, empowerment, audacity and team pride. The France Off-Pitch capsule celebrates national identity (Les Bleus), self-expression and the football culture that lives equally in the stands, in the street and on the pitch.",
+  "logoImageSearchQueries": [
+    "Nike logo svg transparent",
+    "Nike swoosh logo filetype:svg",
+    "site:en.wikipedia.org Nike logo",
+    "Nike logo 2026 official",
+    "Nike swoosh black transparent png",
+    "site:commons.wikimedia.org Nike logo"
+  ],
+  "productImageSearchQueries": [
+    "site:nike.com off-pitch looks France",
+    "Nike Off-Pitch Looks France collection",
+    "Nike FFF off-pitch lifestyle apparel",
+    "Nike France football tracksuit off-pitch",
+    "Nike Off-Pitch Looks France survêtement",
+    "Nike France équipe de France lifestyle collection 2026",
+    "Nike off-pitch France hoodie tee",
+    "site:nike.com/fr off-pitch France",
+    "Nike FFF lifestyle off-pitch sneakers",
+    "Nike France national team off-pitch streetwear"
+  ],
+  "campaignAssetProfile": "retail"
+}

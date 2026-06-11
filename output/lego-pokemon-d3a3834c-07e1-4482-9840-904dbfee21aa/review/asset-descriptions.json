@@ -1,0 +1,89 @@
+{
+  "generated_at": "2026-06-10T15:02:57.667Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/brand-lego.svg",
+      "fileName": "brand-lego.svg",
+      "fileType": "logos",
+      "description": "The iconic LEGO brand logo displayed on a bright red background. The wordmark features bold white letters with black outline and yellow border, accompanied by a registered trademark symbol in the top right corner. This is a text-only graphic with no product imagery.",
+      "layout_hints": [
+        "logo-lockup",
+        "brand-standard"
+      ],
+      "dominant_colors": [
+        "#FF0000",
+        "#FFFF00",
+        "#FFFFFF",
+        "#000000"
+      ],
+      "shows_physical_product": false,
+      "asset_kind": "logo",
+      "primary_product_name": "",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/72152_Prod_en-gb.jpg",
+      "fileName": "72152_Prod_en-gb.jpg",
+      "fileType": "products",
+      "description": "A packshot of the LEGO Pokémon Pikachu & Poké Ball set displayed on a neutral white background. The set shows a large buildable Pikachu figure constructed from bright yellow LEGO bricks with black and red details, featuring articulated limbs and a poseable tail with a lightning bolt design. A matching red and white Poké Ball with dark base platform is positioned to the right, alongside a black and yellow striped baseplate. The product demonstrates the brick-construction quality and character recognition of the Pikachu build.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-hero",
+        "three-quarter-view"
+      ],
+      "dominant_colors": [
+        "#FFFF00",
+        "#000000",
+        "#FFFFFF",
+        "#FF0000"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "LEGO Pokémon Pikachu & Poké Ball",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/blt559eb617476f464f-72164_Prod_en-gb.jpg",
+      "fileName": "blt559eb617476f464f-72164_Prod_en-gb.jpg",
+      "fileType": "products",
+      "description": "A lifestyle scene of the LEGO Pokémon Pikachu & Poké Ball interactive set on white background, showcasing multiple assembled components. The hero element is a large cube-shaped Pikachu head with oversized yellow LEGO brick construction, black eyes, red cheeks, and articulated ear pieces. Additional accessories include a smaller Pikachu figure, a palm tree build with green foliage, a coiled yellow connector cable with yellow power adapter, a beige baseplate tray, and two interactive Poké Ball elements with red and white coloring. This demonstrates the LEGO SMART Play interactive features with light and motion elements integrated into the Pokémon builds.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "all-components-flat-lay",
+        "interactive-tech-visible"
+      ],
+      "dominant_colors": [
+        "#FFFF00",
+        "#FF0000",
+        "#008000",
+        "#000000"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "LEGO Pokémon Pikachu & Poké Ball SMART Play",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/blt85cf136cf937bd03-72167_Prod_en-gb.jpg",
+      "fileName": "blt85cf136cf937bd03-72167_Prod_en-gb.jpg",
+      "fileType": "products",
+      "description": "A lifestyle scene of the LEGO Pokémon interactive starter set displayed on white background, featuring multiple hero Pokémon builds. The composition includes a large orange Charizard figure with teal wing membranes and articulated limbs, a smaller yellow Pikachu with white shoulder spike detail, an interactive battle platform with dark gray base and orange structural elements topped with red Poké Ball design details, a coiled yellow power connector cable, and a yellow baseplate. All figures and interactive elements display the LEGO brick construction with integrated SMART Play motion and light-up circles visible on the Pokémon and platform. This showcases the August 2026 interactive wave featuring light, sound and motion capabilities.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "all-components-displayed",
+        "smart-play-tech-visible"
+      ],
+      "dominant_colors": [
+        "#FF8C00",
+        "#FFFF00",
+        "#008080",
+        "#000000"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "LEGO Pokémon Charizard & Pikachu SMART Play",
+      "is_generic_collection": false
+    }
+  ]
+}

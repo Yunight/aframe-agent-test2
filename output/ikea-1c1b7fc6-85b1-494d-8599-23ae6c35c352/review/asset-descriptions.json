@@ -1,0 +1,138 @@
+{
+  "generated_at": "2026-06-10T13:07:26.396Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/ikea.svg",
+      "fileName": "ikea.svg",
+      "fileType": "logos",
+      "description": "The IKEA brand logo features the word 'IKEA' in bold, uppercase blue letterforms centered within a bright yellow rounded-rectangle oval, with a registered trademark symbol (®) in the top right. The logo is set against a deep blue background. This is the iconic IKEA corporate identity mark used for brand recognition and legal compliance.",
+      "layout_hints": [
+        "logo-lockup",
+        "brand-identifier"
+      ],
+      "dominant_colors": [
+        "#FFCC00",
+        "#003DA5"
+      ],
+      "asset_kind": "logo",
+      "primary_product_name": ""
+    },
+    {
+      "asset_id": "products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530505_pe1015213_s5.jpg",
+      "fileName": "metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530505_pe1015213_s5.jpg",
+      "fileType": "products",
+      "description": "Product packshot of a METOD wall cabinet with shelves in white/Aspudden white matte finish. The unit is a narrow, vertical modular storage element featuring open horizontal shelving compartments with a light gray interior backing. Photographed against a clean white background in a straight-on view typical of IKEA product catalogs.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-hero",
+        "white-background"
+      ],
+      "dominant_colors": [
+        "#FFFFFF",
+        "#E8E8E8"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "METOD élément mural tablettes blanc Aspudden blanc mat",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530509_pe1015215_s5.jpg",
+      "fileName": "metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530509_pe1015215_s5.jpg",
+      "fileType": "products",
+      "description": "Product packshot of a METOD wall cabinet with shelves in white/Aspudden white matte finish, shown in a slightly different dimension or orientation variant. The unit displays similar modular construction with visible open shelving and gray interior backing. Photographed against a pure white background in standard catalog packshot style.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-hero",
+        "white-background"
+      ],
+      "dominant_colors": [
+        "#FFFFFF",
+        "#E8E8E8"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "METOD élément mural tablettes blanc Aspudden blanc mat",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530515_pe1015218_s5.jpg",
+      "fileName": "metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530515_pe1015218_s5.jpg",
+      "fileType": "products",
+      "description": "Product packshot of a METOD wall cabinet with shelves in white/Aspudden white matte finish. This variant shows the modular unit in a compact vertical format with multiple open shelf compartments and gray backing visible. Clean white background and neutral three-quarter frontal framing maintain IKEA's standard product photography conventions.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-hero",
+        "white-background"
+      ],
+      "dominant_colors": [
+        "#FFFFFF",
+        "#E8E8E8"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "METOD élément mural tablettes blanc Aspudden blanc mat",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530533_pe1015230_s5.jpg",
+      "fileName": "metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530533_pe1015230_s5.jpg",
+      "fileType": "products",
+      "description": "Product packshot of a METOD wall cabinet with shelves in white/Aspudden white matte finish. The unit displays open shelving configuration with gray interior dividers in a narrower, tall rectangular profile. Photographed in isolation on a white background using standard IKEA product lighting and perspective techniques.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-hero",
+        "white-background"
+      ],
+      "dominant_colors": [
+        "#FFFFFF",
+        "#E8E8E8"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "METOD élément mural tablettes blanc Aspudden blanc mat",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530535_pe1015232_s5.jpg",
+      "fileName": "metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530535_pe1015232_s5.jpg",
+      "fileType": "products",
+      "description": "Product packshot of a METOD tall wall cabinet with shelves in white/Aspudden white matte finish. The unit is shown at full height in a wider format with visible open shelving compartments and gray interior backing. Photographed against a soft white background with slight shadow detail suggesting three-dimensional form, typical of IKEA product catalog imagery.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-hero",
+        "white-background",
+        "hero-dimension"
+      ],
+      "dominant_colors": [
+        "#FFFFFF",
+        "#E8E8E8"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "METOD élément mural tablettes blanc Aspudden blanc mat",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1534030_pe1016103_s5.jpg",
+      "fileName": "metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1534030_pe1016103_s5.jpg",
+      "fileType": "products",
+      "description": "Product packshot of a METOD wall cabinet element in white/Aspudden white matte finish, photographed from a three-quarter angle that emphasizes depth and perspective. The unit shows clean white exterior panels with subtle shadow modeling on the white background, highlighting the flat-pack furniture's geometric proportions and minimalist Scandinavian design aesthetic.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-hero",
+        "white-background",
+        "3d-perspective"
+      ],
+      "dominant_colors": [
+        "#FFFFFF",
+        "#F5F5F5"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "METOD élément mural tablettes blanc Aspudden blanc mat",
+      "is_generic_collection": false
+    }
+  ]
+}

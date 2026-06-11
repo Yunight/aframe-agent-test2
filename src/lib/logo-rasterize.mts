@@ -1,14 +1,27 @@
 import { readFileSync } from 'node:fs';
 import { extname } from 'node:path';
 import type { Anthropic } from '@anthropic-ai/sdk';
+import { Resvg } from '@resvg/resvg-js';
 import { chromium } from 'playwright';
 import { isSvgAssetFile, readFileAsAnthropicImageBlock, sniffImageMimeFromBuffer } from './image-mime-sniff.mts';
 
+const SVG_RASTER_WIDTH = 800;
 const SVG_RASTER_VIEWPORT = { width: 800, height: 400 };
 
-/** Rasterize an SVG logo to PNG so Haiku vision can inspect it. */
-export async function rasterizeSvgLogoToPngBuffer (absolutePath: string): Promise<Buffer> {
-  const svgMarkup = readFileSync(absolutePath, 'utf8');
+function isPlaywrightMissingError (err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err);
+  return /Executable doesn't exist|npx playwright install/iu.test(msg);
+}
+
+function rasterizeSvgWithResvg (svgMarkup: string): Buffer {
+  const resvg = new Resvg(svgMarkup, {
+    background: '#ffffff',
+    fitTo: { mode: 'width', value: SVG_RASTER_WIDTH }
+  });
+  return Buffer.from(resvg.render().asPng());
+}
+
+async function rasterizeSvgWithPlaywright (svgMarkup: string): Promise<Buffer> {
   const browser = await chromium.launch({ headless: true });
   try {
     const page = await browser.newPage({
@@ -18,7 +31,7 @@ export async function rasterizeSvgLogoToPngBuffer (absolutePath: string): Promis
       `<!DOCTYPE html><html><head><meta charset="utf-8"></head>` +
         `<body style="margin:0;padding:16px;background:#ffffff;display:flex;align-items:center;justify-content:center;">` +
         `${svgMarkup}</body></html>`,
-      { waitUntil: 'networkidle' }
+      { waitUntil: 'load' }
     );
     const locator = page.locator('svg').first();
     await locator.waitFor({ state: 'visible', timeout: 10_000 });
@@ -26,6 +39,34 @@ export async function rasterizeSvgLogoToPngBuffer (absolutePath: string): Promis
     return Buffer.from(png);
   } finally {
     await browser.close();
+  }
+}
+
+/** Rasterize an SVG logo to PNG so Haiku vision can inspect it. */
+export async function rasterizeSvgLogoToPngBuffer (absolutePath: string): Promise<Buffer> {
+  const svgMarkup = readFileSync(absolutePath, 'utf8');
+  let resvgError: string | undefined;
+  try {
+    const png = rasterizeSvgWithResvg(svgMarkup);
+    console.log(`[logo-rasterize] rasterized via resvg: ${absolutePath}`);
+    return png;
+  } catch (err: unknown) {
+    resvgError = err instanceof Error ? err.message : String(err);
+    console.warn(`[logo-rasterize] resvg failed for ${absolutePath}: ${resvgError}`);
+  }
+
+  try {
+    const png = await rasterizeSvgWithPlaywright(svgMarkup);
+    console.log(`[logo-rasterize] rasterized via playwright: ${absolutePath}`);
+    return png;
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    const hint = isPlaywrightMissingError(err)
+      ? ' Install Chromium with: npx playwright install chromium'
+      : '';
+    throw new Error(
+      `SVG rasterization failed (resvg: ${resvgError ?? 'unknown'}; playwright: ${msg}).${hint}`
+    );
   }
 }
 

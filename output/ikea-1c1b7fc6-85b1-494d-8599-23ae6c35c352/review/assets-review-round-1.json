@@ -1,0 +1,78 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-06-10T13:07:38.039Z",
+  "deterministic_ok": true,
+  "audit": {
+    "satisfied": true,
+    "summary": "Portfolio has 6 usable product asset(s) (minimum 2). Remaining product findings downgraded to warnings. BLOCKER: All six product assets share the identical primary_product_name 'METOD élément mural tablettes blanc Aspudden blanc mat', indicating the same SKU repeated across multiple packshots. While all are valid product packshots, the absence of distinct product SKUs means only 1 unique retail product is represented. The campaign requires at least 2 usable retail product assets with different SKUs to proceed to HTML5 generation. The logo asset is valid. The logo file logos/ikea.svg displays the official IKEA brand wordmark lockup with correct colors and formatting. The iconic blue IKEA text on yellow oval background matches the primary color palette (#0058AB blue, #FBD914 yellow) specified in the style guide. This is the recognized global IKEA trademark and is suitable for ad asset generation.",
+    "findings": [
+      {
+        "asset_id": "products",
+        "severity": "warn",
+        "issue": "6 physical product image(s) all depict the same SKU (\"metod element mural tablettes blanc aspudden blanc mat\") — need distinct products for ad variety.",
+        "fix_hint": "Refresh with Brave queries naming different SKUs from the range (not repeated packshots of the same product)."
+      },
+      {
+        "asset_id": "products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530505_pe1015213_s5.jpg",
+        "severity": "warn",
+        "issue": "Duplicate SKU: identical primary_product_name 'METOD élément mural tablettes blanc Aspudden blanc mat' shared across 6 product assets (all variants of the same cabinet unit). No distinct product identities exist.",
+        "fix_hint": "Source additional Nouveautés IKEA products with different primary_product_names (e.g., other kitchen wall cabinets, shelving units, or furniture from the 2026 new arrivals). Each product asset must represent a distinct SKU."
+      },
+      {
+        "asset_id": "products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530509_pe1015215_s5.jpg",
+        "severity": "warn",
+        "issue": "Duplicate SKU: identical primary_product_name shared with 5 other assets.",
+        "fix_hint": "Replace with a different IKEA Nouveautés product SKU."
+      },
+      {
+        "asset_id": "products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530515_pe1015218_s5.jpg",
+        "severity": "warn",
+        "issue": "Duplicate SKU: identical primary_product_name shared with 5 other assets.",
+        "fix_hint": "Replace with a different IKEA Nouveautés product SKU."
+      },
+      {
+        "asset_id": "products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530533_pe1015230_s5.jpg",
+        "severity": "warn",
+        "issue": "Duplicate SKU: identical primary_product_name shared with 5 other assets.",
+        "fix_hint": "Replace with a different IKEA Nouveautés product SKU."
+      },
+      {
+        "asset_id": "products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530535_pe1015232_s5.jpg",
+        "severity": "warn",
+        "issue": "Duplicate SKU: identical primary_product_name shared with 5 other assets.",
+        "fix_hint": "Replace with a different IKEA Nouveautés product SKU."
+      },
+      {
+        "asset_id": "products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1534030_pe1016103_s5.jpg",
+        "severity": "warn",
+        "issue": "Duplicate SKU: identical primary_product_name shared with 5 other assets.",
+        "fix_hint": "Replace with a different IKEA Nouveautés product SKU."
+      }
+    ],
+    "brave_retry_queries": {
+      "logos": [],
+      "products": [
+        "site:ikea.com/fr nouveautés 2026 cuisine mural",
+        "IKEA METOD alternatives kitchen cabinet 2026",
+        "site:ikea.com/fr/fr new products wall storage",
+        "IKEA Nouveautés 2026 étagère décoration",
+        "IKEA new arrivals furniture white 2026"
+      ]
+    }
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 3880,
+    "output_tokens": 818,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 3880,
+    "price_usd": {
+      "input": 0.00388,
+      "output": 0.00409,
+      "total": 0.00797
+    },
+    "duration_ms": 7433
+  }
+}

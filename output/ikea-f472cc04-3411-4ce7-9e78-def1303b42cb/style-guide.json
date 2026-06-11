@@ -1,0 +1,91 @@
+{
+  "companyName": "Inter IKEA Systems",
+  "companyContext": "Swedish-founded multinational group that designs and sells ready-to-assemble furniture, kitchen appliances, home accessories and decorative items, with a presence in over 50 markets worldwide.",
+  "companyURL": "https://www.ikea.com",
+  "brandName": "IKEA",
+  "brandContext": "IKEA is the consumer-facing home furnishing brand known for affordable, functional and democratic design rooted in Scandinavian heritage, offering everything from sofas and beds to storage solutions like sideboards and console tables.",
+  "brandURL": "https://www.ikea.com/fr/fr/cat/buffets-et-consoles-30454/",
+  "logoFileUrls": [
+    "https://www.ikea.com/global/assets/logos/brand/ikea.svg"
+  ],
+  "productName": "Buffets et consoles",
+  "campaignContext": "faire de la promotion pour les buffets et consoles",
+  "campaignReferenceUrl": "https://www.ikea.com/fr/fr/cat/buffets-et-consoles-30454/",
+  "productPictureUrls": [
+    "https://www.ikea.com/fr/fr/range-categorisation/images/product/sideboards-buffets-10412.jpeg?imwidth=160",
+    "https://www.ikea.com/fr/fr/range-categorisation/images/product/console-tables-16246.jpeg?imwidth=160",
+    "https://www.ikea.com/fr/fr/images/products/vihals-buffet-blanc__1035578_pe838113_s5.jpg?f=xxs",
+    "https://www.ikea.com/fr/fr/images/products/vihals-buffet-blanc__1048720_pe843879_s5.jpg?f=xxs",
+    "https://www.ikea.com/fr/fr/images/products/vihals-buffet-gris-fonce__1203691_pe906387_s5.jpg?f=xu",
+    "https://www.ikea.com/fr/fr/images/products/besta-combinaison-rangement-tiroirs-brun-noir-lappviken-stubbarp-motif-noyer__1451119_pe990595_s5.jpg?f=xxs"
+  ],
+  "primaryColorPalette": [
+    "#0058AB",
+    "#FBD914",
+    "#FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "#111111",
+    "#484848",
+    "#929292",
+    "#F5F5F5",
+    "#003E7E"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Noto IKEA Latin",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Brand wordmark / display headlines for the IKEA logo lockup and hero campaign titles"
+    },
+    {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Headings, section titles and price call-outs in marketing communications"
+    },
+    {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Sub-headings, product names and navigation labels"
+    },
+    {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions and supporting paragraphs"
+    },
+    {
+      "fontFamily": "Verdana",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Fallback font for email and legacy systems where Noto Sans cannot be loaded"
+    }
+  ],
+  "brandVision": "Créer un meilleur quotidien pour le plus grand nombre — proposer un large assortiment de produits d'ameublement bien conçus, fonctionnels et à des prix si bas que le plus grand nombre puisse se les offrir.",
+  "brandValues": "Démocratie du design, simplicité, conscience des coûts, esprit d'équipe, renouveau et amélioration constants, sens des responsabilités, et respect de l'héritage suédois et scandinave.",
+  "logoImageSearchQueries": [
+    "IKEA logo SVG official 2026",
+    "IKEA logo transparent PNG",
+    "site:en.wikipedia.org IKEA logo",
+    "IKEA brand logo lockup vector",
+    "IKEA logo filetype:svg",
+    "IKEA logo yellow blue oval"
+  ],
+  "productImageSearchQueries": [
+    "site:ikea.com/fr buffet BESTA",
+    "site:ikea.com/fr console table IDANÄS",
+    "site:ikea.com/fr buffet HEMNES",
+    "site:ikea.com/fr buffet TONSTAD",
+    "site:ikea.com/fr console SKRUVBY",
+    "IKEA buffet salon scandinave",
+    "IKEA console entrée bois",
+    "IKEA buffets et consoles catalogue",
+    "IKEA sideboard living room styling",
+    "IKEA BESTA sideboard white",
+    "IKEA IDANÄS console table",
+    "IKEA HEMNES buffet blanc"
+  ],
+  "campaignAssetProfile": "retail"
+}

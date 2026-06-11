@@ -48,9 +48,9 @@ export function buildMultiAssetCreativeInstruction (productAssetCount: number): 
     return '';
   }
   return (
-    `You have ${String(productAssetCount)} validated product visuals. Use them freely: `
-    + 'carousel, slideshow, animated grid, hero + thumbnails, crossfade, and similar dynamic layouts. '
-    + 'Combine multiple images when the format supports it.'
+    `You have ${String(productAssetCount)} validated on-campaign product visuals. Use a subset or all as fits the format — `
+    + 'the ad is not required to display every asset. Carousel, slideshow, animated grid, hero + thumbnails, '
+    + 'crossfade, and similar dynamic layouts are all valid.'
   );
 }
 

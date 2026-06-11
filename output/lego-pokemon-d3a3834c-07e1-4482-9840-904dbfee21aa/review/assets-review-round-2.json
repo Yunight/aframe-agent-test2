@@ -1,0 +1,62 @@
+{
+  "review_round": 2,
+  "captured_at": "2026-06-10T15:01:13.281Z",
+  "deterministic_ok": true,
+  "audit": {
+    "satisfied": false,
+    "summary": "Logo or asset audit failed: 2 blocker(s). 6 assets audited: 1 logo (on-brand) + 5 products/. BLOCKER: 6 product assets exceed the 3–5 maximum threshold. BLOCKER: 72166 (Gengar & Friends) is off-campaign — Gengar, Snorlax, and Charmander are not part of the 2026 launch range (Pikachu, Eevee, Venusaur, Charizard, Blastoise, SMART Play). Only 4 on-campaign assets remain (72152, 72164, 72167, 72159). Jigglypuff (72159) is also off-campaign for this launch wave. Recommend retry with correct SKUs from style guide product range. Missing Pokémon brand wordmark. The audit found one LEGO official logo asset, but the collaboration campaign requires separate wordmarks for both participating brands (The LEGO Group and The Pokémon Company). Currently only LEGO is represented in logos/.",
+    "findings": [
+      {
+        "asset_id": "products/blt5a5c39cc02cd0dc1-72166_Prod_en-gb.jpg",
+        "severity": "blocker",
+        "issue": "Off-campaign product: Gengar, Snorlax, Charmander are not part of the 2026 LEGO Pokémon launch range (Pikachu, Eevee, Venusaur, Charizard, Blastoise, SMART Play only).",
+        "fix_hint": "Replace with on-campaign SKU from the official 2026 range."
+      },
+      {
+        "asset_id": "products/bltf7cb4b05a8abc42f-72159_Prod_en-gb.jpg",
+        "severity": "blocker",
+        "issue": "Off-campaign product: Jigglypuff is not listed in the 2026 launch wave. Style guide specifies Pikachu, Eevee, Venusaur, Charizard, Blastoise, and SMART Play sets only.",
+        "fix_hint": "Replace with on-campaign SKU (e.g. Eevee 72151, Venusaur, or Blastoise from the confirmed launch range)."
+      },
+      {
+        "asset_id": "products/72152_Prod_en-gb.jpg",
+        "severity": "warn",
+        "issue": "Asset count: 5 products/ + 1 logo = 6 total. Exceeds 3–5 on-campaign product maximum after removing 2 off-campaign assets (72166, 72159). After removal, 3 remain (72152, 72164, 72167).",
+        "fix_hint": "Retain 72152 (Pikachu & Poké Ball), 72164 (Pikachu SMART Play), 72167 (Charizard & Pikachu SMART Play). Add one distinct on-campaign SKU to reach 4–5 (e.g. Eevee 72151 or Blastoise)."
+      },
+      {
+        "asset_id": "logos/brand-lego.svg",
+        "severity": "warn",
+        "issue": "No Pokémon official wordmark present in logos/. The collaboration campaign 'LEGO Pokémon' requires separate official wordmarks for both participating brands per style guide rules. Only LEGO wordmark is provided.",
+        "fix_hint": "Source and add an official Pokémon wordmark (PNG or SVG) to logos/ directory. The LEGO wordmark is correct, but Pokémon wordmark is missing for complete brand representation."
+      }
+    ],
+    "brave_retry_queries": {
+      "logos": [
+        "Pokémon logo site:pokemon.com",
+        "Pokémon official wordmark svg"
+      ],
+      "products": [
+        "site:lego.com LEGO Pokemon Eevee 72151 official packshot 2026",
+        "site:lego.com LEGO Pokemon Venusaur set 72153 packshot",
+        "site:lego.com LEGO Pokemon Blastoise official 2026",
+        "site:lego.com LEGO Pokemon Charizard Blastoise Venusaur starter collection"
+      ]
+    }
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 4150,
+    "output_tokens": 755,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 4150,
+    "price_usd": {
+      "input": 0.00415,
+      "output": 0.003775,
+      "total": 0.007925
+    },
+    "duration_ms": 19231
+  }
+}

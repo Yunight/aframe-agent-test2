@@ -1,0 +1,105 @@
+{
+  "companyName": "The LEGO Group",
+  "companyContext": "Family-owned Danish toy company founded in 1932 in Billund, designing and manufacturing the LEGO System in Play (interlocking plastic bricks, sets, video games and entertainment) sold in more than 120 countries with the mission to inspire and develop the builders of tomorrow through the power of play.",
+  "companyURL": "https://www.lego.com/",
+  "brandName": "LEGO Pokémon",
+  "brandContext": "Multi-year collaboration between the LEGO Group and The Pokémon Company International, launched 27 February 2026, that recreates iconic Pokémon (Pikachu, Eevee, Venusaur, Charizard, Blastoise, Mewtwo and more) in LEGO brick form across display sets for adults and interactive SMART Play sets for kids, inviting fans to continue their Pokémon Trainer journey one brick at a time.",
+  "brandURL": "https://www.lego.com/fr-fr/themes/pokemon",
+  "logoFileUrls": [
+    "https://assets.lego.com/logos/v8.6.0/brand-lego.svg"
+  ],
+  "productName": "LEGO Pokémon",
+  "campaignContext": "promotion des produits pokemon chez lego",
+  "campaignReferenceUrl": "https://www.lego.com/fr-fr/themes/pokemon",
+  "productPictureUrls": [
+    "https://assets.lego.com/logos/v8.6.0/brand-lego.svg"
+  ],
+  "primaryColorPalette": [
+    "#E3000B",
+    "#FFED00",
+    "#000000",
+    "#FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "#0075BE",
+    "#D11013",
+    "#F6EC35",
+    "#2A75BB",
+    "#FFCB05",
+    "#3B4CCA",
+    "#B3A125"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 800,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Headlines and hero titles on LEGO.com category pages"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Subheadings, product titles, navigation labels"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "CTA buttons, badges, callouts"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions, captions"
+    },
+    {
+      "fontFamily": "Pokémon Solid",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold",
+        "italic"
+      ],
+      "fontUses": "Pokémon co-branded wordmark / key-art treatment only (do not use for UI)"
+    },
+    {
+      "fontFamily": "LEGO Thick",
+      "fontWeight": 900,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "LEGO logo lockup only — never set as text"
+    }
+  ],
+  "brandVision": "Bring together two beloved worlds — the endless possibilities of LEGO play and the 30-year adventure of Pokémon — to let fans of every age build, display and battle their favourite Pokémon brick by brick, expanding the Pokémon Trainer journey into the physical world through both adult collectible display sets and interactive SMART Play experiences for kids.",
+  "brandValues": "Imagination, creativity and fun; learning through play; quality and safety; inclusivity for fans of all ages; nostalgia mixed with innovation (SMART Play tech); shared passion between two iconic family entertainment brands that push the boundaries of social and creative play.",
+  "logoImageSearchQueries": [
+    "LEGO logo svg site:lego.com",
+    "LEGO logo 2026 transparent png",
+    "LEGO logo site:en.wikipedia.org",
+    "LEGO Group official logo filetype:svg",
+    "Pokemon logo site:en.wikipedia.org",
+    "Pokemon official wordmark filetype:svg",
+    "LEGO Pokemon lockup logo 2026"
+  ],
+  "productImageSearchQueries": [
+    "site:lego.com LEGO Pokemon Pikachu Poke Ball",
+    "site:lego.com Venusaur Charizard Blastoise 72153",
+    "site:lego.com Kanto Region Badge Collection 40892",
+    "site:lego.com LEGO Pokemon SMART Play Training House Pikachu 72164",
+    "site:lego.com Charizard vs Jolteon Ultimate Battle 72167",
+    "site:lego.com Berry Bash Bulbasaur Bidoof 72155",
+    "site:lego.com Cubone Gengar Spooky Showdown 72166",
+    "site:lego.com fr-fr themes pokemon",
+    "LEGO Pokemon Eevee set 2026 official",
+    "LEGO Pokemon collection key art 2026",
+    "LEGO Pokemon packaging box art Pikachu",
+    "LEGO Pokemon February 2026 press image"
+  ],
+  "campaignAssetProfile": "retail"
+}

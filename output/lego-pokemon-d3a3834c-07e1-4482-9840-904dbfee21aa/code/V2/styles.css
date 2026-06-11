@@ -1,0 +1,391 @@
+/* =============================================
+   RESET
+   ============================================= */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* =============================================
+   PAGE
+   ============================================= */
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1A1A1A;
+  font-family: "Inter", sans-serif;
+}
+
+/* =============================================
+   AD FRAME
+   ============================================= */
+#ad-320x480 {
+  width: 320px;
+  height: 480px;
+  background: #000000;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: adFadeIn 0.35s ease both;
+}
+
+/* LEGO stud dot texture */
+.bg-studs {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 237, 0, 0.07) 2px,
+    transparent 2px
+  );
+  background-size: 20px 20px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* =============================================
+   HEADER
+   ============================================= */
+.ad-header {
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+  height: 50px;
+  background: #E3000B;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+
+.brand-logo {
+  height: 34px;
+  width: auto;
+  display: block;
+}
+
+.new-badge {
+  background: #FFED00;
+  color: #000000;
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 4px 8px 3px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* =============================================
+   CAROUSEL
+   ============================================= */
+.carousel-wrapper {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  height: 206px;
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  width: 960px;
+  height: 206px;
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.carousel-slide {
+  position: relative;
+  width: 320px;
+  height: 206px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* Packshot: white product background */
+.slide--packshot {
+  background: #FFFFFF;
+}
+.slide--packshot .product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center center;
+  display: block;
+}
+
+/* Lifestyle: dark background, fill */
+.slide--lifestyle {
+  background: #1A1A1A;
+}
+.slide--lifestyle .product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+}
+
+/* Gradient overlay for lifestyle slide legibility */
+.slide--lifestyle::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 38%,
+    rgba(0, 0, 0, 0.58) 100%
+  );
+  pointer-events: none;
+}
+
+/* Bottom carousel UI bar */
+.carousel-ui {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  z-index: 6;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.slide-label {
+  font-family: "Inter", sans-serif;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #FFFFFF;
+  background: rgba(0, 0, 0, 0.68);
+  padding: 3px 8px;
+  border-radius: 2px;
+  letter-spacing: 0.2px;
+  max-width: 178px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.carousel-dots {
+  display: flex;
+  gap: 5px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.dot.active {
+  background: #FFED00;
+  transform: scale(1.35);
+}
+
+.dot:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.62);
+}
+
+/* Progress bar */
+.progress-track {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 6;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #FFED00;
+  width: 0%;
+}
+
+/* =============================================
+   YELLOW ACCENT BAR
+   ============================================= */
+.accent-bar {
+  flex-shrink: 0;
+  height: 4px;
+  background: #FFED00;
+  position: relative;
+  z-index: 2;
+  transform-origin: left center;
+  animation: barGrow 0.5s ease 0.25s both;
+}
+
+/* =============================================
+   CONTENT BLOCK
+   ============================================= */
+.content-block {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  padding: 13px 16px 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: slideUpFade 0.5s ease 0.35s both;
+}
+
+.eyebrow {
+  display: block;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 9.5px;
+  color: #F58220;
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  margin-bottom: 4px;
+}
+
+.headline {
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 26px;
+  color: #FFFFFF;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.headline sup {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.headline em {
+  font-style: normal;
+  color: #FFED00;
+  text-shadow: 0 0 16px rgba(255, 237, 0, 0.3);
+}
+
+.subhead {
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 7px;
+  min-height: 14px;
+  transition: opacity 0.25s ease;
+}
+
+.body-copy {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.55;
+}
+
+/* =============================================
+   CTA BUTTON
+   ============================================= */
+.cta-btn {
+  display: block;
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  margin: 0 16px 12px;
+  padding: 11px 20px;
+  background: #FFED00;
+  color: #000000;
+  text-decoration: none;
+  text-align: center;
+  border-radius: 3px;
+  transition: background 0.2s ease, transform 0.15s ease;
+  animation: slideUpFade 0.5s ease 0.5s both, ctaBeat 2.8s ease-in-out 2s infinite;
+}
+
+.cta-btn:hover {
+  background: #FFFFFF;
+  transform: scale(1.025);
+}
+
+.cta-label {
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: letter-spacing 0.18s ease;
+  pointer-events: none;
+}
+
+.cta-btn:hover .cta-label {
+  letter-spacing: 1.5px;
+}
+
+/* =============================================
+   FOOTER
+   ============================================= */
+.ad-footer {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  padding: 0 12px 22px;
+}
+
+.ad-footer span {
+  font-family: "Inter", sans-serif;
+  font-size: 6.5px;
+  color: rgba(255, 255, 255, 0.25);
+  line-height: 1.4;
+  display: block;
+}
+
+/* =============================================
+   KEYFRAMES
+   ============================================= */
+@keyframes adFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes barGrow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes ctaBeat {
+  0%, 100% { box-shadow: 0 0 0 0   rgba(255, 237, 0, 0);    }
+  50%      { box-shadow: 0 0 0 5px rgba(255, 237, 0, 0.22); }
+}
+
+/* =============================================
+   REDUCED MOTION
+   ============================================= */
+@media (prefers-reduced-motion: reduce) {
+  #ad-320x480,
+  .accent-bar,
+  .content-block,
+  .cta-btn {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .carousel-track {
+    transition: none;
+  }
+  .progress-fill {
+    transition: none !important;
+  }
+}

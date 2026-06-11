@@ -2,12 +2,16 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   auditDistinctProducts,
+  buildRetailCampaignRelevanceTerms,
   deterministicFindingsFromAssetDescriptions,
   deterministicFindingsFromEntertainmentDescriptions,
   deterministicFindingsFromExperienceDescriptions,
+  deterministicFindingsFromRetailDescriptions,
+  maxValidProductAssets,
   minPhysicalProductAssets,
   minValidProductAssets,
-  normalizeProductName
+  normalizeProductName,
+  pruneExcessProductAssets
 } from './asset-descriptions-audit.mts';
 import type { AssetDescriptionsFile } from './creative-asset-descriptions.mts';
 import { pruneVisionBlockedProducts } from './creative-native-assets-deterministic.mts';
@@ -82,7 +86,8 @@ const sommeilAndDrainant: AssetDescriptionsFile = {
   model: 'test',
   assets: [
     physicalProduct('products/sommeil.jpg', 'Sommeil'),
-    physicalProduct('products/drainant.jpg', 'Drainant')
+    physicalProduct('products/drainant.jpg', 'Drainant'),
+    physicalProduct('products/minceur.jpg', 'Minceur')
   ]
 };
 
@@ -101,7 +106,10 @@ test('deterministicFindingsFromAssetDescriptions blocks text_only_banner', () =>
 });
 
 test('deterministicFindingsFromAssetDescriptions accepts enough usable products', () => {
-  const findings = deterministicFindingsFromAssetDescriptions(sommeilAndDrainant, 2);
+  const findings = deterministicFindingsFromAssetDescriptions(sommeilAndDrainant, 3, {
+    profile: 'retail',
+    campaignTerms: [ 'sommeil', 'drainant', 'minceur' ]
+  });
   const folderBlocker = findings.find(
     (f) => f.asset_id === 'products' && f.severity === 'blocker' && /Need at least/iu.test(f.issue)
   );
@@ -186,13 +194,126 @@ test('minPhysicalProductAssets defaults to 1', () => {
   }
 });
 
-test('minValidProductAssets defaults to 2', () => {
+test('minValidProductAssets defaults to 3', () => {
   const prev = process.env['CREATIVE_ASSETS_MIN_VALID_PRODUCTS'];
   delete process.env['CREATIVE_ASSETS_MIN_VALID_PRODUCTS'];
-  assert.equal(minValidProductAssets(), 2);
+  assert.equal(minValidProductAssets(), 3);
   if (prev !== undefined) {
     process.env['CREATIVE_ASSETS_MIN_VALID_PRODUCTS'] = prev;
   }
+});
+
+test('maxValidProductAssets defaults to 5', () => {
+  const prev = process.env['CREATIVE_ASSETS_MAX_VALID_PRODUCTS'];
+  delete process.env['CREATIVE_ASSETS_MAX_VALID_PRODUCTS'];
+  assert.equal(maxValidProductAssets(), 5);
+  if (prev !== undefined) {
+    process.env['CREATIVE_ASSETS_MAX_VALID_PRODUCTS'] = prev;
+  }
+});
+
+const legoPokemonTerms = buildRetailCampaignRelevanceTerms({
+  campaignContext: 'mise en avant des produits pokemon',
+  productName: 'LEGO® Pokémon™ collection (2026 collaboration)',
+  brandName: 'LEGO® Pokémon™',
+  companyName: 'The LEGO Group',
+  brandURL: 'https://www.lego.com/fr-fr/themes/pokemon'
+});
+
+const legoPokemonPortfolio: AssetDescriptionsFile = {
+  generated_at: '2026-06-10T00:00:00.000Z',
+  model: 'test',
+  assets: [
+    {
+      asset_id: 'products/40892_Prod.jpg',
+      fileName: '40892_Prod.jpg',
+      fileType: 'products',
+      description: 'LEGO Pokémon 40892 Kanto Region Badge Collection packshot.',
+      layout_hints: [ 'packshot-centre' ],
+      dominant_colors: [ '#0066CC' ],
+      shows_physical_product: true,
+      asset_kind: 'product_packshot',
+      primary_product_name: '40892 Kanto Region Badge Collection',
+      is_generic_collection: false
+    },
+    {
+      asset_id: 'products/fifa.jpg',
+      fileName: 'fifa.jpg',
+      fileType: 'products',
+      description: 'LEGO sculpture of FIFA World Cup Trophy in multicolor bricks.',
+      layout_hints: [ 'lifestyle-scene' ],
+      dominant_colors: [ '#FFD700' ],
+      shows_physical_product: true,
+      asset_kind: 'lifestyle_scene',
+      primary_product_name: 'FIFA World Cup Trophy LEGO Set',
+      is_generic_collection: false
+    },
+    {
+      asset_id: 'products/squirtle.jpg',
+      fileName: 'squirtle.jpg',
+      fileType: 'products',
+      description: 'LEGO Pokémon 72156 Squirtle SMART Play set lifestyle scene.',
+      layout_hints: [ 'packshot-hero-product' ],
+      dominant_colors: [ '#0066CC' ],
+      shows_physical_product: true,
+      asset_kind: 'lifestyle_scene',
+      primary_product_name: '72156 Squirtle',
+      is_generic_collection: false
+    }
+  ]
+};
+
+test('retail audit blocks off-topic FIFA asset on LEGO Pokémon campaign', () => {
+  const findings = deterministicFindingsFromRetailDescriptions(legoPokemonPortfolio, 3, legoPokemonTerms);
+  const fifaBlocker = findings.find(
+    (f) => f.asset_id === 'products/fifa.jpg' && f.severity === 'blocker'
+  );
+  assert.ok(fifaBlocker !== undefined, JSON.stringify(findings));
+  assert.match(fifaBlocker?.issue ?? '', /off-topic/iu);
+});
+
+test('retail audit blocks when fewer than 3 on-campaign products', () => {
+  const twoPokemon: AssetDescriptionsFile = {
+    ...legoPokemonPortfolio,
+    assets: legoPokemonPortfolio.assets.filter((a) => a.fileName !== 'fifa.jpg')
+  };
+  const findings = deterministicFindingsFromRetailDescriptions(twoPokemon, 2, legoPokemonTerms);
+  const countBlocker = findings.find(
+    (f) => f.asset_id === 'products' && f.severity === 'blocker' && /at least 3/iu.test(f.issue)
+  );
+  assert.ok(countBlocker !== undefined, JSON.stringify(findings));
+});
+
+test('retail audit passes with three on-campaign Pokémon products', () => {
+  const threePokemon: AssetDescriptionsFile = {
+    ...legoPokemonPortfolio,
+    assets: [
+      ...legoPokemonPortfolio.assets.filter((a) => a.fileName !== 'fifa.jpg'),
+      {
+        ...physicalProduct('products/eevee.jpg', '72151 Eevee'),
+        description: 'LEGO Pokémon 72151 Eevee display set packshot on white background.'
+      }
+    ]
+  };
+  const findings = deterministicFindingsFromRetailDescriptions(threePokemon, 3, legoPokemonTerms);
+  const blockers = findings.filter((f) => f.severity === 'blocker');
+  assert.equal(blockers.length, 0, JSON.stringify(blockers));
+});
+
+test('pruneExcessProductAssets keeps at most max valid products', () => {
+  const directoryPath = mkdtempSync(join(tmpdir(), 'prune-excess-'));
+  mkdirSync(join(directoryPath, 'products'), { recursive: true });
+  for (let i = 1; i <= 6; i += 1) {
+    writeFileSync(join(directoryPath, 'products', `p${String(i)}.jpg`), 'fake');
+  }
+  const { removed } = pruneExcessProductAssets(directoryPath, { max: 5, campaignTerms: [] });
+  assert.equal(removed.length, 1);
+  assert.equal(
+    [ 'p1.jpg', 'p2.jpg', 'p3.jpg', 'p4.jpg', 'p5.jpg', 'p6.jpg' ].filter((f) =>
+      existsSync(join(directoryPath, 'products', f))
+    ).length,
+    5
+  );
 });
 
 const walibiExperiencePortfolio: AssetDescriptionsFile = {

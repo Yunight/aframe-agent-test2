@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IKEA – Buffets et Consoles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="ad-320x480">
+
+    <!-- Header -->
+    <header class="ad-header">
+      <img src="./ikea.svg" alt="IKEA" class="ad-logo">
+      <span class="eyebrow">Collection</span>
+    </header>
+
+    <!-- Hero Carousel -->
+    <div class="carousel-wrapper">
+      <div class="carousel-track" id="carouselTrack">
+        <div class="carousel-slide">
+          <img src="./vihals-buffet-blanc__1048720_pe843879_s5.jpg" alt="VIHALS buffet blanc ambiance" class="slide-img lifestyle">
+          <div class="slide-badge">Nouveauté</div>
+        </div>
+        <div class="carousel-slide">
+          <img src="./besta-combinaison-rangement-tiroirs-brun-noir-lappviken-stubbarp-motif-noyer__1451119_pe990595_s5.jpg" alt="BESTA combinaison rangement" class="slide-img product">
+          <div class="slide-badge">Bestseller</div>
+        </div>
+        <div class="carousel-slide">
+          <img src="./vihals-buffet-blanc__1035578_pe838113_s5.jpg" alt="VIHALS buffet blanc" class="slide-img product">
+          <div class="slide-badge">Design épuré</div>
+        </div>
+      </div>
+      <div class="carousel-dots" id="carouselDots">
+        <button class="dot active" data-index="0" aria-label="Slide 1"></button>
+        <button class="dot" data-index="1" aria-label="Slide 2"></button>
+        <button class="dot" data-index="2" aria-label="Slide 3"></button>
+      </div>
+    </div>
+
+    <!-- Copy Block -->
+    <div class="copy-block">
+      <p class="headline">Rangez avec <em>style</em></p>
+      <p class="subhead">Buffets et consoles</p>
+      <p class="body-copy">Un intérieur ordonné, un design qui inspire. Découvrez notre collection.</p>
+    </div>
+
+    <!-- Thumbnail Strip -->
+    <div class="thumb-strip">
+      <button class="thumb-btn active" data-slide="0" aria-label="Ambiance VIHALS">
+        <img src="./vihals-buffet-blanc__1048720_pe843879_s5.jpg" alt="Ambiance VIHALS">
+      </button>
+      <button class="thumb-btn" data-slide="1" aria-label="BESTA rangement">
+        <img src="./besta-combinaison-rangement-tiroirs-brun-noir-lappviken-stubbarp-motif-noyer__1451119_pe990595_s5.jpg" alt="BESTA rangement">
+      </button>
+      <button class="thumb-btn" data-slide="2" aria-label="VIHALS buffet">
+        <img src="./vihals-buffet-blanc__1035578_pe838113_s5.jpg" alt="VIHALS buffet">
+      </button>
+      <button class="thumb-btn" data-slide="3" aria-label="Buffet chêne" data-extra="true">
+        <img src="./sideboards-buffets-10412.jpg" alt="Buffet chêne">
+      </button>
+      <button class="thumb-btn" data-slide="4" aria-label="Console blanche" data-extra="true">
+        <img src="./console-tables-16246.jpg" alt="Console blanche">
+      </button>
+    </div>
+
+    <!-- Footer / CTA -->
+    <footer class="ad-footer">
+      <a class="cta-btn" href="https://www.ikea.com/fr/fr/cat/buffets-et-consoles-30454/">
+        <span class="cta-label">Voir la collection</span>
+      </a>
+      <span>ikea.com/fr — Buffets &amp; Consoles</span>
+    </footer>
+
+  </div>
+  <script src="app.js" defer></script>
+</body>
+</html>

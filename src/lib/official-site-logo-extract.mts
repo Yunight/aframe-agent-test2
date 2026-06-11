@@ -1,4 +1,5 @@
 import type { ImageSearchContext } from './brave-image-assets.mts';
+import { resolveLogoSearchNames } from './logo-search-names.mts';
 import { isUntrustedLogoUrl } from './logo-transparency-check.mts';
 import { officialPageFetchHeaders } from './official-fetch.mts';
 import { isTextOnlyCategoryNavProductAsset } from './product-asset-rules.mts';
@@ -174,16 +175,21 @@ export function wikipediaSlugFromBrandName (name: string): string {
 }
 
 export function buildFallbackPageUrls (context: ImageSearchContext): string[] {
-  const label =
-    context.brandName.trim() || context.companyName.trim();
-  const slug = wikipediaSlugFromBrandName(label);
-  if (slug.length === 0) {
+  const names = resolveLogoSearchNames(context);
+  if (names.length === 0) {
     return [];
   }
-  const urls = [
-    `https://en.wikipedia.org/wiki/${encodeURIComponent(slug)}`,
-    `https://fr.wikipedia.org/wiki/${encodeURIComponent(slug)}`
-  ];
+  const urls: string[] = [];
+  for (const label of names) {
+    const slug = wikipediaSlugFromBrandName(label);
+    if (slug.length === 0) {
+      continue;
+    }
+    urls.push(
+      `https://en.wikipedia.org/wiki/${encodeURIComponent(slug)}`,
+      `https://fr.wikipedia.org/wiki/${encodeURIComponent(slug)}`
+    );
+  }
   return [ ...new Set(urls) ];
 }
 

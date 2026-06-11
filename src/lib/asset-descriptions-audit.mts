@@ -5,6 +5,7 @@ import {
   ENTERTAINMENT_PROMO_ASSET_KINDS,
   EXPERIENCE_PROMO_ASSET_KINDS,
   USABLE_PROMO_ASSET_KINDS,
+  loadAssetDescriptions,
   type AssetDescriptionsFile,
   type AssetDescriptionEntry,
   type DescribeApprovedAssetsResult
@@ -24,14 +25,24 @@ import {
   type AssetsReviewOutput,
   type AssetsReviewUsageTotals
 } from '../agents/creative-native-assets-review.mts';
+import { listAssetImageFiles } from './asset-sidecar-files.mts';
 import type { DeterministicFinding } from './creative-native-assets-deterministic.mts';
+import {
+  loadProductAssetSources,
+  removeProductAssetSource
+} from './product-asset-sources.mts';
+import { existsSync, unlinkSync } from 'node:fs';
 import { mergeLogoVisionIntoAudit, runLogoVisionAudit } from './logo-vision-audit.mts';
 import {
   buildProductMatchFields,
   buildProductMatchTerms,
+  buildRetailCampaignRelevanceTerms,
   resolveCampaignAssetProfile,
-  type CampaignAssetProfile
+  type CampaignAssetProfile,
+  type ProductMatchFields
 } from './style-guide-context.mts';
+
+export { buildRetailCampaignRelevanceTerms } from './style-guide-context.mts';
 import { join } from 'node:path';
 import type { Anthropic } from '@anthropic-ai/sdk';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
@@ -63,7 +74,11 @@ export function minPhysicalProductAssets (): number {
 }
 
 export function minValidProductAssets (): number {
-  return parseEnvInt('CREATIVE_ASSETS_MIN_VALID_PRODUCTS', 2);
+  return parseEnvInt('CREATIVE_ASSETS_MIN_VALID_PRODUCTS', 3);
+}
+
+export function maxValidProductAssets (): number {
+  return parseEnvInt('CREATIVE_ASSETS_MAX_VALID_PRODUCTS', 5);
 }
 
 export function minDistinctProductAssets (): number {
@@ -293,8 +308,116 @@ function campaignTermMatchesEntry (
   );
   return campaignTerms.some((term) => {
     const t = normalizeProductName(term);
+    if (t.length < 3) {
+      return false;
+    }
+    if (/\d{3,}/u.test(t)) {
+      return hay.includes(t);
+    }
     return t.length >= 3 && hay.includes(t);
   });
+}
+
+function isUsableRetailProductEntry (entry: AssetDescriptionEntry): boolean {
+  return entry.fileType === 'products' && !isTextOnlyProductEntry(entry);
+}
+
+/** Count product assets that match campaign subject terms. */
+export function countRelevantRetailProductAssets (
+  descriptions: AssetDescriptionsFile,
+  campaignTerms: readonly string[]
+): number {
+  if (campaignTerms.length === 0) {
+    return countUsableProductAssets(descriptions);
+  }
+  return descriptions.assets.filter(
+    (e) => isUsableRetailProductEntry(e) && campaignTermMatchesEntry(e, campaignTerms)
+  ).length;
+}
+
+function scoreProductForPrune (
+  fileName: string,
+  entry: AssetDescriptionEntry | undefined,
+  campaignTerms: readonly string[],
+  sourceUrl: string
+): number {
+  if (entry !== undefined) {
+    if (campaignTerms.length > 0 && !campaignTermMatchesEntry(entry, campaignTerms)) {
+      return 0;
+    }
+    if (entry.is_generic_collection === true) {
+      return 1;
+    }
+    return 2;
+  }
+  if (campaignTerms.length > 0) {
+    const hay = normalizeProductName(`${fileName} ${sourceUrl}`);
+    const matches = campaignTerms.some((term) => {
+      const t = normalizeProductName(term);
+      return t.length >= 3 && hay.includes(t);
+    });
+    if (!matches) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+/** Remove lowest-priority product files when products/ exceeds max (off-topic first, then generic). */
+export function pruneExcessProductAssets (
+  directoryPath: string,
+  options?: {
+    max?: number;
+    campaignTerms?: readonly string[];
+    descriptions?: AssetDescriptionsFile | null;
+  }
+): { removed: string[] } {
+  const max = options?.max ?? maxValidProductAssets();
+  const files = listAssetImageFiles(directoryPath, 'products');
+  if (files.length <= max) {
+    return { removed: [] };
+  }
+
+  const descriptions = options?.descriptions ?? loadAssetDescriptions(directoryPath);
+  const descByFile = new Map<string, AssetDescriptionEntry>();
+  if (descriptions !== null) {
+    for (const entry of descriptions.assets) {
+      if (entry.fileType === 'products') {
+        descByFile.set(entry.fileName, entry);
+      }
+    }
+  }
+
+  const sourceMap = loadProductAssetSources(directoryPath);
+  const campaignTerms = options?.campaignTerms ?? [];
+  const ranked = files.map((fileName) => ({
+    fileName,
+    score: scoreProductForPrune(
+      fileName,
+      descByFile.get(fileName),
+      campaignTerms,
+      sourceMap.get(fileName)?.sourceUrl?.trim() ?? ''
+    )
+  }));
+  ranked.sort((a, b) => a.score - b.score);
+
+  const removed: string[] = [];
+  let remaining = files.length;
+  for (const { fileName } of ranked) {
+    if (remaining <= max) {
+      break;
+    }
+    const filePath = join(directoryPath, 'products', fileName);
+    if (existsSync(filePath)) {
+      unlinkSync(filePath);
+      removeProductAssetSource(directoryPath, fileName);
+      removed.push(`products/${fileName}`);
+      remaining -= 1;
+      console.log(`[assets-prune] Removed excess product: products/${fileName}`);
+    }
+  }
+
+  return { removed };
 }
 
 /** Entertainment audit — subject relevance, not retail SKU/physical product rules. */
@@ -465,6 +588,81 @@ export function deterministicFindingsFromExperienceDescriptions (
   return findings;
 }
 
+/** Retail audit — packshot rules plus per-asset campaign subject relevance (3–5 products). */
+export function deterministicFindingsFromRetailDescriptions (
+  descriptions: AssetDescriptionsFile,
+  productFileCount: number,
+  campaignTerms: readonly string[]
+): DeterministicFinding[] {
+  const findings: DeterministicFinding[] = [];
+  const minValid = minValidProductAssets();
+  const maxValid = maxValidProductAssets();
+  const usableCount = countUsableProductAssets(descriptions);
+  const relevantCount = countRelevantRetailProductAssets(descriptions, campaignTerms);
+
+  for (const entry of descriptions.assets) {
+    if (entry.fileType !== 'products') {
+      continue;
+    }
+    if (isTextOnlyProductEntry(entry)) {
+      findings.push({
+        asset_id: entry.asset_id,
+        severity: usableCount >= minValid ? 'warn' : 'blocker',
+        issue:
+          'Product image is a text-only category/promo banner (no photographed product) — not usable as ad hero.',
+        fix_hint:
+          'Replace with official packshots or lifestyle scenes showing physical products (site:brand packshot).'
+      });
+      continue;
+    }
+    if (campaignTerms.length > 0 && !campaignTermMatchesEntry(entry, campaignTerms)) {
+      findings.push({
+        asset_id: entry.asset_id,
+        severity: 'blocker',
+        issue:
+          'Product image is off-topic — description and primary_product_name do not match the campaign subject.',
+        fix_hint:
+          'Remove and replace with on-campaign packshots or lifestyle scenes from the official reference page.'
+      });
+    }
+  }
+
+  const physicalCount = descriptions.assets.filter(
+    (e) => e.fileType === 'products' && e.shows_physical_product === true
+  ).length;
+
+  if (productFileCount > maxValid) {
+    findings.push({
+      asset_id: 'products',
+      severity: 'blocker',
+      issue: `Too many product files in products/ (maximum ${String(maxValid)}); found ${String(productFileCount)}.`,
+      fix_hint: 'Prune off-topic or excess assets so only 3–5 on-campaign product images remain.'
+    });
+  }
+
+  if (productFileCount > 0 && relevantCount < minValid) {
+    findings.push({
+      asset_id: 'products',
+      severity: 'blocker',
+      issue: `Need at least ${String(minValid)} on-campaign product image(s); found ${String(relevantCount)} matching campaign terms (${String(usableCount)} usable, ${String(physicalCount)} with visible physical product).`,
+      fix_hint:
+        'Refresh products with Brave queries naming concrete on-campaign SKUs from the official site.'
+    });
+  } else if (productFileCount > 0 && usableCount < minValid) {
+    findings.push({
+      asset_id: 'products',
+      severity: 'blocker',
+      issue: `Need at least ${String(minValid)} usable product image(s) (packshot/lifestyle/promo); found ${String(usableCount)} (${String(physicalCount)} with visible physical product).`,
+      fix_hint:
+        'Refresh products with Brave queries naming concrete SKUs, attractions, or lifestyle scenes from the official site.'
+    });
+  }
+
+  findings.push(...auditDistinctProducts(descriptions));
+
+  return findings;
+}
+
 /** Programmatic audit on structured describe fields — robust against euphemistic prose. */
 export function deterministicFindingsFromAssetDescriptions (
   descriptions: AssetDescriptionsFile,
@@ -489,43 +687,7 @@ export function deterministicFindingsFromAssetDescriptions (
     );
   }
 
-  const findings: DeterministicFinding[] = [];
-  const minValid = minValidProductAssets();
-  const usableCount = countUsableProductAssets(descriptions);
-
-  for (const entry of descriptions.assets) {
-    if (entry.fileType !== 'products') {
-      continue;
-    }
-    if (isTextOnlyProductEntry(entry)) {
-      findings.push({
-        asset_id: entry.asset_id,
-        severity: usableCount >= minValid ? 'warn' : 'blocker',
-        issue:
-          'Product image is a text-only category/promo banner (no photographed product) — not usable as ad hero.',
-        fix_hint:
-          'Replace with official packshots or lifestyle scenes showing physical products (site:brand packshot).'
-      });
-    }
-  }
-
-  const physicalCount = descriptions.assets.filter(
-    (e) => e.fileType === 'products' && e.shows_physical_product === true
-  ).length;
-
-  if (productFileCount > 0 && usableCount < minValid) {
-    findings.push({
-      asset_id: 'products',
-      severity: 'blocker',
-      issue: `Need at least ${String(minValid)} usable product image(s) (packshot/lifestyle/promo); found ${String(usableCount)} (${String(physicalCount)} with visible physical product).`,
-      fix_hint:
-        'Refresh products with Brave queries naming concrete SKUs, attractions, or lifestyle scenes from the official site.'
-    });
-  }
-
-  findings.push(...auditDistinctProducts(descriptions));
-
-  return findings;
+  return deterministicFindingsFromRetailDescriptions(descriptions, productFileCount, campaignTerms);
 }
 
 function deterministicToReviewFindings (
@@ -561,48 +723,6 @@ function sanitizeLlmFindings (
     });
   }
   return filtered;
-}
-
-function applyPortfolioSatisfactionThreshold (
-  audit: AssetsReviewOutput,
-  descriptions: AssetDescriptionsFile,
-  profile: CampaignAssetProfile
-): AssetsReviewOutput {
-  if (profile !== 'retail') {
-    return audit;
-  }
-  const minValid = minValidProductAssets();
-  const usableCount = countUsableProductAssets(descriptions);
-  const logoBlockers = audit.findings.filter(
-    (f) => f.severity === 'blocker' && f.asset_id.startsWith('logos/')
-  );
-  if (usableCount < minValid || logoBlockers.length > 0) {
-    return audit;
-  }
-
-  const productBlockers = audit.findings.filter(
-    (f) => f.severity === 'blocker' && (f.asset_id.startsWith('products/') || f.asset_id === 'products')
-  );
-  if (productBlockers.length === 0) {
-    return { ...audit, satisfied: true };
-  }
-
-  const findings = audit.findings.map((f) => {
-    if (
-      f.severity === 'blocker' &&
-      (f.asset_id.startsWith('products/') || f.asset_id === 'products')
-    ) {
-      return { ...f, severity: 'warn' as const };
-    }
-    return f;
-  });
-
-  return {
-    ...audit,
-    satisfied: true,
-    findings,
-    summary: `Portfolio has ${String(usableCount)} usable product asset(s) (minimum ${String(minValid)}). Remaining product findings downgraded to warnings. ${audit.summary}`
-  };
 }
 
 function mergeAudits (
@@ -668,15 +788,17 @@ export async function runAssetDescriptionsAudit (
   }));
   console.log(`[asset-descriptions-audit] Campaign asset profile: ${profile}`);
 
+  const matchFields: ProductMatchFields = {
+    campaignContext: prunedStyleGuide.campaignContext ?? null,
+    productName: prunedStyleGuide.productName,
+    brandName: prunedStyleGuide.brandName,
+    brandContext: prunedStyleGuide.brandContext,
+    brandURL: prunedStyleGuide.brandURL
+  };
   const campaignTerms =
-    profile === 'entertainment' || profile === 'experience'
-      ? buildProductMatchTerms({
-          campaignContext: prunedStyleGuide.campaignContext ?? null,
-          productName: prunedStyleGuide.productName,
-          brandName: prunedStyleGuide.brandName,
-          brandURL: prunedStyleGuide.brandURL
-        })
-      : [];
+    profile === 'retail'
+      ? buildRetailCampaignRelevanceTerms(matchFields)
+      : buildProductMatchTerms(matchFields);
 
   const deterministic = deterministicFindingsFromAssetDescriptions(descriptions, productFileCount, {
     profile,
@@ -691,23 +813,27 @@ export async function runAssetDescriptionsAudit (
     }
   }
 
+  const minValid = minValidProductAssets();
+  const maxValid = maxValidProductAssets();
+
   const retailSystemPrompt = [
     'You audit pre-generated asset descriptions (JSON) before HTML5 ad code generation.',
     'You receive NO images — only structured descriptions with shows_physical_product, asset_kind, primary_product_name, is_generic_collection.',
     'Evaluate product relevance for the campaign in the style guide.',
     'Rules:',
     '- BLOCKER for products/ where asset_kind is text_only_banner or the description is a category navigation tile.',
-    '- BLOCKER when fewer than 2 usable product assets exist (packshots with visible merchandise).',
+    `- BLOCKER when fewer than ${String(minValid)} or more than ${String(maxValid)} on-campaign product assets exist in products/.`,
+    '- BLOCKER when any products/ asset is clearly off-topic (wrong franchise, sport, unrelated brand line) vs brandName, productName, campaignContext, or brandContext.',
     '- BLOCKER when primary_product_name is missing, vague, or inconsistent with the description for physical products.',
     '- BLOCKER when 2+ physical product assets share the exact same primary_product_name (same SKU repeated). Different flavor/variant names (e.g. Litchi vs Pêche kits) are distinct — do not treat as duplicates.',
     '- BLOCKER when no distinct identifiable SKUs exist among physical product assets.',
     '- Accept is_generic_collection=true only if at least one other asset has a concrete primary_product_name.',
-    '- Collection/listing campaigns: accept diverse Kusmi products from the reference page scrape; do not BLOCK solely because an asset differs from styleGuide.productName.',
-    '- Trust deterministic SKU pre-checks — do not invent duplicate-SKU blockers when primary_product_name values differ.',
+    '- Listing campaigns: accept multiple SKUs from the same campaign line only — never other ranges from the same retailer (e.g. FIFA or Star Wars on a Pokémon campaign).',
+    '- Trust deterministic subject-relevance and SKU pre-checks — do not downgrade off-topic assets to warnings.',
     '- WARN only for minor logo padding issues (logos are validated by a separate Haiku vision audit).',
-    '- Accept packshots, lifestyle scenes with visible merchandise, and product group shots.',
-    'Set satisfied to true when at least 2 usable retail product assets exist and zero logo blockers.',
-    'For blockers, suggest concrete Brave image search queries in brave_retry_queries.products naming different SKUs.',
+    '- Accept packshots, lifestyle scenes with visible merchandise, and product group shots when on-campaign.',
+    `Set satisfied to true when ${String(minValid)}–${String(maxValid)} on-campaign retail product assets exist and zero blockers.`,
+    'For blockers, suggest concrete Brave image search queries in brave_retry_queries.products naming different on-campaign SKUs.',
     '',
     '--- Style guide JSON ---',
     JSON.stringify(prunedStyleGuide),
@@ -772,8 +898,8 @@ export async function runAssetDescriptionsAudit (
 
   const retailUserContent =
     `Audit round ${String(reviewRound)}. Review the asset descriptions JSON for retail ad suitability. ` +
-    'Reject text-only category banners even if sourced from the official reference page. ' +
-    'Pass when at least 2 usable packshot/lifestyle product assets exist. ' +
+    'Reject text-only category banners and any off-topic product even if from the official retailer CDN. ' +
+    `Pass only when ${String(minValid)}–${String(maxValid)} products/ assets each match the campaign subject. ` +
     'Different named variants are acceptable; only identical primary_product_name across 2+ assets is a duplicate blocker.';
 
   const entertainmentUserContent =
@@ -828,8 +954,7 @@ export async function runAssetDescriptionsAudit (
     throw new Error('Asset descriptions audit returned no structured output.');
   }
 
-  let audit = mergeAudits(deterministic, llmParsed, profile);
-  audit = applyPortfolioSatisfactionThreshold(audit, descriptions, profile);
+  const audit = mergeAudits(deterministic, llmParsed, profile);
   const blockers = audit.findings.filter((f) => f.severity === 'blocker');
   if (blockers.length > 0) {
     audit.satisfied = false;

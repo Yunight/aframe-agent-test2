@@ -1,0 +1,106 @@
+{
+  "companyName": "The LEGO Group",
+  "companyContext": "Family-owned Danish toy manufacturer founded in Billund in 1932 by Ole Kirk Kristiansen. Maker of the iconic LEGO interlocking plastic brick system, sold in more than 120 countries. Mission: inspire and develop the builders of tomorrow through the power of play.",
+  "companyURL": "https://www.lego.com/",
+  "brandName": "LEGO Pokémon",
+  "brandContext": "Multi-year licensing collaboration between The LEGO Group and The Pokémon Company International, first announced March 2025 and launched 27 February 2026. The range brings iconic Pokémon (Pikachu, Eevee, Venusaur, Charizard, Blastoise and more) to life in LEGO brick form, with a second wave of LEGO SMART Play sets launching 1 August 2026 featuring interactive light, sound and motion via the LEGO SMART Brick.",
+  "brandURL": "https://www.lego.com/fr-fr/themes/pokemon",
+  "logoFileUrls": [
+    "https://assets.lego.com/logos/v8.6.0/brand-lego.svg"
+  ],
+  "productName": "LEGO Pokémon (gamme nouveautés 2026 : Pikachu & Poké Ball, Eevee, Venusaur Charizard Blastoise, SMART Play)",
+  "campaignContext": "promotion des nouveautés pokemon",
+  "campaignReferenceUrl": "https://www.lego.com/fr-fr/themes/pokemon",
+  "productPictureUrls": [
+    "https://www.lego.com/cdn/cs/set/assets/blt25fee4c206bffbb0/blt85cf136cf937bd03-72167_Prod_en-gb.png?fit=bounds&format=jpg&quality=80&width=1500&height=1500&dpr=1",
+    "https://www.lego.com/cdn/cs/set/assets/blt815145aa4c16625c/blt559eb617476f464f-72164_Prod_en-gb.png?fit=bounds&format=jpg&quality=80&width=1500&height=1500&dpr=1",
+    "https://www.lego.com/cdn/cs/set/assets/bltcc712e807c108c42/72152_Prod_en-gb.png?fit=bounds&format=jpg&quality=80&width=1500&height=1500&dpr=1",
+    "https://www.lego.com/cdn/cs/set/assets/bltb7fcbd69f4d9b490/blt97242dbda84bbda1-72162_Prod_en-gb.png?fit=bounds&format=jpg&quality=80&width=1500&height=1500&dpr=1",
+    "https://www.lego.com/cdn/cs/set/assets/blt03c6f9be28fbf6ad/72153_Prod.png?fit=bounds&format=jpg&quality=80&width=1500&height=1500&dpr=1"
+  ],
+  "primaryColorPalette": [
+    "#E3000B",
+    "#FFED00",
+    "#000000",
+    "#FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "#006DB7",
+    "#00A651",
+    "#F58220",
+    "#D3BC8D",
+    "#1A1A1A",
+    "#F2F2F2"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 800,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Headlines and hero titles on LEGO.com (e.g. 'Découvrez LEGO Pokémon')"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Subheadings, product card titles, section labels"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Buttons, navigation, CTAs"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions, paragraphs"
+    },
+    {
+      "fontFamily": "Pokémon Solid",
+      "fontWeight": 900,
+      "fontEffect": [
+        "bold",
+        "italic"
+      ],
+      "fontUses": "Co-branded Pokémon wordmark / lockup only (licensed asset, never as UI font)"
+    },
+    {
+      "fontFamily": "LEGO Typeface (Lego Thick)",
+      "fontWeight": 900,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "LEGO brick logo lockup only — never used for body text"
+    }
+  ],
+  "brandVision": "Inspirer et développer les bâtisseurs de demain par le pouvoir du jeu — en réunissant deux univers iconiques de l'imaginaire (LEGO et Pokémon) pour offrir aux Dresseurs et constructeurs de tous âges des expériences créatives, tactiles et interactives, brique par brique.",
+  "brandValues": "Imagination, créativité, jeu (Play Well / LEG GOdt), qualité et durabilité, apprentissage par le jeu, inclusion familiale (6+ et 18+), passion partagée des fans, innovation (SMART Play sans écran).",
+  "logoImageSearchQueries": [
+    "LEGO logo svg site:lego.com",
+    "LEGO logo site:en.wikipedia.org",
+    "LEGO logo filetype:svg 2026",
+    "LEGO official logo transparent",
+    "LEGO Pokemon logo lockup 2026",
+    "LEGO brand logo wikimedia commons"
+  ],
+  "productImageSearchQueries": [
+    "site:lego.com LEGO Pokemon Pikachu Poke Ball 72152",
+    "site:lego.com LEGO Pokemon Eevee 72151",
+    "site:lego.com LEGO Pokemon Venusaur Charizard Blastoise 72153",
+    "site:lego.com fr-fr themes pokemon",
+    "LEGO Pokemon Pikachu Poke Ball set official packshot",
+    "LEGO Pokemon Eevee 72151 official image",
+    "LEGO Pokemon Kanto starter evolution 72153 packshot",
+    "LEGO Pokemon SMART Play Training House Pikachu 72164",
+    "LEGO Pokemon SMART Play Charizard Jolteon 72167",
+    "LEGO Pokemon 2026 product photography lifestyle",
+    "LEGO Pokemon Kanto Region Badge Collection 40892"
+  ],
+  "campaignAssetProfile": "retail"
+}

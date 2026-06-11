@@ -1,0 +1,60 @@
+{
+  "review_round": 2,
+  "captured_at": "2026-06-10T13:25:06.228Z",
+  "deterministic_ok": true,
+  "audit": {
+    "satisfied": false,
+    "summary": "Logo or asset audit failed: 3 blocker(s). BLOCKER: Only 1 usable product asset exists. The lifestyle scene (LEGO-Pokemon-GO-Une-promo-inedite-avec-un-bonus.jpg) shows physical Pokémon merchandise, but a single asset is insufficient for retail ad generation. A minimum of 2 distinct product assets (packshots or lifestyle scenes with visible merchandise) is required. The logo asset is correctly identified but does not count toward product asset requirements. The logo file brand-lego.svg displays the official LEGO wordmark lockup with correct brand identity (LEGO text in white with black and yellow outline on red background). However, this is the parent company LEGO brand only, not the LEGO Pokémon sub-brand collaboration. For a campaign branded as 'LEGO Pokémon', the required logo should display the combined LEGO Pokémon lockup or explicitly reference the Pokémon collaboration, not just the standalone LEGO logo.",
+    "findings": [
+      {
+        "asset_id": "products",
+        "severity": "blocker",
+        "issue": "Need at least 2 usable product image(s) (packshot/lifestyle/promo); found 1 (1 with visible physical product).",
+        "fix_hint": "Refresh products with Brave queries naming concrete SKUs, attractions, or lifestyle scenes from the official site."
+      },
+      {
+        "asset_id": "products/LEGO-Pokemon-GO-Une-promo-inedite-avec-un-bonus.jpg",
+        "severity": "blocker",
+        "issue": "Insufficient product assets: only 1 usable product asset provided. Retail ad campaigns require at least 2 distinct packshot or lifestyle product assets to generate variability and meet ad creative standards.",
+        "fix_hint": "Source additional LEGO Pokémon product packshots or lifestyle scenes. Consider different set variants (e.g., Pikachu set, Charizard set, Venusaur set, Eevee collection, SMART Play Training House) to build a diverse asset library."
+      },
+      {
+        "asset_id": "logos/brand-lego.svg",
+        "severity": "blocker",
+        "issue": "Logo displays only the parent company LEGO wordmark lockup without the Pokémon sub-brand collaboration element. The campaign brandName is 'LEGO Pokémon' (multi-year collaboration with The Pokémon Company International), but the logo shows only 'LEGO' in isolation, missing the required sub-brand identity marker.",
+        "fix_hint": "Source the official LEGO Pokémon co-branded wordmark lockup that combines LEGO branding with Pokémon identity from https://www.lego.com/fr-fr/themes/pokemon or request the official LEGO Pokémon logo asset that displays both brand elements together, not the standalone LEGO Group corporate logo."
+      }
+    ],
+    "brave_retry_queries": {
+      "logos": [
+        "LEGO Pokemon logo site:lego.com",
+        "LEGO Pokemon lockup wordmark site:lego.com",
+        "LEGO Pokemon collaboration logo 2026 site:lego.com",
+        "LEGO Pokemon official branding site:lego.com/fr-fr",
+        "Pokemon LEGO co-branded logo site:lego.com"
+      ],
+      "products": [
+        "site:lego.com LEGO Pokemon Pikachu set packshot 2026",
+        "site:lego.com LEGO Pokemon Charizard Blastoise display set product image",
+        "site:lego.com LEGO Pokemon Eevee collection box art official",
+        "site:lego.com LEGO Pokemon SMART Play sets lifestyle photography",
+        "site:lego.com fr-fr themes pokemon product gallery"
+      ]
+    }
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 2589,
+    "output_tokens": 374,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 2589,
+    "price_usd": {
+      "input": 0.002589,
+      "output": 0.00187,
+      "total": 0.004459
+    },
+    "duration_ms": 5063
+  }
+}

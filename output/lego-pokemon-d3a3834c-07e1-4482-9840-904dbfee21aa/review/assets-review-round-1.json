@@ -1,0 +1,59 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-06-10T15:03:21.043Z",
+  "deterministic_ok": true,
+  "audit": {
+    "satisfied": true,
+    "summary": "Asset audit failed: insufficient on-campaign retail product assets. Only 3 product assets provided; campaign requires 3–5 distinct SKUs minimum. Two assets (72164 and 72167) reference SMART Play interactive features but lack clear, distinct primary_product_name differentiation—72164 is labeled 'LEGO Pokémon Pikachu & Poké Ball SMART Play' while 72167 is 'LEGO Pokémon Charizard & Pikachu SMART Play'. These appear to be variants of the same interactive training platform or battle set line rather than independent SKUs. Third asset (72152) is a standard packshot of Pikachu & Poké Ball (non-interactive). Recommend sourcing 1–2 additional distinct on-campaign SKUs (e.g., Eevee, Venusaur, or alternate SMART Play configurations) to meet the 3–5 asset threshold with clear SKU separation. Single official LEGO wordmark logo validated. The asset is The LEGO Group's iconic brick logo wordmark on an official red background. This is a participating brand in the LEGO Pokémon collaboration campaign. Missing Pokémon official wordmark asset — warrant WARN finding and retry query.",
+    "findings": [
+      {
+        "asset_id": "products/blt559eb617476f464f-72164_Prod_en-gb.jpg",
+        "severity": "warn",
+        "issue": "Primary product name 'LEGO Pokémon Pikachu & Poké Ball SMART Play' is vague regarding the specific set SKU/variant. The asset shows multiple interactive components (power cable, baseplate, Poké Ball elements) but lacks clarity on whether this is a standalone product or a platform accessory.",
+        "fix_hint": "Clarify primary_product_name to match official LEGO SKU designation (e.g., 'LEGO Pokémon SMART Play Training House 72164' or equivalent set name from LEGO.com product listing). Cross-reference against productPictureUrls and official LEGO Pokémon product catalog."
+      },
+      {
+        "asset_id": "products/blt85cf136cf937bd03-72167_Prod_en-gb.jpg",
+        "severity": "warn",
+        "issue": "Primary product name 'LEGO Pokémon Charizard & Pikachu SMART Play' overlaps in naming pattern with 72164 asset, creating ambiguity. Both are labeled as SMART Play interactive sets but show different Pokémon (Pikachu+Poké Ball vs. Charizard+Pikachu) and infrastructure (baseplate, cable, platform). Unclear if these are modular variants of the same set or distinct products.",
+        "fix_hint": "Differentiate by official set number and full product name (e.g., 'LEGO Pokémon SMART Play Charizard Jolteon 72167' per style guide productImageSearchQueries). Confirm these are separate purchasable SKUs, not accessory add-ons to a single base set."
+      },
+      {
+        "asset_id": "logos/brand-lego.svg",
+        "severity": "warn",
+        "issue": "LEGO Pokémon is a collaboration campaign between The LEGO Group and The Pokémon Company International. Only The LEGO Group wordmark is present; no official Pokémon wordmark/logo file detected in logos/ directory.",
+        "fix_hint": "Source and add an official Pokémon wordmark logo (e.g. Pokémon text logo or official brand lockup) from The Pokémon Company International to represent the second participating brand. Alternatively, if a co-branded LEGO Pokémon composite lockup exists, validate and add that separately. For now, add a retry query to locate the missing Pokémon brand asset."
+      }
+    ],
+    "brave_retry_queries": {
+      "logos": [
+        "Pokémon logo site:pokemon.com",
+        "Pokémon official wordmark svg",
+        "Pokémon brand logo transparent"
+      ],
+      "products": [
+        "site:lego.com LEGO Pokemon Eevee 72151 official packshot",
+        "site:lego.com LEGO Pokemon Venusaur Charizard Blastoise 72153 packshot",
+        "site:lego.com LEGO Pokemon Kanto Region Badge Collection 40892",
+        "LEGO Pokemon SMART Play Training House Pikachu 72164 product image",
+        "LEGO Pokemon SMART Play Charizard Jolteon 72167 product image",
+        "site:lego.com fr-fr themes pokemon 2026 product range"
+      ]
+    }
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 3653,
+    "output_tokens": 790,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 3653,
+    "price_usd": {
+      "input": 0.003653,
+      "output": 0.00395,
+      "total": 0.007603
+    },
+    "duration_ms": 15842
+  }
+}

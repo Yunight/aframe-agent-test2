@@ -1,0 +1,150 @@
+{
+  "generated_at": "2026-06-10T13:38:46.391Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/brand-lego.svg",
+      "fileName": "brand-lego.svg",
+      "fileType": "logos",
+      "description": "The iconic LEGO brand logotype displayed on a bright red background. The wordmark features white letters with black outlines and a distinctive yellow rounded border, accompanied by the registered trademark symbol in the top right corner.",
+      "layout_hints": [
+        "logo-lockup",
+        "centred"
+      ],
+      "dominant_colors": [
+        "#FF0000",
+        "#FFFF00",
+        "#FFFFFF",
+        "#000000"
+      ],
+      "asset_kind": "logo",
+      "primary_product_name": ""
+    },
+    {
+      "asset_id": "products/21362_Prod_en-gb.jpg",
+      "fileName": "21362_Prod_en-gb.jpg",
+      "fileType": "products",
+      "description": "A LEGO Pokémon display set featuring multiple iconic Pokémon built in LEGO brick form. The set showcases Pikachu (yellow), Charizard (red and black), Blastoise (blue and purple), Venusaur (green), and other Pokémon characters arranged on brown and tan tiered display shelves against a white background. The product represents a collectible display set for adult builders.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-display",
+        "multi-hero"
+      ],
+      "dominant_colors": [
+        "#8B4513",
+        "#D4AF37",
+        "#FF0000",
+        "#0066FF"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "LEGO Pokémon Collection Display Set",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/40892_Prod.jpg",
+      "fileName": "40892_Prod.jpg",
+      "fileType": "products",
+      "description": "A blue LEGO storage case with an open lid revealing two transparent display shelves and colourful LEGO Pokémon elements in the compartments below. The case features hot pink, yellow, cyan, red, and green LEGO pieces representing various Pokémon figures and shapes, designed for interactive play and storage. This is a SMART Play™ set for kids.",
+      "layout_hints": [
+        "packshot-centre",
+        "storage-case",
+        "open-configuration"
+      ],
+      "dominant_colors": [
+        "#0066FF",
+        "#FF1493",
+        "#FFFF00",
+        "#00CED1"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "LEGO Pokémon Storage Case",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/40911_Prod.jpg",
+      "fileName": "40911_Prod.jpg",
+      "fileType": "products",
+      "description": "A LEGO Pokéball-themed Pokémon Center building set depicted against a white background. The structure features a distinctive red-and-white Pokéball design on the roof, red and white main walls, cyan-tinted windows, black base platform, and lime-green landscape elements. The set includes minifigure-scale architecture with interactive play features.",
+      "layout_hints": [
+        "packshot-centre",
+        "building-playset",
+        "architectural-focus"
+      ],
+      "dominant_colors": [
+        "#FF0000",
+        "#FFFFFF",
+        "#00CED1",
+        "#32CD32"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "LEGO Pokémon Pokéball Pokémon Center",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/blt19be59033574c9ff-Project-2025XX-Page-StaticHero-Tall-Small.jpg",
+      "fileName": "blt19be59033574c9ff-Project-2025XX-Page-StaticHero-Tall-Small.jpg",
+      "fileType": "products",
+      "description": "A lifestyle scene featuring a young adult male in a green casual shirt holding and presenting LEGO Pokémon buildable figures on a wooden table. The scene displays Charizard and Blastoise as prominent hero LEGO builds with vibrant orange, blue, and green brick construction, capturing the interactive play experience. A dark teal wall and bookshelf background create a modern home setting.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "hands-on-play",
+        "hero-product"
+      ],
+      "dominant_colors": [
+        "#FF6600",
+        "#0066FF",
+        "#228B22",
+        "#2F4F4F"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "LEGO Pokémon Charizard and Blastoise Sets",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/blt691e598d84db744d-75456_Prod_en-gb.jpg",
+      "fileName": "blt691e598d84db744d-75456_Prod_en-gb.jpg",
+      "fileType": "products",
+      "description": "A comprehensive flat-lay collection showcasing multiple LEGO elements and minifigures from the LEGO Pokémon theme displayed on a white background. The layout features dozens of individual LEGO pieces, minifigure characters, small animal figures, spacecraft, and building elements arranged across the frame, representing the breadth of the LEGO Pokémon collection.",
+      "layout_hints": [
+        "flat-lay",
+        "collection-showcase",
+        "product-assortment"
+      ],
+      "dominant_colors": [
+        "#FF6600",
+        "#808080",
+        "#228B22",
+        "#D2B48C"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "LEGO Pokémon Collection Assortment",
+      "is_generic_collection": true
+    },
+    {
+      "asset_id": "products/bltbb0bcfc7ccb47ae6-Hero_Superhero.jpg",
+      "fileName": "bltbb0bcfc7ccb47ae6-Hero_Superhero.jpg",
+      "fileType": "products",
+      "description": "The LEGO Pokéball Pokémon Center building set displayed against a vibrant two-tone blue background with yellow geometric shapes. The red-and-white Pokéball-topped structure with cyan windows, black base, and green landscaping is positioned centrally, emphasizing the iconic design. The colourful background creates a dynamic, promotional campaign aesthetic.",
+      "layout_hints": [
+        "packshot-centre",
+        "promotional-hero",
+        "geometric-background"
+      ],
+      "dominant_colors": [
+        "#0066FF",
+        "#FF0000",
+        "#FFFFFF",
+        "#FFFF00"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "LEGO Pokémon Pokéball Pokémon Center",
+      "is_generic_collection": false
+    }
+  ]
+}

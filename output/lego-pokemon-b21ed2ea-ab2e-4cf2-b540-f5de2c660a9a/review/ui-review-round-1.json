@@ -1,0 +1,51 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-06-10T13:52:55.324Z",
+  "manifest_path": "/Users/benchi/Documents/aframe-agent-test2/output/lego-pokemon-b21ed2ea-ab2e-4cf2-b540-f5de2c660a9a/review/screenshots/manifest.json",
+  "audit": {
+    "satisfied": false,
+    "summary": "The 320×480 ad creative has several critical and minor issues: (1) Pagination dots are visible (6 dots) with only 1 working carousel slide, violating the carousel blocker rule; (2) Primary CTA button lacks required bottom padding/safe margin and sits too close to the bottom frame edge; (3) Product headline text is too faint/low-contrast in initial state (fades in during animation); (4) Typography hierarchy needs reinforcement — subheading 'COLLECTION OFFICIELLE' is undersized and low-contrast.",
+    "findings": [
+      {
+        "format_id": "320x480",
+        "severity": "blocker",
+        "issue": "Carousel pagination dots (6 dots visible) present with only 1 functional slide. Orphan/orphaned dots must be hidden when carousel has ≤1 working slide.",
+        "fix_hint": "Hide pagination dots via CSS: `.carousel-dots { display: none; }` or conditionally render only if slide count > 1. Verify carousel backend tracks slide count before rendering dots."
+      },
+      {
+        "format_id": "320x480",
+        "severity": "warn",
+        "issue": "Primary CTA button 'DÉCOUVRIR LA COLLECTION' sits too close to the bottom edge of #ad-320x480 with insufficient safe margin. Text and button frame lack the recommended 20px padding buffer from the bottom ad boundary.",
+        "fix_hint": "Add padding-bottom to #ad-320x480 or margin-bottom to the CTA container: `.cta-button { margin-bottom: 20px; }` or wrap CTA in a container with `padding-bottom: 20px;`."
+      },
+      {
+        "format_id": "320x480",
+        "severity": "warn",
+        "issue": "Product headline text 'Construis ton aventure Pokémon' and subheading 'COLLECTION OFFICIELLE' are nearly invisible in initial state (very faint/low opacity) and only become readable during animation. Initial state should have legible text from load.",
+        "fix_hint": "In initial state, set headline opacity to 1 (or remove opacity animation start): `.headline { opacity: 1; }` in base styles. Keep animation triggered only on subsequent events, not on page load default."
+      },
+      {
+        "format_id": "320x480",
+        "severity": "warn",
+        "issue": "Subheading 'COLLECTION OFFICIELLE' is too small and low-contrast (light gray on white background). Hierarchy is unclear — the tagline should be visually distinct from body copy.",
+        "fix_hint": "Increase font-size of `.subheading { font-size: 12px; font-weight: 700; color: #000000; }` and ensure it uses bold Cera Pro 700 from the style guide. Consider adding a top border or accent color bar above the headline."
+      }
+    ],
+    "regeneration_prompt": "1. Hide carousel pagination dots: add `display: none;` to `.carousel-dots` or conditionally render only if > 1 slide.\n2. Add `margin-bottom: 20px;` to CTA button container for safe bottom margin inside ad frame.\n3. Remove opacity fade-in animation from initial state — set headline/subheading to `opacity: 1;` on page load, animate only on user interaction or after a delay.\n4. Increase `.subheading` (COLLECTION OFFICIELLE) to `font-size: 12px; font-weight: 700; color: #000000;` and apply bold Cera Pro 700.\n5. Verify carousel slide count; if only 1 slide exists, do not render dots at all."
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 3799,
+    "output_tokens": 809,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 3799,
+    "price_usd": {
+      "input": 0.003799,
+      "output": 0.004045,
+      "total": 0.007844
+    },
+    "duration_ms": 11443
+  }
+}

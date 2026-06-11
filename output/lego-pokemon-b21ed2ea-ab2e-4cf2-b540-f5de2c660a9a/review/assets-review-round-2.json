@@ -1,0 +1,42 @@
+{
+  "review_round": 2,
+  "captured_at": "2026-06-10T14:47:57.754Z",
+  "deterministic_ok": true,
+  "audit": {
+    "satisfied": false,
+    "summary": "Logo or asset audit failed: 1 blocker(s). BLOCKER: One asset (products/LEGO-Pokemon-February-2026-Sets-72153-40892-72152-72151-40911-GWP-Insiders-Reward.jpg) lacks a primary_product_name value, making it impossible to verify distinct SKU identity. While the other four assets (72151, 72152, 72153, and the collection image) represent valid on-campaign LEGO® Pokémon™ products from the February 2026 launch wave, the missing product name violates the deterministic SKU pre-check requirement and creates ambiguity about whether this is a distinct retail asset or a duplicate composite. Additionally, only 4 properly identified product assets exist when 3–5 are required. The logo asset is valid but cannot compensate for product asset deficiencies. The LEGO® official wordmark logo is correctly presented. The asset shows the iconic LEGO brick-style wordmark with proper brand colors (red background #E3000B, yellow outline #FFED00, white fill, black stroke) and the registered trademark symbol. This is a valid official LEGO Group wordmark suitable for the LEGO® Pokémon™ collaboration campaign.",
+    "findings": [
+      {
+        "asset_id": "products/LEGO-Pokemon-February-2026-Sets-72153-40892-72152-72151-40911-GWP-Insiders-Reward.jpg",
+        "severity": "blocker",
+        "issue": "primary_product_name is empty string; cannot verify distinct SKU identity or rule out duplicate/composite nature. Collection/grid layouts must have explicit primary_product_name (e.g. 'LEGO® Pokémon™ February 2026 Launch Collection' or individual set identifiers).",
+        "fix_hint": "Assign a concrete, distinct primary_product_name. If this is a composite grid of multiple sets, either: (a) split into separate product assets with individual set numbers (72153, 40892, 72152, 72151, 40911), or (b) label as 'LEGO® Pokémon™ Launch Collection Multi-Set Display' and ensure at least one other asset has a specific SKU name so is_generic_collection=true is valid."
+      }
+    ],
+    "brave_retry_queries": {
+      "logos": [],
+      "products": [
+        "LEGO Pokemon 72164 SMART Play Training House Pikachu 2026",
+        "LEGO Pokemon 72167 Charizard vs Jolteon SMART Play set",
+        "LEGO Pokemon Kanto Region Badge Collection 40892 packshot",
+        "LEGO Pokemon Mini Pokemon Center 40911 Insiders reward",
+        "LEGO Pokemon August 2026 SMART Play wave sets launch"
+      ]
+    }
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 3575,
+    "output_tokens": 541,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 3575,
+    "price_usd": {
+      "input": 0.003575,
+      "output": 0.002705,
+      "total": 0.00628
+    },
+    "duration_ms": 7631
+  }
+}

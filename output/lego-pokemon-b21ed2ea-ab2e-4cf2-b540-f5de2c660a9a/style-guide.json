@@ -1,0 +1,90 @@
+{
+  "companyName": "The LEGO Group",
+  "companyContext": "Family-owned Danish toy company founded in 1932 in Billund, Denmark, best known for its interlocking LEGO® plastic bricks; products are sold in more than 120 countries and the group's mission is to inspire and develop the builders of tomorrow through the power of play.",
+  "companyURL": "https://www.lego.com/",
+  "brandName": "LEGO® Pokémon™",
+  "brandContext": "LEGO® Pokémon™ is the official 2026 collaboration between The LEGO Group and The Pokémon Company International. The first wave (launched 27 February 2026, coinciding with Pokémon Day and Pokémon's 30th anniversary) features adult display sets — 72151 Eevee, 72152 Pikachu and Poké Ball, and 72153 Venusaur, Charizard and Blastoise — plus the 40892 Kanto Region Badge Collection GWP and 40911 Mini Pokémon Center Insiders reward. A second wave of twelve LEGO® Pokémon™ SMART Play™ sets (powered by the LEGO SMART Brick) launches 1 August 2026 for kids, featuring Bulbasaur, Charmander, Squirtle, Gengar, Eevee, Mew, Jolteon, Charizard and more.",
+  "brandURL": "https://www.lego.com/fr-fr/themes/pokemon",
+  "logoFileUrls": [
+    "https://assets.lego.com/logos/v8.6.0/brand-lego.svg"
+  ],
+  "productName": "LEGO® Pokémon™ collection (2026 collaboration)",
+  "campaignContext": "mise en avant des produits pokemon qui sont en collaboration avec lego",
+  "campaignReferenceUrl": "https://www.lego.com/fr-fr/themes/pokemon",
+  "productPictureUrls": [
+    "https://assets.lego.com/logos/v8.6.0/brand-lego.svg"
+  ],
+  "primaryColorPalette": [
+    "#E3000B",
+    "#FFED00",
+    "#000000",
+    "#FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "#FFCB05",
+    "#3D7DCA",
+    "#B3A125",
+    "#1D4F91",
+    "#F2F2F2"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 800,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Display / hero headlines and campaign key visuals (LEGO house style)"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Section headings and product titles (e.g. 'Pikachu et Poké Ball')"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Sub-headings, callouts, set numbers and price labels"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions and editorial text"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Web fallback for body text and UI elements"
+    }
+  ],
+  "brandVision": "Faire se rencontrer deux univers iconiques — la créativité illimitée de la brique LEGO et le monde imaginaire de Pokémon — pour permettre à chaque Dresseur, enfant comme adulte, de continuer son aventure 'brique par brique'. La collaboration ambitionne d'être l'un des partenariats licensing les plus marquants de la décennie en célébrant les 30 ans de Pokémon.",
+  "brandValues": "Imagination, créativité, jeu (Leg Godt — 'Play Well'), qualité artisanale, nostalgie partagée, communauté de fans, apprentissage par le jeu, inclusivité intergénérationnelle (sets 18+ pour adultes et sets SMART Play pour enfants), passion et plaisir.",
+  "logoImageSearchQueries": [
+    "LEGO logo SVG transparent",
+    "LEGO logo official 2026",
+    "site:lego.com LEGO logo header",
+    "site:en.wikipedia.org LEGO logo",
+    "LEGO brand logo filetype:svg",
+    "LEGO logo PNG transparent background"
+  ],
+  "productImageSearchQueries": [
+    "LEGO Pokemon 72152 Pikachu Poke Ball",
+    "LEGO Pokemon 72151 Eevee set",
+    "LEGO Pokemon 72153 Venusaur Charizard Blastoise",
+    "site:lego.com LEGO Pokemon set 2026",
+    "LEGO Pokemon Kanto Region Badge 40892",
+    "LEGO Pokemon SMART Play Training House Pikachu 72164",
+    "LEGO Pokemon Charizard vs Jolteon 72167",
+    "LEGO Pokemon collection 2026 official press",
+    "LEGO Pokemon Mini Pokemon Center 40911",
+    "LEGO Pokemon February 2026 launch packshot",
+    "site:lego.com/fr-fr/themes/pokemon"
+  ],
+  "campaignAssetProfile": "retail"
+}

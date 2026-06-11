@@ -1,0 +1,86 @@
+{
+  "generated_at": "2026-06-10T14:48:51.113Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/brand-lego.svg",
+      "fileName": "brand-lego.svg",
+      "fileType": "logos",
+      "description": "Official LEGO® brand logo featuring the iconic word 'LEGO' in white with black outline and yellow border on a solid red background. The registered trademark symbol appears in the top right corner. This is a pure logo mark with no product imagery.",
+      "layout_hints": [
+        "logo-lockup",
+        "brand-mark"
+      ],
+      "dominant_colors": [
+        "#E60012",
+        "#FFED00",
+        "#FFFFFF",
+        "#000000"
+      ]
+    },
+    {
+      "asset_id": "products/72151_Prod.jpg",
+      "fileName": "72151_Prod.jpg",
+      "fileType": "products",
+      "description": "LEGO® Pokémon™ Eevee set (72151) displayed as a fully constructed buildable character figure. The model features warm brown and tan LEGO bricks forming Eevee's distinctive body, ears, and fluffy tail with characteristic expressive eyes and smiling mouth. The product is photographed against a neutral white background in a three-quarter front view, showcasing the complete assembled buildable figure.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-display",
+        "character-build"
+      ],
+      "dominant_colors": [
+        "#C77A3A",
+        "#E8C88C",
+        "#FFFFFF",
+        "#000000"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "LEGO® Pokémon™ 72151 Eevee",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/72152_Prod_en-gb.jpg",
+      "fileName": "72152_Prod_en-gb.jpg",
+      "fileType": "products",
+      "description": "LEGO® Pokémon™ Pikachu and Poké Ball set (72152) featuring a large fully-constructed Pikachu figure in bright yellow LEGO bricks with black ears, white eyes, red cheeks, and pink mouth, posed dynamically on a black and yellow baseplate with teal-colored electric effect details. A separately displayed red and white Poké Ball buildable model appears to the right. The composition is set against a white background with product-focused lighting.",
+      "layout_hints": [
+        "packshot-centre",
+        "multi-component-display",
+        "character-build"
+      ],
+      "dominant_colors": [
+        "#FFEB00",
+        "#000000",
+        "#FFFFFF",
+        "#E63946"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "LEGO® Pokémon™ 72152 Pikachu and Poké Ball",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/72153_Prod.jpg",
+      "fileName": "72153_Prod.jpg",
+      "fileType": "products",
+      "description": "LEGO® Pokémon™ Venusaur, Charizard and Blastoise set (72153) displaying three hero buildable character figures. Charizard (orange with teal wings) flies above on a central stand; Blastoise (blue and tan with cyan cannons) stands to the right; Venusaur (blue-green body with magenta flower and green vine) sits on the left with decorative floral base elements. All figures are rendered in detailed LEGO brick construction with expressive features, positioned on a dark brick-textured baseplate with colorful flora accents. The scene is isolated against a white background.",
+      "layout_hints": [
+        "packshot-centre",
+        "multi-character-display",
+        "lifestyle-scene",
+        "themed-diorama"
+      ],
+      "dominant_colors": [
+        "#FF8C00",
+        "#1E90FF",
+        "#00CED1",
+        "#6B4423"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "LEGO® Pokémon™ 72153 Venusaur, Charizard and Blastoise",
+      "is_generic_collection": false
+    }
+  ]
+}

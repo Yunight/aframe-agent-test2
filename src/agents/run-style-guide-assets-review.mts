@@ -1,6 +1,6 @@
 /**
  * Post–style-guide assets review: JSON + logo (lock after OK) + products.
- * Deterministic checks + Haiku vision describe + logo vision audit + text-only descriptions audit.
+ * Deterministic product checks + Haiku describe + logo vision audit (sole logo gate) + text-only descriptions audit.
  *
  * Usage: node src/agents/run-style-guide-assets-review.mts <directory-uuid>
  */
@@ -12,7 +12,6 @@ import {
   buildProductSearchQueriesFromFindings,
   imageContextFromStyleGuide,
   loadBraveExcludedUrls,
-  officialHostsFromContext,
   refreshAssetsFromQueries
 } from '../lib/brave-image-assets.mts';
 import {
@@ -20,14 +19,16 @@ import {
   imageSearchLogPrefix,
   resolveImageSearchProvider
 } from '../lib/image-search.mts';
-import { runDescriptionsBasedAssetsReview } from '../lib/asset-descriptions-audit.mts';
+import {
+  buildRetailCampaignRelevanceTerms,
+  pruneExcessProductAssets,
+  runDescriptionsBasedAssetsReview
+} from '../lib/asset-descriptions-audit.mts';
 import { buildProductMatchFields, resolveCampaignAssetProfile } from '../lib/style-guide-context.mts';
 import {
   logDeterministicFindings,
   pruneDeterministicBlockedProducts,
-  pruneInvalidLogos,
   pruneListingIneligibleProducts,
-  pruneNonWordmarkLogos,
   pruneOversizedAssets,
   pruneUndersizedAssets,
   pruneVisionBlockedLogos,
@@ -141,7 +142,7 @@ async function refreshProductsOnly (
   productQueries: string[],
   round: number,
   notes: string,
-  refreshOptions?: { clearProductFolder?: boolean }
+  refreshOptions?: { clearProductFolder?: boolean; preferBraveOnly?: boolean }
 ): Promise<void> {
   if (productQueries.length === 0) {
     return;
@@ -155,7 +156,8 @@ async function refreshProductsOnly (
       excludeUrls: excludedUrls,
       ...(refreshOptions?.clearProductFolder !== undefined
         ? { clearProductFolder: refreshOptions.clearProductFolder }
-        : {})
+        : {}),
+      ...(refreshOptions?.preferBraveOnly === true ? { preferBraveOnly: true } : {})
     }
   );
   if (refresh.rejectedUrls.length > 0) {
@@ -194,7 +196,9 @@ function lockLogoAfterVisionAudit (): void {
 
 function hasProductBlockers (findings: { severity: string; asset_id: string }[]): boolean {
   return findings.some(
-    (f) => f.severity === 'blocker' && f.asset_id.startsWith('products/')
+    (f) =>
+      f.severity === 'blocker' &&
+      (f.asset_id === 'products' || f.asset_id.startsWith('products/'))
   );
 }
 
@@ -245,10 +249,6 @@ while (reviewRound < maxRounds) {
   pruneListingIneligibleProducts(directoryPath, styleGuide);
   await pruneOversizedAssets(directoryPath);
   await pruneUndersizedAssets(directoryPath);
-  if (!logoLocked) {
-    await pruneNonWordmarkLogos(directoryPath);
-    await pruneInvalidLogos(directoryPath, officialHostsFromContext(imageContext));
-  }
 
   const deterministic = await runDeterministicAssetsCheck(directoryPath, styleGuide);
   logDeterministicFindings(deterministic.findings);
@@ -316,20 +316,9 @@ while (reviewRound < maxRounds) {
         );
         if (productQueries.length > 0) {
           console.log('[style-guide-review] Product blockers — Brave refresh (products)…');
-          await refreshProductsOnly(productQueries, reviewRound, 'deterministic product refresh');
-          retried = true;
-        }
-      }
-
-      if (hasLogoBlockers(deterministic.findings)) {
-        const logoQueries = buildLogoSearchQueriesFromFindings(
-          imageContext,
-          deterministic.findings,
-          lastAudit?.brave_retry_queries.logos
-        );
-        if (logoQueries.length > 0) {
-          console.log('[style-guide-review] Logo blockers — Brave refresh (logos)…');
-          await refreshLogosOnly(logoQueries, reviewRound, 'deterministic logo refresh');
+          await refreshProductsOnly(productQueries, reviewRound, 'deterministic product refresh', {
+            preferBraveOnly: true
+          });
           retried = true;
         }
       }
@@ -401,10 +390,6 @@ while (reviewRound < maxRounds) {
     break;
   }
 
-  if (reviewRound >= maxRounds) {
-    break;
-  }
-
   const prunedLogos = pruneVisionBlockedLogos(
     directoryPath,
     lastAudit.findings,
@@ -430,6 +415,20 @@ while (reviewRound < maxRounds) {
       pruned.excludedSourceUrls
     );
   }
+  const relevanceTerms = buildRetailCampaignRelevanceTerms(
+    buildProductMatchFields({
+      campaignContext: styleGuide.campaignContext ?? null,
+      productName: styleGuide.productName,
+      brandName: styleGuide.brandName,
+      brandContext: styleGuide.brandContext,
+      brandURL: styleGuide.brandURL
+    })
+  );
+  pruneExcessProductAssets(directoryPath, { campaignTerms: relevanceTerms });
+
+  if (reviewRound >= maxRounds) {
+    break;
+  }
 
   const retryQueries = buildBraveRetryQueriesFromAudit(lastAudit, imageContext);
   const logoQueries = buildLogoSearchQueriesFromFindings(
@@ -453,7 +452,8 @@ while (reviewRound < maxRounds) {
   if (products.length > 0) {
     console.log('[style-guide-review] Descriptions audit blockers — Brave refresh (products)…');
     await refreshProductsOnly(products, reviewRound, 'post-descriptions-audit products refresh', {
-      clearProductFolder: false
+      clearProductFolder: false,
+      preferBraveOnly: true
     });
     retried = true;
   }
@@ -467,7 +467,6 @@ const finalDeterministic = await runDeterministicAssetsCheck(directoryPath, styl
 const satisfied =
   finalDeterministic.ok &&
   logoLocked &&
-  countLogoFiles() >= 1 &&
   lastAudit?.satisfied === true;
 
 let assetDescriptionsRel: string | null = null;

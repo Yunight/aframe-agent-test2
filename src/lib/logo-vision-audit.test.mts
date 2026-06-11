@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { hasLogoBlockers, mergeLogoVisionIntoAudit, useLogoVisionAudit } from './logo-vision-audit.mts';
+import {
+  hasLogoBlockers,
+  mergeLogoVisionIntoAudit,
+  runLogoVisionAudit,
+  useLogoVisionAudit
+} from './logo-vision-audit.mts';
 import { pruneVisionBlockedLogos } from './creative-native-assets-deterministic.mts';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { mkdtempSync } from 'node:fs';
@@ -73,6 +78,47 @@ test('hasLogoBlockers detects empty logos folder and per-file blockers', () => {
       { severity: 'warn', asset_id: 'logos/bad.svg' }
     ]),
     false
+  );
+});
+
+test('runLogoVisionAudit reports blocker when logos folder is empty', async () => {
+  const directoryPath = mkdtempSync(join(tmpdir(), 'logo-vision-empty-'));
+  mkdirSync(join(directoryPath, 'logos'), { recursive: true });
+
+  const { audit, usage } = await runLogoVisionAudit({
+    anthropicClient: {} as never,
+    directoryPath,
+    prunedStyleGuide: {
+      companyName: 'Nike, Inc.',
+      companyContext: 'Sportswear',
+      companyURL: 'https://www.nike.com/',
+      brandName: 'Nike Football',
+      brandContext: 'Football line',
+      brandURL: 'https://www.nike.com/football',
+      productName: 'Off-Pitch Looks France',
+      primaryColorPalette: [ '#111111' ],
+      secondaryColorPalette: [ '#FFFFFF' ],
+      typography: [
+        {
+          fontFamily: 'Helvetica',
+          fontWeight: 400,
+          fontEffect: [],
+          fontUses: 'body'
+        }
+      ],
+      brandVision: 'Test',
+      brandValues: 'Test',
+      logoImageSearchQueries: [],
+      productImageSearchQueries: []
+    },
+    reviewRound: 1
+  });
+
+  assert.equal(audit.satisfied, false);
+  assert.equal(usage, null);
+  assert.ok(
+    audit.findings.some((f) => f.severity === 'blocker' && f.asset_id === 'logos'),
+    `expected logos blocker, got ${JSON.stringify(audit.findings)}`
   );
 });
 

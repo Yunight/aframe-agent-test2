@@ -124,6 +124,30 @@ test('buildFallbackPageUrls', () => {
   assert.ok(urls.some((u) => u.includes('fr.wikipedia.org/wiki/Red_Bull')));
 });
 
+test('buildFallbackPageUrls Nike Football division uses Nike not Nike_Football', () => {
+  const urls = buildFallbackPageUrls({
+    brandName: 'Nike Football',
+    companyName: 'Nike, Inc.',
+    productName: 'Off-Pitch Looks France',
+    brandURL: 'https://www.nike.com/',
+    companyURL: 'https://www.nike.com/'
+  });
+  assert.ok(urls.some((u) => u.includes('en.wikipedia.org/wiki/Nike')));
+  assert.ok(!urls.some((u) => u.includes('Nike_Football')));
+});
+
+test('buildFallbackPageUrls independent sub-brand tries both names', () => {
+  const urls = buildFallbackPageUrls({
+    brandName: 'Parkside',
+    companyName: 'Lidl',
+    productName: 'Tools',
+    brandURL: 'https://www.lidl.fr/',
+    companyURL: 'https://www.lidl.fr/'
+  });
+  assert.ok(urls.some((u) => u.includes('en.wikipedia.org/wiki/Parkside')));
+  assert.ok(urls.some((u) => u.includes('en.wikipedia.org/wiki/Lidl')));
+});
+
 test('shouldUseWikipediaProductFallback skips when listing reference URL is set', () => {
   const ctx = {
     brandName: 'Diablo IV',

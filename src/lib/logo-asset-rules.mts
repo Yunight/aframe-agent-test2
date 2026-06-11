@@ -1,13 +1,12 @@
 /**
- * Heuristics: logos/ should contain brand wordmarks only, not product packshots.
+ * Canonical logo file rules for logos/ (one file; Haiku vision audit validates identity).
  */
 
 import { listAssetImageFiles } from './asset-sidecar-files.mts';
 import { existsSync, unlinkSync } from 'node:fs';
 import { extname, join } from 'node:path';
-import { validateLogoAssetFile } from './logo-transparency-check.mts';
 
-/** Exactly one transparent logo (SVG or PNG/WebP with alpha) lives in logos/. */
+/** Exactly one logo file lives in logos/ until Haiku vision audit approves it. */
 export const CANONICAL_LOGO_COUNT = 1;
 
 export function isOfficialLogoSvgUrl (url: string): boolean {
@@ -18,53 +17,27 @@ export function officialUrlsIncludeSvg (urls: readonly string[]): boolean {
   return urls.some((u) => isOfficialLogoSvgUrl(u));
 }
 
-/** True when filename looks like a product SKU / packshot misplaced in logos/. */
-export function looksLikeProductPackshotInLogosFolder (fileName: string): boolean {
-  const base = fileName.replace(/\\/gu, '/').split('/').pop() ?? fileName;
-  const lower = base.toLowerCase();
-
-  if (lower.endsWith('.svg')) {
-    return false;
-  }
-
-  if (/logo|wordmark|marque|brand|lockup|sigle/iu.test(lower)) {
-    return false;
-  }
-
-  if (/packshot|product|prod_|_prod|catalogue|thumb|sku/iu.test(lower)) {
-    return true;
-  }
-
-  // Fashion e-commerce refs: A04P501D.jpg, 5093200.jpg
-  if (/^[a-z]?\d{2,}[a-z0-9]*\.(jpe?g|png|webp|gif)$/iu.test(lower)) {
-    return true;
-  }
-
-  if (/^[a-z]{1,3}\d{3,}[a-z]?\d*\.(jpe?g|png|webp)$/iu.test(lower)) {
-    return true;
-  }
-
-  return false;
-}
-
 function scoreCanonicalLogoFile (filePath: string): number {
   const ext = extname(filePath).toLowerCase();
-  const validation = validateLogoAssetFile(filePath);
-  if (!validation.ok) {
-    return -10_000;
-  }
-  let score = 0;
   if (ext === '.svg') {
-    score += 300;
-  } else if (ext === '.png') {
-    score += 200 + (validation.transparentRatio ?? 0) * 100;
-  } else if (ext === '.webp') {
-    score += 150 + (validation.transparentRatio ?? 0) * 80;
+    return 300;
   }
-  return score;
+  if (ext === '.png') {
+    return 200;
+  }
+  if (ext === '.webp') {
+    return 150;
+  }
+  if (ext === '.jpg' || ext === '.jpeg') {
+    return 100;
+  }
+  if (ext === '.gif') {
+    return 50;
+  }
+  return 0;
 }
 
-/** Keep the best valid logo file; remove any extras in logos/. */
+/** Keep the best logo file by format; remove any extras in logos/. */
 export async function enforceSingleCanonicalLogo (
   directoryPath: string
 ): Promise<{ kept: string | null; removed: string[] }> {

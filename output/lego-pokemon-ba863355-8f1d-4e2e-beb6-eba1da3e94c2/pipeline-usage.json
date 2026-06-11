@@ -1,0 +1,355 @@
+{
+  "directoryUuid": "lego-pokemon-ba863355-8f1d-4e2e-beb6-eba1da3e94c2",
+  "updated_at": "2026-06-10T13:38:55.564Z",
+  "entries": [
+    {
+      "action": "style_guide",
+      "agent": "agents/gen-style-guide.mts",
+      "model": "claude-opus-4-7",
+      "review_round": null,
+      "api_calls": 1,
+      "input_tokens": 42663,
+      "output_tokens": 3154,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 42663,
+      "price_usd": {
+        "input": 0.213315,
+        "output": 0.07885,
+        "total": 0.292165
+      },
+      "duration_ms": 95316,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 48015,
+          "stop_reason": "end_turn",
+          "label": "style-guide turn 1"
+        }
+      ],
+      "phase": "style_guide",
+      "sub_step_timings": [
+        {
+          "label": "claude_style_guide",
+          "duration_ms": 48015
+        },
+        {
+          "label": "logo_download",
+          "duration_ms": 1145
+        },
+        {
+          "label": "official_product_extract",
+          "duration_ms": 1042
+        },
+        {
+          "label": "product_images_brave",
+          "duration_ms": 43304
+        },
+        {
+          "label": "write_style_guide_json",
+          "duration_ms": 4
+        }
+      ],
+      "timestamp": "2026-06-10T13:13:51.980Z"
+    },
+    {
+      "action": "asset_descriptions",
+      "agent": "lib/creative-asset-descriptions.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 1,
+      "api_calls": 1,
+      "input_tokens": 2224,
+      "output_tokens": 224,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 2224,
+      "price_usd": {
+        "input": 0.002224,
+        "output": 0.00112,
+        "total": 0.003344
+      },
+      "duration_ms": 3956,
+      "phase": "style_guide",
+      "timestamp": "2026-06-10T13:13:58.122Z"
+    },
+    {
+      "action": "assets_review",
+      "agent": "lib/asset-descriptions-audit.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 1,
+      "api_calls": 1,
+      "input_tokens": 2441,
+      "output_tokens": 410,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 2441,
+      "price_usd": {
+        "input": 0.002441,
+        "output": 0.00205,
+        "total": 0.004491
+      },
+      "duration_ms": 6271,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 6271,
+          "stop_reason": "end_turn",
+          "label": "asset-descriptions-audit round 1"
+        }
+      ],
+      "phase": "style_guide",
+      "timestamp": "2026-06-10T13:14:04.401Z"
+    },
+    {
+      "action": "logo_vision_audit",
+      "agent": "lib/logo-vision-audit.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 1,
+      "api_calls": 1,
+      "input_tokens": 3096,
+      "output_tokens": 348,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 3096,
+      "price_usd": {
+        "input": 0.003096,
+        "output": 0.00174,
+        "total": 0.004836
+      },
+      "duration_ms": 5755,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 5755,
+          "stop_reason": "end_turn",
+          "label": "logo-vision-audit round 1"
+        }
+      ],
+      "phase": "style_guide",
+      "timestamp": "2026-06-10T13:14:11.608Z"
+    },
+    {
+      "action": "assets_refresh",
+      "agent": "agents/run-style-guide-assets-review.mts",
+      "model": null,
+      "review_round": 1,
+      "api_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 0,
+      "price_usd": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "notes": "post-logo-vision-audit logos refresh",
+      "duration_ms": 1540,
+      "phase": "style_guide",
+      "timestamp": "2026-06-10T13:14:13.164Z"
+    },
+    {
+      "action": "assets_refresh",
+      "agent": "agents/run-style-guide-assets-review.mts",
+      "model": null,
+      "review_round": 1,
+      "api_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 0,
+      "price_usd": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "notes": "post-descriptions-audit products refresh",
+      "duration_ms": 56208,
+      "phase": "style_guide",
+      "timestamp": "2026-06-10T13:15:09.375Z"
+    },
+    {
+      "action": "asset_descriptions",
+      "agent": "lib/creative-asset-descriptions.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 2,
+      "api_calls": 1,
+      "input_tokens": 9473,
+      "output_tokens": 1533,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 9473,
+      "price_usd": {
+        "input": 0.009473,
+        "output": 0.007665,
+        "total": 0.017138
+      },
+      "duration_ms": 17020,
+      "phase": "style_guide",
+      "timestamp": "2026-06-10T13:15:27.945Z"
+    },
+    {
+      "action": "assets_review",
+      "agent": "lib/asset-descriptions-audit.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 2,
+      "api_calls": 1,
+      "input_tokens": 3750,
+      "output_tokens": 145,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 3750,
+      "price_usd": {
+        "input": 0.00375,
+        "output": 0.000725,
+        "total": 0.004475
+      },
+      "duration_ms": 3143,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 3143,
+          "stop_reason": "end_turn",
+          "label": "asset-descriptions-audit round 2"
+        }
+      ],
+      "phase": "style_guide",
+      "timestamp": "2026-06-10T13:15:31.097Z"
+    },
+    {
+      "action": "logo_vision_audit",
+      "agent": "lib/logo-vision-audit.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 2,
+      "api_calls": 1,
+      "input_tokens": 3096,
+      "output_tokens": 372,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 3096,
+      "price_usd": {
+        "input": 0.003096,
+        "output": 0.00186,
+        "total": 0.004956
+      },
+      "duration_ms": 4977,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 4977,
+          "stop_reason": "end_turn",
+          "label": "logo-vision-audit round 2"
+        }
+      ],
+      "phase": "style_guide",
+      "timestamp": "2026-06-10T13:15:37.453Z"
+    },
+    {
+      "action": "asset_descriptions",
+      "agent": "lib/creative-asset-descriptions.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 1,
+      "api_calls": 1,
+      "input_tokens": 9473,
+      "output_tokens": 1497,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 9473,
+      "price_usd": {
+        "input": 0.009473,
+        "output": 0.007485,
+        "total": 0.016958
+      },
+      "duration_ms": 15961,
+      "phase": "creative",
+      "timestamp": "2026-06-10T13:38:46.402Z"
+    },
+    {
+      "action": "assets_review",
+      "agent": "lib/asset-descriptions-audit.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 1,
+      "api_calls": 1,
+      "input_tokens": 3712,
+      "output_tokens": 86,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 3712,
+      "price_usd": {
+        "input": 0.003712,
+        "output": 0.00043,
+        "total": 0.004142
+      },
+      "duration_ms": 3619,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 3619,
+          "stop_reason": "end_turn",
+          "label": "asset-descriptions-audit round 1"
+        }
+      ],
+      "timestamp": "2026-06-10T13:38:50.026Z"
+    },
+    {
+      "action": "logo_vision_audit",
+      "agent": "lib/logo-vision-audit.mts",
+      "model": "claude-haiku-4-5-20251001",
+      "review_round": 1,
+      "api_calls": 1,
+      "input_tokens": 3208,
+      "output_tokens": 146,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "billed_input_tokens": 3208,
+      "price_usd": {
+        "input": 0.003208,
+        "output": 0.00073,
+        "total": 0.003938
+      },
+      "duration_ms": 3907,
+      "api_call_timings": [
+        {
+          "call_index": 1,
+          "duration_ms": 3907,
+          "stop_reason": "end_turn",
+          "label": "logo-vision-audit round 1"
+        }
+      ],
+      "phase": "creative",
+      "timestamp": "2026-06-10T13:38:55.506Z"
+    }
+  ],
+  "totals": {
+    "api_calls": 10,
+    "input_tokens": 83136,
+    "output_tokens": 7915,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "billed_input_tokens": 83136,
+    "price_usd": {
+      "input": 0.253788,
+      "output": 0.102655,
+      "total": 0.356443
+    },
+    "duration_ms": 217673,
+    "claude_api_duration_ms": 75687,
+    "wall_clock_ms": 1503526,
+    "phase_duration_ms": {
+      "style_guide": 194186,
+      "creative": 23487
+    }
+  },
+  "run_summary": {
+    "wall_clock_ms": 26783,
+    "ended_at": "2026-06-10T13:38:55.564Z",
+    "claude_api_calls": 10,
+    "claude_api_duration_ms": 75687,
+    "phase_duration_ms": {
+      "style_guide": 194186,
+      "creative": 23487
+    }
+  }
+}

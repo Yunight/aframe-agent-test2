@@ -1,0 +1,14 @@
+{
+  "ui_review_rounds_run": 2,
+  "max_ui_review_rounds": 2,
+  "satisfied": true,
+  "summary": "The 320x480 advertisement creative meets all audit criteria. The layout respects exact IAB dimensions, the IKEA logo is clearly visible and properly scaled, typography follows the style guide (Noto Sans for headlines and body copy), color palette strictly adheres to brand standards (#0058AB blue, #FBD914 yellow, #FFFFFF white, #111111 black), and French copy is grammatically sound and compelling. The product carousel displays four distinct furniture items with proper spacing, the CTA button ",
+  "findings": [],
+  "screenshots_dir": "/Users/benchi/Documents/aframe-agent-test2/output/ikea-f472cc04-3411-4ce7-9e78-def1303b42cb/review/screenshots",
+  "pipeline_usage_path": "/Users/benchi/Documents/aframe-agent-test2/output/ikea-f472cc04-3411-4ce7-9e78-def1303b42cb/pipeline-usage.json",
+  "pipeline_totals_usd": {
+    "input": 0.319596,
+    "output": 0.379995,
+    "total": 0.699591
+  }
+}

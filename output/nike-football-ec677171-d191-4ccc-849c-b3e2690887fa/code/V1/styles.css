@@ -1,0 +1,314 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #E5E5E5;
+  font-family: "Inter", sans-serif;
+}
+
+#ad-320x480 {
+  width: 320px;
+  height: 480px;
+  background-color: #F5F5F5;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+.ad-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px 8px;
+  background-color: #111111;
+  flex-shrink: 0;
+  height: 42px;
+}
+
+.nike-logo {
+  height: 22px;
+  width: auto;
+  display: block;
+  filter: invert(1);
+}
+
+.eyebrow {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #F26522;
+}
+
+/* CAROUSEL */
+.carousel-wrapper {
+  position: relative;
+  flex-shrink: 0;
+  width: 320px;
+  height: 228px;
+  overflow: hidden;
+  background-color: #FFFFFF;
+}
+
+.carousel-track {
+  display: flex;
+  width: calc(320px * 6);
+  height: 228px;
+  transition: transform 0.52s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.carousel-slide {
+  width: 320px;
+  height: 228px;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #FFFFFF;
+}
+
+.product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transition: transform 0.55s ease;
+}
+
+.carousel-slide:hover .product-img {
+  transform: scale(1.04);
+}
+
+/* Slide label */
+.slide-label {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  background-color: #002654;
+  color: #FFFFFF;
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 14px 3px 10px;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 7px) 100%, 0 100%);
+  transition: opacity 0.2s ease;
+  z-index: 5;
+}
+
+/* Dots */
+.carousel-dots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 5;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.dot.active {
+  background-color: #F26522;
+  border-color: #F26522;
+  transform: scale(1.35);
+}
+
+/* Progress bar */
+.progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background-color: #EF4135;
+  z-index: 6;
+  transition: none;
+}
+
+.progress-bar.running {
+  transition: width 3.8s linear;
+  width: 100%;
+}
+
+/* COPY BLOCK */
+.copy-block {
+  padding: 12px 16px 6px;
+  flex-shrink: 0;
+  background-color: #F5F5F5;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.55s ease 0.15s, transform 0.55s ease 0.15s;
+}
+
+.copy-block.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.headline {
+  font-family: "Jost", sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: #111111;
+  font-style: italic;
+}
+
+.headline em {
+  font-style: italic;
+  color: #0055A4;
+}
+
+.subhead {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #EF4135;
+  margin-top: 4px;
+}
+
+.body-copy {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  color: #1A1A1A;
+  margin-top: 5px;
+  line-height: 1.45;
+  opacity: 0.8;
+}
+
+/* CTA */
+.cta-wrap {
+  padding: 8px 16px 0;
+  flex-shrink: 0;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease 0.35s, transform 0.5s ease 0.35s;
+}
+
+.cta-wrap.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cta-btn {
+  display: block;
+  width: 100%;
+  background-color: #111111;
+  color: #FFFFFF;
+  text-decoration: none;
+  border-radius: 2px;
+  padding: 11px 12px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.25s ease;
+}
+
+.cta-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: #0055A4;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s ease;
+  z-index: 0;
+}
+
+.cta-btn:hover::before {
+  transform: scaleX(1);
+}
+
+.cta-label {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+  color: #FFFFFF;
+}
+
+/* FOOTER */
+.ad-footer {
+  margin-top: auto;
+  padding: 6px 16px 16px;
+  background-color: #F5F5F5;
+  border-top: 1px solid rgba(17, 17, 17, 0.1);
+  opacity: 0;
+  transition: opacity 0.4s ease 0.5s;
+}
+
+.ad-footer.visible {
+  opacity: 1;
+}
+
+.ad-footer span {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  font-size: 9px;
+  color: #1A1A1A;
+  opacity: 0.5;
+  letter-spacing: 0.06em;
+}
+
+/* LOGO REVEAL */
+@keyframes logoReveal {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.nike-logo {
+  animation: logoReveal 0.45s ease both;
+}
+
+/* REDUCED MOTION */
+@media (prefers-reduced-motion: reduce) {
+  .carousel-track,
+  .product-img,
+  .cta-btn::before,
+  .copy-block,
+  .cta-wrap,
+  .ad-footer,
+  .nike-logo,
+  .slide-label,
+  .progress-bar {
+    animation: none !important;
+    transition: none !important;
+  }
+  .copy-block,
+  .cta-wrap,
+  .ad-footer {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

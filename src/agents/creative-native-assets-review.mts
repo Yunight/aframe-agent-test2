@@ -15,6 +15,15 @@ import { join } from 'node:path';
 import { Anthropic } from '@anthropic-ai/sdk';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
 import { z } from 'zod';
+import {
+  maxValidProductAssets,
+  minValidProductAssets
+} from '../lib/asset-descriptions-audit.mts';
+import {
+  buildCollaborationLogoAuditRules,
+  isCollaborationCampaign,
+  resolveLogoSearchNames
+} from '../lib/logo-search-names.mts';
 
 const DEFAULT_ASSETS_REVIEW_MODEL = 'claude-haiku-4-5-20251001';
 
@@ -196,26 +205,55 @@ export async function runCreativeNativeAssetsReview (
     }
   }
 
+  const brandName = prunedStyleGuide.brandName?.trim() ?? '';
+  const companyName = prunedStyleGuide.companyName?.trim() ?? '';
+  const brandContext = prunedStyleGuide.brandContext?.trim() ?? '';
+  const collaborationCampaign = isCollaborationCampaign({
+    brandName,
+    companyName,
+    ...(brandContext.length > 0 ? { brandContext } : {})
+  });
+
   const systemPrompt = [
     'You are a strict brand asset auditor before HTML5 ad code generation.',
     'You receive a JSON style guide (text) and logo/product image files (raster and possibly SVG logos).',
     'Evaluate:',
-    '- logos/ folder must contain ONLY the brand wordmark lockup (SVG or PNG), never product packshots or catalog photos.',
+    '- logos/ folder must contain ONLY brand wordmark lockups (SVG or PNG), never product packshots or catalog photos.',
     '  * BLOCKER if any file in logos/ looks like a product SKU/packshot (e.g. A04P501D.jpg) — those belong in products/ only.',
     '  * Do NOT accept a product JPEG as a "secondary logo" or alternate brand asset.',
+    ...(collaborationCampaign
+      ? buildCollaborationLogoAuditRules({
+          brandName,
+          companyName,
+          ...(brandContext.length > 0 ? { brandContext } : {})
+        })
+      : []),
     '- Logo (STRICT on source and brand): must match brandName/companyName (reject wrong brands, e.g. homonyms).',
-    '  * BLOCKER if the logo in logos/ is NOT the same lockup as the brand homepage header (e.g. div.primary-logo / img.logo-simple on brandURL) — wrong file from Brave/generic search.',
+    ...(collaborationCampaign
+      ? [
+          '  * For collaboration campaigns, brandName names the partnership — do NOT require a single file showing the full composite brandName string.',
+          '  * BLOCKER only when a logos/ file is the wrong brand, a composite multi-brand lockup, or fails source checks below.'
+        ]
+      : [
+          '  * BLOCKER if the logo in logos/ is NOT the same lockup as the brand homepage header (e.g. div.primary-logo / img.logo-simple on brandURL) — wrong file from Brave/generic search.'
+        ]),
     '  * BLOCKER if the logo clearly comes from a third-party scraper (KindPNG, PNGaaaa, Pinterest, random blogs) while companyURL/brandURL host an official header lockup.',
     '  * BLOCKER if hostname of the image URL does not match companyURL/brandURL (or their parent domain) unless it is a known official CDN/subdomain of that brand.',
     '  * Accept transparent PNG, opaque PNG/JPEG on brand background, and official SVG wordmarks.',
     '  * Warn (not blocker) for low padding or baked checkerboard; suggest site:official_host queries in brave_retry_queries.',
+    collaborationCampaign
+      ? '  * brave_retry_queries.logos: one query per missing collaboration party name only — never combined co-branded lockup strings.'
+      : '  * brave_retry_queries.logos must use ONLY brand/company names (never productName, campaignContext, partners, countries, or campaign URL slugs).',
     '  * Readable at small banner sizes (min ~120×40px for raster); SVG logos are rasterized to PNG for vision review.',
-    '- Product images: must match STYLE_GUIDE_CONTEXT / campaignContext and productName (exact hero model); reject other models from the same brand line-up.',
+    `- Product images (products/): need ${String(minValidProductAssets())}–${String(maxValidProductAssets())} files; each must match the campaign subject (brandName, productName, campaignContext, brandContext).`,
+    '  * BLOCKER for any off-topic product (wrong franchise, sport, or unrelated brand line) even from the official retailer CDN.',
+    '  * BLOCKER when fewer than 3 or more than 5 on-campaign product images remain in products/.',
+    '  * Product images must match STYLE_GUIDE_CONTEXT / campaignContext and productName (exact hero model); reject other models from the same brand line-up.',
     '  * BLOCKER for watermarked press blogs, unrelated stock, meme images, or obvious thumbnails/wallpapers when official packshots exist.',
     '  * brave_retry_queries must prioritize site:hostname from brandURL/companyURL and concrete product names — never generic "product photo" alone.',
     '- Style guide: primary colors and typography are plausible and internally consistent; flag empty or generic placeholders.',
     'Set satisfied to true only when there are zero findings with severity "blocker".',
-    'For each blocker, suggest concrete Brave image search queries in brave_retry_queries (French or English, specific to the brand/product).',
+    'For each blocker, suggest concrete Brave image search queries in brave_retry_queries (French or English). Logo queries: brand/company name only; product queries: use productName and campaign context.',
     'Provide at least one logo query and one product query when blockers exist; empty arrays only if satisfied.',
     '',
     '--- Pruned style guide JSON ---',
@@ -381,6 +419,12 @@ export function buildBraveRetryQueriesFromAudit (
 ): { logos: string[]; products: string[] } {
   const brand = context.brandName.trim();
   const product = context.productName.trim();
+  const logoNames = resolveLogoSearchNames({
+    brandName: context.brandName,
+    companyName: context.companyName,
+    productName: context.productName
+  });
+  const primaryLogoName = logoNames[0] ?? context.brandName.trim();
   const logos = [ ...audit.brave_retry_queries.logos, ...(context.logoImageSearchQueries ?? []) ];
   const products = [
     ...audit.brave_retry_queries.products,
@@ -397,14 +441,18 @@ export function buildBraveRetryQueriesFromAudit (
         try {
           const site = new URL(rawUrl.trim()).hostname;
           if (site.length > 0) {
-            logos.push(`${brand} logo site:${site}`);
-            logos.push(`${brand} logo SVG site:${site}`);
+            for (const name of logoNames.length > 0 ? logoNames : [ primaryLogoName ]) {
+              logos.push(`${name} logo site:${site}`);
+              logos.push(`${name} logo SVG site:${site}`);
+            }
           }
         } catch {
           /* ignore invalid URL */
         }
       }
-      logos.push(`${brand} official logo SVG`, `${brand} logo officiel site officiel`);
+      for (const name of logoNames.length > 0 ? logoNames : [ primaryLogoName ]) {
+        logos.push(`${name} official logo SVG`, `${name} logo officiel site officiel`);
+      }
     }
   }
   if (products.length === 0) {

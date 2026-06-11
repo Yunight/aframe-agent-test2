@@ -14,7 +14,6 @@ import {
 } from './official-site-logo-extract.mts';
 import { resolveImageSearchProvider } from './image-search.mts';
 import { enforceSingleCanonicalLogo, CANONICAL_LOGO_COUNT } from './logo-asset-rules.mts';
-import { pruneInvalidLogos, pruneNonWordmarkLogos } from './creative-native-assets-deterministic.mts';
 import { listAssetImageFiles } from './asset-sidecar-files.mts';
 import { existsSync } from 'node:fs';
 import { basename, join } from 'node:path';
@@ -184,8 +183,6 @@ export async function collectSingleTransparentLogo (
     }
   }
 
-  await pruneNonWordmarkLogos(directoryPath);
-  await pruneInvalidLogos(directoryPath, officialHosts);
   const { kept, removed } = await enforceSingleCanonicalLogo(directoryPath);
   if (removed.length > 0) {
     console.log(`[logo] Canonical logo kept: ${kept ?? 'none'} (removed ${String(removed.length)} extra file(s))`);

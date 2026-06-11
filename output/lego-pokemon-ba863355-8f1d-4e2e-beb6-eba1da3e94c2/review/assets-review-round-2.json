@@ -1,0 +1,41 @@
+{
+  "review_round": 2,
+  "captured_at": "2026-06-10T13:15:37.455Z",
+  "deterministic_ok": true,
+  "audit": {
+    "satisfied": false,
+    "summary": "Logo or asset audit failed: 1 blocker(s). All assets pass audit. 6 total assets reviewed: 1 logo (valid brand asset) + 5 product assets (4 distinct LEGO Pokémon sets with packshots/lifestyle scenes + 1 LEGO Star Wars collection marked generic). 4 distinct Pokémon SKUs with visible merchandise exceed the minimum 2 usable retail product assets required. No text-only banners, no duplicate SKU blockers, no missing primary_product_names. Logo and product assets are retail-ready. The logo shows only 'LEGO' wordmark without 'LEGO® Pokémon™' co-branding required for this campaign. For LEGO® Pokémon™ sub-brand campaign, the logo must display the full co-branded lockup or official Pokémon partnership wordmark, not the parent company LEGO-only wordmark.",
+    "findings": [
+      {
+        "asset_id": "logos/brand-lego.svg",
+        "severity": "blocker",
+        "issue": "Logo displays only 'LEGO' parent company wordmark without 'Pokémon™' co-branding. For LEGO® Pokémon™ campaign, the official logo must show the sub-brand co-branded lockup per brandURL (https://www.lego.com/fr-fr/themes/pokemon), not the standalone parent company wordmark.",
+        "fix_hint": "Source the official 'LEGO® Pokémon™' co-branded logo lockup from https://www.lego.com/fr-fr/themes/pokemon or official LEGO Pokémon partnership press assets. The wordmark must display both 'LEGO®' and 'Pokémon™' together in the approved sub-brand configuration."
+      }
+    ],
+    "brave_retry_queries": {
+      "logos": [
+        "LEGO Pokemon logo lockup site:lego.com",
+        "LEGO Pokémon co-branded wordmark official",
+        "LEGO Pokémon logo transparent site:lego.com/fr-fr/themes/pokemon",
+        "LEGO Pokemon brand lockup SVG 2026"
+      ],
+      "products": []
+    }
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 3750,
+    "output_tokens": 145,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 3750,
+    "price_usd": {
+      "input": 0.00375,
+      "output": 0.000725,
+      "total": 0.004475
+    },
+    "duration_ms": 3143
+  }
+}

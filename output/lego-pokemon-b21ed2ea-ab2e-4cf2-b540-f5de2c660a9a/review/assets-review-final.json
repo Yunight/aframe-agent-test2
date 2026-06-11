@@ -1,0 +1,11 @@
+{
+  "review_phase": "style_guide",
+  "assets_review_rounds_run": 3,
+  "max_assets_review_rounds": 4,
+  "satisfied": true,
+  "logo_locked": true,
+  "summary": "All assets are on-campaign and retail-suitable. One official LEGO® brand logo and three distinct LEGO® Pokémon™ physical product sets from the 2026 launch wave (72151 Eevee, 72152 Pikachu and Poké Ball, 72153 Venusaur/Charizard/Blastoise). Each product asset shows packshot quality with visible merchandise. No duplicates, no text-only banners, no off-topic products. Asset count (3 products) falls within 3–5 required range. logos/brand-lego.svg is the official LEGO® wordmark lockup. The logo displays the correct iconic LEGO brand identity with white letter forms outlined in black, a yellow/gold outer ring, and the required registered trademark symbol (®). Colors match the primary palette (#E3000B red background, #FFED00 yellow, #000000 black, #FFFFFF white). This is a valid and approved brand wordmark for the LEGO® Pokémon™ collaboration campaign.",
+  "findings": [],
+  "asset_descriptions_path": "review/asset-descriptions.json",
+  "pipeline_usage_path": "/Users/benchi/Documents/aframe-agent-test2/output/lego-pokemon-b21ed2ea-ab2e-4cf2-b540-f5de2c660a9a/pipeline-usage.json"
+}

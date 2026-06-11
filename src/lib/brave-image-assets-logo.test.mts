@@ -2,7 +2,10 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   buildLogoSearchQueries,
+  filterLogoSearchQueries,
   logoSearchCurrentYear,
+  normalizeLegalEntityName,
+  resolveLogoSearchNames,
   scoreCampaignLogoAdjustment,
   scoreEntertainmentLogoOpusPenalty,
   scoreSubBrandLogoAdjustment
@@ -23,7 +26,38 @@ test('buildLogoSearchQueries includes current year for latest logo lockup', () =
   assert.ok(queries.some((q) => /Peugeot logo \d{4}/iu.test(q)));
 });
 
-test('buildLogoSearchQueries prepends expansion queries when product differs from brand', () => {
+test('resolveLogoSearchNames division line uses parent company only', () => {
+  assert.equal(normalizeLegalEntityName('Nike, Inc.'), 'Nike');
+  assert.deepEqual(
+    resolveLogoSearchNames({
+      brandName: 'Nike Football',
+      companyName: 'Nike, Inc.',
+      productName: 'Off-Pitch Looks France'
+    }),
+    [ 'Nike' ]
+  );
+});
+
+test('resolveLogoSearchNames independent sub-brand returns brand and company', () => {
+  assert.deepEqual(
+    resolveLogoSearchNames({
+      brandName: 'Parkside',
+      companyName: 'Lidl',
+      productName: 'Tools'
+    }),
+    [ 'Parkside', 'Lidl' ]
+  );
+  assert.deepEqual(
+    resolveLogoSearchNames({
+      brandName: 'Diablo IV',
+      companyName: 'Blizzard Entertainment',
+      productName: 'Diablo IV: Lord of Hatred'
+    }),
+    [ 'Diablo IV', 'Blizzard Entertainment' ]
+  );
+});
+
+test('buildLogoSearchQueries uses brand names only not campaign product terms', () => {
   const queries = buildLogoSearchQueries({
     brandName: 'Diablo IV',
     companyName: 'Blizzard Entertainment',
@@ -31,11 +65,36 @@ test('buildLogoSearchQueries prepends expansion queries when product differs fro
     brandURL: 'https://diablo4.blizzard.com/',
     companyURL: 'https://www.blizzard.com/',
     campaignReferenceUrl: 'https://diablo4.blizzard.com/en-us/lord-of-hatred',
-    logoImageSearchQueries: [],
+    logoImageSearchQueries: [
+      'Diablo IV Lord of Hatred logo svg',
+      'site:diablo4.blizzard.com lord of hatred logo'
+    ],
     productImageSearchQueries: []
   });
-  assert.ok(queries.some((q) => /Lord of Hatred.*logo/iu.test(q)));
-  assert.ok(queries.some((q) => /site:diablo4\.blizzard\.com.*lord of hatred logo/iu.test(q)));
+  assert.ok(queries.some((q) => /Diablo IV logo/iu.test(q)));
+  assert.ok(queries.some((q) => /Blizzard Entertainment logo/iu.test(q)));
+  assert.ok(!queries.some((q) => /lord of hatred/iu.test(q)));
+  assert.ok(!queries.some((q) => /site:diablo4\.blizzard\.com.*lord of hatred/iu.test(q)));
+});
+
+test('filterLogoSearchQueries rejects campaign and product tokens for Nike Football', () => {
+  const ctx = {
+    brandName: 'Nike Football',
+    companyName: 'Nike, Inc.',
+    productName: 'Off-Pitch Looks France — FFF Lifestyle Collection 2026',
+    campaignContext: 'promotion de la gamme look de foot france',
+    campaignReferenceUrl: 'https://www.nike.com/fr/w/off-pitch-looks-france-9wreezabxgs'
+  };
+  const filtered = filterLogoSearchQueries(
+    [
+      'Nike swoosh logo transparent png 2026',
+      'Nike Football logo FFF 2026 lockup',
+      'FFF Fédération Française Football logo 2026 svg',
+      'site:nike.com France football off-pitch looks logo 2026'
+    ],
+    ctx
+  );
+  assert.deepEqual(filtered, [ 'Nike swoosh logo transparent png 2026' ]);
 });
 
 test('scoreCampaignLogoAdjustment penalizes corporate Blizzard logo vs expansion lockup', () => {

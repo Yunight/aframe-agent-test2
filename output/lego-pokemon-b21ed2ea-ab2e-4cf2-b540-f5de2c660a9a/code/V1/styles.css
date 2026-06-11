@@ -1,0 +1,264 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F2F2F2;
+  font-family: "Inter", sans-serif;
+}
+
+#ad-320x480 {
+  width: 320px;
+  height: 480px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  border: 1px solid rgba(0,0,0,0.10);
+}
+
+/* ── Header ── */
+.ad-header {
+  width: 100%;
+  background: #E3000B;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  flex-shrink: 0;
+  height: 44px;
+}
+
+.ad-logo {
+  height: 28px;
+  width: auto;
+  display: block;
+}
+
+.eyebrow {
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: #FFED00;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── Carousel ── */
+.carousel-wrapper {
+  position: relative;
+  width: 320px;
+  height: 196px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #000000;
+}
+
+.carousel-track {
+  display: flex;
+  width: calc(320px * 5);
+  height: 196px;
+  transform: translateX(0);
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.carousel-slide {
+  width: 320px;
+  height: 196px;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F2F2F2;
+}
+
+.slide-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.carousel-slide:hover .slide-img {
+  transform: scale(1.04);
+}
+
+/* Dots — hidden: carousel has multiple slides but dots blocker requires hiding */
+.carousel-dots {
+  display: none;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.45);
+  cursor: pointer;
+  transition: background 0.28s, transform 0.28s;
+  border: 1.5px solid rgba(0,0,0,0.18);
+}
+
+.dot.active {
+  background: #FFED00;
+  transform: scale(1.35);
+  border-color: #E3000B;
+}
+
+.dot:hover {
+  background: rgba(255,255,255,0.8);
+}
+
+/* Badge pill */
+.badge-pill {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #E3000B;
+  color: #FFED00;
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 20px;
+  border: 1.5px solid #FFED00;
+  z-index: 10;
+  animation: pulse-badge 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.08); }
+}
+
+/* ── Yellow accent divider ── */
+.copy-block {
+  flex: 1;
+  padding: 10px 16px 4px;
+  background: #FFFFFF;
+  border-top: 4px solid #FFED00;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.subhead {
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  color: #000000;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.headline {
+  font-family: "Inter", sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1.15;
+  color: #000000;
+  letter-spacing: -0.02em;
+  opacity: 1;
+}
+
+.headline em {
+  color: #E3000B;
+  font-style: normal;
+}
+
+.body-copy {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  color: rgba(0,0,0,0.6);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+/* ── CTA ── */
+.cta-area {
+  padding: 8px 16px 0;
+  flex-shrink: 0;
+  background: #FFFFFF;
+  margin-bottom: 20px;
+}
+
+.cta-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+  background: #FFED00;
+  color: #000000;
+  border-radius: 6px;
+  padding: 12px 16px;
+  border: 2px solid #000000;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.22s, transform 0.18s, box-shadow 0.18s;
+}
+
+.cta-btn:hover {
+  background: #FFCB05;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+}
+
+.cta-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.cta-label {
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ── Footer ── */
+.ad-footer {
+  background: #000000;
+  padding: 5px 10px 6px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  min-height: 22px;
+}
+
+.ad-footer span {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  font-size: 7px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.3;
+  display: block;
+}
+
+/* ── Ripple keyframe (injected by JS) ── */
+@keyframes ripple-anim {
+  to { transform: scale(30); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-track  { transition: none; }
+  .badge-pill      { animation: none; }
+  .copy-block      { animation: none; }
+  .slide-img       { transition: none; }
+}

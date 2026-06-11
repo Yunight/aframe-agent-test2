@@ -1,0 +1,131 @@
+{
+  "generated_at": "2026-06-10T12:37:54.670Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/ikea.svg",
+      "fileName": "ikea.svg",
+      "fileType": "logos",
+      "description": "The IKEA brand logo featuring the iconic wordmark 'IKEA' in bold blue capital letters centered within a bright yellow rounded rectangular oval shape, set against a deep blue background. The registered trademark symbol appears in the top right corner. This is the recognizable corporate identity mark used for brand signage and marketing materials.",
+      "layout_hints": [
+        "logo-lockup",
+        "centered"
+      ],
+      "dominant_colors": [
+        "#0051BA",
+        "#FFCC00"
+      ],
+      "asset_kind": "logo"
+    },
+    {
+      "asset_id": "products/besta-combinaison-rangement-tiroirs-brun-noir-lappviken-stubbarp-motif-noyer__1451119_pe990595_s5.jpg",
+      "fileName": "besta-combinaison-rangement-tiroirs-brun-noir-lappviken-stubbarp-motif-noyer__1451119_pe990595_s5.jpg",
+      "fileType": "products",
+      "description": "Product packshot of the BESTA storage combination sideboard with drawers, featuring a warm walnut-pattern front with two side door panels and center drawer compartments, mounted on four black cylindrical legs. The unit is photographed against a clean white background in a neutral three-quarter front view. The design showcases the Scandinavian minimalist aesthetic characteristic of IKEA storage solutions.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-front-view"
+      ],
+      "dominant_colors": [
+        "#8B6F47",
+        "#2A2A2A",
+        "#FFFFFF"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "BESTA Combinaison rangement tiroirs noyer",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/console-tables-16246.jpg",
+      "fileName": "console-tables-16246.jpg",
+      "fileType": "products",
+      "description": "Product packshot of a minimalist white console table with an open-shelf design, featuring a rectangular top surface and lower shelf shelf for storage or display. The piece is supported by four simple vertical legs and photographed against a neutral white background. The clean Scandinavian lines exemplify IKEA's functional furniture design.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-front-view"
+      ],
+      "dominant_colors": [
+        "#FFFFFF",
+        "#F5F5F5"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "Console table white",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/sideboards-buffets-10412.jpg",
+      "fileName": "sideboards-buffets-10412.jpg",
+      "fileType": "products",
+      "description": "Product packshot of a light natural oak sideboard buffet with four vertical panels forming cabinet doors, photographed against a clean white background in a three-quarter front view. The piece features a warm wood finish and sits on four slanted modern legs. The design represents IKEA's classic storage furniture with accessible Scandinavian style.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-front-view"
+      ],
+      "dominant_colors": [
+        "#D4A574",
+        "#FFFFFF"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "Sideboard buffet oak",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/vihals-buffet-blanc__1035578_pe838113_s5.jpg",
+      "fileName": "vihals-buffet-blanc__1035578_pe838113_s5.jpg",
+      "fileType": "products",
+      "description": "Product packshot of the VIHALS white buffet cabinet featuring two upper drawers and four lower cabinet doors with recessed pull handles, photographed against a neutral white background. The piece displays clean geometric lines and minimalist hardware, exemplifying IKEA's functional Nordic design principles for storage and dining room furniture.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-front-view"
+      ],
+      "dominant_colors": [
+        "#FFFFFF",
+        "#E8E8E8"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "VIHALS Buffet blanc",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/vihals-buffet-blanc__1048720_pe843879_s5.jpg",
+      "fileName": "vihals-buffet-blanc__1048720_pe843879_s5.jpg",
+      "fileType": "products",
+      "description": "Lifestyle scene showcasing the white VIHALS buffet in a modern dining space with a green accent chair, hanging industrial pendant lamp, potted green plant, decorative clock, and floral arrangement on the buffet surface. The scene is set against soft neutral walls and demonstrates how the sideboard functions as a practical storage and display piece in a contemporary home environment.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "room-setting"
+      ],
+      "dominant_colors": [
+        "#FFFFFF",
+        "#A8D08D",
+        "#999999"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "VIHALS Buffet blanc",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/vihals-buffet-gris-fonce__1203691_pe906387_s5.jpg",
+      "fileName": "vihals-buffet-gris-fonce__1203691_pe906387_s5.jpg",
+      "fileType": "products",
+      "description": "Product packshot of the VIHALS dark grey buffet cabinet featuring four cabinet door panels with recessed pull details, photographed against a neutral white background in a clean front view. The piece showcases IKEA's minimalist Scandinavian design with a sophisticated charcoal finish suitable for modern home furnishing schemes.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-front-view"
+      ],
+      "dominant_colors": [
+        "#3A3A3A",
+        "#FFFFFF"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "VIHALS Buffet gris foncé",
+      "is_generic_collection": false
+    }
+  ]
+}

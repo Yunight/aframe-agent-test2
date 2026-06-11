@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IKEA – Nouveautés</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="ad-320x480">
+
+    <!-- Header -->
+    <header class="ad-header">
+      <img src="./ikea.svg" alt="logo" class="ad-logo">
+      <span class="eyebrow">Nouveautés</span>
+    </header>
+
+    <!-- Hero product area -->
+    <div class="hero-area">
+      <div class="carousel-track" id="carouselTrack">
+        <div class="slide active">
+          <img src="./metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530535_pe1015232_s5.jpg" alt="METOD élément mural" class="product-img hero-img">
+        </div>
+        <div class="slide">
+          <img src="./metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1534030_pe1016103_s5.jpg" alt="METOD élément mural perspective" class="product-img hero-img">
+        </div>
+        <div class="slide">
+          <img src="./metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530515_pe1015218_s5.jpg" alt="METOD élément mural compact" class="product-img hero-img">
+        </div>
+        <div class="slide">
+          <img src="./metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530533_pe1015230_s5.jpg" alt="METOD élément mural tablettes" class="product-img hero-img">
+        </div>
+      </div>
+      <!-- Dot indicators -->
+      <div class="carousel-dots" id="carouselDots">
+        <button class="dot active" data-index="0" aria-label="Image 1"></button>
+        <button class="dot" data-index="1" aria-label="Image 2"></button>
+        <button class="dot" data-index="2" aria-label="Image 3"></button>
+        <button class="dot" data-index="3" aria-label="Image 4"></button>
+      </div>
+    </div>
+
+    <!-- Text content -->
+    <div class="content-block">
+      <p class="headline">Rangement <em>repensé</em></p>
+      <p class="subhead">METOD Élément mural</p>
+      <p class="body-copy">Modulable, épuré, conçu pour s'adapter à votre espace. Découvrez la nouvelle collection.</p>
+    </div>
+
+    <!-- Thumbnail strip -->
+    <div class="thumb-strip" id="thumbStrip">
+      <button class="thumb-btn active" data-index="0">
+        <img src="./metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530535_pe1015232_s5.jpg" alt="Vue 1">
+      </button>
+      <button class="thumb-btn" data-index="1">
+        <img src="./metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1534030_pe1016103_s5.jpg" alt="Vue 2">
+      </button>
+      <button class="thumb-btn" data-index="2">
+        <img src="./metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530515_pe1015218_s5.jpg" alt="Vue 3">
+      </button>
+      <button class="thumb-btn" data-index="3">
+        <img src="./metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530533_pe1015230_s5.jpg" alt="Vue 4">
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="ad-footer">
+      <a class="cta-btn" href="https://www.ikea.com/fr/fr/new/new-products/?filters=f-subcategories%3App003">
+        <span class="cta-label">Voir les nouveautés</span>
+      </a>
+      <span>ikea.com/fr</span>
+    </footer>
+
+  </div>
+  <script src="app.js" defer></script>
+</body>
+</html>

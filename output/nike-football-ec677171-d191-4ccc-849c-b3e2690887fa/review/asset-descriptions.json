@@ -1,0 +1,139 @@
+{
+  "generated_at": "2026-06-10T09:40:54.156Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/Logo_NIKE.svg",
+      "fileName": "Logo_NIKE.svg",
+      "fileType": "logos",
+      "description": "Nike Swoosh logo mark in black on transparent background. Standard brand lockup for Nike Football division.",
+      "layout_hints": [
+        "logo-lockup",
+        "brand-mark"
+      ],
+      "dominant_colors": [
+        "#000000"
+      ]
+    },
+    {
+      "asset_id": "products/FFF_M_NK_DF_ENERGY_JKT_W.jpg",
+      "fileName": "FFF_M_NK_DF_ENERGY_JKT_W.jpg",
+      "fileType": "products",
+      "description": "Model wearing a France FFF off-pitch windbreaker jacket in light mint green with rust orange and black colorblock sleeves. Features the orange Nike Swoosh on the chest and embroidered FFF crest. White background studio shot.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "product-on-model",
+        "three-quarter-view"
+      ],
+      "dominant_colors": [
+        "#A8D5D0",
+        "#C85A1F",
+        "#1A1A1A"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "FFF Nike DF Energy Jacket",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/FFF_M_NK_DF_ENERGY_PANT_W.jpg",
+      "fileName": "FFF_M_NK_DF_ENERGY_PANT_W.jpg",
+      "fileType": "products",
+      "description": "Full-body lifestyle shot of model wearing black FFF off-pitch tracksuit—black nylon polo shirt with white collar trim and orange Nike Swoosh, paired with black tapered track pants featuring FFF crest in orange. White background studio setting.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "product-on-model",
+        "full-body"
+      ],
+      "dominant_colors": [
+        "#1A1A1A",
+        "#FFFFFF",
+        "#C85A1F"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "FFF Nike DF Energy Pant",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/FFF_M_NK_DF_ENERGY_TOP_SS.jpg",
+      "fileName": "FFF_M_NK_DF_ENERGY_TOP_SS.jpg",
+      "fileType": "products",
+      "description": "Model in profile shot wearing black FFF off-pitch short-sleeve polo shirt with white collar trim and orange Nike Swoosh, holding a white Nike football with black Swoosh. Orange FFF crest embroidered on chest. White background.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "product-on-model",
+        "profile-pose"
+      ],
+      "dominant_colors": [
+        "#1A1A1A",
+        "#FFFFFF",
+        "#C85A1F"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "FFF Nike DF Energy Top Short Sleeve",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/FFF_M_NK_DF_JSY_SS_STAD_AW.jpg",
+      "fileName": "FFF_M_NK_DF_JSY_SS_STAD_AW.jpg",
+      "fileType": "products",
+      "description": "Model wearing mint/pale green FFF away stadium jersey with crew neck, short sleeves featuring red-white-blue striped cuff trim. Orange Nike Swoosh and embroidered FFF rooster crest with two stars. Styled with dark sunglasses. White background.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "product-on-model",
+        "jersey-showcase"
+      ],
+      "dominant_colors": [
+        "#C8E5DB",
+        "#C85A1F",
+        "#000000"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "FFF Nike Stadium Jersey Short Sleeve Away",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/FFF_M_NK_DF_JSY_SS_STAD_HM.jpg",
+      "fileName": "FFF_M_NK_DF_JSY_SS_STAD_HM.jpg",
+      "fileType": "products",
+      "description": "Model in navy blue FFF home stadium jersey with fine vertical striped pattern and white collar. Features orange Nike Swoosh on left chest and embroidered FFF rooster crest with two stars. White background studio portrait.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "product-on-model",
+        "jersey-showcase"
+      ],
+      "dominant_colors": [
+        "#003DA5",
+        "#C85A1F",
+        "#FFFFFF"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "FFF Nike Stadium Jersey Short Sleeve Home",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/NIKE_AIR_MAX_PLUS_OG_PRM.jpg",
+      "fileName": "NIKE_AIR_MAX_PLUS_OG_PRM.jpg",
+      "fileType": "products",
+      "description": "Nike Air Max Plus OG Premium sneaker in profile view featuring mint green to orange gradient color-blocked upper with black toe cap and midsole. Black air unit with visible Air Max cushioning pod. White background product shot.",
+      "layout_hints": [
+        "packshot-side",
+        "product-hero",
+        "sneaker-footwear"
+      ],
+      "dominant_colors": [
+        "#A8D5D0",
+        "#C85A1F",
+        "#1A1A1A"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "Nike Air Max Plus OG Premium",
+      "is_generic_collection": false
+    }
+  ]
+}

@@ -20,6 +20,11 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Anthropic } from '@anthropic-ai/sdk';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
+import {
+  buildCollaborationLogoAuditRules,
+  isCollaborationCampaign,
+  resolveLogoSearchNames
+} from './logo-search-names.mts';
 
 const DEFAULT_LOGO_VISION_MODEL = 'claude-haiku-4-5-20251001';
 
@@ -122,14 +127,46 @@ export async function runLogoVisionAudit (
 
   const brandName = options.prunedStyleGuide.brandName?.trim() ?? '';
   const companyName = options.prunedStyleGuide.companyName?.trim() ?? '';
-  const subBrand = brandName.length > 0 && companyName.length > 0 &&
+  const brandContext = options.prunedStyleGuide.brandContext?.trim() ?? '';
+  const collaborationCampaign = isCollaborationCampaign({
+    brandName,
+    companyName,
+    ...(brandContext.length > 0 ? { brandContext } : {})
+  });
+  const subBrand =
+    !collaborationCampaign &&
+    brandName.length > 0 &&
+    companyName.length > 0 &&
     brandName.toLowerCase() !== companyName.toLowerCase();
+  const logoSearchNames = resolveLogoSearchNames({
+    brandName,
+    companyName,
+    productName: options.prunedStyleGuide.productName?.trim() ?? '',
+    ...(options.prunedStyleGuide.brandContext !== undefined
+      ? { brandContext: options.prunedStyleGuide.brandContext }
+      : {}),
+    ...(options.prunedStyleGuide.campaignContext !== undefined
+      ? { campaignContext: options.prunedStyleGuide.campaignContext }
+      : {}),
+    ...(options.prunedStyleGuide.campaignReferenceUrl !== undefined
+      ? { campaignReferenceUrl: options.prunedStyleGuide.campaignReferenceUrl }
+      : {})
+  });
 
   const systemPrompt = [
     'You are a strict brand logo auditor before HTML5 ad code generation.',
     'You receive PNG screenshots of logo files plus a JSON style guide.',
-    'Evaluate whether each logos/ file is the SAME brand lockup as the official header on brandURL (campaign brand), not merely the parent retailer.',
+    collaborationCampaign
+      ? 'Evaluate whether each logos/ file is an official wordmark for a participating brand in this collaboration campaign.'
+      : 'Evaluate whether each logos/ file is the SAME brand lockup as the official header on brandURL (campaign brand), not merely the parent retailer.',
     'Rules:',
+    ...(collaborationCampaign
+      ? buildCollaborationLogoAuditRules({
+          brandName,
+          companyName,
+          ...(brandContext.length > 0 ? { brandContext } : {})
+        })
+      : []),
     ...(subBrand
       ? [
           `- SUB-BRAND CAMPAIGN: brandName is "${brandName}" but companyName is "${companyName}".`,
@@ -138,14 +175,20 @@ export async function runLogoVisionAudit (
         ]
       : []),
     '- BLOCKER if the logo is a different brand, homonym, or unrelated acronym (e.g. "NET" TV network vs "Matériel.net" retailer).',
-    '- BLOCKER if the logo does not display brandName or its recognizable official icon+wordmark.',
+    ...(collaborationCampaign
+      ? []
+      : [ '- BLOCKER if the logo does not display brandName or its recognizable official icon+wordmark.' ]),
     '- BLOCKER if colors/shape clearly contradict the style guide palette and known brand identity.',
     '- BLOCKER if the file is a product packshot, generic homonym wordmark, or third-party scraper asset.',
     '- BLOCKER if filename suggests wrong brand (e.g. NET_Logo_1970.svg for Matériel.net).',
     '- Accept official wordmarks on opaque dark/light backgrounds (Tier B PNG) when brand text/icon is clearly correct.',
     '- WARN only for minor padding/contrast issues when the brand identity is clearly correct.',
     'Set satisfied to true only when there are zero blocker findings.',
-    'For each blocker, suggest concrete logo search queries in brave_retry_queries.logos (site:official_host preferred; include the current calendar year in some queries to find the latest logo).',
+    `Logo search queries (brave_retry_queries.logos): use ONLY these allowed brand name(s): ${logoSearchNames.join(', ') || brandName}.`,
+    '  * Combine with site:official_host from brandURL/companyURL and generic logo words (logo, wordmark, svg, transparent).',
+    collaborationCampaign
+      ? '  * For missing collaboration parties, use each party name separately — never combined co-branded lockup strings.'
+      : '  * NEVER include productName, campaignContext, partner names (e.g. FFF), country/collection names, or campaign URL slugs in logo queries.',
     'products array must be empty.',
     '',
     '--- Style guide JSON ---',

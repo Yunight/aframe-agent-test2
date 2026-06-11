@@ -1,0 +1,93 @@
+{
+  "companyName": "Inter IKEA Systems",
+  "companyContext": "Inter IKEA Systems B.V. is the worldwide IKEA franchisor and owner of the IKEA Concept, supplying affordable, well-designed Scandinavian home furnishings and accessories through more than 460 stores and ikea.com in 60+ markets.",
+  "companyURL": "https://www.ikea.com",
+  "brandName": "IKEA",
+  "brandContext": "IKEA is the Swedish-origin home furnishings retailer offering ready-to-assemble furniture, kitchen appliances, décor and lifestyle accessories sold under flat-pack democratic-design principles. The French e-commerce site (ikea.com/fr) regularly showcases its 'Nouveautés' assortment.",
+  "brandURL": "https://www.ikea.com/fr/fr/new/new-products/?filters=f-subcategories%3App003",
+  "logoFileUrls": [
+    "https://www.ikea.com/global/assets/logos/brand/ikea.svg"
+  ],
+  "productName": "Nouveautés IKEA",
+  "campaignContext": "nouveaux produit",
+  "campaignReferenceUrl": "https://www.ikea.com/fr/fr/new/new-products/?filters=f-subcategories%3App003",
+  "productPictureUrls": [
+    "https://www.ikea.com/fr/fr/images/products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530535_pe1015232_s5.jpg?f=xxs",
+    "https://www.ikea.com/fr/fr/images/products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1534030_pe1016103_s5.jpg?f=xxs",
+    "https://www.ikea.com/fr/fr/images/products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530505_pe1015213_s5.jpg?f=xu",
+    "https://www.ikea.com/fr/fr/images/products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530515_pe1015218_s5.jpg?f=xu",
+    "https://www.ikea.com/fr/fr/images/products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530509_pe1015215_s5.jpg?f=xu",
+    "https://www.ikea.com/fr/fr/images/products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530533_pe1015230_s5.jpg?f=xu"
+  ],
+  "primaryColorPalette": [
+    "#0058AB",
+    "#FBD914",
+    "#FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "#003E7E",
+    "#111111",
+    "#484848",
+    "#929292",
+    "#F5F5F5"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Noto IKEA Latin",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Display headings and hero titles on ikea.com (custom IKEA cut of Noto Sans)"
+    },
+    {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Section headings and product titles (web fallback when Noto IKEA isn't loaded)"
+    },
+    {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions and UI labels"
+    },
+    {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Buttons, navigation links and emphasised inline text"
+    },
+    {
+      "fontFamily": "Verdana",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "System fallback typeface used in emails and contexts where Noto cannot be served"
+    },
+    {
+      "fontFamily": "IKEA Sans",
+      "fontWeight": 800,
+      "fontEffect": [],
+      "fontUses": "Logotype lockup only (proprietary, Futura-derived); never used for body or UI"
+    }
+  ],
+  "brandVision": "To create a better everyday life for the many people by offering a wide range of well-designed, functional home furnishing products at prices so low that as many people as possible will be able to afford them.",
+  "brandValues": "Togetherness, caring for people and planet, cost-consciousness, simplicity, renew and improve, different with a meaning, give and take responsibility, lead by example — all rooted in Swedish democratic design (form, function, quality, sustainability, low price).",
+  "logoImageSearchQueries": [
+    "IKEA logo svg",
+    "IKEA logo official 2026",
+    "site:ikea.com IKEA logo",
+    "site:en.wikipedia.org IKEA logo",
+    "IKEA logo transparent png",
+    "IKEA brand logo lockup"
+  ],
+  "productImageSearchQueries": [
+    "site:ikea.com/fr nouveautés",
+    "IKEA nouveautés 2026",
+    "IKEA new products 2026",
+    "site:ikea.com nouveaux produits",
+    "IKEA nouvelle collection 2026",
+    "IKEA new arrivals furniture 2026",
+    "IKEA nouveautés salon décoration",
+    "ikea.com/fr/fr/new new products"
+  ],
+  "campaignAssetProfile": "retail"
+}

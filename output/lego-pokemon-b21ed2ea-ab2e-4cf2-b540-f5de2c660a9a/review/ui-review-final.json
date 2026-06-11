@@ -1,0 +1,14 @@
+{
+  "ui_review_rounds_run": 2,
+  "max_ui_review_rounds": 2,
+  "satisfied": true,
+  "summary": "The 320×480 LEGO® Pokémon™ ad creative meets all mandatory design requirements. Logo is visible and properly scaled, typography hierarchy is clear, color palette adheres strictly to the style guide (red, yellow, black, white), French copy is punchy and on-brand, layout respects exact IAB dimensions with safe margins, and the primary CTA has adequate bottom padding. All three states (initial, animated, settled) are identical with no visible animation—a static layout that is clean, readable, and brand-compliant.",
+  "findings": [],
+  "screenshots_dir": "/Users/benchi/Documents/aframe-agent-test2/output/lego-pokemon-b21ed2ea-ab2e-4cf2-b540-f5de2c660a9a/review/screenshots",
+  "pipeline_usage_path": "/Users/benchi/Documents/aframe-agent-test2/output/lego-pokemon-b21ed2ea-ab2e-4cf2-b540-f5de2c660a9a/pipeline-usage.json",
+  "pipeline_totals_usd": {
+    "input": 0.327271,
+    "output": 0.306625,
+    "total": 0.633896
+  }
+}

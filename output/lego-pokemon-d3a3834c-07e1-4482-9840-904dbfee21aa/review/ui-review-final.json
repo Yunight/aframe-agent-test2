@@ -1,0 +1,14 @@
+{
+  "ui_review_rounds_run": 1,
+  "max_ui_review_rounds": 2,
+  "satisfied": true,
+  "summary": "The 300×250 px ad creative meets all critical requirements. The LEGO logo is visible and properly scaled in the top-left corner. The Pikachu product image is clear and well-positioned as the focal point. Typography hierarchy is clean: 'NOUVEAUTÉS 2026' headline, 'Construis ton Pokémon!' subheading, and 'DÉCOUVRIR LA COLLECTION' CTA in the required yellow-black contrast. Color palette adheres strictly to the style guide (LEGO red #E3000B, yellow #FFED00, black #000000, white #FFFFFF). The CTA has visible spacing from the bottom edge of the ad frame. All three states (initial, animated, settled) render identically with no layout shift or animation artifacts. French copy is grammatically correct and on-brand. The ad respects the 300×250 px safe zone and maintains readable contrast throughout.",
+  "findings": [],
+  "screenshots_dir": "/Users/benchi/Documents/aframe-agent-test2/output/lego-pokemon-d3a3834c-07e1-4482-9840-904dbfee21aa/review/screenshots",
+  "pipeline_usage_path": "/Users/benchi/Documents/aframe-agent-test2/output/lego-pokemon-d3a3834c-07e1-4482-9840-904dbfee21aa/pipeline-usage.json",
+  "pipeline_totals_usd": {
+    "input": 0.397063,
+    "output": 1.348975,
+    "total": 1.746038
+  }
+}

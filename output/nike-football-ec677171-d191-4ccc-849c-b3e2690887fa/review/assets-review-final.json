@@ -1,0 +1,18 @@
+{
+  "review_phase": "style_guide",
+  "assets_review_rounds_run": 2,
+  "max_assets_review_rounds": 2,
+  "satisfied": true,
+  "logo_locked": false,
+  "summary": "Logo or asset audit failed: 1 blocker(s). All 6 assets pass audit. 5 lifestyle product scenes (4 FFF apparel items + 1 Air Max sneaker) showcase distinct Nike Football Off-Pitch Looks France SKUs with visible merchandise. Logo asset is standard brand mark. No duplicates, no text-only banners, no missing primary_product_names. Campaign-ready for HTML5 ad generation. Logo file unreadable or missing. Cannot validate Nike Football brand lockup. SVG asset failed to render/parse.",
+  "findings": [
+    {
+      "asset_id": "logos/Logo_NIKE.svg",
+      "severity": "blocker",
+      "issue": "Logo file unreadable or cannot be parsed. SVG failed to rasterize to PNG for visual inspection.",
+      "fix_hint": "Ensure the SVG file is valid, not corrupted, and uses proper XML/SVG syntax. Verify file permissions and encoding. Re-upload or provide a properly formatted SVG file."
+    }
+  ],
+  "asset_descriptions_path": null,
+  "pipeline_usage_path": "/Users/benchi/Documents/aframe-agent-test2/output/nike-football-ec677171-d191-4ccc-849c-b3e2690887fa/pipeline-usage.json"
+}

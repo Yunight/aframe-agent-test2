@@ -1,0 +1,14 @@
+{
+  "ui_review_rounds_run": 1,
+  "max_ui_review_rounds": 2,
+  "satisfied": true,
+  "summary": "The 320×480 IKEA Nouveautés ad creative meets all critical requirements. The layout respects the exact IAB pixel dimensions, the IKEA logo is visible and properly scaled, typography hierarchy is clear with French copy ('Rangement repensé', 'METOD Élément mural'), brand colors (#0058AB blue, #FBD914 yellow) are correctly applied, and the primary CTA button ('VOIR LES NOUVEAUTÉS') has adequate spacing from the bottom edge. The carousel with pagination dots works correctly, showing one hero product image with four distinct product thumbnails below, all aligned to the safe zone. No blockers detected.",
+  "findings": [],
+  "screenshots_dir": "/Users/benchi/Documents/aframe-agent-test2/output/ikea-1c1b7fc6-85b1-494d-8599-23ae6c35c352/review/screenshots",
+  "pipeline_usage_path": "/Users/benchi/Documents/aframe-agent-test2/output/ikea-1c1b7fc6-85b1-494d-8599-23ae6c35c352/pipeline-usage.json",
+  "pipeline_totals_usd": {
+    "input": 0.225511,
+    "output": 0.13735,
+    "total": 0.362861
+  }
+}

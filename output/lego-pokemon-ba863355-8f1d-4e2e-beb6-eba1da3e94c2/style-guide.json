@@ -1,0 +1,103 @@
+{
+  "companyName": "The LEGO Group",
+  "companyContext": "Danish family-owned toy manufacturer founded in 1932 in Billund by Ole Kirk Kristiansen. The LEGO Group designs, produces and distributes LEGO® brick-based building sets and play experiences sold in more than 120 countries, with a mission to inspire and develop the builders of tomorrow through the power of play.",
+  "companyURL": "https://www.lego.com/",
+  "brandName": "LEGO® Pokémon™",
+  "brandContext": "LEGO® Pokémon™ is a multi-year collaboration between The LEGO Group and The Pokémon Company International, launched in 2026. The range lets fans build iconic Pokémon (Pikachu, Eevee, Venusaur, Charizard, Blastoise and more) in LEGO brick form, spanning collectible display sets for adults and interactive SMART Play™ playsets for kids — bringing the Pokémon Trainer journey to life, brick by brick.",
+  "brandURL": "https://www.lego.com/fr-fr/themes/pokemon",
+  "logoFileUrls": [
+    "https://assets.lego.com/logos/v8.6.0/brand-lego.svg"
+  ],
+  "productName": "LEGO® Pokémon™ Collection (2026 launch)",
+  "campaignContext": "Promotion des nouveaux legos pokemon",
+  "campaignReferenceUrl": "https://www.lego.com/fr-fr/themes/pokemon",
+  "productPictureUrls": [
+    "https://assets.lego.com/logos/v8.6.0/brand-lego.svg"
+  ],
+  "primaryColorPalette": [
+    "#E3000B",
+    "#FFED00",
+    "#000000",
+    "#FFFFFF"
+  ],
+  "secondaryColorPalette": [
+    "#3D7DCA",
+    "#FFCB05",
+    "#B3A125",
+    "#CC0000",
+    "#2A75BB",
+    "#F2F2F2"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Lego Thick",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Logo lockup and LEGO® wordmark only — never use for body copy"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 800,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Hero headlines and campaign titles (e.g. 'LEGO® Pokémon™ — Catch them all, brick by brick')"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Subheadings and section titles on product pages"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Body copy, product descriptions, paragraph text"
+    },
+    {
+      "fontFamily": "Cera Pro",
+      "fontWeight": 500,
+      "fontEffect": [
+        "bold"
+      ],
+      "fontUses": "Buttons, CTAs ('Acheter', 'Précommander'), navigation labels"
+    },
+    {
+      "fontFamily": "Pokémon Solid",
+      "fontWeight": 700,
+      "fontEffect": [
+        "bold",
+        "italic"
+      ],
+      "fontUses": "Co-branded Pokémon™ wordmark / decorative key-art accent only (never long copy)"
+    }
+  ],
+  "brandVision": "Réunir deux univers iconiques de l'imagination — la brique LEGO et le monde Pokémon — pour offrir aux fans une nouvelle façon, tangible et créative, de vivre leur aventure de Dresseur. Inspirer les bâtisseurs et dresseurs de demain à travers le jeu, la collection et la nostalgie partagée, brique après brique.",
+  "brandValues": "Imagination, créativité, jeu, qualité, nostalgie partagée, plaisir intergénérationnel, esprit de collection, découverte (« Attrapez-les tous »), et partenariat respectueux entre deux marques emblématiques. Play Well — Leg Godt.",
+  "logoImageSearchQueries": [
+    "LEGO logo SVG official 2026",
+    "LEGO logo site:en.wikipedia.org",
+    "LEGO logo transparent PNG official",
+    "LEGO Pokemon logo lockup 2026",
+    "LEGO wordmark filetype:svg",
+    "site:lego.com LEGO logo header"
+  ],
+  "productImageSearchQueries": [
+    "site:lego.com LEGO Pokemon Pikachu Poke Ball",
+    "site:lego.com Venusaur Charizard Blastoise 72153",
+    "site:lego.com LEGO Pokemon Eevee set",
+    "site:lego.com Kanto Region Badge Collection 40892",
+    "LEGO Pokemon SMART Play Training House Pikachu 72164",
+    "LEGO Pokemon Charizard Jolteon Ultimate Battle 72167",
+    "LEGO Pokemon 2026 collection official press image",
+    "LEGO Pokemon Pikachu brick figure packshot",
+    "site:lego.com themes pokemon hero image",
+    "LEGO Pokemon key visual 2026 launch",
+    "LEGO Pokemon Mini Pokemon Center Insiders reward",
+    "LEGO Pokemon scavenger hunt key art"
+  ],
+  "campaignAssetProfile": "retail"
+}

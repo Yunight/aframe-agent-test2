@@ -1,0 +1,51 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-06-10T13:03:05.680Z",
+  "manifest_path": "/Users/benchi/Documents/aframe-agent-test2/output/ikea-f472cc04-3411-4ce7-9e78-def1303b42cb/review/screenshots/manifest.json",
+  "audit": {
+    "satisfied": false,
+    "summary": "The 320×480 ad unit has multiple critical issues: the IAB frame size does not match the declared 320×480 pixels (appears wider), the IKEA logo is missing or not visible, and the product carousel has visible pagination dots despite showing only one active slide state across all three screenshots. Additionally, the primary CTA button appears to lack proper bottom padding inside the frame.",
+    "findings": [
+      {
+        "format_id": "320x480",
+        "severity": "blocker",
+        "issue": "IAB frame dimensions do not match declared 320×480 px; rendered width appears significantly wider than 320px, causing layout overflow and potential capture/compliance failure.",
+        "fix_hint": "Verify #ad-320x480 { width: 320px; height: 480px; } is set in CSS and that no parent container or body overflow-x is causing horizontal expansion. Check for margin, padding, or border-box sizing issues on the root ad container."
+      },
+      {
+        "format_id": "320x480",
+        "severity": "blocker",
+        "issue": "IKEA logo is not visibly present in any of the three states (initial, animated, settled). The top-left logo area appears blank or the logo image path is broken.",
+        "fix_hint": "Add or restore the IKEA logo as an <img> tag with src pointing to the provided logo file (e.g. './ikea-logo.svg'), set max-height: 32px or appropriate size, and ensure it is visible in the header. Verify the file path is correct and the image is not hidden by display: none or opacity: 0."
+      },
+      {
+        "format_id": "320x480",
+        "severity": "blocker",
+        "issue": "Product carousel pagination dots are visible (four dots below the product images) but only one slide is active/highlighted across all three screenshots. When fewer than two distinct visible slides are present, pagination dots must be hidden per carousel best practices.",
+        "fix_hint": "Hide the pagination container with CSS: .carousel-pagination { display: none; } or .carousel-dots { visibility: hidden; } until the carousel has at least two distinct slides with proper state management. Verify carousel markup has at least 2 functional slide elements before re-enabling dots."
+      },
+      {
+        "format_id": "320x480",
+        "severity": "warn",
+        "issue": "Primary CTA button 'VOIR LA COLLECTION' may lack sufficient bottom margin/padding inside the #ad-320x480 frame; text appears very close to the bottom edge, risking visibility issues on some devices.",
+        "fix_hint": "Add padding-bottom: 20px; to the CTA container or margin-bottom: 20px; to the button element to ensure safe spacing from the bottom edge of #ad-320x480 (320×480 px boundary)."
+      }
+    ],
+    "regeneration_prompt": "1. Fix #ad-320x480 width/height: set { width: 320px; height: 480px; } and remove any overflow-x or parent margin/padding causing horizontal expansion.\n2. Restore IKEA logo: add <img src=\"./ikea-logo.svg\" alt=\"IKEA\" style=\"max-height: 32px;\"> in the header, verify file path is correct.\n3. Hide pagination dots: set .carousel-pagination { display: none; } or .carousel-dots { visibility: hidden; } until carousel has >= 2 working slides.\n4. Add CTA bottom margin: set margin-bottom: 20px; or padding-bottom: 20px; on .cta-button or the button container to ensure 20px safe zone from frame bottom."
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 3719,
+    "output_tokens": 792,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 3719,
+    "price_usd": {
+      "input": 0.003719,
+      "output": 0.00396,
+      "total": 0.007679
+    },
+    "duration_ms": 11042
+  }
+}

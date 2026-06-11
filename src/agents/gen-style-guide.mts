@@ -407,7 +407,7 @@ const logoImageSearchQueriesModel = z
   .min(2)
   .max(8)
   .describe(
-    '3-8 Brave Image Search queries as last resort only. Logo pipeline: official site header → Wikipedia/Wikimedia → Brave. Prefer filetype:svg or transparent PNG. No KindPNG or scraper sites.'
+    '3-8 Brave Image Search queries as last resort only. Logo pipeline: official site header → Wikipedia/Wikimedia → Brave. Brand/company name only — never productName, campaignContext, partners, or URL slugs. Prefer filetype:svg or transparent PNG. No KindPNG or scraper sites.'
   );
 
 const productImageSearchQueriesModel = z
@@ -502,7 +502,7 @@ const STYLE_GUIDE_SYSTEM_PROMPT = (referenceNote: string, skillGuidance: string)
       - Pipeline keeps a single logo: SVG, or PNG/WebP with real transparent pixels (alpha). JPEG/opaque logos are rejected.
       - Source order: (1) brandURL/companyURL header lockup (primary-logo, logo-container, img.logo-simple), (2) Wikipedia/Wikimedia if official fails, (3) Brave using logoImageSearchQueries.
       - Use web_search to confirm brandURL and header structure; do not guess image URLs in JSON.
-      - Fill logoImageSearchQueries with 2-8 queries for Brave fallback only (site:official-host filetype:svg, site:en.wikipedia.org brand logo). Include the current calendar year (e.g. 2026) in some queries to bias toward the latest logo lockup, not an older Wikipedia variant.
+      - Fill logoImageSearchQueries with 2-8 queries for Brave fallback only (site:official-host filetype:svg, site:en.wikipedia.org brand logo). Use ONLY the brand/company name (normalized companyName for division lines like Nike Football → Nike; both brandName and companyName for independent sub-brands). NEVER productName, campaignContext, partners, countries, collections, or campaign URL slugs. Include the current calendar year (e.g. 2026) in some queries to bias toward the latest logo lockup, not an older Wikipedia variant.
       - For film campaigns: prefer the current installment title treatment / key art — never an older franchise logo (e.g. Scary Movie 4 when promoting Scary Movie 6 / 2026).
       - Never use KindPNG, PNGaaa, Pinterest, or generic scraper "transparent PNG" sites.
 

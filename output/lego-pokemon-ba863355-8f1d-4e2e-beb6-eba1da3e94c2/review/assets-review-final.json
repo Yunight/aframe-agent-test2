@@ -1,0 +1,13 @@
+{
+  "assets_review_rounds_run": 1,
+  "max_assets_review_rounds": 3,
+  "post_audit_refresh": false,
+  "satisfied": true,
+  "summary": "Asset audit passed. Six assets total: 1 logo (valid brand asset) and 5 usable product assets with distinct SKUs across packshots and lifestyle scenes. No duplicate primary_product_name values. Sufficient variety for retail HTML5 ad generation. The logos/brand-lego.svg file displays the official LEGO® wordmark with correct brand identity. The iconic red background, yellow outline, white letterforms with black stroke, and registered trademark symbol (®) all match the established LEGO brand guidelines and primary color palette (#E3000B red, #FFED00 yellow, #000000 black, #FFFFFF white). This is a legitimate official LEGO wordmark suitable for the LEGO® Pokémon™ collaboration campaign.",
+  "findings": [],
+  "brave_retry_queries": {
+    "logos": [],
+    "products": []
+  },
+  "pipeline_usage_path": "/Users/benchi/Documents/aframe-agent-test2/output/lego-pokemon-ba863355-8f1d-4e2e-beb6-eba1da3e94c2/pipeline-usage.json"
+}

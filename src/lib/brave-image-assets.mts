@@ -12,11 +12,7 @@ import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { imageSizeFromFile } from 'image-size/fromFile';
 import type { LogoSourcePhase } from './logo-asset-sources.mts';
-import {
-  isUntrustedLogoUrl,
-  validateLogoAssetFile,
-  type LogoValidationContext
-} from './logo-transparency-check.mts';
+import { isUntrustedLogoUrl } from './logo-transparency-check.mts';
 import { AssetHostFailureTracker } from './asset-host-fail-fast.mts';
 import {
   isLowValueOfficialProductUrl,
@@ -30,6 +26,7 @@ import type { ProductAssetSourceProvenance } from './product-asset-sources.mts';
 import {
   buildProductMatchFields,
   buildProductMatchTerms,
+  buildRetailCampaignRelevanceTerms,
   filterPrioritizeProductUrls,
   isEntertainmentCampaign,
   isEntertainmentDeniedHost,
@@ -44,6 +41,9 @@ import {
 } from './style-guide-context.mts';
 import type { ImageSearchRow } from './image-search-types.mts';
 import { imageSearch, imageSearchLogPrefix, resolveImageSearchProvider } from './image-search.mts';
+import { filterLogoSearchQueries, resolveLogoSearchNames } from './logo-search-names.mts';
+
+export { filterLogoSearchQueries, normalizeLegalEntityName, resolveLogoSearchNames } from './logo-search-names.mts';
 
 export interface BraveImageResult {
   type: 'image_result';
@@ -166,7 +166,7 @@ export function braveProductCandidatePool (): number {
 }
 
 export function braveProductTargetCount (): number {
-  return parseEnvInt('BRAVE_PRODUCT_TARGET_COUNT', 6);
+  return parseEnvInt('BRAVE_PRODUCT_TARGET_COUNT', 5);
 }
 
 export function braveProductMinContentLength (): number {
@@ -849,48 +849,30 @@ export function logoSearchCurrentYear (): number {
   return new Date().getFullYear();
 }
 
-function expansionLogoSearchQueries (base: ImageSearchContext): string[] {
-  const brand = base.brandName.trim();
-  const product = base.productName.trim();
-  if (product.length === 0 || brand.length === 0) {
-    return [];
-  }
-  if (product.toLowerCase() === brand.toLowerCase()) {
-    return [];
-  }
-
-  const year = logoSearchCurrentYear();
-  const queries: string[] = [
-    `${product} logo transparent`,
-    `${product} wordmark svg`,
-    `${product} official logo`,
-    `${product} logo ${year}`
-  ];
-  const ref = base.campaignReferenceUrl?.trim() ?? base.brandURL?.trim() ?? '';
-  if (ref.length > 0) {
-    try {
-      const parsed = new URL(ref);
-      const host = parsed.hostname;
-      const segments = parsed.pathname.split('/').filter((s) => s.length >= 3);
-      const slug = segments.at(-1);
-      if (slug !== undefined) {
-        queries.push(`site:${host} ${slug.replace(/-/gu, ' ')} logo`);
-      }
-      queries.push(`site:${host} logo filetype:svg`);
-    } catch {
-      // skip invalid URL
-    }
-  }
-  return queries;
-}
-
 function buildLogoSearchQueriesBuiltin (base: ImageSearchContext): string[] {
-  const brand = base.brandName.trim();
-  const company = base.companyName.trim();
+  const names = resolveLogoSearchNames(base);
+  if (names.length === 0) {
+    return [];
+  }
+
   const year = logoSearchCurrentYear();
-  const queries: string[] = [ ...expansionLogoSearchQueries(base) ];
+  const queries: string[] = [];
   const brandHost = hostFromBrandUrl(base.brandURL);
   const companyHost = hostFromBrandUrl(base.companyURL);
+  const primary = names[0] ?? '';
+  const secondary = names[1];
+
+  for (const name of names) {
+    queries.push(
+      `${name} logo ${year}`,
+      `${name} logo transparent`,
+      `${name} wordmark svg`,
+      `${name} official logo`,
+      `${name} identité visuelle logo`,
+      `${name} charte graphique logo`,
+      `${name} nouveau logo ${year}`
+    );
+  }
 
   if (brandHost !== null) {
     const h = brandHost;
@@ -900,32 +882,31 @@ function buildLogoSearchQueriesBuiltin (base: ImageSearchContext): string[] {
       `site:${h} logo filetype:png`,
       `site:${h} inurl:logo`,
       `site:${h} wordmark`,
-      `${brand} logo officiel site:${h}`,
+      `${primary} logo officiel site:${h}`,
       `site:${h} logo ${year}`,
-      `${brand} logo ${year} site:${h}`
+      `${primary} logo ${year} site:${h}`
     );
+    if (secondary !== undefined) {
+      queries.push(`site:${h} ${secondary} logo`);
+    }
   }
   if (companyHost !== null && companyHost !== brandHost) {
-    queries.push(`site:${companyHost} ${brand} logo`, `site:${companyHost} logo`);
+    queries.push(`site:${companyHost} ${primary} logo`, `site:${companyHost} logo`);
+    if (secondary !== undefined) {
+      queries.push(`site:${companyHost} ${secondary} logo`);
+    }
   }
-
-  if (company.length > 0 && company.toLowerCase() !== brand.toLowerCase()) {
-    queries.push(`${company} logo officiel`);
-  }
-
-  queries.push(
-    `${brand} identité visuelle logo`,
-    `${brand} charte graphique logo`,
-    `${brand} logo ${year}`,
-    `${brand} nouveau logo ${year}`,
-    `${brand} identité visuelle logo ${year}`
-  );
 
   return queries;
 }
 
 export function buildLogoSearchQueries (base: ImageSearchContext): string[] {
-  return mergeSearchQueries(base.logoImageSearchQueries, buildLogoSearchQueriesBuiltin(base));
+  const builtIn = buildLogoSearchQueriesBuiltin(base);
+  const fromModel = filterLogoSearchQueries(
+    (base.logoImageSearchQueries ?? []).map((q) => q.trim()).filter((q) => q.length >= 5),
+    base
+  );
+  return [ ...new Set([ ...fromModel, ...builtIn ]) ];
 }
 
 function hostFromBrandUrl (brandURL: string | undefined): string | null {
@@ -1043,10 +1024,12 @@ export function buildLogoSearchQueriesFromFindings (
   auditLogoQueries?: readonly string[]
 ): string[] {
   const queries = [ ...buildLogoSearchQueries(base) ];
-  const brand = base.brandName.trim();
+  const names = resolveLogoSearchNames(base);
+  const primary = names[0] ?? base.brandName.trim();
+  const secondary = names[1];
 
   if (auditLogoQueries !== undefined) {
-    for (const q of auditLogoQueries) {
+    for (const q of filterLogoSearchQueries(auditLogoQueries, base)) {
       if (q.trim().length > 0) {
         queries.push(q.trim());
       }
@@ -1066,11 +1049,14 @@ export function buildLogoSearchQueriesFromFindings (
         `site:${brandHost} inurl:logo`,
         `site:${brandHost} logo officiel`,
         `site:${brandHost} logo ${year}`,
-        `${brand} logo ${year}`
+        `${primary} logo ${year}`
       );
     }
     if (companyHost !== null && companyHost !== brandHost) {
-      queries.unshift(`site:${companyHost} ${brand} logo`);
+      queries.unshift(`site:${companyHost} ${primary} logo`);
+      if (secondary !== undefined) {
+        queries.unshift(`site:${companyHost} ${secondary} logo`);
+      }
     }
   }
 
@@ -1186,24 +1172,6 @@ export function clearAssetSubdirectory (subdirectoryPath: string): void {
   }
 }
 
-function validateDownloadedLogoAsset (
-  filePath: string,
-  context?: LogoValidationContext
-): boolean {
-  const check = validateLogoAssetFile(filePath, context);
-  if (!check.ok) {
-    console.warn(`[download] Rejected logo ${basename(filePath)}: ${check.issue}`);
-    return false;
-  }
-  if (check.warn !== undefined) {
-    console.log(`[download] Logo ${basename(filePath)}: ${check.warn}`);
-  }
-  if (check.tier === 'B') {
-    console.log(`[download] Logo ${basename(filePath)}: Tier B official opaque lockup accepted.`);
-  }
-  return true;
-}
-
 async function validateDownloadedDimensions (
   fileType: 'logos' | 'products',
   filePath: string
@@ -1272,22 +1240,9 @@ export async function downloadUrlsToAssetFolder (
       console.log(`Downloading ${filePath} ...`);
       await downloadFileToFileSystem(fileUrl, filePath);
 
-      if (validateDims) {
+      if (validateDims && fileType === 'products') {
         const dim = await validateDownloadedDimensions(fileType, filePath);
         if (!dim.ok) {
-          unlinkSync(filePath);
-          options?.rejectedUrls?.push(fileUrl);
-          continue;
-        }
-      }
-
-      if (fileType === 'logos') {
-        const logoContext: LogoValidationContext = {
-          sourceUrl: fileUrl,
-          officialHosts: options?.officialHosts ?? [],
-          sourcePhase: options?.logoSourcePhase ?? 'unknown'
-        };
-        if (!validateDownloadedLogoAsset(filePath, logoContext)) {
           unlinkSync(filePath);
           options?.rejectedUrls?.push(fileUrl);
           continue;
@@ -1339,6 +1294,8 @@ export type CollectAndDownloadOptions = {
   /** When true and prioritizeUrls filled the target, skip Brave image search entirely. */
   skipBraveWhenPrioritizedFilled?: boolean;
   productMatchTerms?: readonly string[];
+  /** Campaign-specific terms for listing-mode relevance (official URLs included). */
+  retailCampaignRelevanceTerms?: readonly string[];
   referenceListingUrls?: readonly string[];
   entertainmentMode?: boolean;
   experienceMode?: boolean;
@@ -1399,24 +1356,35 @@ export async function collectAndDownloadValidAssetUrls (
     prioritize = [ ...(options.prioritizeUrls ?? []) ];
   }
 
-  if (
-    fileType === 'products' &&
-    !listingMode &&
-    options.productMatchTerms !== undefined &&
-    options.productMatchTerms.length > 0 &&
-    prioritize.length > 0
-  ) {
-    const beforeCount = prioritize.length;
-    prioritize = filterPrioritizeProductUrls(
-      prioritize,
-      options.productMatchTerms,
-      productMinRelevanceScore(),
-      officialHosts
-    );
-    if (prioritize.length < beforeCount) {
-      console.log(
-        `[download] Filtered official product URLs by context: ${String(prioritize.length)}/${String(beforeCount)} kept`
-      );
+  if (fileType === 'products' && prioritize.length > 0) {
+    const relevanceTerms =
+      options.retailCampaignRelevanceTerms !== undefined &&
+      options.retailCampaignRelevanceTerms.length > 0
+        ? options.retailCampaignRelevanceTerms
+        : options.productMatchTerms;
+    if (relevanceTerms !== undefined && relevanceTerms.length > 0) {
+      const beforeCount = prioritize.length;
+      if (listingMode) {
+        const minScore = productMinRelevanceScore();
+        prioritize = prioritize.filter((url) => {
+          const fileName = url.split('/').pop()?.split('?')[0] ?? '';
+          return (
+            scoreProductContextRelevance(`${url} ${fileName}`, '', relevanceTerms) >= minScore
+          );
+        });
+      } else {
+        prioritize = filterPrioritizeProductUrls(
+          prioritize,
+          relevanceTerms,
+          productMinRelevanceScore(),
+          officialHosts
+        );
+      }
+      if (prioritize.length < beforeCount) {
+        console.log(
+          `[download] Filtered product URLs by campaign relevance: ${String(prioritize.length)}/${String(beforeCount)} kept`
+        );
+      }
     }
   }
 
@@ -1619,6 +1587,8 @@ export async function refreshAssetsFromQueries (
     excludeUrls?: Set<string>;
     /** When false, keep existing products/ files and only add new downloads (post-audit refresh). */
     clearProductFolder?: boolean;
+    /** Skip official-site scrape; use Brave queries only (targeted post-audit retry). */
+    preferBraveOnly?: boolean;
   }
 ): Promise<RefreshAssetsResult & { rejectedUrls: string[] }> {
   const productMax = options?.productMaxResults ?? braveProductTargetCount();
@@ -1648,10 +1618,21 @@ export async function refreshAssetsFromQueries (
   let productDownload = { downloadedUrls: [] as string[], count: 0, rejectedUrls: [] as string[] };
   if (productQueries.length > 0) {
     console.log(`${imageSearchLogPrefix()} Refresh — collecting product candidates…`);
+    const preferBraveOnly = options?.preferBraveOnly === true;
     const { extractOfficialProductImageUrls } = await import('./official-site-logo-extract.mts');
-    const officialProductCandidates = await extractOfficialProductImageUrls(context, {
-      minimumCandidates: Math.max(productMax * 2, braveProductCandidatePool())
+    const officialProductCandidates = preferBraveOnly
+      ? []
+      : await extractOfficialProductImageUrls(context, {
+          minimumCandidates: Math.max(productMax * 2, braveProductCandidatePool())
+        });
+    const matchFields = buildProductMatchFields({
+      campaignContext: context.campaignContext ?? null,
+      productName: context.productName,
+      brandName: context.brandName,
+      brandContext: context.brandContext,
+      brandURL: context.brandURL
     });
+    const retailCampaignRelevanceTerms = buildRetailCampaignRelevanceTerms(matchFields);
     const referenceListingUrls = resolveReferenceListingUrls({
       ...(context.campaignReferenceUrl !== undefined && context.campaignReferenceUrl.length > 0
         ? { campaignReferenceUrl: context.campaignReferenceUrl }
@@ -1671,16 +1652,10 @@ export async function refreshAssetsFromQueries (
         clearFolder: options?.clearProductFolder !== false,
         officialHosts: officialHostsFromContext(context),
         prioritizeCandidates: officialProductCandidates,
-        skipBraveWhenPrioritizedFilled: true,
+        skipBraveWhenPrioritizedFilled: !preferBraveOnly,
         ...(referenceListingUrls.length > 0 ? { referenceListingUrls } : {}),
         ...(() => {
-          const profile = resolveCampaignAssetProfile(buildProductMatchFields({
-            campaignContext: context.campaignContext ?? null,
-            productName: context.productName,
-            brandName: context.brandName,
-            brandContext: context.brandContext,
-            brandURL: context.brandURL
-          }));
+          const profile = resolveCampaignAssetProfile(matchFields);
           if (profile === 'entertainment') {
             return { entertainmentMode: true as const };
           }
@@ -1689,6 +1664,9 @@ export async function refreshAssetsFromQueries (
           }
           return {};
         })(),
+        ...(retailCampaignRelevanceTerms.length > 0
+          ? { retailCampaignRelevanceTerms }
+          : {}),
         ...(context.productMatchTerms !== undefined && context.productMatchTerms.length > 0
           ? { productMatchTerms: context.productMatchTerms }
           : {})

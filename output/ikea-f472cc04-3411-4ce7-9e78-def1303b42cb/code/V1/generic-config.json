@@ -1,0 +1,93 @@
+{
+  "type": "generic",
+  "dimensions": {
+    "width": 970,
+    "height": 250
+  },
+  "settings": {
+    "backgroundColor": "#FFFFFF",
+    "clickTag": "https://www.ikea.com/fr/fr/cat/buffets-et-consoles-30454/"
+  },
+  "fields": {
+    "eyebrow": {
+      "text": "Nouvelle Collection",
+      "font": "Inter",
+      "size": 9,
+      "weight": "600",
+      "style": "normal",
+      "color": "#FBD914"
+    },
+    "headline": {
+      "text": "Buffets Consoles",
+      "font": "Inter",
+      "size": 22,
+      "weight": "700",
+      "style": "normal",
+      "color": "#FFFFFF"
+    },
+    "subhead": {
+      "text": "Design scandinave<br>pour chaque intérieur",
+      "font": "Inter",
+      "size": 11,
+      "weight": "400",
+      "style": "normal",
+      "color": "rgba(255,255,255,0.78)"
+    },
+    "ctaText": {
+      "text": "Découvrir",
+      "font": "Noto IKEA Latin",
+      "size": 13,
+      "weight": "500",
+      "style": "normal",
+      "color": "#111111"
+    },
+    "body_copy": {
+      "text": "Nos produits",
+      "font": "Inter",
+      "size": 11,
+      "weight": "400",
+      "style": "normal",
+      "color": "#484848"
+    },
+    "thumb_name": {
+      "text": "Buffets",
+      "font": "Noto IKEA Latin",
+      "size": 12,
+      "weight": "500",
+      "style": "normal",
+      "color": "#B0B3B8"
+    },
+    "promo_text": {
+      "text": "Jusqu'à <strong>-30%</strong>",
+      "font": "Noto IKEA Latin",
+      "size": 12,
+      "weight": "500",
+      "style": "normal",
+      "color": "#B0B3B8"
+    },
+    "text_2243": {
+      "text": "ikea.com/fr · Offre valable en magasin et en ligne",
+      "font": "Inter",
+      "size": 9,
+      "weight": "400",
+      "style": "normal",
+      "color": "rgba(255,255,255,0.7)"
+    },
+    "headlineAccent": {
+      "text": "&",
+      "font": "Noto IKEA Latin",
+      "size": 26,
+      "weight": "700",
+      "style": "normal",
+      "color": "#FBD914"
+    }
+  },
+  "images": {
+    "logo": [
+      "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2298.36%22%20height%3D%2240%22%20viewBox%3D%220%200%2098.36%2040%22%3E%3Cpath%20fill%3D%22%230058a3%22%20d%3D%22M98.36%2040H0V0h98.36v40Z%22%2F%3E%3Cpath%20fill%3D%22%23ffdb00%22%20d%3D%22M1.92%2020c0%209.66%2019.81%2017.67%2047.26%2017.67S96.44%2029.66%2096.44%2020%2076.63%202.33%2049.18%202.33%201.92%2010.34%201.92%2020Z%22%2F%3E%3Cpath%20fill%3D%22%230058ab%22%20d%3D%22M46.39%2025.67c.29.43.63.83%201.04%201.25H36.79c0-.42-.4-1.28-.86-1.96l-2.9-4.38v5.09c0%20.42%200%20.83.21%201.25h-8.87c.21-.42.21-.83.21-1.25v-12.1c0-.42%200-.83-.21-1.25h8.87c-.21.42-.21.83-.21%201.25v5.28s2.84-3.68%203.48-4.55c.49-.66%201.11-1.57%201.11-1.98h9.24c-.64.42-1.34%201.19-1.92%201.89l-3.39%204.13%204.82%207.33Zm2.79-12.1v12.1c0%20.42%200%20.83-.21%201.25h17.11v-4.05c-.42.21-.83.21-1.25.21h-7.2v-1.92h6.92v-3.07h-6.92v-1.92h7.2c.42%200%20.83%200%201.25.2v-4.05H48.97c.21.42.21.83.21%201.25Zm40.63%2012.09c.16.42.32.84.69%201.26h-9.28c.05-.42-.12-.83-.28-1.25l-.33-.84-.08-.22h-5.34l-.08.22-.3.84c-.15.42-.3.83-.24%201.25h-7.32c.36-.42.51-.83.66-1.25l4.39-12.1c.15-.42.3-.83.25-1.25h12.36c-.11.42.11.83.27%201.25l4.63%2012.09Zm-10.47-4.12-1.29-3.38a9.4%209.4%200%200%201-.29-.96s-.1.54-.25.96l-1.23%203.38h3.05Zm-59.15-9.22h-9.64c.21.42.21.83.21%201.25v12.1c0%20.42%200%20.83-.21%201.25h9.64c-.21-.42-.21-.83-.21-1.25v-12.1c0-.42%200-.83.21-1.25Zm66.64%201.15c0-1.12.81-1.92%201.92-1.92s1.92.81%201.92%201.92-.81%201.92-1.92%201.92-1.92-.81-1.92-1.92Zm.39%200c0%20.85.64%201.54%201.54%201.54.85%200%201.54-.64%201.54-1.54%200-.85-.64-1.54-1.54-1.54s-1.54.64-1.54%201.54Zm1.15%201.15h-.34v-2.3h.86c.4%200%20.72.35.72.75%200%20.28-.17.56-.41.67l.5.89h-.38l-.46-.81h-.5v.81Zm0-1.15h.47c.24%200%20.43-.17.43-.41s-.19-.41-.43-.41h-.47v.81Z%22%2F%3E%3C%2Fsvg%3E%0A"
+    ]
+  },
+  "html": "<div id=\"ad-970x250\" data-gv-bind=\"canvas\" data-gv-type=\"root\"> <!-- Left: Brand Panel --> <div class=\"brand-panel\"> <img src=\"\" alt=\"logo\" class=\"brand-logo\" data-gv-bind=\"logo\" data-gv-type=\"image\"> <div class=\"brand-copy\"> <p class=\"eyebrow\" data-gv-bind=\"eyebrow\" data-gv-type=\"text\">Nouvelle Collection</p> <h1 class=\"headline\"><span data-gv-bind=\"headline\" data-gv-type=\"text\">Buffets</span> <em><span data-gv-bind=\"headlineAccent\" data-gv-type=\"text\">&amp;</span></em></h1> <p class=\"subhead\" data-gv-bind=\"subhead\" data-gv-type=\"text\">Design scandinave<br>pour chaque intérieur</p> </div> <a class=\"cta-btn\" href=\"https://www.ikea.com/fr/fr/cat/buffets-et-consoles-30454/\" data-gv-bind=\"ctaText\" data-gv-type=\"link\"><span class=\"cta-label\"></span></a> </div> <!-- Center: Hero Slideshow --> <div class=\"hero-panel\"> <div class=\"slideshow\"> <div class=\"slide active\" data-index=\"0\"> <img src=\"./vihals-buffet-blanc__1048720_pe843879_s5.jpg\" alt=\"VIHALS buffet blanc ambiance\" class=\"slide-img\"> <div class=\"slide-badge\">Ambiance</div> </div> <div class=\"slide\" data-index=\"1\"> <img src=\"./besta-combinaison-rangement-tiroirs-brun-noir-lappviken-stubbarp-motif-noyer__1451119_pe990595_s5.jpg\" alt=\"BESTA combinaison rangement\" class=\"slide-img\"> <div class=\"slide-badge\">BESTA</div> </div> <div class=\"slide\" data-index=\"2\"> <img src=\"./vihals-buffet-blanc__1035578_pe838113_s5.jpg\" alt=\"VIHALS buffet blanc\" class=\"slide-img\"> <div class=\"slide-badge\">VIHALS</div> </div> </div> <div class=\"slide-dots\"> <button class=\"dot active\" data-dot=\"0\" aria-label=\"Slide 1\"></button> <button class=\"dot\" data-dot=\"1\" aria-label=\"Slide 2\"></button> <button class=\"dot\" data-dot=\"2\" aria-label=\"Slide 3\"></button> </div> </div> <!-- Right: Product Thumbnails --> <div class=\"thumb-panel\"> <p class=\"body-copy thumb-label\" data-gv-bind=\"body_copy\" data-gv-type=\"text\">Nos produits</p> <div class=\"thumb-grid\"> <div class=\"thumb-card\" data-target=\"0\"> <img src=\"./sideboards-buffets-10412.jpg\" alt=\"Buffet chêne\" class=\"thumb-img\"> <span class=\"thumb-name\" data-gv-bind=\"thumb_name\" data-gv-type=\"text\">Buffets</span> </div> <div class=\"thumb-card\" data-target=\"1\"> <img src=\"./console-tables-16246.jpg\" alt=\"Console blanche\" class=\"thumb-img\"> <span class=\"thumb-name\">Consoles</span> </div> <div class=\"thumb-card\" data-target=\"2\"> <img src=\"./vihals-buffet-gris-fonce__1203691_pe906387_s5.jpg\" alt=\"VIHALS gris foncé\" class=\"thumb-img\"> <span class=\"thumb-name\">VIHALS</span> </div> </div> <div class=\"promo-tag\"> <span class=\"promo-text\" data-gv-bind=\"promo_text\" data-gv-type=\"text\">Jusqu'à <strong>-30%</strong></span> </div> </div> <!-- Footer strip --> <div class=\"ad-footer\"> <span data-gv-bind=\"text_2243\" data-gv-type=\"text\">ikea.com/fr · Offre valable en magasin et en ligne</span> </div> </div>",
+  "css": "@import url('https://fonts.googleapis.com/css2?family=inter:wght@400;600;700&display=swap');\n\n*, *::before, *::after {\n  box-sizing: border-box;\n  margin: 0;\n  padding: 0;\n}\n\nbody {\n  min-height: 100vh;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: #F5F5F5;\n  font-family: \"Inter\", sans-serif;\n}\n\n/* ── Ad Root ── */\n#ad-970x250 {\n  width: 970px;\n  height: 250px;\n  display: flex;\n  flex-direction: row;\n  overflow: hidden;\n  position: relative;\n  background: #FFFFFF;\n  border: 1px solid rgba(0,0,0,0.08);\n}\n\n/* ══ BRAND PANEL (left) ══ */\n.brand-panel {\n  width: 210px;\n  min-width: 210px;\n  height: 250px;\n  background: #0058AB;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: space-between;\n  padding: 18px 18px 28px 18px;\n  position: relative;\n  z-index: 2;\n}\n\n.brand-logo {\n  width: 64px;\n  height: auto;\n  display: block;\n}\n\n.brand-copy {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  padding: 6px 0;\n}\n\n.eyebrow {\n  font-family: \"Inter\", sans-serif;\n  font-size: 9px;\n  font-weight: 600;\n  letter-spacing: 1.4px;\n  text-transform: uppercase;\n  color: #FBD914;\n  margin-bottom: 6px;\n}\n\n.headline {\n  font-family: \"Inter\", sans-serif;\n  font-size: 22px;\n  font-weight: 700;\n  line-height: 1.15;\n  color: #FFFFFF;\n  margin-bottom: 8px;\n}\n\n.headline em {\n  font-style: normal;\n  color: #FBD914;\n}\n\n.subhead {\n  font-family: \"Inter\", sans-serif;\n  font-size: 10.5px;\n  font-weight: 400;\n  line-height: 1.5;\n  color: rgba(255,255,255,0.78);\n}\n\n.cta-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  background: #FBD914;\n  color: #111111;\n  text-decoration: none;\n  border-radius: 3px;\n  padding: 9px 20px;\n  transition: background 0.2s, transform 0.15s;\n  cursor: pointer;\n  margin-bottom: 0;\n}\n\n.cta-btn:hover {\n  background: #FFFFFF;\n  transform: translateY(-1px);\n}\n\n.cta-label {\n  font-family: \"Inter\", sans-serif;\n  font-size: 12.5px;\n  font-weight: 700;\n  letter-spacing: 0.4px;\n  white-space: nowrap;\n}\n\n/* ══ HERO PANEL (center) ══ */\n.hero-panel {\n  flex: 1;\n  height: 250px;\n  position: relative;\n  overflow: hidden;\n  background: #F5F5F5;\n}\n\n.slideshow {\n  width: 100%;\n  height: 222px;\n  position: relative;\n}\n\n.slide {\n  position: absolute;\n  inset: 0;\n  opacity: 0;\n  transition: opacity 0.7s ease;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.slide.active {\n  opacity: 1;\n  z-index: 1;\n}\n\n.slide-img {\n  width: 100%;\n  height: 222px;\n  object-fit: cover;\n  object-position: center;\n  display: block;\n}\n\n.slide-badge {\n  position: absolute;\n  top: 12px;\n  left: 12px;\n  background: #0058AB;\n  color: #FFFFFF;\n  font-family: \"Inter\", sans-serif;\n  font-size: 9px;\n  font-weight: 700;\n  letter-spacing: 0.8px;\n  text-transform: uppercase;\n  padding: 4px 10px;\n  border-radius: 2px;\n  z-index: 2;\n}\n\n.slide-dots {\n  position: absolute;\n  bottom: 8px;\n  left: 50%;\n  transform: translateX(-50%);\n  display: flex;\n  gap: 6px;\n  z-index: 3;\n}\n\n.dot {\n  width: 8px;\n  height: 8px;\n  border-radius: 50%;\n  border: none;\n  background: rgba(0,88,171,0.25);\n  cursor: pointer;\n  transition: background 0.2s, transform 0.15s;\n  padding: 0;\n}\n\n.dot.active {\n  background: #0058AB;\n  transform: scale(1.25);\n}\n\n.dot:hover {\n  background: #0058AB;\n}\n\n/* ══ THUMB PANEL (right) ══ */\n.thumb-panel {\n  width: 200px;\n  min-width: 200px;\n  height: 250px;\n  background: #FFFFFF;\n  border-left: 1px solid rgba(0,0,0,0.07);\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start;\n  padding: 14px 12px 28px 12px;\n  position: relative;\n  gap: 8px;\n}\n\n.thumb-label {\n  font-family: \"Inter\", sans-serif;\n  font-size: 9px;\n  font-weight: 600;\n  letter-spacing: 1.2px;\n  text-transform: uppercase;\n  color: #929292;\n  align-self: flex-start;\n  margin-bottom: 2px;\n}\n\n.body-copy {\n  font-family: \"Inter\", sans-serif;\n  font-size: 11px;\n  font-weight: 400;\n  color: #484848;\n  line-height: 1.4;\n}\n\n.thumb-grid {\n  display: flex;\n  flex-direction: row;\n  gap: 6px;\n  width: 100%;\n  justify-content: center;\n}\n\n.thumb-card {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 4px;\n  cursor: pointer;\n  border-radius: 4px;\n  padding: 5px 4px;\n  transition: background 0.18s, transform 0.15s;\n  border: 1.5px solid transparent;\n}\n\n.thumb-card:hover {\n  background: rgba(0,88,171,0.07);\n  border-color: #0058AB;\n  transform: translateY(-2px);\n}\n\n.thumb-card.active-thumb {\n  border-color: #FBD914;\n  background: rgba(251,217,20,0.1);\n}\n\n.thumb-img {\n  width: 52px;\n  height: 52px;\n  object-fit: contain;\n  object-position: center;\n  display: block;\n  border-radius: 3px;\n  background: #F5F5F5;\n}\n\n.thumb-name {\n  font-family: \"Inter\", sans-serif;\n  font-size: 9px;\n  font-weight: 600;\n  color: #111111;\n  text-align: center;\n  letter-spacing: 0.3px;\n}\n\n.promo-tag {\n  margin-top: auto;\n  background: #0058AB;\n  border-radius: 4px;\n  padding: 7px 16px;\n  text-align: center;\n  width: 100%;\n  margin-bottom: 0;\n}\n\n.promo-text {\n  font-family: \"Inter\", sans-serif;\n  font-size: 12px;\n  font-weight: 600;\n  color: #FFFFFF;\n}\n\n.promo-text strong {\n  color: #FBD914;\n  font-size: 15px;\n  font-weight: 700;\n}\n\n/* ══ AD FOOTER ══ */\n.ad-footer {\n  position: absolute;\n  bottom: 0;\n  left: 210px;\n  right: 200px;\n  height: 22px;\n  background: rgba(0,62,126,0.92);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 10;\n}\n\n.ad-footer span {\n  font-family: \"Inter\", sans-serif;\n  font-size: 9px;\n  font-weight: 400;\n  color: rgba(255,255,255,0.7);\n  letter-spacing: 0.4px;\n}\n\n/* ══ ANIMATED ENTRANCE ══ */\n@keyframes slideInLeft {\n  from { transform: translateX(-24px); opacity: 0; }\n  to   { transform: translateX(0);     opacity: 1; }\n}\n\n@keyframes fadeUp {\n  from { transform: translateY(12px); opacity: 0; }\n  to   { transform: translateY(0);    opacity: 1; }\n}\n\n@keyframes fadeIn {\n  from { opacity: 0; }\n  to   { opacity: 1; }\n}\n\n.brand-panel {\n  animation: slideInLeft 0.55s cubic-bezier(0.22,1,0.36,1) both;\n}\n\n.hero-panel {\n  animation: fadeIn 0.6s ease 0.2s both;\n}\n\n.thumb-panel {\n  animation: fadeUp 0.55s cubic-bezier(0.22,1,0.36,1) 0.3s both;\n}\n\n.promo-tag {\n  animation: fadeUp 0.5s ease 0.8s both;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .brand-panel, .hero-panel, .thumb-panel, .promo-tag {\n    animation: none;\n  }\n  .slide {\n    transition: none;\n  }\n}",
+  "js": "(function () {\n  'use strict';\n\n  // ── Slideshow ──\n  const slides = document.querySelectorAll('.slide');\n  const dots   = document.querySelectorAll('.dot');\n  let current  = 0;\n  let timer    = null;\n\n  function goToSlide(index) {\n    slides[current].classList.remove('active');\n    dots[current].classList.remove('active');\n    current = (index + slides.length) % slides.length;\n    slides[current].classList.add('active');\n    dots[current].classList.add('active');\n  }\n\n  function startAutoplay() {\n    timer = setInterval(function () {\n      goToSlide(current + 1);\n    }, 3200);\n  }\n\n  function resetAutoplay() {\n    clearInterval(timer);\n    startAutoplay();\n  }\n\n  // Dot navigation\n  dots.forEach(function (dot) {\n    dot.addEventListener('click', function () {\n      const target = parseInt(dot.getAttribute('data-dot'), 10);\n      goToSlide(target);\n      resetAutoplay();\n    });\n  });\n\n  // ── Thumbnail cards: click syncs to slide ──\n  const thumbCards = document.querySelectorAll('.thumb-card');\n\n  thumbCards.forEach(function (card) {\n    card.addEventListener('click', function () {\n      const target = parseInt(card.getAttribute('data-target'), 10);\n      thumbCards.forEach(function (c) { c.classList.remove('active-thumb'); });\n      card.classList.add('active-thumb');\n      goToSlide(target);\n      resetAutoplay();\n    });\n\n    card.addEventListener('mouseenter', function () {\n      const target = parseInt(card.getAttribute('data-target'), 10);\n      goToSlide(target);\n      resetAutoplay();\n    });\n  });\n\n  // Sync thumb highlight with active slide\n  function syncThumbs() {\n    thumbCards.forEach(function (c) { c.classList.remove('active-thumb'); });\n    const matching = document.querySelector('.thumb-card[data-target=\"' + current + '\"]');\n    if (matching) matching.classList.add('active-thumb');\n  }\n\n  // Override goToSlide to also sync thumbs\n  const _goToSlide = goToSlide;\n  function goToSlideSync(index) {\n    _goToSlide(index);\n    syncThumbs();\n  }\n\n  // Patch dot click and thumb handlers to use synced version\n  dots.forEach(function (dot) {\n    dot.addEventListener('click', function () {\n      syncThumbs();\n    });\n  });\n\n  thumbCards.forEach(function (card) {\n    card.addEventListener('click', syncThumbs);\n    card.addEventListener('mouseenter', syncThumbs);\n  });\n\n  // Patch autoplay to sync thumbs\n  clearInterval(timer);\n  timer = setInterval(function () {\n    slides[current].classList.remove('active');\n    dots[current].classList.remove('active');\n    current = (current + 1) % slides.length;\n    slides[current].classList.add('active');\n    dots[current].classList.add('active');\n    syncThumbs();\n  }, 3200);\n\n  // Initial sync\n  syncThumbs();\n\n  // ── CTA hover pulse ──\n  const ctaBtn = document.querySelector('.cta-btn');\n  if (ctaBtn) {\n    ctaBtn.addEventListener('mouseenter', function () {\n      ctaBtn.style.boxShadow = '0 4px 16px rgba(0,88,171,0.28)';\n    });\n    ctaBtn.addEventListener('mouseleave', function () {\n      ctaBtn.style.boxShadow = '';\n    });\n  }\n\n  // ── Promo tag pulse animation ──\n  const promoTag = document.querySelector('.promo-tag');\n  if (promoTag) {\n    setInterval(function () {\n      promoTag.style.transform = 'scale(1.04)';\n      promoTag.style.transition = 'transform 0.18s ease';\n      setTimeout(function () {\n        promoTag.style.transform = 'scale(1)';\n      }, 180);\n    }, 4000);\n  }\n\n}());"
+}

@@ -304,6 +304,39 @@ export function isProductAssetFromReferenceListing (
   return false;
 }
 
+/** Drop retailer/company tokens when campaign has more specific terms (e.g. LEGO vs Pokémon). */
+export function filterRetailCampaignRelevanceTerms (
+  terms: readonly string[],
+  fields: Pick<ProductMatchFields, 'brandName' | 'companyName'>
+): string[] {
+  const parentBrandTokens = new Set<string>();
+  for (const raw of [ fields.companyName ?? '' ]) {
+    for (const t of normalizeForTermMatch(raw.replace(/[®™]/gu, '')).split(/\s+/u)) {
+      if (t.length >= 4) {
+        parentBrandTokens.add(t);
+      }
+    }
+  }
+  const specific = terms.filter((term) => {
+    const t = normalizeForTermMatch(term);
+    if (t.length < 3) {
+      return false;
+    }
+    if (/\d{3,}/u.test(t)) {
+      return true;
+    }
+    if (parentBrandTokens.has(t)) {
+      return false;
+    }
+    return true;
+  });
+  return specific.length > 0 ? [ ...specific ] : [ ...terms ];
+}
+
+export function buildRetailCampaignRelevanceTerms (fields: ProductMatchFields): string[] {
+  return filterRetailCampaignRelevanceTerms(buildProductMatchTerms(fields), fields);
+}
+
 /** Same rules as listing-mode product review in creative-native-assets-deterministic. */
 export function wouldPassListingProductAsset (params: {
   entry: ProductAssetSourceEntry | undefined;
@@ -312,22 +345,25 @@ export function wouldPassListingProductAsset (params: {
   officialHosts: readonly string[];
   terms: readonly string[];
   minScore?: number;
+  relevanceFields?: Pick<ProductMatchFields, 'brandName' | 'companyName'>;
 }): boolean {
   const sourceUrl = params.sourceUrl.trim();
   if (sourceUrl.length === 0) {
     return false;
   }
   const minScore = params.minScore ?? productMinRelevanceScore();
-  const hostOk = hostOnOfficialList(sourceUrl, params.officialHosts);
-  const trustedOfficialVisual = isOfficialHostCampaignOrProductImageUrl(
-    sourceUrl,
-    params.officialHosts
-  );
   const referenceProvenance =
     params.entry !== undefined &&
     isProductAssetFromReferenceListing(params.entry, params.referenceListingUrls);
-  const contextOk = scoreProductContextRelevance(sourceUrl, '', params.terms) >= minScore;
-  return referenceProvenance || (hostOk && trustedOfficialVisual) || contextOk;
+  const termsForContext =
+    params.relevanceFields !== undefined
+      ? filterRetailCampaignRelevanceTerms(params.terms, params.relevanceFields)
+      : params.terms;
+  const fileName = params.entry?.fileName ?? '';
+  const contextOk =
+    scoreProductContextRelevance(`${sourceUrl} ${fileName}`, params.entry?.sourceTitle ?? '', termsForContext) >=
+    minScore;
+  return referenceProvenance || contextOk;
 }
 
 /** Hero poster / still validation for film and series campaigns. */
@@ -616,6 +652,12 @@ export function buildProductMatchTerms (fields: ProductMatchFields): string[] {
 
   for (const t of termsFromBrandUrlPath(fields.brandURL)) {
     terms.add(t);
+  }
+
+  if (brandCtx.length > 0) {
+    for (const sku of brandCtx.matchAll(/\b\d{5}\b/gu)) {
+      terms.add(sku[0]);
+    }
   }
 
   return [ ...terms ]

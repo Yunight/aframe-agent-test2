@@ -1,0 +1,68 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-06-10T14:41:47.292Z",
+  "deterministic_ok": true,
+  "audit": {
+    "satisfied": false,
+    "summary": "Logo or asset audit failed: 4 blocker(s). Campaign audit failed: 2 on-campaign LEGO Pokémon retail product assets found (40892 Kanto Region Badge Collection, 72156 Squirtle SMART Set); 3 off-topic assets present (FIFA World Cup Trophy, Star Wars minifigures collection, Marvel Super Heroes minifigures collection). Minimum 3 on-campaign products required; maximum 5 permitted. Off-topic assets must be replaced with Pokémon-branded SKUs from the 2026 collaboration lineup. The LEGO® logo file is the correct official brand wordmark, but the audit has identified one critical finding: a missing Pokémon wordmark logo file. This collaboration campaign ('LEGO® Pokémon™') requires separate official wordmark files for each participating brand per the collaboration rules. The LEGO logo alone is valid and correct, but Pokémon branding is absent from the logos/ directory.",
+    "findings": [
+      {
+        "asset_id": "products/blt4040f2bc95e1380d-43032_Prod_en-gb.jpg",
+        "severity": "blocker",
+        "issue": "Product image is off-topic — description and primary_product_name do not match the campaign subject.",
+        "fix_hint": "Remove and replace with on-campaign packshots or lifestyle scenes from the official reference page."
+      },
+      {
+        "asset_id": "products/blt4040f2bc95e1380d-43032_Prod_en-gb.jpg",
+        "severity": "blocker",
+        "issue": "Off-topic product asset: FIFA World Cup Trophy is not part of LEGO Pokémon 2026 collaboration. Belongs to separate FIFA licensing line.",
+        "fix_hint": "Replace with on-campaign LEGO Pokémon SKU from wave 1 (72151 Eevee, 72152 Pikachu & Poké Ball, 72153 Venusaur/Charizard/Blastoise) or wave 2 SMART Play sets (e.g. 72164 Training House, 72167 Charizard vs Jolteon)."
+      },
+      {
+        "asset_id": "products/blt691e598d84db744d-75456_Prod_en-gb.jpg",
+        "severity": "blocker",
+        "issue": "Off-topic product asset: Star Wars minifigures collection is not part of LEGO Pokémon 2026 collaboration. Belongs to separate Star Wars licensing line; primary_product_name is empty and asset represents generic collection without concrete SKU.",
+        "fix_hint": "Replace with on-campaign LEGO Pokémon SKU. Suggest Brave search for 'LEGO Pokemon SMART Play Gengar set 2026' or 'LEGO Pokemon Mew buildable figure'."
+      },
+      {
+        "asset_id": "products/blt91ca18fede88b80f-76340_Prod_en-gb.jpg",
+        "severity": "blocker",
+        "issue": "Off-topic product asset: Marvel Super Heroes minifigures collection is not part of LEGO Pokémon 2026 collaboration. Belongs to separate Marvel licensing line; primary_product_name is empty and asset represents generic collection without concrete SKU.",
+        "fix_hint": "Replace with on-campaign LEGO Pokémon SKU from official 2026 lineup. Suggest Brave search for 'LEGO Pokemon adult display sets 72151 72152 72153' or 'LEGO Pokemon Insiders reward 40911 Mini Pokemon Center'."
+      },
+      {
+        "asset_id": "logos/",
+        "severity": "warn",
+        "issue": "Missing Pokémon official wordmark logo file. The collaboration campaign 'LEGO® Pokémon™' lists two participating brands (The LEGO Group and The Pokémon Company International), but only the LEGO wordmark is present in logos/. Per collaboration rules, separate official wordmark files for each party should be sourced when available.",
+        "fix_hint": "Add an official Pokémon wordmark SVG or PNG file (e.g. logos/brand-pokemon.svg) to the logos/ directory. Retry search queries provided in brave_retry_queries.logos."
+      }
+    ],
+    "brave_retry_queries": {
+      "logos": [
+        "Pokémon"
+      ],
+      "products": [
+        "LEGO Pokemon 72152 Pikachu Poke Ball packshot",
+        "LEGO Pokemon 72151 Eevee adult display set",
+        "LEGO Pokemon 72153 Venusaur Charizard Blastoise trilogy",
+        "LEGO Pokemon 72164 SMART Play Training House Pikachu 2026",
+        "LEGO Pokemon 72167 Charizard vs Jolteon SMART Play set"
+      ]
+    }
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 3613,
+    "output_tokens": 743,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 3613,
+    "price_usd": {
+      "input": 0.003613,
+      "output": 0.003715,
+      "total": 0.007328
+    },
+    "duration_ms": 7557
+  }
+}

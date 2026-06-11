@@ -1,0 +1,51 @@
+{
+  "review_round": 2,
+  "captured_at": "2026-06-10T12:34:15.692Z",
+  "manifest_path": "/Users/benchi/Documents/aframe-agent-test2/output/nike-football-ec677171-d191-4ccc-849c-b3e2690887fa/review/screenshots/manifest.json",
+  "audit": {
+    "satisfied": false,
+    "summary": "300x250 format has critical blocker issues: unreadable red text (LES BLEUS) on dark background violates WCAG contrast requirements, CTA button text is cut off or illegible, and footer safe zone margin appears insufficient. Typography hierarchy and color palette need correction.",
+    "findings": [
+      {
+        "format_id": "300x250",
+        "severity": "blocker",
+        "issue": "Red text 'LES BLEUS' has insufficient contrast against the dark gradient background — fails WCAG accessibility and readability standards; text appears dim and hard to read.",
+        "fix_hint": "Change 'LES BLEUS' text color from red (#EF4135) to white (#FFFFFF) or use a lighter accent color with strong contrast. Apply text-shadow or outline if layering over dark is unavoidable; e.g., 'color: #FFFFFF; text-shadow: 0 1px 3px rgba(0,0,0,0.5);'"
+      },
+      {
+        "format_id": "300x250",
+        "severity": "blocker",
+        "issue": "CTA button label 'DÉCOUVRIR LA COLLECTION' appears truncated or text is cut off — only partial text is visible in the red button box.",
+        "fix_hint": "Increase button width or reduce font-size of CTA text to fit fully within #ad-300x250 .cta-button bounds. Check CSS: ensure padding, width, and font-size allow the full French label to display without overflow or text-overflow: hidden."
+      },
+      {
+        "format_id": "300x250",
+        "severity": "warn",
+        "issue": "Footer text 'Nike.com' sits very close to the bottom edge of the ad frame — safe zone margin may be less than recommended 20px padding.",
+        "fix_hint": "Add padding-bottom: 20px; or margin-bottom: 20px; to the footer element or #ad-300x250 container to ensure safe spacing from the bottom frame edge."
+      },
+      {
+        "format_id": "300x250",
+        "severity": "warn",
+        "issue": "Subheading 'COLLECTION FRANCE' and 'MAILLOT DOMICILE' are very small and may lack visual hierarchy — could be slightly larger to match style guide headline emphasis.",
+        "fix_hint": "Increase font-size of .collection-label and .jersey-label; e.g., from current size to 14–16px, using Trade Gothic 700 for consistency with the style guide."
+      }
+    ],
+    "regeneration_prompt": "1. Change #ad-300x250 .hero-text 'LES BLEUS' color from #EF4135 to #FFFFFF. 2. Increase .cta-button width or reduce font-size so 'DÉCOUVRIR LA COLLECTION' displays fully without overflow. 3. Add padding-bottom: 20px; to #ad-300x250 for safe footer margin. 4. Increase font-size of .collection-label and .jersey-label to 14–16px, using Trade Gothic 700."
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 3862,
+    "output_tokens": 679,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 3862,
+    "price_usd": {
+      "input": 0.003862,
+      "output": 0.003395,
+      "total": 0.007257
+    },
+    "duration_ms": 8915
+  }
+}

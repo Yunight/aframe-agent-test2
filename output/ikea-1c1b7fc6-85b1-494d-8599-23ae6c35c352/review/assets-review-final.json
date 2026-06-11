@@ -1,0 +1,54 @@
+{
+  "review_phase": "style_guide",
+  "assets_review_rounds_run": 1,
+  "max_assets_review_rounds": 2,
+  "satisfied": true,
+  "logo_locked": true,
+  "summary": "Portfolio has 6 usable product asset(s) (minimum 2). Remaining product findings downgraded to warnings. BLOCKER: All six product assets share the identical primary_product_name 'METOD élément mural tablettes blanc Aspudden blanc mat', indicating the same SKU repeated across multiple packshots. While all are valid product packshots, the absence of distinct product SKUs means only 1 unique retail product is represented. The campaign requires at least 2 usable retail product assets with different SKUs to proceed to HTML5 generation. The logo asset is valid. The logo file logos/ikea.svg displays the official IKEA brand wordmark lockup with correct colors and formatting. The iconic blue IKEA text on yellow oval background matches the primary color palette (#0058AB blue, #FBD914 yellow) specified in the style guide. This is the recognized global IKEA trademark and is suitable for ad asset generation.",
+  "findings": [
+    {
+      "asset_id": "products",
+      "severity": "warn",
+      "issue": "6 physical product image(s) all depict the same SKU (\"metod element mural tablettes blanc aspudden blanc mat\") — need distinct products for ad variety.",
+      "fix_hint": "Refresh with Brave queries naming different SKUs from the range (not repeated packshots of the same product)."
+    },
+    {
+      "asset_id": "products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530505_pe1015213_s5.jpg",
+      "severity": "warn",
+      "issue": "Duplicate SKU: identical primary_product_name 'METOD élément mural tablettes blanc Aspudden blanc mat' shared across 6 product assets (all variants of the same cabinet unit). No distinct product identities exist.",
+      "fix_hint": "Source additional Nouveautés IKEA products with different primary_product_names (e.g., other kitchen wall cabinets, shelving units, or furniture from the 2026 new arrivals). Each product asset must represent a distinct SKU."
+    },
+    {
+      "asset_id": "products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530509_pe1015215_s5.jpg",
+      "severity": "warn",
+      "issue": "Duplicate SKU: identical primary_product_name shared with 5 other assets.",
+      "fix_hint": "Replace with a different IKEA Nouveautés product SKU."
+    },
+    {
+      "asset_id": "products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530515_pe1015218_s5.jpg",
+      "severity": "warn",
+      "issue": "Duplicate SKU: identical primary_product_name shared with 5 other assets.",
+      "fix_hint": "Replace with a different IKEA Nouveautés product SKU."
+    },
+    {
+      "asset_id": "products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530533_pe1015230_s5.jpg",
+      "severity": "warn",
+      "issue": "Duplicate SKU: identical primary_product_name shared with 5 other assets.",
+      "fix_hint": "Replace with a different IKEA Nouveautés product SKU."
+    },
+    {
+      "asset_id": "products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1530535_pe1015232_s5.jpg",
+      "severity": "warn",
+      "issue": "Duplicate SKU: identical primary_product_name shared with 5 other assets.",
+      "fix_hint": "Replace with a different IKEA Nouveautés product SKU."
+    },
+    {
+      "asset_id": "products/metod-element-mural-tablettes-blanc-aspudden-blanc-mat__1534030_pe1016103_s5.jpg",
+      "severity": "warn",
+      "issue": "Duplicate SKU: identical primary_product_name shared with 5 other assets.",
+      "fix_hint": "Replace with a different IKEA Nouveautés product SKU."
+    }
+  ],
+  "asset_descriptions_path": "review/asset-descriptions.json",
+  "pipeline_usage_path": "/Users/benchi/Documents/aframe-agent-test2/output/ikea-1c1b7fc6-85b1-494d-8599-23ae6c35c352/pipeline-usage.json"
+}

@@ -110,15 +110,6 @@ export function loadAssetDescriptions (directoryPath: string): AssetDescriptions
   }
 }
 
-function parseEnvInt (name: string, fallback: number): number {
-  const raw = process.env[name]?.trim();
-  if (raw === undefined || raw.length === 0) {
-    return fallback;
-  }
-  const n = Number.parseInt(raw, 10);
-  return Number.isFinite(n) && n > 0 ? n : fallback;
-}
-
 export function maxProductAssetsForCodegen (): number {
   const raw = process.env['CREATIVE_CODEGEN_MAX_PRODUCT_ASSETS']?.trim();
   if (raw === undefined || raw.length === 0) {

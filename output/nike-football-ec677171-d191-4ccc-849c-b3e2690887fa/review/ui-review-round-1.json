@@ -1,0 +1,69 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-06-10T12:33:13.163Z",
+  "manifest_path": "/Users/benchi/Documents/aframe-agent-test2/output/nike-football-ec677171-d191-4ccc-849c-b3e2690887fa/review/screenshots/manifest.json",
+  "audit": {
+    "satisfied": false,
+    "summary": "The 300×250 ad has critical issues: (1) The product hero image is missing or not loading (visible only as a placeholder in initial/animated states; settled state shows a different product without proper styling), (2) Typography hierarchy is weak — the main headline 'STYLE LES BLEUS' lacks visual prominence and the subheading is cramped, (3) Color palette violations — the red used for 'LES BLEUS' text does not match any approved hex from the style guide (#EF4135 or #C8102E), (4) CTA button ('DÉCOUVRIR LA COLLECTION') is flush against the bottom edge with insufficient padding, (5) Layout is unbalanced with floating elements and poor spacing alignment.",
+    "findings": [
+      {
+        "format_id": "300x250",
+        "severity": "blocker",
+        "issue": "Product hero image missing or broken — initial and animated states show a placeholder/missing asset; settled state shows a different product without proper image loading or src path reference.",
+        "fix_hint": "Verify the product image src path in HTML. Use one of the provided Nike Off-Pitch Looks France product URLs (e.g., FFF M NK DF JSY SS STAD HM.png). Ensure <img src=\"./product.png\"> is correctly referenced and the file exists in the output directory. Update CSS to constrain the image height to ~120–140px and center it horizontally within the ad frame."
+      },
+      {
+        "format_id": "300x250",
+        "severity": "blocker",
+        "issue": "CTA button 'DÉCOUVRIR LA COLLECTION' sits flush against the bottom edge of #ad-300x250 with no visible padding or margin — violates safe zone requirement (minimum 20px margin from bottom edge).",
+        "fix_hint": "Add padding-bottom: 16px; or margin-bottom: 16px; to the button element or its container to create visible breathing room from the bottom frame edge."
+      },
+      {
+        "format_id": "300x250",
+        "severity": "blocker",
+        "issue": "Typography hierarchy is weak and unbalanced — 'STYLE' and 'LES BLEUS' lack consistent font sizing and visual prominence; subheading text is cramped and hard to scan.",
+        "fix_hint": "Increase headline font-size to at least 32px (Futura 900 italic for 'STYLE'); enlarge 'LES BLEUS' to match or exceed 36px. Use Futura 800 or 900 weight. Ensure line-height ≥ 1.2 and margin-bottom: 8px between headline and subheading."
+      },
+      {
+        "format_id": "300x250",
+        "severity": "blocker",
+        "issue": "Red color used for 'LES BLEUS' text does not match approved style guide hex values (#EF4135 or #C8102E). Measured red appears to be a non-brand hex.",
+        "fix_hint": "Replace the current red color with #EF4135 (primary red from Nike Football palette) or #C8102E (secondary) in CSS for .headline or the specific span wrapping 'LES BLEUS'."
+      },
+      {
+        "format_id": "300x250",
+        "severity": "warn",
+        "issue": "Logo scale and positioning could be more prominent — the Nike Swoosh is small and positioned in the top-left without clear visual hierarchy relative to the product hero.",
+        "fix_hint": "Increase logo max-height to 32–40px. Ensure margin-top and margin-left are consistent (12–16px). Verify logo SVG is loading from the correct ./nike-logo.svg path."
+      },
+      {
+        "format_id": "300x250",
+        "severity": "warn",
+        "issue": "Layout spacing is inconsistent — elements (logo, product, headline, tagline, CTA) lack aligned margins and padding; negative space is uneven.",
+        "fix_hint": "Apply consistent 12–16px horizontal padding to #ad-300x250. Use margin: 0 auto; for centered elements. Set product image margin-bottom: 12px; headline margin-bottom: 8px; subheading margin-bottom: 16px; CTA margin-bottom: 16px (safe zone padding)."
+      },
+      {
+        "format_id": "300x250",
+        "severity": "warn",
+        "issue": "'COLLECTION FRANCE' and 'MAILLOT BONCICLE' (or 'EXTÉRIEUR') badge styling is minimal — no clear background color, inconsistent positioning relative to product image.",
+        "fix_hint": "Add background-color: #0055A4; (Nike blue from primary palette) color: #FFFFFF; padding: 4px 8px; font-size: 11px; font-family: 'Trade Gothic', sans-serif; font-weight: 700; to the badge. Position absolutely or with flex layout at top-right of the product section."
+      }
+    ],
+    "regeneration_prompt": "1. Fix product image: verify src path points to a valid Nike Off-Pitch Looks France product image file (e.g., ./FFF_M_NK_DF_JSY_SS_STAD_HM.png); set max-height: 140px; margin: 0 auto 12px; 2. Increase headline 'STYLE' to font-size: 32px; Futura 900 italic; margin-bottom: 4px. 3. Set 'LES BLEUS' color to #EF4135; font-size: 36px; Futura 900; margin-bottom: 8px. 4. Set subheading 'LOOKS OFF-PITCH À PORTER PARTOUT' to font-size: 12px; Helvetica Neue 400; color: #111111; margin-bottom: 16px. 5. Add #ad-300x250 padding: 12px; to create consistent margins on all sides. 6. Add padding-bottom: 16px; or margin-bottom: 16px; to CTA button to ensure safe zone from bottom edge. 7. Style badge with background-color: #0055A4; color: #FFFFFF; padding: 4px 8px; font-size: 11px; font-weight: 700; position: absolute; top: 8px; right: 8px; 8. Ensure logo max-height: 36px; margin: 12px; 9. Verify all colors use only #111111, #FFFFFF, #0055A4, #EF4135, #F26522, #E5E5E5, #1A1A1A, #C8102E, #002654, #F5F5F5 from style guide."
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 3862,
+    "output_tokens": 1499,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 3862,
+    "price_usd": {
+      "input": 0.003862,
+      "output": 0.007495,
+      "total": 0.011357
+    },
+    "duration_ms": 23181
+  }
+}
