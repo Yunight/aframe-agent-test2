@@ -14,20 +14,20 @@ import {
   loadBraveExcludedUrls,
   mergeRefreshIntoStyleGuideFile,
   refreshAssetsFromQueries
-} from '../lib/brave-image-assets.mts';
+} from '../lib/core.mts';
 import {
   assertImageSearchProviderConfigured,
   imageSearchLogPrefix,
   resolveImageSearchProvider
-} from '../lib/image-search.mts';
+} from '../lib/core.mts';
 import {
   buildRetailCampaignRelevanceTerms,
   pruneExcessProductAssets,
   runDescriptionsBasedAssetsReview,
   useDescriptionsBasedAssetsReview
-} from '../lib/asset-descriptions-audit.mts';
-import { buildProductMatchFields } from '../lib/style-guide-context.mts';
-import { listAssetImageFiles } from '../lib/asset-sidecar-files.mts';
+} from '../lib/core.mts';
+import { buildProductMatchFields } from '../lib/core.mts';
+import { listAssetImageFiles } from '../lib/core.mts';
 import {
   logDeterministicFindings,
   pruneDeterministicBlockedProducts,
@@ -35,7 +35,7 @@ import {
   pruneVisionBlockedLogos,
   pruneVisionBlockedProducts,
   runDeterministicAssetsCheck
-} from '../lib/creative-native-assets-deterministic.mts';
+} from '../lib/core.mts';
 import {
   appendPipelineRunSummary,
   appendPipelineUsage,
@@ -47,9 +47,9 @@ import {
   pipelineUsagePath,
   recomputePhaseTotals,
   type PipelineUsageFile
-} from '../lib/creative-pipeline-usage.mts';
-import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
-import { hasLogoBlockers } from '../lib/logo-vision-audit.mts';
+} from '../lib/core.mts';
+import { repoRootFromModuleDir } from '../lib/core.mts';
+import { hasLogoBlockers } from '../lib/core.mts';
 import {
   buildBraveRetryQueriesFromAudit,
   parseAssetsReviewMaxRoundsFromEnv,
@@ -218,6 +218,20 @@ while (reviewRound < maxRounds) {
 
   mkdirSync(reviewDirectoryPath, { recursive: true });
   await pruneUndersizedAssets(directoryPath);
+  pruneExcessProductAssets(
+    directoryPath,
+    {
+      campaignTerms: buildRetailCampaignRelevanceTerms(
+        buildProductMatchFields({
+          campaignContext: styleGuide.campaignContext ?? null,
+          productName: styleGuide.productName,
+          brandName: styleGuide.brandName,
+          brandContext: styleGuide.brandContext,
+          brandURL: styleGuide.brandURL
+        })
+      )
+    }
+  );
 
   const deterministic = await runDeterministicAssetsCheck(directoryPath, styleGuide);
   logDeterministicFindings(deterministic.findings);

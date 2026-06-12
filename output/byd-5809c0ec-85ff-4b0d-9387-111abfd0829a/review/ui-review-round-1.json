@@ -1,0 +1,26 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-06-11T11:00:34.027Z",
+  "manifest_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\byd-5809c0ec-85ff-4b0d-9387-111abfd0829a\\review\\screenshots\\manifest.json",
+  "audit": {
+    "satisfied": true,
+    "summary": "The 320×480 ad unit displays a well-structured vertical format with strong visual hierarchy, accurate color use from the BYD palette, and correct French copy. The layout respects safe zones, the hero product image is prominent and properly positioned, the BYD logo is visible at an appropriate scale, and the primary CTA button has adequate spacing from the bottom edge. Typography is clear and follows the style guide. Animation states show smooth transitions of headline elements without jarring visual shifts. No blockers detected.",
+    "findings": [],
+    "regeneration_prompt": ""
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 4086,
+    "output_tokens": 128,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 4086,
+    "price_usd": {
+      "input": 0.004086,
+      "output": 0.00064,
+      "total": 0.004726
+    },
+    "duration_ms": 4527
+  }
+}

@@ -194,8 +194,7 @@ node src/agents/gen-creative-code-native.mts <directory-uuid> --asset-input url
 | `CREATIVE_THINKING_BUDGET_TOKENS` | `32000` | Si `CREATIVE_THINKING_MODE=budget` |
 | `CREATIVE_PROMPT_CACHE` | activé | `0` = désactive le prompt caching sur le bloc skills statique |
 | `CREATIVE_USE_FULL_SKILLS` | — | `1` = injecte les 12 fichiers `.claude/.skills/` complets ; sinon checklist compacte |
-| `CREATIVE_TWO_PHASE` | — | `1` = plan JSON structuré puis génération HTML/CSS/JS |
-| `CREATIVE_PARALLEL_FORMATS` | — | `1` = une gen API par format IAB (2+ formats, hors arche), puis fusion |
+| `CREATIVE_PARALLEL_FORMATS` | — | `1` = phase code parallèle par format IAB (2+ formats, hors arche) après le plan créatif commun, puis fusion |
 | `CREATIVE_AD_FORMATS` | 1er preset | JSON array des formats IAB à produire |
 
 Les métriques `duration_ms` / `turn_timings` / `api_call_timings` sont dans `creative-native-token-usage.json`, `review/*-token-usage.json` (`duration_ms` par round) et `pipeline-usage.json`.
@@ -291,6 +290,8 @@ Puis lancer `style-guide-ui` (Vite).
 |----------|--------|------|
 | `CREATIVE_UI_REVIEW_MAX_ROUNDS` | `2` | Tours screenshot + review + regen max |
 | `CREATIVE_UI_REVIEW_MODEL` | `claude-haiku-4-5-20251001` | Modèle review visuelle |
+| `CREATIVE_UI_REVIEW_INCLUDE_CODE` | `1` | Annotations + bundle HTML/CSS/JS dans le prompt reviewer (`0` = screenshots seuls) |
+| `CREATIVE_UI_REVIEW_MAX_FILE_CHARS` | `20000` | Troncature max par fichier de code dans le prompt reviewer |
 | `CREATIVE_SCREENSHOT_INITIAL_WAIT_MS` | `600` | Délai capture `initial` |
 | `CREATIVE_SCREENSHOT_ANIMATED_WAIT_MS` | `2500` | Délai capture `animated` |
 | `CREATIVE_SCREENSHOT_SETTLED_WAIT_MS` | `5000` | Délai capture `settled` |

@@ -1,0 +1,34 @@
+{
+  "captured_at": "2026-06-11T16:15:32.931Z",
+  "entry_html": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\kusmi-tea-6c57ae2b-beb6-4c50-8ede-d0d42b7c548f\\code\\V2\\index.html",
+  "entry_url": "file:///C:/Users/Ben/Desktop/formats_creator/aframe-agent-test2/aframe-agent-test2/output/kusmi-tea-6c57ae2b-beb6-4c50-8ede-d0d42b7c548f/code/V2/index.html",
+  "formats": [
+    {
+      "format_id": "320x480",
+      "width": 320,
+      "height": 480,
+      "selector": "#ad-320x480",
+      "error": null,
+      "shots": [
+        {
+          "state": "initial",
+          "fileName": "320x480__initial.png",
+          "relativePath": "320x480__initial.png",
+          "captured_at": "2026-06-11T16:15:30.407Z"
+        },
+        {
+          "state": "animated",
+          "fileName": "320x480__animated.png",
+          "relativePath": "320x480__animated.png",
+          "captured_at": "2026-06-11T16:15:31.300Z"
+        },
+        {
+          "state": "settled",
+          "fileName": "320x480__settled.png",
+          "relativePath": "320x480__settled.png",
+          "captured_at": "2026-06-11T16:15:32.900Z"
+        }
+      ]
+    }
+  ]
+}

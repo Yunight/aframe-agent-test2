@@ -1,0 +1,53 @@
+{
+  "review_round": 2,
+  "captured_at": "2026-06-11T10:34:38.939Z",
+  "deterministic_ok": true,
+  "audit": {
+    "satisfied": false,
+    "summary": "Logo or asset audit failed: 2 blocker(s). BLOCKER: 6 product assets provided, exceeds 5-asset limit for retail campaign. BLOCKER: 1 asset depicts BYD SEALION 5 DM-i (off-campaign product line) vs. campaign hero BYD SEAL U DM-i. Remaining 5 SEAL U DM-i assets show strong visual variety (lifestyle, packshot, promotional angles) and are on-topic. Remedy: remove SEALION 5 asset and reduce to 4–5 SEAL U DM-i assets. Official BYD Auto 2022 logo confirmed. The logo displays the correct BYD wordmark in the official red (#EC1C24) on white/transparent background. The geometric sans-serif design matches the style guide specifications for the BYD brand identity. No blockers identified.",
+    "findings": [
+      {
+        "asset_id": "products",
+        "severity": "blocker",
+        "issue": "Too many product files in products/ (maximum 5); found 7.",
+        "fix_hint": "Prune off-topic or excess assets so only 3–5 on-campaign product images remain."
+      },
+      {
+        "asset_id": "products/byd-sealion5-dmi-1stBanner-l.webp",
+        "severity": "blocker",
+        "issue": "Off-campaign product: BYD SEALION 5 DM-i depicted. Campaign specifies BYD SEAL U DM-i as hero product. SEALION 5 is a different model line within BYD's SUV range.",
+        "fix_hint": "Remove this asset or replace with an alternative SEAL U DM-i lifestyle scene (e.g., coastal, urban, or mountain setting with same hero product)."
+      },
+      {
+        "asset_id": "products/BYD-SEAL-U-DM-i-kv-banner-pc.jpg",
+        "severity": "warn",
+        "issue": "Asset count warning: 6 product/ assets exceed recommended 5-asset maximum for retail campaign. No individual asset defect, but cumulative volume requires curation.",
+        "fix_hint": "Prioritize 4–5 strongest SEAL U DM-i assets. Candidates for retention: packshots (BYD-SEAL-U-DMI-side-view-pc.jpg, BYD_SEAL_U_DM-i_BlackFriday.png) + 2–3 lifestyle scenes (mountain road, waterfront, motion dynamic)."
+      }
+    ],
+    "brave_retry_queries": {
+      "logos": [],
+      "products": [
+        "BYD SEAL U DM-i lifestyle waterfront exterior",
+        "BYD SEAL U DM-i packshot studio white background",
+        "BYD SEAL U DM-i mountain road dynamic driving",
+        "BYD SEAL U DM-i three-quarter view premium"
+      ]
+    }
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 4120,
+    "output_tokens": 518,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 4120,
+    "price_usd": {
+      "input": 0.00412,
+      "output": 0.00259,
+      "total": 0.00671
+    },
+    "duration_ms": 6425
+  }
+}

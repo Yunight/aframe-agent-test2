@@ -1,0 +1,272 @@
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Page centering */
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0F0F0F;
+}
+
+/* ─── Ad frame ─────────────────────────────────────────────── */
+#ad-320x480 {
+  width: 320px;
+  height: 480px;
+  position: relative;
+  overflow: hidden;
+  outline: 1.5px solid #3F6B2A;
+  font-family: "Montserrat", sans-serif;
+  padding-bottom: 20px;
+}
+
+/* ─── Background – ambient ken-burns ───────────────────────── */
+.ad-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: url('./Nav_Push_Matcha_Premium_2026.jpg') center top / cover no-repeat;
+  animation: kenBurns 16s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes kenBurns {
+  0%   { transform: scale(1)    translate(0, 0); }
+  100% { transform: scale(1.07) translate(-2%, 2%); }
+}
+
+/* ─── Forest-green overlay ─────────────────────────────────── */
+.ad-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(31, 58, 26, 0.78);
+}
+
+/* ─── Ambient particles ─────────────────────────────────────── */
+.particles-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: particleDrift linear infinite;
+  will-change: transform, opacity;
+}
+@keyframes particleDrift {
+  0%   {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  8%   { opacity: var(--p-op, 0.65); }
+  88%  { opacity: var(--p-op, 0.65); }
+  100% {
+    transform: translateY(-500px) translateX(var(--p-dx, 20px));
+    opacity: 0;
+  }
+}
+
+/* ─── Logo strip ────────────────────────────────────────────── */
+.logo-strip {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 54px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(245, 241, 230, 0.94);
+  border-bottom: 1px solid rgba(63, 107, 42, 0.35);
+}
+.logo-img {
+  height: 32px;
+  width: auto;
+  display: block;
+}
+
+/* ─── Packshot – floating levitation ────────────────────────── */
+.packshot-wrap {
+  position: absolute;
+  top: 64px;
+  left: 50%;
+  z-index: 10;
+  animation: bob 3.8s ease-in-out infinite;
+}
+.packshot-wrap::before {
+  content: '';
+  position: absolute;
+  inset: -42%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    rgba(143, 183, 62, 0.18) 0%,
+    transparent 68%
+  );
+  z-index: -1;
+  pointer-events: none;
+}
+.packshot-img {
+  width: 205px;
+  height: 205px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 10px 24px rgba(15, 15, 15, 0.52));
+}
+@keyframes bob {
+  0%, 100% { transform: translateX(-50%) translateY(0px); }
+  50%       { transform: translateX(-50%) translateY(-13px); }
+}
+
+/* ─── Bottom zone – text + CTA ──────────────────────────────── */
+.bottom-zone {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 214px;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 20px 20px;
+  background: linear-gradient(
+    to bottom,
+    rgba(31, 58, 26, 0)    0%,
+    rgba(31, 58, 26, 0.88) 22%,
+    rgba(15, 15, 15, 0.84) 100%
+  );
+}
+
+/* Eyebrow */
+.eyebrow {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 8.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #C9D89A;
+  margin-bottom: 6px;
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards 0.3s;
+}
+
+/* Kinetic headline */
+.headline {
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #F5F1E6;
+  text-align: center;
+  line-height: 1.2;
+  min-height: 22px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: visible;
+  width: auto;
+}
+.headline .char {
+  display: inline-block;
+  opacity: 0;
+  animation: charIn 0.22s ease forwards;
+}
+@keyframes charIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* Subhead */
+.subhead {
+  font-family: "Playfair Display", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 12px;
+  color: #C9D89A;
+  text-align: center;
+  line-height: 1.45;
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards 2s;
+  margin-bottom: auto;
+  margin-top: 0;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* CTA button */
+.cta-btn {
+  display: block;
+  width: 100%;
+  background: #8FB73E;
+  text-decoration: none;
+  text-align: center;
+  padding: 12px 16px;
+  border-radius: 2px;
+  margin-top: 10px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+  animation: ctaPulse 2s ease-in-out infinite;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.cta-btn:hover,
+.cta-btn:active {
+  transform: scale(1.045);
+  background: #C9D89A;
+}
+.cta-label {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #0F0F0F;
+  pointer-events: none;
+}
+@keyframes ctaPulse {
+  0%   { box-shadow: 0 0 0 0   rgba(201, 169, 97, 0.65); }
+  65%  { box-shadow: 0 0 0 9px rgba(201, 169, 97, 0);    }
+  100% { box-shadow: 0 0 0 0   rgba(201, 169, 97, 0);    }
+}
+
+/* Footer */
+.ad-footer {
+  flex-shrink: 0;
+  text-align: center;
+}
+.ad-footer span {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  color: rgba(245, 241, 230, 0.52);
+}
+
+/* Reduced-motion fallback */
+@media (prefers-reduced-motion: reduce) {
+  .ad-bg,
+  .packshot-wrap,
+  .particle,
+  .cta-btn {
+    animation: none !important;
+  }
+  .packshot-wrap {
+    transform: translateX(-50%) translateY(0);
+  }
+  .eyebrow,
+  .subhead {
+    opacity: 1;
+    animation: none !important;
+  }
+  .headline .char {
+    opacity: 1;
+    animation: none !important;
+  }
+}

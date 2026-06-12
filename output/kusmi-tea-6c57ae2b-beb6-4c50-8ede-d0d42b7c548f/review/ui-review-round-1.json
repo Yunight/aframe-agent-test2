@@ -1,0 +1,39 @@
+{
+  "review_round": 1,
+  "captured_at": "2026-06-11T16:14:41.620Z",
+  "manifest_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\kusmi-tea-6c57ae2b-beb6-4c50-8ede-d0d42b7c548f\\review\\screenshots\\manifest.json",
+  "audit": {
+    "satisfied": false,
+    "summary": "The 320×480 ad unit has critical typography and copy issues that must be fixed. The animated state shows truncated product name ('MATCHA P' instead of 'MATCHA PREMIUM'), violating the style guide requirement for full product visibility. The settled state shows correct copy but reveals the animated state flaw. The logo is visible and properly scaled, the CTA button is well-positioned with adequate spacing, and the product hero image (matcha tin) is prominent. Colors align with the primary palette (#8FB73E for CTA, #3F6B2A backgrounds). However, the kinetic typography animation that truncates the headline is a blocker for readability and product identity.",
+    "findings": [
+      {
+        "format_id": "320x480",
+        "severity": "blocker",
+        "issue": "Animated state shows truncated product name 'MATCHA P' instead of full 'MATCHA PREMIUM' — violates style guide requirement for clear product name visibility and French copy integrity on all visible states.",
+        "fix_hint": "Reduce font-size or line-height on the animated headline keyframe to ensure full 'MATCHA PREMIUM' fits without truncation, or adjust animation timing/positioning. Check @keyframes for headline and confirm final settled state text is 'MATCHA PREMIUM' (not clipped)."
+      },
+      {
+        "format_id": "320x480",
+        "severity": "warn",
+        "issue": "The subheadline 'L'authenticité du Japon, certifié Bio' in settled state uses a serif italic font that appears to be Playfair Display, matching the style guide, but the optical hierarchy between 'MATCHA PREMIUM' (uppercase sans-serif) and the italic tagline could be tighter — small leading adjustment.",
+        "fix_hint": "Verify .subheadline or tagline element uses Playfair Display italic; if needed, reduce margin-top between headline and subheadline by 4–8px for better visual unity."
+      }
+    ],
+    "regeneration_prompt": "1. Fix animated state: reduce @keyframes headline font-size or increase container width so 'MATCHA PREMIUM' displays in full without character truncation (current 'MATCHA P' is blocker).\n2. Confirm settled state headline is 'MATCHA PREMIUM' (not cut off) — measure text bounding box and adjust animation end state if needed.\n3. Optional polish: tighten margin between 'MATCHA PREMIUM' headline and 'L'authenticité du Japon, certifié Bio' tagline by 4px for improved visual cohesion."
+  },
+  "usage": {
+    "api_calls": 1,
+    "input_tokens": 4329,
+    "output_tokens": 581,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model": "claude-haiku-4-5-20251001",
+    "billed_input_tokens": 4329,
+    "price_usd": {
+      "input": 0.004329,
+      "output": 0.002905,
+      "total": 0.007234
+    },
+    "duration_ms": 8378
+  }
+}

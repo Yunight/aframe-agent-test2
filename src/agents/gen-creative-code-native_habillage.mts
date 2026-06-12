@@ -1,11 +1,11 @@
-import { withAnthropicRetry } from '../lib/anthropic-retry.mts';
-import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
+import { withAnthropicRetry } from '../lib/core.mts';
+import { repoRootFromModuleDir } from '../lib/core.mts';
 import type { StyleGuide } from './gen-style-guide.mjs';
-import type { AdFormatPreset, AdFormatSelection } from '../lib/studio-ad-formats.mts';
-import { sniffImageMimeFromBuffer } from '../lib/image-mime-sniff.mts';
-import { allocateNextCodeVersionDirectory } from '../lib/creative-code-versions.mts';
-import { loadAdFormatPresets, parseCreativeAdFormatsFromEnv } from '../lib/studio-ad-formats.mts';
-import { getFontComplianceIssue } from '../lib/style-guide-typography.mts';
+import type { AdFormatPreset, AdFormatSelection } from '../lib/core.mts';
+import { sniffImageMimeFromBuffer } from '../lib/core.mts';
+import { allocateNextCodeVersionDirectory } from '../lib/core.mts';
+import { loadAdFormatPresets, parseCreativeAdFormatsFromEnv } from '../lib/core.mts';
+import { getFontComplianceIssue } from '../lib/core.mts';
 import { basename, dirname, extname, join } from 'node:path';
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { config as loadDotenv } from 'dotenv';

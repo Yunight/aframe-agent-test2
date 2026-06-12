@@ -13,18 +13,19 @@ import {
   imageContextFromStyleGuide,
   loadBraveExcludedUrls,
   refreshAssetsFromQueries
-} from '../lib/brave-image-assets.mts';
+} from '../lib/core.mts';
 import {
   assertImageSearchProviderConfigured,
   imageSearchLogPrefix,
   resolveImageSearchProvider
-} from '../lib/image-search.mts';
+} from '../lib/core.mts';
 import {
   buildRetailCampaignRelevanceTerms,
+  canReconcileAfterExcessProductPrune,
   pruneExcessProductAssets,
   runDescriptionsBasedAssetsReview
-} from '../lib/asset-descriptions-audit.mts';
-import { buildProductMatchFields, resolveCampaignAssetProfile } from '../lib/style-guide-context.mts';
+} from '../lib/core.mts';
+import { buildProductMatchFields, resolveCampaignAssetProfile } from '../lib/core.mts';
 import {
   logDeterministicFindings,
   pruneDeterministicBlockedProducts,
@@ -34,7 +35,7 @@ import {
   pruneVisionBlockedLogos,
   pruneVisionBlockedProducts,
   runDeterministicAssetsCheck
-} from '../lib/creative-native-assets-deterministic.mts';
+} from '../lib/core.mts';
 import {
   appendPipelineRunSummary,
   appendPipelineUsage,
@@ -45,12 +46,12 @@ import {
   pipelineUsagePath,
   recomputePhaseTotals,
   type PipelineUsageFile
-} from '../lib/creative-pipeline-usage.mts';
-import { assetDescriptionsPath } from '../lib/creative-asset-descriptions.mts';
-import { listAssetImageFiles } from '../lib/asset-sidecar-files.mts';
-import { clearLogoLock, logoLockExists, writeLogoLock } from '../lib/logo-lock.mts';
-import { hasLogoBlockers, runLogoVisionAudit, useLogoVisionAudit } from '../lib/logo-vision-audit.mts';
-import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
+} from '../lib/core.mts';
+import { assetDescriptionsPath } from '../lib/core.mts';
+import { listAssetImageFiles } from '../lib/core.mts';
+import { clearLogoLock, logoLockExists, writeLogoLock } from '../lib/core.mts';
+import { hasLogoBlockers, runLogoVisionAudit, useLogoVisionAudit } from '../lib/core.mts';
+import { repoRootFromModuleDir } from '../lib/core.mts';
 import {
   buildBraveRetryQueriesFromAudit,
   writeAssetsReviewRoundReport,
@@ -79,10 +80,10 @@ const styleGuidePath = join(directoryPath, 'style-guide.json');
 function parseStyleGuideReviewMaxRounds (): number {
   const raw = process.env['STYLE_GUIDE_ASSETS_REVIEW_MAX_ROUNDS']?.trim();
   if (raw === undefined || raw.length === 0) {
-    return 2;
+    return 5;
   }
   const n = Number.parseInt(raw, 10);
-  return Number.isFinite(n) && n > 0 ? n : 2;
+  return Number.isFinite(n) && n > 0 ? n : 5;
 }
 
 if (!existsSync(styleGuidePath)) {
@@ -202,6 +203,22 @@ function hasProductBlockers (findings: { severity: string; asset_id: string }[])
   );
 }
 
+function campaignRelevanceTermsForPrune (sg: StyleGuide): string[] {
+  return buildRetailCampaignRelevanceTerms(
+    buildProductMatchFields({
+      campaignContext: sg.campaignContext ?? null,
+      productName: sg.productName,
+      brandName: sg.brandName,
+      brandContext: sg.brandContext,
+      brandURL: sg.brandURL
+    })
+  );
+}
+
+function pruneExcessProductsForCampaign (sg: StyleGuide): void {
+  pruneExcessProductAssets(directoryPath, { campaignTerms: campaignRelevanceTermsForPrune(sg) });
+}
+
 async function refreshLogosOnly (
   logoQueries: string[],
   round: number,
@@ -249,6 +266,7 @@ while (reviewRound < maxRounds) {
   pruneListingIneligibleProducts(directoryPath, styleGuide);
   await pruneOversizedAssets(directoryPath);
   await pruneUndersizedAssets(directoryPath);
+  pruneExcessProductsForCampaign(styleGuide);
 
   const deterministic = await runDeterministicAssetsCheck(directoryPath, styleGuide);
   logDeterministicFindings(deterministic.findings);
@@ -415,16 +433,7 @@ while (reviewRound < maxRounds) {
       pruned.excludedSourceUrls
     );
   }
-  const relevanceTerms = buildRetailCampaignRelevanceTerms(
-    buildProductMatchFields({
-      campaignContext: styleGuide.campaignContext ?? null,
-      productName: styleGuide.productName,
-      brandName: styleGuide.brandName,
-      brandContext: styleGuide.brandContext,
-      brandURL: styleGuide.brandURL
-    })
-  );
-  pruneExcessProductAssets(directoryPath, { campaignTerms: relevanceTerms });
+  pruneExcessProductsForCampaign(styleGuide);
 
   if (reviewRound >= maxRounds) {
     break;
@@ -464,10 +473,32 @@ while (reviewRound < maxRounds) {
 }
 
 const finalDeterministic = await runDeterministicAssetsCheck(directoryPath, styleGuide);
-const satisfied =
+let satisfied: boolean =
   finalDeterministic.ok &&
   logoLocked &&
   lastAudit?.satisfied === true;
+
+if (
+  !satisfied &&
+  lastAudit !== null &&
+  canReconcileAfterExcessProductPrune({
+    finalDeterministicOk: finalDeterministic.ok,
+    productFileCount: countProductFiles(),
+    lastAuditFindings: lastAudit.findings
+  }) &&
+  !hasLogoBlockers(lastAudit.findings) &&
+  countLogoFiles() > 0
+) {
+  lockLogoAfterVisionAudit();
+  lastAudit = {
+    ...lastAudit,
+    satisfied: true,
+    summary: `Reconciled after excess product prune. ${lastAudit.summary}`,
+    findings: []
+  };
+  satisfied = true;
+  console.log('[style-guide-review] Reconciled — excess product count pruned on final round.');
+}
 
 let assetDescriptionsRel: string | null = null;
 if (satisfied && existsSync(assetDescriptionsPath(directoryPath))) {

@@ -1,0 +1,11 @@
+{
+  "review_phase": "style_guide",
+  "assets_review_rounds_run": 2,
+  "max_assets_review_rounds": 5,
+  "satisfied": true,
+  "logo_locked": true,
+  "summary": "All 5 assets pass audit. Logo is correctly segregated. 4 product assets (packshot, powder detail, lifestyle, multi-tin group) all depict Matcha Premium 30g with strong visual variety—packshot, texture close-up, lifestyle scene, and product group—meeting hero product campaign standards. No blockers detected. Logo audit passed. The asset logos/logo_black.svg displays the official Kusmi Tea brand wordmark lockup with 'KUSMI TEA' in uppercase Copperplate Gothic and 'PARIS' subtitle, matching the style guide requirements. Black color on transparent background is acceptable for Tier B PNG usage.",
+  "findings": [],
+  "asset_descriptions_path": "review/asset-descriptions.json",
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\kusmi-tea-6c57ae2b-beb6-4c50-8ede-d0d42b7c548f\\pipeline-usage.json"
+}

@@ -1,6 +1,6 @@
 /**
  * Agent review UI (Playwright screenshots + Haiku vision).
- * Boucle jusqu'à satisfaction ou CREATIVE_UI_REVIEW_MAX_ROUNDS (défaut 3).
+ * Boucle jusqu'à satisfaction ou CREATIVE_UI_REVIEW_MAX_ROUNDS (défaut 5).
  * Relance gen-creative-code-native.mts avec feedback si des blockers subsistent.
  *
  * Usage : node src/agents/run-creative-native-ui-review.mts <directory-uuid>
@@ -8,10 +8,10 @@
  */
 
 import type { StyleGuide } from './gen-style-guide.mjs';
-import { captureCreativeNativeScreenshots } from '../lib/creative-native-playwright-screenshots.mts';
-import { loadSkillsForCodegenPrompt } from '../lib/creative-native-codegen-prompt.mts';
-import { runCreativeNativeGeneration } from '../lib/creative-native-generate.mts';
-import { writeGenericAdConfigFile } from '../lib/generic-ad-config.mts';
+import { captureCreativeNativeScreenshots } from '../lib/core.mts';
+import { loadSkillsForCodegenPrompt } from '../lib/core.mts';
+import { runCreativeNativeGeneration } from '../lib/core.mts';
+import { writeGenericAdConfigFile } from '../lib/core.mts';
 import {
   appendPipelineRunSummary,
   formatDurationMinSec,
@@ -20,8 +20,8 @@ import {
   pipelineUsagePath,
   recomputePhaseTotals,
   type PipelineUsageFile
-} from '../lib/creative-pipeline-usage.mts';
-import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
+} from '../lib/core.mts';
+import { repoRootFromModuleDir } from '../lib/core.mts';
 import {
   buildRegenerationUserMessage,
   parseUiReviewMaxRoundsFromEnv,
@@ -31,24 +31,24 @@ import {
   type UiReviewOutput,
   type UiReviewUsageTotals
 } from './creative-native-ui-review.mts';
-import { loadAdFormatPresets, parseCreativeAdFormatsFromEnv, type AdFormatSelection } from '../lib/studio-ad-formats.mts';
+import { loadAdFormatPresets, parseCreativeAdFormatsFromEnv, type AdFormatSelection } from '../lib/core.mts';
 import {
   buildStrictMinimalRegenSuffix,
   resolveRegenModelFromUiAudit
-} from '../lib/creative-native-ui-review-regen.mts';
+} from '../lib/core.mts';
 import {
   isCaptureOrDomBlockerAudit,
   tryDeterministicCaptureFixes
-} from '../lib/creative-native-regen-deterministic.mts';
+} from '../lib/core.mts';
 import {
   isRegenDiffGuardEnabled,
   logRegenDiffSummary,
   reconcileRegenWithBaseline,
   snapshotCodeBundleForDiff,
   writeRegenBaselineSnapshot
-} from '../lib/creative-native-regen-diff.mts';
-import { healBundleAssetsFromRunDirectory } from '../lib/creative-bundle-assets.mts';
-import { latestCodeVersion } from '../lib/creative-code-versions.mts';
+} from '../lib/core.mts';
+import { healBundleAssetsFromRunDirectory } from '../lib/core.mts';
+import { latestCodeVersion } from '../lib/core.mts';
 import { config as loadDotenv } from 'dotenv';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';

@@ -1,0 +1,33 @@
+{
+  "ui_review_rounds_run": 2,
+  "max_ui_review_rounds": 2,
+  "satisfied": false,
+  "summary": "The 320×480 ad creative demonstrates strong visual identity and brand alignment with good hierarchy and color usage. However, there are critical issues: the product name reveal is incomplete ('MATCHA P' in animated state suggests truncation), the full tagline 'L'authenticité du Japon, certifié bio' is small and may have contrast concerns on the dark background, and the CTA button appears to sit very close to the bottom edge of the ad frame without sufficient safe-zone padding.",
+  "findings": [
+    {
+      "format_id": "320x480",
+      "severity": "blocker",
+      "issue": "Product headline 'MATCHA P' appears truncated in animated state; settled state shows 'MATCHA PREMIUM' fully. Confirm the animated-to-settled transition completes without text overflow or layout shift.",
+      "fix_hint": "Verify CSS animation timing and text wrapping: ensure .matcha-headline has sufficient width and max-width to contain 'MATCHA PREMIUM' without clipping. Check line-height and letter-spacing do not cause vertical overflow into CTA."
+    },
+    {
+      "format_id": "320x480",
+      "severity": "warn",
+      "issue": "Tagline 'L'authenticité du Japon, certifié bio' is small (appears ~12–14px) and rendered in white-on-dark-green; contrast may be borderline. Legibility on mobile and in retina contexts should be verified.",
+      "fix_hint": "Increase tagline font-size to 14px minimum (Montserrat 400), ensure color is #FFFFFF or near-white (#F5F1E6), and add text-shadow or slight background opacity if needed: e.g., .tagline { font-size: 14px; color: #FFFFFF; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }"
+    },
+    {
+      "format_id": "320x480",
+      "severity": "warn",
+      "issue": "Primary CTA button 'DÉCOUVRIR' appears flush or very close to the bottom edge of the #ad-320x480 frame; no visible safe-zone margin (≥20px padding-bottom) between the button and the ad boundary.",
+      "fix_hint": "Add padding-bottom to the CTA or the ad-container: #ad-320x480 { padding-bottom: 20px; } or apply margin-bottom: 16px to the .cta-button. Ensure footer text 'Kusmi Tea - Matcha Premium 30g...' sits comfortably above the CTA with 8–12px spacing."
+    }
+  ],
+  "screenshots_dir": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\kusmi-tea-6c57ae2b-beb6-4c50-8ede-d0d42b7c548f\\review\\screenshots",
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\kusmi-tea-6c57ae2b-beb6-4c50-8ede-d0d42b7c548f\\pipeline-usage.json",
+  "pipeline_totals_usd": {
+    "input": 0.751892,
+    "output": 0.975165,
+    "total": 1.727057
+  }
+}

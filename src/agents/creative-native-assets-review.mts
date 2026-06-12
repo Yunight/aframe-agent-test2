@@ -1,7 +1,7 @@
-import { withAnthropicRetry } from '../lib/anthropic-retry.mts';
+import { withAnthropicRetry } from '../lib/core.mts';
 import type { StyleGuide } from './gen-style-guide.mjs';
-import { readLogoFileAsAnthropicImageBlock } from '../lib/logo-rasterize.mts';
-import { readFileAsAnthropicImageBlock } from '../lib/image-mime-sniff.mts';
+import { readLogoFileAsAnthropicImageBlock } from '../lib/core.mts';
+import { readFileAsAnthropicImageBlock } from '../lib/core.mts';
 import {
   appendPipelineUsage,
   entryFromSingleUsage,
@@ -9,7 +9,7 @@ import {
   priceUsdFromTokens,
   timedAnthropicCall,
   type PriceUsd
-} from '../lib/creative-pipeline-usage.mts';
+} from '../lib/core.mts';
 import { appendFileSync, existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Anthropic } from '@anthropic-ai/sdk';
@@ -18,12 +18,15 @@ import { z } from 'zod';
 import {
   maxValidProductAssets,
   minValidProductAssets
-} from '../lib/asset-descriptions-audit.mts';
+} from '../lib/core.mts';
 import {
   buildCollaborationLogoAuditRules,
+  buildDivisionLineLogoAuditRules,
+  buildIndependentSubBrandLogoAuditRules,
   isCollaborationCampaign,
+  resolveBrandLogoRelationship,
   resolveLogoSearchNames
-} from '../lib/logo-search-names.mts';
+} from '../lib/core.mts';
 
 const DEFAULT_ASSETS_REVIEW_MODEL = 'claude-haiku-4-5-20251001';
 
@@ -49,11 +52,11 @@ export type AssetsReviewOutput = z.infer<typeof assetsReviewOutputSchema>;
 export function parseAssetsReviewMaxRoundsFromEnv (): number {
   const raw = process.env['CREATIVE_ASSETS_REVIEW_MAX_ROUNDS']?.trim();
   if (raw === undefined || raw.length === 0) {
-    return 3;
+    return 5;
   }
   const n = Number.parseInt(raw, 10);
   if (!Number.isFinite(n) || n < 0) {
-    return 3;
+    return 5;
   }
   return Math.min(n, 10);
 }
@@ -213,6 +216,11 @@ export async function runCreativeNativeAssetsReview (
     companyName,
     ...(brandContext.length > 0 ? { brandContext } : {})
   });
+  const brandLogoRelationship = resolveBrandLogoRelationship(brandName, companyName);
+  const divisionLineBrand =
+    !collaborationCampaign && brandLogoRelationship === 'division_line';
+  const independentSubBrand =
+    !collaborationCampaign && brandLogoRelationship === 'independent_sub_brand';
 
   const systemPrompt = [
     'You are a strict brand asset auditor before HTML5 ad code generation.',
@@ -228,15 +236,23 @@ export async function runCreativeNativeAssetsReview (
           ...(brandContext.length > 0 ? { brandContext } : {})
         })
       : []),
+    ...(divisionLineBrand ? buildDivisionLineLogoAuditRules({ brandName, companyName }) : []),
+    ...(independentSubBrand
+      ? buildIndependentSubBrandLogoAuditRules({ brandName, companyName })
+      : []),
     '- Logo (STRICT on source and brand): must match brandName/companyName (reject wrong brands, e.g. homonyms).',
     ...(collaborationCampaign
       ? [
           '  * For collaboration campaigns, brandName names the partnership — do NOT require a single file showing the full composite brandName string.',
           '  * BLOCKER only when a logos/ file is the wrong brand, a composite multi-brand lockup, or fails source checks below.'
         ]
-      : [
-          '  * BLOCKER if the logo in logos/ is NOT the same lockup as the brand homepage header (e.g. div.primary-logo / img.logo-simple on brandURL) — wrong file from Brave/generic search.'
-        ]),
+      : divisionLineBrand
+        ? [
+            `  * ACCEPT the official "${companyName}" wordmark from brandURL/companyURL — do NOT require "${brandName}" regional suffix in the logo file.`
+          ]
+        : [
+            '  * BLOCKER if the logo in logos/ is NOT the same lockup as the brand homepage header (e.g. div.primary-logo / img.logo-simple on brandURL) — wrong file from Brave/generic search.'
+          ]),
     '  * BLOCKER if the logo clearly comes from a third-party scraper (KindPNG, PNGaaaa, Pinterest, random blogs) while companyURL/brandURL host an official header lockup.',
     '  * BLOCKER if hostname of the image URL does not match companyURL/brandURL (or their parent domain) unless it is a known official CDN/subdomain of that brand.',
     '  * Accept transparent PNG, opaque PNG/JPEG on brand background, and official SVG wordmarks.',

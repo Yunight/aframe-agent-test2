@@ -1,0 +1,97 @@
+{
+  "companyName": "Groupe Orientis",
+  "companyContext": "French parent group that owns Kusmi Tea since 2003. Originally cotton, non-ferrous metals, and then cocoa/coffee merchants (Orebi family), the group pivoted into premium tea and built Kusmi Tea into an international tea house with workshops in Saint-Vigor d'Ymonville, near Le Havre in Normandy, and headquarters in Paris.",
+  "companyURL": "https://www.kusmitea.com",
+  "brandName": "Kusmi Tea",
+  "brandContext": "Kusmi Tea is a French premium tea house founded in 1867 in Saint Petersburg by Pavel Kousmichoff and re-established in Paris in 1917. B Corp certified, made in Normandy, the maison creates organic blends of black, green, white, matcha, rooibos and herbal teas — a free-spirited, modern and inclusive vision of tea distributed in around 100 boutiques worldwide.",
+  "brandURL": "https://www.kusmitea.com/products/matcha-premium",
+  "logoFileUrls": [
+    "https://www.kusmitea.com/cdn/shop/files/logo_black.svg?v=1761137956&amp;width=114"
+  ],
+  "productName": "Matcha Premium",
+  "campaignContext": "promotion du thé vert matcha premium",
+  "campaignReferenceUrl": "https://www.kusmitea.com/products/matcha-premium",
+  "productPictureUrls": [
+    "https://www.kusmitea.com/cdn/shop/files/Nav_Push_Matcha_Premium_2026.webp?v=1781074949&amp;width=610",
+    "https://www.kusmitea.com/cdn/shop/files/ACCESS_24_MATCHABOLTOTEMNOI_UNI_01_1.png?v=1773417313&amp;width=3277",
+    "https://www.kusmitea.com/cdn/shop/files/d66b63cdf8f1da068f481b329324a6d35de5ba05_MATCHA.jpg?v=1780667398&amp;width=1000",
+    "https://www.kusmitea.com/cdn/shop/files/Matcha_26_VCHACER30BIO_VCHAPRE30BIO_VCHACLA30BIO_POR_01.jpg?v=1780491399&amp;width=3150",
+    "https://www.kusmitea.com/cdn/shop/files/ef81321077cf26bffabf401ae6806d1b856df2e5_VCHAPRE30BIO_packshot_b2cweb.png?v=1779983333&width=600"
+  ],
+  "primaryColorPalette": [
+    "#3F6B2A",
+    "#8FB73E",
+    "#0F0F0F",
+    "#F5F1E6"
+  ],
+  "secondaryColorPalette": [
+    "#1F3A1A",
+    "#C9D89A",
+    "#C9A961",
+    "#FFFFFF",
+    "#7A5230"
+  ],
+  "typography": [
+    {
+      "fontFamily": "Copperplate Gothic",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Brand wordmark / logo lockup 'KUSMI TEA — PARIS' (uppercase, tracked-out serif gothic, the historical Kusmi signature)"
+    },
+    {
+      "fontFamily": "Copperplate Gothic",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Display headlines and product name 'MATCHA PREMIUM' — uppercase, letter-spaced for a premium, ceremonial feel"
+    },
+    {
+      "fontFamily": "Playfair Display",
+      "fontWeight": 400,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Editorial sub-headings and poetic accroches ('thé vert du Japon', 'cérémonie umami')"
+    },
+    {
+      "fontFamily": "Montserrat",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "UI body copy, product descriptions, ingredient lists and e-commerce labels"
+    },
+    {
+      "fontFamily": "Montserrat",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Call-to-action buttons ('Ajouter au panier', 'Découvrir'), badges (Bio, Made in Normandy)"
+    },
+    {
+      "fontFamily": "Montserrat",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Captions, legal, fine print, nutritional information"
+    }
+  ],
+  "brandVision": "Cultivate a free spirit through tea — break the rules of etiquette without ever compromising on quality. Kusmi sees tea as inclusive, joyful and resolutely modern: organic, creative and accessible blends imagined in Normandy that revolutionize the art of blending and unite novices and connoisseurs around the universal emotion of pleasure.",
+  "brandValues": "Freedom of taste and creation; organic and natural ingredients; French savoir-faire made in Normandy (Le Havre); B Corp commitment to people and the planet; gender equality and women-focused causes (Ruban Rose); reduction of plastic packaging; ARRONDI micro-donations; heritage since 1867 reinterpreted with daring modernity, gourmandise and optimism.",
+  "logoImageSearchQueries": [
+    "Kusmi Tea logo svg",
+    "Kusmi Tea logo transparent png",
+    "site:kusmitea.com logo",
+    "site:en.wikipedia.org Kusmi Tea logo",
+    "Kusmi Tea Paris wordmark 2026",
+    "Kusmi Tea brand logo black"
+  ],
+  "productImageSearchQueries": [
+    "site:kusmitea.com Matcha Premium",
+    "Kusmi Tea Matcha Premium tin 30g",
+    "Kusmi Tea matcha premium boîte packshot",
+    "Kusmi Tea matcha premium organic green tea Japan",
+    "Kusmi Tea matcha premium poudre",
+    "\"Matcha Premium\" Kusmi Tea packshot",
+    "Kusmi Tea matcha premium bowl chasen",
+    "Kusmi Tea matcha premium lifestyle",
+    "site:kusmitea.com matcha premium product",
+    "Kusmi Tea matcha premium 30g tea-filled tin"
+  ],
+  "campaignAssetProfile": "retail"
+}

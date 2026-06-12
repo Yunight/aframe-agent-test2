@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
+import { repoRootFromModuleDir } from '../lib/core.mts';
 
 type UsageEntry = {
   action?: string;

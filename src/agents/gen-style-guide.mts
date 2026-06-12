@@ -5,16 +5,16 @@ import {
   buildProductSearchQueries,
   collectAndDownloadValidAssetUrls,
   officialHostsFromContext
-} from '../lib/brave-image-assets.mts';
-import { collectSingleTransparentLogo } from '../lib/logo-pipeline.mts';
-import { extractOfficialProductImageUrls } from '../lib/official-site-logo-extract.mts';
+} from '../lib/core.mts';
+import { collectSingleTransparentLogo } from '../lib/core.mts';
+import { extractOfficialProductImageUrls } from '../lib/core.mts';
 import {
   buildProductMatchFields,
   buildProductMatchTerms,
   parseStyleGuideContextPrompt,
   resolveCampaignAssetProfile,
   resolveReferenceListingUrls
-} from '../lib/style-guide-context.mts';
+} from '../lib/core.mts';
 import { basename, join, extname } from 'node:path';
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
@@ -22,25 +22,25 @@ import { config as loadDotenv } from 'dotenv';
 import { Anthropic } from '@anthropic-ai/sdk';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
 import { z } from 'zod';
-import { withAnthropicRetry } from '../lib/anthropic-retry.mts';
-import { buildOutputDirectoryName, repoRootFromModuleDir } from '../lib/repo-paths.mts';
-import { toStyleGuideHex } from '../lib/style-guide-colors.mts';
+import { withAnthropicRetry } from '../lib/core.mts';
+import { buildOutputDirectoryName, repoRootFromModuleDir } from '../lib/core.mts';
+import { toStyleGuideHex } from '../lib/core.mts';
 import {
   extractHttpsUrlsFromText,
   normalizeBrandAndCompanyUrls,
   preflightCampaignReferenceUrl,
   resolveCampaignReferenceUrl
-} from '../lib/style-guide-urls.mts';
+} from '../lib/core.mts';
 import {
   fontEffectSchema,
   isStructuredOutputParseError,
   sanitizeStyleGuideTypography
-} from '../lib/style-guide-schema.mts';
+} from '../lib/core.mts';
 import {
   assertImageSearchProviderConfigured,
   imageSearchLogPrefix,
   resolveImageSearchProvider
-} from '../lib/image-search.mts';
+} from '../lib/core.mts';
 import {
   appendPipelineRunSummary,
   appendPipelineUsage,
@@ -55,7 +55,7 @@ import {
   timedStep,
   type ApiCallTiming,
   type SubStepTiming
-} from '../lib/creative-pipeline-usage.mts';
+} from '../lib/core.mts';
 
 const STYLE_GUIDE_MODEL = 'claude-opus-4-7';
 

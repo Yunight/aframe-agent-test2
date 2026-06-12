@@ -1,0 +1,126 @@
+{
+  "generated_at": "2026-06-11T10:38:16.336Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/BYD_Auto_2022_logo.svg",
+      "fileName": "BYD_Auto_2022_logo.svg",
+      "fileType": "logos",
+      "description": "BYD corporate wordmark in bold red sans-serif typeface on transparent background. Clean, geometric letterforms with no additional visual elements or imagery.",
+      "layout_hints": [
+        "logo-lockup",
+        "text-only"
+      ],
+      "dominant_colors": [
+        "#E60012"
+      ],
+      "asset_kind": "logo",
+      "primary_product_name": ""
+    },
+    {
+      "asset_id": "products/BYD-SEAL-U-DM-i.webp",
+      "fileName": "BYD-SEAL-U-DM-i.webp",
+      "fileType": "products",
+      "description": "BYD SEAL U DM-i compact SUV photographed in silver-blue metallic finish, positioned on a curved mountain road overlooking a serene fjord-like lake landscape with snow-capped peaks in background. Three-quarter front view in daylight with professional motion-blur effect on surrounding scenery.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "hero-angle",
+        "landscape-background"
+      ],
+      "dominant_colors": [
+        "#87CEEB",
+        "#6B8E99",
+        "#4A7C5E",
+        "#C0C0C0"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "BYD SEAL U DM-i",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/BYD-SEAL-U-DMI-side-view-pc.jpg",
+      "fileName": "BYD-SEAL-U-DMI-side-view-pc.jpg",
+      "fileType": "products",
+      "description": "BYD SEAL U DM-i in gunmetal-grey finish, displayed in true side profile against neutral light blue-white gradient studio background. Clean product packshot showcasing vehicle proportions, roofline, wheels, and door configuration without background distractions.",
+      "layout_hints": [
+        "packshot-side",
+        "studio-background",
+        "product-isolation"
+      ],
+      "dominant_colors": [
+        "#A9A9A9",
+        "#E8F0F5",
+        "#2D3E50"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "BYD SEAL U DM-i",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/BYD_SEAL_U_DM-i_BlackFriday.png",
+      "fileName": "BYD_SEAL_U_DM-i_BlackFriday.png",
+      "fileType": "products",
+      "description": "BYD SEAL U DM-i in black finish, angled three-quarter front view on neutral white background. Vehicle displays prominent front grille with 'BYD SEAL U DMH' badging visible on lower bumper area. Clean product presentation ideal for promotional campaigns.",
+      "layout_hints": [
+        "packshot-three-quarter",
+        "studio-background",
+        "product-detail"
+      ],
+      "dominant_colors": [
+        "#1A1A1A",
+        "#FFFFFF",
+        "#C0C0C0"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "BYD SEAL U DM-i",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/Promo_SEAL_U_DM-i.webp",
+      "fileName": "Promo_SEAL_U_DM-i.webp",
+      "fileType": "products",
+      "description": "BYD SEAL U DM-i in silver-blue metallic, positioned on curved mountain road overlooking alpine lake with snow-capped peaks. Text overlay 'BYD SEAL U DM-i' in white sans-serif positioned upper-left. Scenic landscape lifestyle shot combining vehicle hero with aspirational wilderness backdrop.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "text-overlay",
+        "hero-shot",
+        "landscape"
+      ],
+      "dominant_colors": [
+        "#87CEEB",
+        "#F5F5F5",
+        "#6B8E99",
+        "#4A7C5E"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "BYD SEAL U DM-i",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/Seal-u-dmi-1stBanner-l.jpg",
+      "fileName": "Seal-u-dmi-1stBanner-l.jpg",
+      "fileType": "products",
+      "description": "BYD SEAL U DM-i in silver-blue finish on curved mountain pass road above expansive fjord lake with alpine peaks. Expansive landscape panorama captures vehicle in natural driving environment with motion blur on terrain edges. No visible text overlay; pure lifestyle hero composition.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "hero-angle",
+        "panoramic-banner",
+        "landscape-background"
+      ],
+      "dominant_colors": [
+        "#87CEEB",
+        "#6B8E99",
+        "#4A7C5E",
+        "#D4AF8A"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "BYD SEAL U DM-i",
+      "is_generic_collection": false
+    }
+  ]
+}

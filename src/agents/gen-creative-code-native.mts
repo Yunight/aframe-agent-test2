@@ -1,5 +1,5 @@
-import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
-import { runCreativeNativeGeneration } from '../lib/creative-native-generate.mts';
+import { repoRootFromModuleDir } from '../lib/core.mts';
+import { runCreativeNativeGeneration } from '../lib/core.mts';
 import { join } from 'node:path';
 import { config as loadDotenv } from 'dotenv';
 

@@ -1,0 +1,14 @@
+{
+  "ui_review_rounds_run": 1,
+  "max_ui_review_rounds": 2,
+  "satisfied": true,
+  "summary": "The 320×480 ad unit displays a well-structured vertical format with strong visual hierarchy, accurate color use from the BYD palette, and correct French copy. The layout respects safe zones, the hero product image is prominent and properly positioned, the BYD logo is visible at an appropriate scale, and the primary CTA button has adequate spacing from the bottom edge. Typography is clear and follows the style guide. Animation states show smooth transitions of headline elements without jarring visual shifts. No blockers detected.",
+  "findings": [],
+  "screenshots_dir": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\byd-5809c0ec-85ff-4b0d-9387-111abfd0829a\\review\\screenshots",
+  "pipeline_usage_path": "C:\\Users\\Ben\\Desktop\\formats_creator\\aframe-agent-test2\\aframe-agent-test2\\output\\byd-5809c0ec-85ff-4b0d-9387-111abfd0829a\\pipeline-usage.json",
+  "pipeline_totals_usd": {
+    "input": 0.396829,
+    "output": 0.364275,
+    "total": 0.761104
+  }
+}

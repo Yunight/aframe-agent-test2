@@ -7,27 +7,22 @@ import Express from 'express';
 import {
   envForCreativeCodegenPreset,
   isCreativeCodegenPresetId,
-} from '../lib/creative-native-codegen-presets.mts';
-import {
   appendPipelineRunSummary,
   formatDurationMinSec,
-  pipelineUsagePath
-} from '../lib/creative-pipeline-usage.mts';
-import { loadAdFormatPresets, normalizeApiAdFormats } from '../lib/studio-ad-formats.mts';
-import { preflightReferenceUrlForStudio } from '../lib/reference-url-preflight.mts';
-import {
+  pipelineUsagePath,
+  loadAdFormatPresets,
+  normalizeApiAdFormats,
+  preflightReferenceUrlForStudio,
   codeVersionCount,
   listCodeVersions,
-  resolveCodeDirectory
-} from '../lib/creative-code-versions.mts';
-import {
+  resolveCodeDirectory,
   buildGenericAdConfig,
   genericConfigFilePath,
   getUnboundGenericConfigKeysError,
   isGenericConfigFileFresh,
-  readGenericAdConfigFile
-} from '../lib/generic-ad-config.mts';
-import { repoRootFromModuleDir } from '../lib/repo-paths.mts';
+  readGenericAdConfigFile,
+  repoRootFromModuleDir
+} from '../lib/core.mts';
 
 const repoRoot = repoRootFromModuleDir(import.meta.dirname);
 loadDotenv({ path: join(repoRoot, '.env') });
@@ -671,7 +666,10 @@ app.post('/api/style-guide/run', async (req, res) => {
           const folder = outputFolderNameFromDirectoryPath(activeJob.outputDirectoryPath);
           return folder !== null ? [ styleGuideAssetsReviewPath, folder ] : null;
         },
-        env: { ...imageEnv }
+        env: {
+          ...imageEnv,
+          STYLE_GUIDE_ASSETS_REVIEW_MAX_ROUNDS: '5'
+        }
       }
     ]);
   } else {
@@ -806,7 +804,7 @@ app.post('/api/creative-code/run', (req, res) => {
       argv: [ uiReviewPath, outputFolder ],
       env: {
         CREATIVE_AD_FORMATS: adFormatsJson,
-        CREATIVE_UI_REVIEW_MAX_ROUNDS: '2',
+        CREATIVE_UI_REVIEW_MAX_ROUNDS: '5',
         CREATIVE_SCREENSHOT_PROFILE: 'fast'
       }
     });
@@ -943,7 +941,7 @@ app.post('/api/creative-code/review-ui', (req, res) => {
     CREATIVE_IMAGE_SEARCH_PROVIDER: IMAGE_SEARCH_PROVIDER,
     PIPELINE_PHASE: 'creative',
     CREATIVE_AD_FORMATS: adFormatsJson,
-    CREATIVE_UI_REVIEW_MAX_ROUNDS: '2',
+    CREATIVE_UI_REVIEW_MAX_ROUNDS: '5',
     CREATIVE_SCREENSHOT_PROFILE: 'fast'
   });
   res.status(202).json({ jobId: job.id });

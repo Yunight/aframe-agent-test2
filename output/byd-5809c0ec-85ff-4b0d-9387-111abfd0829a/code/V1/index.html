@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BYD SEAL U DM-i</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="ad-320x480">
+
+    <!-- Background hero image -->
+    <div class="hero-bg"></div>
+
+    <!-- Dark overlay -->
+    <div class="hero-overlay"></div>
+
+    <!-- Diagonal accent line (CSS handled) -->
+
+    <!-- Car image (z-index 5, below slices z-index 7) -->
+    <div class="car-img-wrap" id="carImgWrap">
+      <img src="./BYD-SEAL-U-DM-i.webp" alt="BYD SEAL U DM-i" class="car-img">
+    </div>
+
+    <!-- Diagonal slices container (above car image) -->
+    <div class="slices-container" id="slicesContainer">
+      <div class="slice slice-0" id="slice0">
+        <div class="slice-inner">
+          <div class="stat-value">Super Hybride</div>
+          <div class="stat-label">Technologie DM-i</div>
+        </div>
+      </div>
+      <div class="slice slice-1" id="slice1">
+        <div class="slice-inner">
+          <div class="stat-value">100 km</div>
+          <div class="stat-label">Autonomie électrique WLTP</div>
+        </div>
+      </div>
+      <div class="slice slice-2" id="slice2">
+        <div class="slice-inner">
+          <div class="stat-value">1,3 L</div>
+          <div class="stat-label">Consommation /100 km</div>
+        </div>
+      </div>
+      <div class="slice slice-3" id="slice3">
+        <div class="slice-inner">
+          <div class="stat-value">160 kW</div>
+          <div class="stat-label">Puissance système totale</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <div class="ad-header">
+      <img src="./BYD_Auto_2022_logo.svg" alt="logo" class="brand-logo">
+      <span class="eyebrow">SEAL U DM-i</span>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Headline -->
+    <div class="headline-wrap">
+      <h1 class="headline">Libérez <em>chaque km</em></h1>
+      <p class="subhead">La liberté hybride sans compromis</p>
+    </div>
+
+    <!-- Step dots -->
+    <div class="step-dots" id="stepDots">
+      <span class="dot active" data-step="0"></span>
+      <span class="dot" data-step="1"></span>
+      <span class="dot" data-step="2"></span>
+      <span class="dot" data-step="3"></span>
+    </div>
+
+    <!-- Tap hint -->
+    <div class="tap-hint" id="tapHint">Appuyez pour découvrir</div>
+
+    <!-- Footer / CTA -->
+    <div class="ad-footer">
+      <a class="cta-btn" href="https://www.byd.com/fr/vehicules-hybrides/seal-u-dm-i" target="_blank">
+        <span class="cta-label">Découvrir le SEAL U DM-i</span>
+      </a>
+      <span class="body-copy">*Autonomie WLTP combinée. Consommation variable selon usage.</span>
+    </div>
+
+  </div>
+  <script src="app.js" defer></script>
+</body>
+</html>

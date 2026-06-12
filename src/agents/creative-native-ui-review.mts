@@ -1,6 +1,6 @@
-import { withAnthropicRetry } from '../lib/anthropic-retry.mts';
+import { withAnthropicRetry } from '../lib/core.mts';
 import type { StyleGuide } from './gen-style-guide.mjs';
-import type { ScreenshotManifest } from '../lib/creative-native-playwright-screenshots.mts';
+import type { ScreenshotManifest } from '../lib/core.mts';
 import {
   appendPipelineUsage,
   entryFromSingleUsage,
@@ -8,12 +8,20 @@ import {
   priceUsdFromTokens,
   timedAnthropicCall,
   type PriceUsd
-} from '../lib/creative-pipeline-usage.mts';
+} from '../lib/core.mts';
 import {
+  auditContentGatingPattern,
   auditCreativeBundleIntegrity,
-  mergeBundleIntegrityIntoUiAudit
-} from '../lib/creative-bundle-integrity.mts';
-import { buildCreativeAdFormatInstructions, type AdFormatSelection } from '../lib/studio-ad-formats.mts';
+  auditInteractionGatedReviewCapture,
+  buildUiReviewCodeAnnotations,
+  detectsKineticTypingPattern,
+  formatBundleForUiReviewPrompt,
+  isUiReviewIncludeCodeEnabled,
+  loadCodeBundleForUiReview,
+  mergeBundleIntegrityIntoUiAudit,
+  suppressKineticAnimatedFalsePositives
+} from '../lib/core.mts';
+import { buildCreativeAdFormatInstructions, type AdFormatSelection } from '../lib/core.mts';
 import { dirname } from 'node:path';
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -74,11 +82,11 @@ export function buildRegenerationUserMessage (
 export function parseUiReviewMaxRoundsFromEnv (): number {
   const raw = process.env['CREATIVE_UI_REVIEW_MAX_ROUNDS']?.trim();
   if (raw === undefined || raw.length === 0) {
-    return 2;
+    return 5;
   }
   const n = Number.parseInt(raw, 10);
   if (!Number.isFinite(n) || n < 0) {
-    return 2;
+    return 5;
   }
   return Math.min(n, 10);
 }
@@ -206,6 +214,11 @@ export async function runCreativeNativeUiReview (
   const model = options.model ?? process.env['CREATIVE_UI_REVIEW_MODEL']?.trim() ?? DEFAULT_UI_REVIEW_MODEL;
 
   const captureErrors = manifestCaptureErrors(manifest);
+  const bundleDir = dirname(manifest.entry_html);
+  const appJsPath = join(bundleDir, 'app.js');
+  const bundleAppJs =
+    existsSync(appJsPath) ? readFileSync(appJsPath, { encoding: 'utf8' }) : '';
+  const hasKineticHeadline = detectsKineticTypingPattern(bundleAppJs);
   const compactManifest = {
     captured_at: manifest.captured_at,
     entry_url: manifest.entry_url,
@@ -223,7 +236,8 @@ export async function runCreativeNativeUiReview (
       type: 'text',
       text:
         `Review round ${String(reviewRound)}. Audit the advertisement creatives from the PNG screenshots below.\n` +
-        `Each format may have multiple states: initial, animated, settled.\n` +
+        `Each format may have multiple states: initial, animated, settled, and optionally revealed (post-interaction).\n` +
+        `When a revealed shot is present, validate product image, price, and promo on revealed — not on settled overlay states.\n` +
         `Screenshot manifest:\n${JSON.stringify(compactManifest)}\n` +
         (captureErrors.length > 0
           ? `\nScreenshot capture errors (treat as blockers):\n${captureErrors.join('\n')}\n`
@@ -231,13 +245,31 @@ export async function runCreativeNativeUiReview (
     }
   ];
 
+  if (isUiReviewIncludeCodeEnabled()) {
+    const annotations = buildUiReviewCodeAnnotations(bundleDir);
+    if (annotations !== null) {
+      userContent.push({ type: 'text', text: annotations });
+    }
+    try {
+      const codeBundle = loadCodeBundleForUiReview(bundleDir);
+      userContent.push({ type: 'text', text: formatBundleForUiReviewPrompt(codeBundle) });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn(`[ui-review] Code bundle omitted from prompt: ${message}`);
+    }
+  }
+
   for (const formatEntry of manifest.formats) {
     for (const shot of formatEntry.shots) {
       const imagePath = join(screenshotsDir, shot.fileName);
       const block = readPngAsImageBlock(imagePath);
+      const kineticAnimatedNote =
+        hasKineticHeadline && shot.state === 'animated'
+          ? ' [kinetic headline mid-animation — do NOT blocker incomplete headline text here; validate full copy on settled only]'
+          : '';
       userContent.push({
         type: 'text',
-        text: `--- ${formatEntry.format_id} / ${shot.state} (${shot.relativePath}) ---`
+        text: `--- ${formatEntry.format_id} / ${shot.state} (${shot.relativePath})${kineticAnimatedNote} ---`
       });
       if (block !== null) {
         userContent.push(block);
@@ -252,7 +284,8 @@ export async function runCreativeNativeUiReview (
 
   const systemPrompt = [
     'You are a strict UI/UX auditor for HTML5 display advertisement creatives.',
-    'You receive PNG screenshots of rendered ad units plus a JSON style guide and mandatory design skills.',
+    'You receive PNG screenshots of rendered ad units plus the HTML/CSS/JS source bundle, a JSON style guide, and mandatory design skills.',
+    'Screenshots judge final visuals; source code explains animations, copy, and selectors. Do not blocker animated-state partial kinetic text when code shows character-by-character reveal and the settled screenshot shows full copy.',
     'Evaluate visual quality: logo visibility and scale, typography hierarchy, color adherence to the style guide,',
     'French copy quality, layout at exact pixel dimensions, no fake browser chrome, consistency across formats.',
     'CTA spacing: use severity "warn" only if the primary CTA looks visually flush against the bottom ad frame (no visible gap). Never use blocker for CTA spacing, estimated pixel margins, or "20px" rules. Do not request a full regen for CTA spacing alone — a small CSS padding/margin patch in fix_hint is enough.',
@@ -264,7 +297,11 @@ export async function runCreativeNativeUiReview (
     '- fix_hint and regeneration_prompt must name concrete selectors or rules (e.g. "#ad-300x600 .hero img { max-height: 180px }").',
     '- NEVER use words: redesign, rebuild, replace entire, from scratch, new layout, new concept, refonte.',
     '- BLOCKER only for: wrong IAB pixel size, missing/broken logo, unreadable text (logo, headline, CTA label, legal/tagline), style-guide color/typography violation, missing required product hero image, fake browser chrome, screenshot capture failure.',
-    '- Product image quality: blocker only if no product image is visible or path is wrong; otherwise warn with a specific src/CSS fix.',
+    '- Logo and product hero image MUST be visible on initial and settled states (opacity > 0, not fully masked). BLOCKER if logo or packshot is absent or hidden until user interaction.',
+    '- Animated state: do NOT blocker on partial kinetic-type text mid-animation — validate full French copy on settled only.',
+    '- Product, price, and primary CTA: validate on initial/settled/revealed when visible; BLOCKER if missing on settled when the ad is not legacy interaction-gated.',
+    '- Legacy interaction-gated bundles (revealed screenshot present): apply product/price rules on revealed only; do not require product on overlay states. New creatives must not use content gating.',
+    '- Product image quality: blocker if no product image is visible or path is wrong on settled (or revealed for legacy gating); otherwise warn with a specific src/CSS fix.',
     '- Carousel/pagination BLOCKER: pagination dots (slide indicators) present while fewer than 2 distinct visible slides, broken/missing carousel background images, or dots count mismatched with slide count.',
     '- When carousel has <= 1 working slide, dots must be hidden — treat visible orphan dots as a blocker.',
     '- Other carousel/interaction issues: suggest CSS/JS timing or size fixes — not a new carousel design.',
@@ -329,7 +366,6 @@ export async function runCreativeNativeUiReview (
     duration_ms: stepDurationMs
   };
 
-  const bundleDir = dirname(manifest.entry_html);
   const integrityFindings = auditCreativeBundleIntegrity({ bundleDir, adFormats });
   if (integrityFindings.length > 0) {
     console.log(`[ui-review] bundle integrity: ${String(integrityFindings.length)} finding(s)`);
@@ -337,6 +373,36 @@ export async function runCreativeNativeUiReview (
       console.log(`[ui-review]   [${f.severity}] ${f.format_id}: ${f.issue}`);
     }
     mergeBundleIntegrityIntoUiAudit(parsed, integrityFindings);
+  }
+
+  const contentGatingFindings = auditContentGatingPattern(
+    bundleDir,
+    adFormats.map((f) => f.id)
+  );
+  if (contentGatingFindings.length > 0) {
+    console.log(`[ui-review] content gating: ${String(contentGatingFindings.length)} finding(s)`);
+    for (const f of contentGatingFindings) {
+      console.log(`[ui-review]   [${f.severity}] ${f.format_id}: ${f.issue}`);
+    }
+    mergeBundleIntegrityIntoUiAudit(parsed, contentGatingFindings);
+  }
+
+  const interactionReviewFindings = auditInteractionGatedReviewCapture(manifest, bundleDir);
+  if (interactionReviewFindings.length > 0) {
+    console.log(`[ui-review] interaction review capture: ${String(interactionReviewFindings.length)} finding(s)`);
+    for (const f of interactionReviewFindings) {
+      console.log(`[ui-review]   [${f.severity}] ${f.format_id}: ${f.issue}`);
+    }
+    mergeBundleIntegrityIntoUiAudit(parsed, interactionReviewFindings);
+  }
+
+  if (bundleAppJs.length > 0) {
+    const kineticSuppressed = suppressKineticAnimatedFalsePositives(parsed, bundleAppJs);
+    if (kineticSuppressed.suppressed > 0) {
+      console.log(
+        `[ui-review] kinetic animated false positives suppressed: ${String(kineticSuppressed.suppressed)}`
+      );
+    }
   }
 
   if (captureErrors.length > 0 && parsed.findings.filter((f) => f.severity === 'blocker').length === 0) {

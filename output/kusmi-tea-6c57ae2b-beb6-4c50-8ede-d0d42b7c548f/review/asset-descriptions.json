@@ -1,0 +1,106 @@
+{
+  "generated_at": "2026-06-11T15:44:52.499Z",
+  "model": "claude-haiku-4-5-20251001",
+  "assets": [
+    {
+      "asset_id": "logos/logo_black.svg",
+      "fileName": "logo_black.svg",
+      "fileType": "logos",
+      "description": "Kusmi Tea Paris wordmark in bold, sans-serif black typography on transparent background. Logo features the brand name 'KUSMI TEA' in large capitals with 'PARIS' in smaller capitals underneath. Clean, modern lockup with no decorative elements.",
+      "layout_hints": [
+        "logo-lockup",
+        "text-only"
+      ],
+      "dominant_colors": [
+        "#000000"
+      ],
+      "shows_physical_product": false,
+      "asset_kind": "logo",
+      "primary_product_name": "",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/ef81321077cf26bffabf401ae6806d1b856df2e5_VCHAPRE30BIO_packshot_b2cweb.png",
+      "fileName": "VCHAPRE30BIO_packshot_b2cweb.png",
+      "fileType": "products",
+      "description": "Matcha Premium tin packshot shot on white background, centered front-facing angle. Gray metal lid and base with vibrant botanically illustrated label featuring koi fish, flowers, and foliage in warm oranges, greens, and reds. Label clearly reads 'Kusmi TEA MATCHA Premium'. Product is the 30g bio organic tin.",
+      "layout_hints": [
+        "packshot-centre",
+        "product-focused"
+      ],
+      "dominant_colors": [
+        "#C0C0C0",
+        "#2D5016",
+        "#FF6B35",
+        "#FFA500"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "Matcha Premium",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/Matcha_26_VCHACER30BIO_VCHAPRE30BIO_VCHACLA30BIO_POR_01.jpg",
+      "fileName": "Matcha_26_VCHACER30BIO_VCHAPRE30BIO_VCHACLA30BIO_POR_01.jpg",
+      "fileType": "products",
+      "description": "Overhead close-up of vibrant bright green matcha powder mounded in a white ceramic bowl with gray rim, shot against deep forest-green blurred background. Fine, freshly whisked powder texture visible. Product is premium organic matcha.",
+      "layout_hints": [
+        "product-detail",
+        "close-up",
+        "texture-focus"
+      ],
+      "dominant_colors": [
+        "#A8D600",
+        "#2D5016",
+        "#FFFFFF",
+        "#808080"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "Matcha Premium",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/Nav_Push_Matcha_Premium_2026.jpg",
+      "fileName": "Nav_Push_Matcha_Premium_2026.jpg",
+      "fileType": "products",
+      "description": "Lifestyle scene: Matcha Premium tin with decorative label displayed on vibrant bright green surface, surrounded by scattered bright matcha powder. Background features ornate botanical illustration with stylized koi fish in cream and red, blossoming flowers in coral, and flowing green foliage against deep forest-green. Label text 'Kusmi TEA MATCHA Premium' clearly visible on tin.",
+      "layout_hints": [
+        "lifestyle-scene",
+        "product-focus",
+        "vibrant-background"
+      ],
+      "dominant_colors": [
+        "#A8D600",
+        "#2D5016",
+        "#FFB366",
+        "#FF6B35"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "lifestyle_scene",
+      "primary_product_name": "Matcha Premium",
+      "is_generic_collection": false
+    },
+    {
+      "asset_id": "products/the-vert-matcha-premium-30g-bio-multiple-1024_480x480.jpg",
+      "fileName": "the-vert-matcha-premium-30g-bio-multiple-1024_480x480.jpg",
+      "fileType": "products",
+      "description": "Still-life product arrangement showing three Matcha Premium 30g tins stacked on neutral light background with organic certification logo (AB Agriculture Biologique) in upper left. Gray metal lids visible on white label tins reading 'Kusmi TEA MATCHA Premium 100% bio, 100% Japon'. All three tins are identical hero SKU.",
+      "layout_hints": [
+        "packshot-group",
+        "product-multiple",
+        "certification-visible"
+      ],
+      "dominant_colors": [
+        "#FFFFFF",
+        "#2D5016",
+        "#808080",
+        "#00AA00"
+      ],
+      "shows_physical_product": true,
+      "asset_kind": "product_packshot",
+      "primary_product_name": "Matcha Premium",
+      "is_generic_collection": false
+    }
+  ]
+}

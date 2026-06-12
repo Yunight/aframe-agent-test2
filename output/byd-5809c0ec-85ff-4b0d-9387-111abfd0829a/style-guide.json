@@ -1,0 +1,98 @@
+{
+  "companyName": "BYD",
+  "companyContext": "BYD (Build Your Dreams) est un constructeur automobile chinois et leader mondial des véhicules à énergie nouvelle (NEV), produisant des voitures 100% électriques, hybrides rechargeables (Super Hybride DM-i), bus, camions et batteries Blade. BYD France distribue la gamme via un réseau de concessionnaires.",
+  "companyURL": "https://www.byd.com/fr",
+  "brandName": "BYD",
+  "brandContext": "Marque automobile principale du groupe BYD, regroupant les SUV, berlines et citadines électriques et Super Hybrides (DM-i) commercialisés en Europe et en France, dont la gamme SEAL, SEALION, ATTO, DOLPHIN et TANG.",
+  "brandURL": "https://www.byd.com/fr/vehicules-hybrides/seal-u-dm-i",
+  "logoFileUrls": [
+    "https://upload.wikimedia.org/wikipedia/commons/e/e2/BYD_Auto_2022_logo.svg"
+  ],
+  "productName": "BYD SEAL U DM-i",
+  "campaignContext": "promotion de la voiture seal u dm i",
+  "campaignReferenceUrl": "https://www.byd.com/fr/vehicules-hybrides/seal-u-dm-i",
+  "productPictureUrls": [
+    "https://www.byd.com/material/byd-site/eu/product/seal-u-dm-i/l/Seal-u-dmi-1stBanner-l.jpg",
+    "https://www.byd.com/material/byd-site/fr/product/energy-label/SEAL_U_DM-i_etiquette_enegetique_2026.png",
+    "https://www.byd.com/material/byd-site/eu/hybrid-cars/sealion5-dmi/l/byd-sealion5-dmi-1stBanner-l.webp",
+    "https://www.byd.com/content/dam/byd-site/fr/promotions/2025/blackfriday/BYD_SEAL_U_DM-i_BlackFriday.png",
+    "https://www.byd.com/material/byd-site/fr/product/energy-label/SEAL_U_DM-i_etiquette_enegetique_2026.png"
+  ],
+  "primaryColorPalette": [
+    "#EC1C24",
+    "#FFFFFF",
+    "#0A0A0A"
+  ],
+  "secondaryColorPalette": [
+    "#1F2A44",
+    "#5B7CA8",
+    "#C8CED6",
+    "#F4F5F7",
+    "#7A0E14"
+  ],
+  "typography": [
+    {
+      "fontFamily": "BYD Sans",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Wordmark / logotype BYD (sans-serif géométrique sur-mesure, lettres avec petits espaces internes)"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 700,
+      "fontEffect": [],
+      "fontUses": "Titres principaux (H1, hero, accroches campagne SEAL U DM-i)"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 600,
+      "fontEffect": [],
+      "fontUses": "Sous-titres, H2/H3, intertitres de section"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 500,
+      "fontEffect": [],
+      "fontUses": "Boutons (CTA : Configurer, Essayer, Découvrir)"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 400,
+      "fontEffect": [],
+      "fontUses": "Texte courant, descriptions produit, mentions légales LLD"
+    },
+    {
+      "fontFamily": "Inter",
+      "fontWeight": 400,
+      "fontEffect": [
+        "italic"
+      ],
+      "fontUses": "Notes de bas de page, conditions tarifaires, références WLTP"
+    }
+  ],
+  "brandVision": "Innover pour une vie meilleure : accélérer la transition vers la mobilité électrifiée grâce à une intégration verticale complète (batterie Blade, plateforme e-Platform 3.0, technologie Super DM) et rendre le véhicule à énergie nouvelle accessible à tous, des citadines familiales aux SUV Super Hybrides comme le SEAL U DM-i.",
+  "brandValues": "Innovation technologique, sécurité (note maximale Euro NCAP 5 étoiles), durabilité environnementale, design Ocean Aesthetics inspiré du monde marin, confort familial, fiabilité, accessibilité et performance énergétique (autonomie WLTP optimisée, faible consommation).",
+  "logoImageSearchQueries": [
+    "BYD logo official 2026 svg",
+    "BYD wordmark logo red transparent png",
+    "site:en.wikipedia.org BYD Auto logo",
+    "BYD Auto logo 2022 frameless",
+    "BYD France logo officiel",
+    "BYD logo filetype:svg",
+    "site:commons.wikimedia.org BYD logo"
+  ],
+  "productImageSearchQueries": [
+    "site:byd.com SEAL U DM-i",
+    "BYD SEAL U DM-i SUV hybride rechargeable",
+    "BYD SEAL U DM-i France press photo",
+    "BYD SEAL U DM-i exterior official",
+    "BYD SEAL U DM-i interior dashboard",
+    "BYD SEAL U DM-i jantes 19 pouces",
+    "BYD SEAL U DM-i blanc",
+    "BYD SEAL U DM-i 2026 packshot",
+    "site:byd.com/fr seal-u-dm-i",
+    "BYD SEAL U DM-i media gallery",
+    "BYD SEAL U DM-i Super Hybride"
+  ],
+  "campaignAssetProfile": "retail"
+}
